@@ -1,3 +1,5 @@
+import { alpha, darken } from '@mui/material'
+
 import {
   background,
   black,
@@ -13,9 +15,7 @@ import {
   success,
   warning,
   white
-} from '@constants/colors'
-
-import { alpha, darken } from '@mui/material'
+} from 'constants/colors'
 
 const palette = {
   common: {

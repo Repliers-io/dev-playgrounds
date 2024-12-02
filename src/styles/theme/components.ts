@@ -1,10 +1,8 @@
-import { primary } from '@constants/colors'
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import type {} from '@mui/lab/themeAugmentation'
 import { alpha, type Theme } from '@mui/material'
 
 import { toRem } from 'utils/theme'
+import { primary } from 'constants/colors'
 
 type ThemeProps = {
   theme: Theme

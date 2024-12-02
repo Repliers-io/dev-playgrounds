@@ -4,7 +4,14 @@ const config = {
     ecmaVersion: 'latest',
     project: './tsconfig.json'
   },
-  plugins: ['@typescript-eslint', 'react', 'import', 'jsx-a11y', 'react-hooks'],
+  plugins: [
+    '@typescript-eslint',
+    'simple-import-sort',
+    'react',
+    'import',
+    'jsx-a11y',
+    'react-hooks'
+  ],
   extends: [
     'eslint:recommended',
     'plugin:prettier/recommended',
@@ -52,8 +59,8 @@ const config = {
     'import/no-unresolved': 'off',
     'import/prefer-default-export': ['warn', { target: 'single' }],
     'import/no-extraneous-dependencies': 'off',
-    // 'simple-import-sort/imports': 'error',
-    // 'simple-import-sort/exports': 'error',
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
     '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
@@ -70,40 +77,40 @@ const config = {
     'jsx-a11y/click-events-have-key-events': 'off'
   },
   overrides: [
-    // {
-    //   files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
-    //   rules: {
-    //     'simple-import-sort/imports': [
-    //       'error',
-    //       {
-    //         groups: [
-    //           // Packages `react` related packages come first.
-    //           ['^react', '^next', '^(?!.*services)\\w+[^/]*$'],
-    //           ['^@constants', '^assets'],
-    //           ['^@', '^@mui'],
-    //           // components, sometimes app/components
-    //           ['^\\w'],
-    //           [
-    //             '^services',
-    //             '^providers',
-    //             '^store',
-    //             '@store',
-    //             'slices',
-    //             '^hooks',
-    //             '^utils',
-    //             '^configs',
-    //             '^constants'
-    //           ],
-    //           ['font', 'styles', 'css$'],
-    //           // Parent imports. Put `..` last.
-    //           ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-    //           // Other relative imports. Put same-folder imports and `.` last.
-    //           ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$']
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // },
+    {
+      files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
+      rules: {
+        'simple-import-sort/imports': [
+          'error',
+          {
+            groups: [
+              // Packages `react` related packages come first.
+              ['^react', '^next', '^(?!.*services)\\w+[^/]*$'],
+              ['^@constants', '^assets'],
+              ['^@', '^@mui'],
+              // components, sometimes app/components
+              ['^\\w'],
+              [
+                '^services',
+                '^providers',
+                '^store',
+                '@store',
+                'slices',
+                '^hooks',
+                '^utils',
+                '^configs',
+                '^constants'
+              ],
+              ['font', 'styles', 'css$'],
+              // Parent imports. Put `..` last.
+              ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$']
+            ]
+          }
+        ]
+      }
+    },
     {
       files: ['**/*.spec.ts', '**/*.test.ts'],
       env: {
