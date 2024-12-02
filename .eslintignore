@@ -1,0 +1,5 @@
+.eslintrc.cjs
+jest.config.js
+vite.config.ts
+scripts/**/*
+coverage/**/*
