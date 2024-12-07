@@ -4,7 +4,7 @@ import React from 'react'
 const baseColor = '#cccccc'
 const keyColor = '#cb4b16' //'#002b36'
 const valueColor = '#268bd2'
-const protocolColor = 'inherit' //'#002b36'
+const protocolColor = '#002b36' //'#002b36'
 
 const RequestParser = ({ request }: { request: string }) => {
   const [requestType, requestUrl] = request.split(/\s+/g)

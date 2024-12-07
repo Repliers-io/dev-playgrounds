@@ -73,8 +73,8 @@ const ResponsePanel = ({
             sx={{
               p: 1,
               width: '100%',
-              fontSize: '10pt',
-              lineHeight: '24px',
+              fontSize: '12px',
+              lineHeight: '22px',
               fontFamily: 'monospace',
               textWrapMode: 'wrap',
               wordBreak: 'break-all',
@@ -114,7 +114,8 @@ const ResponsePanel = ({
             flex: 1,
             width: '100%',
             display: 'flex',
-            fontSize: '10pt',
+            fontSize: '12px',
+            lineHeight: '24px',
             fontFamily: 'monospace',
             boxSizing: 'border-box',
             bgcolor: 'background.default',
@@ -125,19 +126,32 @@ const ResponsePanel = ({
             // boxShadow: 1
           }}
         >
-          <Box sx={{ flex: 1, overflow: 'auto' }}>
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'auto',
+              '& .object-content > .object-key-val': {
+                paddingleft: '0 !important'
+              },
+              '& .variable-row': { padding: '0 0 0 12px !important' },
+              '& .object-key-val': {
+                paddingTop: '0 !important',
+                paddingBottom: '0 !important'
+              }
+            }}
+          >
             <ReactJson
               src={responseJson}
               name={false}
               collapsed={2}
-              indentWidth={1}
+              indentWidth={2}
               iconStyle="square"
               quotesOnKeys={false}
-              groupArraysAfterLength={10}
-              collapseStringsAfterLength={50}
               enableClipboard={false}
               displayDataTypes={false}
               displayObjectSize={false}
+              groupArraysAfterLength={10}
+              collapseStringsAfterLength={50}
             />
           </Box>
         </Box>
