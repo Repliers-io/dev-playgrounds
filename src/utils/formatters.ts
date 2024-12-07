@@ -1,6 +1,4 @@
-import { currency as defaultCurrency } from '@constants/i18n'
-
-import { scrubbed } from './properties'
+import { currency as defaultCurrency } from 'constants/i18n'
 
 const fractionDigits = 2
 const numberFormat = 'en-US'
@@ -48,7 +46,6 @@ export const formatLongNumber = (
 }
 
 export const formatPrice = (value: Primitive, currency = '$') => {
-  if (scrubbed(value)) return ''
   const number = toSafeNumber(value)
   return `${number < 0 ? '-' : ''}${currency}${formatLongNumber(number)}`
 }

@@ -2,20 +2,17 @@ import { type Feature, type Point, type Position } from 'geojson'
 import mapboxgl, { type LngLat, type LngLatBounds } from 'mapbox-gl'
 import { type Map as MapboxMap } from 'mapbox-gl'
 
-import { info } from '@constants/colors'
-import { secondary } from '@constants/colors'
+import { lighten } from '@mui/material'
+
+import { toSafeNumber } from 'utils/formatters'
+import { info } from 'constants/colors'
+import { secondary } from 'constants/colors'
 import {
   defaultPolygon,
   mapboxDefaults,
   type MapStyle,
   mapStyles
-} from '@constants/map'
-import { paramNames } from '@constants/params'
-import routes from '@constants/routes'
-
-import { lighten } from '@mui/material'
-
-import { toSafeNumber } from 'utils/formatters'
+} from 'constants/map'
 
 export type ApiCoords = {
   latitude: number
@@ -59,7 +56,7 @@ export const getDefaultBounds = () => {
 }
 
 export const getZoom = (searchParams: URLSearchParams) =>
-  toSafeNumber(searchParams.get(paramNames.zoom)) || mapboxDefaults.zoom!
+  toSafeNumber(searchParams.get('z')) || mapboxDefaults.zoom!
 
 export const getCoords = (searchParams: URLSearchParams) => {
   const firstParam = searchParams.keys().next().value || ''
@@ -89,13 +86,9 @@ export const getStaticMarker = (
   return `pin-${markerSize}-${symbol}+${markerColor}(${longitude},${latitude})`
 }
 
-export const getMapUrl = (
-  center: LngLat,
-  zoom: number,
-  layout: 'map' | 'grid' = 'map'
-) => {
+export const getMapUrl = (center: LngLat, zoom: number) => {
   const { lat, lng } = center
-  return `${routes[layout]}?${roundCoord(lat)},${roundCoord(lng)}&z=${String(zoom).slice(0, 8)}`
+  return `?${roundCoord(lat)},${roundCoord(lng)}&z=${String(zoom).slice(0, 8)}`
 }
 
 export const setMapUrl = (center: LngLat, zoom: number) => {

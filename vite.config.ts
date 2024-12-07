@@ -6,9 +6,14 @@ import path from 'path'
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  server: {
+    open: true,
+    hmr: true
+  },
   resolve: {
     alias: {
       // temporary solution until we find a way to set root dir for everything
+      assets: path.resolve(__dirname, 'src/assets'),
       components: path.resolve(__dirname, 'src/components'),
       constants: path.resolve(__dirname, 'src/constants'),
       hooks: path.resolve(__dirname, 'src/hooks'),

@@ -1,5 +1,3 @@
-import { notAvailableString } from '@constants/properties'
-
 import { type Primitive } from './formatters'
 
 export const capitalize = (str: Primitive) =>
@@ -22,13 +20,10 @@ export const pluralize = (
   return word!.replace('$', Number(count).toLocaleString())
 }
 
-export const notNA = (str: string) => str && str !== notAvailableString
-
 export const joinNonEmpty = (items: Primitive[], separator = ', ') => {
   return items
     .map((x) => String(x || '').trim())
     .filter(Boolean)
-    .filter((str) => notNA(str))
     .join(separator)
 }
 /**

@@ -10,7 +10,8 @@ const config = {
     'react',
     'import',
     'jsx-a11y',
-    'react-hooks'
+    'react-hooks',
+    'react-refresh'
   ],
   extends: [
     'eslint:recommended',
@@ -74,7 +75,8 @@ const config = {
     'jsx-a11y/no-noninteractive-element-interactions': 'warn',
     'jsx-a11y/control-has-associated-label': 'warn',
     'jsx-a11y/no-static-element-interactions': 'warn',
-    'jsx-a11y/click-events-have-key-events': 'off'
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'react-refresh/only-export-components': 'error'
   },
   overrides: [
     {

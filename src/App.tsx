@@ -2,6 +2,8 @@ import { ThemeProvider } from '@mui/system'
 
 import PageContent from 'components/PageContent'
 
+import MapOptionsProvider from 'providers/MapOptionsProvider'
+
 import '@fontsource/poppins/latin.css'
 import theme from 'styles/theme'
 import './App.css'
@@ -15,7 +17,9 @@ function App() {
         <img src={viteLogo} alt="Vite logo" />
       </div>
       <ThemeProvider theme={theme}>
-        <PageContent />
+        <MapOptionsProvider style="map">
+          <PageContent />
+        </MapOptionsProvider>
       </ThemeProvider>
     </>
   )

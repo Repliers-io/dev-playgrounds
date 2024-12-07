@@ -5,7 +5,21 @@ import { type TypographyOptions } from '@mui/material/styles/createTypography'
 const typography: TypographyOptions = {
   htmlFontSize: 16, // HTML base font size in pixels
   fontSize: 16, // 16px
-  fontFamily: ['Poppins', 'sans-serif'].join(','),
+  fontFamily: [
+    'Twemoji Country Flags',
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    'sans-serif'
+  ].join(','),
 
   h1: {
     fontWeight: 600,

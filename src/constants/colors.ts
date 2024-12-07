@@ -7,7 +7,7 @@ export const black = '#130F26'
 export const background = '#F4F4F4'
 
 // main green
-export const primary = '#32735F'
+export const primary = '#384248'
 // main coral
 export const secondary = '#EC6932'
 // markers color, normally the same as secondary
