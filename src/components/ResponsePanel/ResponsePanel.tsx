@@ -11,7 +11,7 @@ https://api.mapbox.com/search/searchbox/v1/suggest?q=ride&language=en&limit=10&c
 
 import { useRef } from 'react'
 
-import responseJson from '../dummy2.json'
+import responseJson from '../dummy.json'
 
 import RequestParser from './components/RequestParser'
 
@@ -38,12 +38,12 @@ const ResponsePanel = ({
       }}
     >
       <Stack
-        spacing={2}
+        spacing={1}
         alignItems="flex-start"
         justifyContent="stretch"
         height="100%"
       >
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Stack width="100%" spacing={2} direction="row" alignItems="center">
             <IconButton size="small" onClick={onExpand}>
               {expanded ? (
@@ -73,14 +73,18 @@ const ResponsePanel = ({
             sx={{
               p: 1,
               width: '100%',
-              borderRadius: 1,
-              overflow: 'hidden',
+              fontSize: '10pt',
+              lineHeight: '24px',
+              fontFamily: 'monospace',
               textWrapMode: 'wrap',
               wordBreak: 'break-all',
-              fontSize: '10pt',
-              fontFamily: 'monospace',
               boxSizing: 'border-box',
-              bgcolor: 'background.default'
+              bgcolor: 'background.default',
+              overflow: 'hidden',
+              border: 1,
+              borderColor: '#eee',
+              borderRadius: 1
+              // boxShadow: 1
             }}
           >
             <RequestParser request={requestString} />
@@ -110,18 +114,25 @@ const ResponsePanel = ({
             flex: 1,
             width: '100%',
             display: 'flex',
-            borderRadius: 1,
             fontSize: '10pt',
             fontFamily: 'monospace',
             boxSizing: 'border-box',
             bgcolor: 'background.default',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            border: 1,
+            borderColor: '#eee',
+            borderRadius: 1
+            // boxShadow: 1
           }}
         >
-          <Box sx={{ flex: 1, overflow: 'auto', scrollbarWidth: 'thin' }}>
+          <Box sx={{ flex: 1, overflow: 'auto' }}>
             <ReactJson
               src={responseJson}
-              indentWidth={2}
+              indentWidth={1}
+              collapsed={2}
+              quotesOnKeys={false}
+              collapseStringsAfterLength={50}
+              groupArraysAfterLength={10}
               iconStyle="square"
               enableClipboard={false}
               displayDataTypes={false}

@@ -7,7 +7,7 @@ const OptionsPanel = () => {
         width: 320
       }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={1}>
         <Typography variant="h6" textAlign="center" sx={{ lineHeight: '34px' }}>
           Parameters
         </Typography>
@@ -15,10 +15,13 @@ const OptionsPanel = () => {
           sx={{
             p: 1,
             width: '100%',
-            borderRadius: 1,
             boxSizing: 'border-box',
             bgcolor: 'background.default',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            border: 1,
+            borderRadius: 1,
+            borderColor: '#eee'
+            // boxShadow: 1
           }}
         >
           <Typography variant="body2">

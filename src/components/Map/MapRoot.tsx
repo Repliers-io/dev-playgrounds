@@ -66,7 +66,7 @@ const MapRoot = ({
   }, [mapVisible, drawer])
 
   return (
-    <Stack flex={1} spacing={2} sx={{ display: expanded ? 'none' : 'flex' }}>
+    <Stack flex={1} spacing={1} sx={{ display: expanded ? 'none' : 'flex' }}>
       <Box
         sx={{
           flex: 1,
@@ -80,8 +80,8 @@ const MapRoot = ({
         <MapNavigation />
         <MapStyleSwitch />
       </Box>
-      <Stack spacing={2}>
-        <Stack spacing={2} direction="row" alignItems="center">
+      <Stack spacing={1}>
+        <Stack spacing={1} direction="row" alignItems="center">
           <IconButton size="small" onClick={handleDrawerClick}>
             {drawer ? (
               <ArrowDownwardIcon sx={{ fontSize: 24 }} />
@@ -95,10 +95,12 @@ const MapRoot = ({
           sx={{
             p: 1,
             height: 280,
-            borderRadius: 1,
             boxSizing: 'border-box',
             bgcolor: 'background.default',
-            display: drawer ? 'block' : 'none'
+            display: drawer ? 'block' : 'none',
+            border: 1,
+            borderRadius: 1,
+            borderColor: '#eee'
           }}
         >
           cards carousel
