@@ -19,7 +19,7 @@ const PageContent = () => {
         spacing={2}
         direction="row"
         justifyContent="stretch"
-        sx={{ height: 'calc(100vh - 88px)', minHeight: 500 }}
+        sx={{ height: 'calc(100vh - 80px)', minHeight: 500 }}
       >
         <ParamsPanel />
 

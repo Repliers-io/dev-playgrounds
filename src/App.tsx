@@ -8,13 +8,23 @@ import '@fontsource/poppins/latin.css'
 import theme from 'styles/theme'
 import './App.css'
 
-import viteLogo from '/vite.svg'
-
 function App() {
   return (
     <>
-      <div style={{ textAlign: 'center', padding: '16px' }}>
-        <img src={viteLogo} alt="Vite logo" />
+      <div
+        style={{
+          padding: '11.5px 26px',
+          background: '#000',
+          marginBottom: '16px'
+        }}
+      >
+        <img
+          width="135"
+          height="24"
+          alt="Repliers"
+          src="https://files.readme.io/1b52edf-small-RepliersLogo_1.png"
+          style={{ display: 'block' }}
+        />
       </div>
       <ThemeProvider theme={theme}>
         <MapOptionsProvider style="map">

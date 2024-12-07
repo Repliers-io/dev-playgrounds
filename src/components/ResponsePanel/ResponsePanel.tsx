@@ -52,7 +52,13 @@ const ResponsePanel = ({
                 <ArrowBackIcon sx={{ fontSize: 24 }} />
               )}
             </IconButton>
-            <Typography variant="h6" flex={1} textAlign="center">
+            <Typography
+              flex={1}
+              variant="h6"
+              textAlign="center"
+              fontSize="12px"
+              textTransform="uppercase"
+            >
               Request
             </Typography>
             <Stack
@@ -91,7 +97,13 @@ const ResponsePanel = ({
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
             <Box sx={{ width: 64 }} />
-            <Typography variant="h6" textAlign="center" flex={1}>
+            <Typography
+              flex={1}
+              variant="h6"
+              textAlign="center"
+              fontSize="12px"
+              textTransform="uppercase"
+            >
               Response
             </Typography>
             <Stack spacing={0.5} direction="row">

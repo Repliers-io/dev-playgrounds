@@ -89,7 +89,14 @@ const MapRoot = ({
               <ArrowUpwardIcon sx={{ fontSize: 24 }} />
             )}
           </IconButton>
-          <Typography variant="h6">XXX Listings</Typography>
+          <Typography
+            variant="h6"
+            fontSize="12px"
+            lineHeight="34px"
+            textTransform="uppercase"
+          >
+            XXX Listings
+          </Typography>
         </Stack>
         <Box
           sx={{

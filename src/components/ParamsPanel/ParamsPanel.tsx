@@ -8,7 +8,12 @@ const OptionsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <Typography variant="h6" textAlign="center" sx={{ lineHeight: '34px' }}>
+        <Typography
+          variant="h6"
+          fontSize="12px"
+          lineHeight="34px"
+          textTransform="uppercase"
+        >
           Parameters
         </Typography>
         <Box
