@@ -128,12 +128,13 @@ const ResponsePanel = ({
           <Box sx={{ flex: 1, overflow: 'auto' }}>
             <ReactJson
               src={responseJson}
-              indentWidth={1}
+              name={false}
               collapsed={2}
-              quotesOnKeys={false}
-              collapseStringsAfterLength={50}
-              groupArraysAfterLength={10}
+              indentWidth={1}
               iconStyle="square"
+              quotesOnKeys={false}
+              groupArraysAfterLength={10}
+              collapseStringsAfterLength={50}
               enableClipboard={false}
               displayDataTypes={false}
               displayObjectSize={false}
