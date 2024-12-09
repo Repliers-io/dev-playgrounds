@@ -5,11 +5,8 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  build: { sourcemap: true },
   plugins: [react()],
-  server: {
-    open: true,
-    hmr: true
-  },
   resolve: {
     alias: {
       // temporary solution until we find a way to set root dir for everything

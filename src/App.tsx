@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/system'
 import PageContent from 'components/PageContent'
 
 import MapOptionsProvider from 'providers/MapOptionsProvider'
+import SearchProvider from 'providers/SearchProvider'
 
 import '@fontsource/poppins/latin.css'
 import theme from 'styles/theme'
@@ -15,7 +16,7 @@ function App() {
         style={{
           padding: '11.5px 26px',
           background: '#000',
-          marginBottom: '16px'
+          marginBottom: '15px'
         }}
       >
         <img
@@ -28,7 +29,9 @@ function App() {
       </div>
       <ThemeProvider theme={theme}>
         <MapOptionsProvider style="map">
-          <PageContent />
+          <SearchProvider>
+            <PageContent />
+          </SearchProvider>
         </MapOptionsProvider>
       </ThemeProvider>
     </>

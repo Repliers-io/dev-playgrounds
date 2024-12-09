@@ -1,10 +1,12 @@
-import ReactJson from 'react-json-view'
+import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
+
+import 'react-json-view-lite/dist/index.css'
 
 const requestString = `GET:
 https://api.mapbox.com/search/searchbox/v1/suggest?q=ride&language=en&limit=10&country=ca&proximity=-75.69791,45.420779&types=street,neighborhood,postcode&session_token=0b5c7152-b6dc-4a51-8938-7ecefd603638&access_token=YOUR_MAPBOX_ACCESS_TOKEN`
@@ -22,6 +24,8 @@ const ResponsePanel = ({
   expanded?: boolean
   onExpand?: () => void
 }) => {
+  const customStyles = { ...defaultStyles, quotesForFieldNames: false }
+
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
 
   const handleCopyClick = () => {
@@ -33,7 +37,7 @@ const ResponsePanel = ({
   return (
     <Box
       sx={{
-        width: 320,
+        width: 360,
         flex: expanded ? 1 : 'none'
       }}
     >
@@ -67,9 +71,9 @@ const ResponsePanel = ({
               justifyContent="flex-end"
               sx={{ width: 34 }}
             >
-              <Tooltip title="Copy to clipboard" arrow placement="top-end">
-                <IconButton size="small" onClick={handleCopyClick}>
-                  <ContentPasteGoIcon sx={{ fontSize: 20 }} />
+              <Tooltip title="Copy" arrow placement="bottom">
+                <IconButton onClick={handleCopyClick}>
+                  <ContentCopyIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
             </Stack>
@@ -77,11 +81,11 @@ const ResponsePanel = ({
           <Box
             ref={requestContainerRef}
             sx={{
-              p: 1,
+              p: 1.25,
               width: '100%',
               fontSize: '12px',
-              lineHeight: '22px',
-              fontFamily: 'monospace',
+              lineHeight: '18px',
+              fontFamily: 'ui-monospace, Menlo, Consolas, monospace',
               textWrapMode: 'wrap',
               wordBreak: 'break-all',
               boxSizing: 'border-box',
@@ -89,14 +93,14 @@ const ResponsePanel = ({
               overflow: 'hidden',
               border: 1,
               borderColor: '#eee',
-              borderRadius: 1
+              borderRadius: 2
               // boxShadow: 1
             }}
           >
             <RequestParser request={requestString} />
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
-            <Box sx={{ width: 64 }} />
+            <Box sx={{ width: 72 }} />
             <Typography
               flex={1}
               variant="h6"
@@ -107,14 +111,14 @@ const ResponsePanel = ({
               Response
             </Typography>
             <Stack spacing={0.5} direction="row">
-              <Tooltip title="Open in new tab" arrow placement="top">
-                <IconButton size="small">
-                  <OpenInNewIcon sx={{ fontSize: 20 }} />
+              <Tooltip title="Open in new tab" arrow placement="bottom">
+                <IconButton>
+                  <OpenInNewIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Copy to clipboard" arrow placement="top-end">
-                <IconButton size="small">
-                  <ContentPasteGoIcon sx={{ fontSize: 20 }} />
+              <Tooltip title="Copy" arrow placement="bottom">
+                <IconButton>
+                  <ContentCopyIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
             </Stack>
@@ -122,19 +126,19 @@ const ResponsePanel = ({
         </Stack>
         <Box
           sx={{
-            p: 1,
+            p: 1.25,
             flex: 1,
             width: '100%',
             display: 'flex',
             fontSize: '12px',
-            lineHeight: '24px',
-            fontFamily: 'monospace',
+            lineHeight: '18px',
+            fontFamily: 'ui-monospace, Menlo, Consolas, monospace',
             boxSizing: 'border-box',
             bgcolor: 'background.default',
             overflow: 'hidden',
             border: 1,
             borderColor: '#eee',
-            borderRadius: 1
+            borderRadius: 2
             // boxShadow: 1
           }}
         >
@@ -149,21 +153,20 @@ const ResponsePanel = ({
               '& .object-key-val': {
                 paddingTop: '0 !important',
                 paddingBottom: '0 !important'
+              },
+              '& > *': {
+                background: 'transparent !important',
+                '& > *': {
+                  marginLeft: 0
+                }
               }
             }}
           >
-            <ReactJson
-              src={responseJson}
-              name={false}
-              collapsed={2}
-              indentWidth={2}
-              iconStyle="square"
-              quotesOnKeys={false}
-              enableClipboard={false}
-              displayDataTypes={false}
-              displayObjectSize={false}
-              groupArraysAfterLength={10}
-              collapseStringsAfterLength={50}
+            <JsonView
+              data={responseJson}
+              clickToExpandNode={true}
+              style={customStyles}
+              shouldExpandNode={(level: number) => level < 3}
             />
           </Box>
         </Box>

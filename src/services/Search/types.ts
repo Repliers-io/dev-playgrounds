@@ -1,0 +1,43 @@
+import { type ApiLastStatus, type ApiSortBy } from 'services/API/types'
+
+export const daysOnMarket = [
+  'any',
+  'lastDay',
+  'lastWeek',
+  'lastMonth',
+  'last3Months',
+  'last6Months',
+  'lastYear',
+  'last2Years'
+] as const
+
+export const soldWithin = [...daysOnMarket] as const
+
+export type DaysOnMarket = (typeof daysOnMarket)[number]
+export type SoldWithin = (typeof soldWithin)[number]
+
+export interface Filters {
+  sortBy?: ApiSortBy
+  minPrice?: number
+  maxPrice?: number
+  minBaths?: number
+  minBeds?: number
+  minParkingSpaces?: number
+  minGarageSpaces?: number
+  propertyType?: string | string[] | string[][]
+  class?: string | string[]
+  lastStatus?: ApiLastStatus | ApiLastStatus[]
+  amenities?: string[]
+  minSqft?: string
+  maxSqft?: string
+  maxListDate?: string
+  minListDate?: string
+  minSoldDate?: string
+  maxSoldDate?: string
+  daysOnMarket?: DaysOnMarket
+  soldWithin?: SoldWithin
+  minYearBuilt?: number | null
+  maxYearBuilt?: number | null
+  coverImage?: string
+  imageSearchItems?: any[]
+}

@@ -1,0 +1,7 @@
+export const tokenKey = 'token'
+export const profileKey = 'profile'
+export const polygonKey = 'polygon'
+export const cookieKey = 'cookie'
+export const authCallbackKey = 'authCallback'
+export const nlpTokenKey = 'nlpToken'
+export const nlpHistoryKey = 'nlpHistory'

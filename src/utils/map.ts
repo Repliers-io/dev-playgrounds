@@ -27,7 +27,7 @@ export type ApiBounds = {
 type Polygon = Array<{ lat: number; lng: number }>
 
 /**
- * @description Function to convert custom polygon object from '@constants/map' module to mapbox bounds
+ * @description Function to convert custom polygon object from 'constants/map' module to mapbox bounds
  */
 export const getPolygonBounds = (polygon: Polygon) => {
   const { tl, br } = polygon.reduce(

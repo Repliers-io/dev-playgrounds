@@ -311,8 +311,8 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
-          fontSize: toRem(16),
-          lineHeight: toRem(24)
+          fontSize: toRem(14),
+          lineHeight: toRem(20)
         })
     }
   },
@@ -324,8 +324,8 @@ const components = {
             p: 0,
             '& .MuiInputBase-input': {
               p: 2,
-              height: 16,
-              lineHeight: toRem(16)
+              height: 14,
+              lineHeight: toRem(14)
             }
           },
           '& .MuiAutocomplete-clearIndicator': {
@@ -438,11 +438,13 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           '& input, & textarea': {
-            p: 2,
-            py: 1.5,
+            px: 2,
+            py: 1,
             height: 'auto',
             fontSize: toRem(16),
-            lineHeight: toRem(24)
+            lineHeight: toRem(24),
+            bgcolor: 'background.paper',
+            borderRadius: 1
           },
           '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
             borderColor: '#E9E9E9 !important'
@@ -462,11 +464,15 @@ const components = {
             p: 0
           },
           '&.MuiInputBase-sizeSmall': {
-            px: 0.5,
-            maxHeight: 38,
+            maxHeight: 30,
             '& .MuiInputBase-input': {
-              py: 1.5,
-              fontSize: toRem(14)
+              fontSize: toRem(12)
+            },
+            '& input, & textarea': {
+              px: 1,
+              py: 0.5,
+              fontSize: toRem(14),
+              lineHeight: toRem(22)
             }
           },
           '&.MuiInputBase-colorSecondary': {
@@ -531,6 +537,16 @@ const components = {
           '& .MuiInputBase-root .MuiInputBase-input.MuiSelect-select': {
             py: 1.5
           }
+        })
+    }
+  },
+  MuiInputLabel: {
+    styleOverrides: {
+      root: ({ theme }: ThemeProps) =>
+        theme.unstable_sx({
+          fontWeight: 600,
+          fontSize: toRem(12),
+          lineHeight: toRem(18)
         })
     }
   },

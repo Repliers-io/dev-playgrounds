@@ -33,6 +33,7 @@ const config = {
     'react/require-default-props': 'off',
     'react/destructuring-assignment': 'warn',
     'react-hooks/exhaustive-deps': 'off',
+    'react-refresh/only-export-components': 'off',
     'react/function-component-definition': [
       'error',
       {
@@ -75,8 +76,7 @@ const config = {
     'jsx-a11y/no-noninteractive-element-interactions': 'warn',
     'jsx-a11y/control-has-associated-label': 'warn',
     'jsx-a11y/no-static-element-interactions': 'warn',
-    'jsx-a11y/click-events-have-key-events': 'off',
-    'react-refresh/only-export-components': 'error'
+    'jsx-a11y/click-events-have-key-events': 'off'
   },
   overrides: [
     {

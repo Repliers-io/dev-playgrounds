@@ -14,17 +14,15 @@ const PageContent = () => {
   }
 
   return (
-    <Container maxWidth="xl" disableGutters sx={{ px: 2 }}>
+    <Container maxWidth="xl">
       <Stack
-        spacing={2}
+        spacing={2.5}
         direction="row"
         justifyContent="stretch"
-        sx={{ height: 'calc(100vh - 80px)', minHeight: 500 }}
+        sx={{ height: 'calc(100vh - 76px)', minHeight: 500 }}
       >
         <ParamsPanel />
-
         <MapRoot expanded={expanded} />
-
         <ResponsePanel expanded={expanded} onExpand={handleExpandClick} />
       </Stack>
     </Container>

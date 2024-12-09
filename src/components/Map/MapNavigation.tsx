@@ -18,8 +18,8 @@ const MapNavigation = () => {
   return (
     <Box
       sx={{
-        right: 16,
         bottom: 68,
+        right: 16,
         boxShadow: 1,
         borderRadius: 2,
         zIndex: 'fab',
