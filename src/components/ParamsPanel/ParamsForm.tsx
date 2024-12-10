@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Box, InputLabel, Stack, TextField } from '@mui/material'
 
-import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from './schema'
@@ -18,8 +17,7 @@ type FormData = {
 }
 
 const ParamsForm = () => {
-  const { position } = useMapOptions()
-  const { setFilters } = useSearch()
+  const { setParams } = useSearch()
   const {
     register,
     handleSubmit,
@@ -34,14 +32,12 @@ const ParamsForm = () => {
   })
 
   const onSubmit = (data: FormData) => {
-    setFilters(data)
+    setParams(data)
   }
 
   useEffect(() => {
-    if (position.bounds) {
-      handleSubmit(onSubmit)()
-    }
-  }, [position.bounds])
+    handleSubmit(onSubmit)()
+  }, [])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>

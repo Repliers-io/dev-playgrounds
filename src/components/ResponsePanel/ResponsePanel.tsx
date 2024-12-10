@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -6,14 +7,9 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 
+import { useSearch } from 'providers/SearchProvider'
+
 import 'react-json-view-lite/dist/index.css'
-
-const requestString = `GET:
-https://api.mapbox.com/search/searchbox/v1/suggest?q=ride&language=en&limit=10&country=ca&proximity=-75.69791,45.420779&types=street,neighborhood,postcode&session_token=0b5c7152-b6dc-4a51-8938-7ecefd603638&access_token=YOUR_MAPBOX_ACCESS_TOKEN`
-
-import { useRef } from 'react'
-
-import responseJson from '../dummy.json'
 
 import RequestParser from './components/RequestParser'
 
@@ -24,6 +20,7 @@ const ResponsePanel = ({
   expanded?: boolean
   onExpand?: () => void
 }) => {
+  const { request, statusCode, json } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
 
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
@@ -47,7 +44,7 @@ const ResponsePanel = ({
         justifyContent="stretch"
         height="100%"
       >
-        <Stack spacing={1}>
+        <Stack spacing={1} width="100%">
           <Stack width="100%" spacing={2} direction="row" alignItems="center">
             <IconButton size="small" onClick={onExpand}>
               {expanded ? (
@@ -94,10 +91,15 @@ const ResponsePanel = ({
               border: 1,
               borderColor: '#eee',
               borderRadius: 2
-              // boxShadow: 1
             }}
           >
-            <RequestParser request={requestString} />
+            {request ? (
+              <RequestParser request={'GET: ' + request} />
+            ) : (
+              <Typography color="primary.light" variant="body2">
+                loading...
+              </Typography>
+            )}
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
             <Box sx={{ width: 72 }} />
@@ -139,36 +141,37 @@ const ResponsePanel = ({
             border: 1,
             borderColor: '#eee',
             borderRadius: 2
-            // boxShadow: 1
           }}
         >
-          <Box
-            sx={{
-              flex: 1,
-              overflow: 'auto',
-              '& .object-content > .object-key-val': {
-                paddingleft: '0 !important'
-              },
-              '& .variable-row': { padding: '0 0 0 12px !important' },
-              '& .object-key-val': {
-                paddingTop: '0 !important',
-                paddingBottom: '0 !important'
-              },
-              '& > *': {
-                background: 'transparent !important',
+          {statusCode !== 200 ? (
+            <Typography
+              textAlign="center"
+              variant="h3"
+              sx={{ width: '100%', color: '#C66' }}
+            >
+              {statusCode}
+            </Typography>
+          ) : (
+            <Box
+              sx={{
+                flex: 1,
+                overflow: 'auto',
                 '& > *': {
-                  marginLeft: 0
+                  background: 'transparent !important',
+                  '& > *': {
+                    marginLeft: 0
+                  }
                 }
-              }
-            }}
-          >
-            <JsonView
-              data={responseJson}
-              clickToExpandNode={true}
-              style={customStyles}
-              shouldExpandNode={(level: number) => level < 3}
-            />
-          </Box>
+              }}
+            >
+              <JsonView
+                data={json}
+                clickToExpandNode={true}
+                style={customStyles}
+                shouldExpandNode={(level: number) => level < 3}
+              />
+            </Box>
+          )}
         </Box>
       </Stack>
     </Box>

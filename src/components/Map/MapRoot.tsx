@@ -1,19 +1,11 @@
 import { useEffect, useState } from 'react'
-import { type Position } from 'geojson'
 import { Map as MapboxMap } from 'mapbox-gl'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
 
-import {
-  type Filters,
-  getDefaultRectangle,
-  getMapPolygon,
-  getMapRectangle
-} from 'services/Search'
-import { type MapPosition, useMapOptions } from 'providers/MapOptionsProvider'
-import { useSearch } from 'providers/SearchProvider'
+import { useMapOptions } from 'providers/MapOptionsProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getDefaultBounds, getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
@@ -24,39 +16,13 @@ import MapStyleSwitch from './MapStyleSwitch'
 
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
-  const { search, save, filters, polygon } = useSearch()
-  const { style, mapRef, setMapRef, position, setPosition } = useMapOptions()
+
+  const { style, mapRef, setMapRef, setPosition } = useMapOptions()
   const [drawer, setDrawer] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   const handleDrawerClick = () => {
     setDrawer(!drawer)
-  }
-
-  const fetchData = async (
-    position: MapPosition,
-    filters: Filters,
-    polygon: Position[] | null
-  ) => {
-    const { bounds } = position
-
-    const fetchBounds = polygon
-      ? getMapPolygon(polygon)
-      : bounds
-        ? getMapRectangle(bounds)
-        : getDefaultRectangle()
-
-    const response = await search({
-      ...filters,
-      ...fetchBounds
-      // ...getPageParams(),
-      // ...getListingFields()
-      // ...getClusterParams(zoom)
-    })
-    if (!response) return
-    const { list, clusters, count } = save(response)
-    console.log('count', count, 'list', list, 'clusters', clusters)
-    //   // MapService.update(list, clusters, count)
   }
 
   const initializeMap = (container: HTMLElement) => {
@@ -73,7 +39,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       const center = map.getCenter()
       const zoom = map.getZoom()
       setLoaded(true)
-      setPosition({ bounds, center, zoom })
+      if (loaded) setPosition({ bounds, center, zoom })
     })
 
     map.on('moveend', () => {
@@ -99,10 +65,6 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   useEffect(() => {
     mapRef.current?.resize()
   }, [mapVisible, drawer])
-
-  useEffect(() => {
-    if (loaded) fetchData(position, filters, polygon)
-  }, [position, filters, polygon])
 
   return (
     <Stack flex={1} spacing={1} sx={{ display: expanded ? 'none' : 'flex' }}>

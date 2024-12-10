@@ -1,10 +1,9 @@
 import queryString from 'query-string'
 
 import APIBase from './APIBase'
-import { type ApiQueryResponse } from './types'
 
 class APISearch extends APIBase {
-  fetch(params: { get?: any; post?: any }, options?: RequestInit) {
+  async fetch(params: { get?: any; post?: any }, options?: RequestInit) {
     // GET params
     const getParamsString = queryString.stringify(params.get, {
       arrayFormat: 'none',
@@ -17,21 +16,21 @@ class APISearch extends APIBase {
         ? JSON.stringify(params.post)
         : ''
 
-    // change query method to POST if postParams are present
-    return this.fetchJSON<ApiQueryResponse>(
-      `/listings/search?${getParamsString}`,
-      {
-        ...(postParamsString
-          ? {
-              method: 'POST',
-              body: postParamsString
-            }
-          : {
-              method: 'GET'
-            }),
-        ...options
-      }
-    )
+    const request = `/listings/search?${getParamsString}`
+    const response = await this.fetchRaw(request, {
+      ...(postParamsString
+        ? {
+            // change query method to POST if postParams are present
+            method: 'POST',
+            body: postParamsString
+          }
+        : {
+            method: 'GET'
+          }),
+      ...options
+    })
+
+    return response
   }
 }
 
