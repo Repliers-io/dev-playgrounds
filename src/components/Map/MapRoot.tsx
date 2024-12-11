@@ -4,6 +4,7 @@ import { Map as MapboxMap } from 'mapbox-gl'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import {
+  alpha,
   Box,
   CircularProgress,
   IconButton,
@@ -83,7 +84,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [mapContainerRef])
 
   return (
-    <Stack flex={1} spacing={1} sx={{ display: expanded ? 'none' : 'flex' }}>
+    <Stack flex={1} spacing={1.5} sx={{ display: expanded ? 'none' : 'flex' }}>
       <Box
         sx={{
           flex: 1,
@@ -101,9 +102,22 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         <MapContainer ref={mapContainerRef} />
         <MapNavigation />
         <MapStyleSwitch />
-      </Box>
-      <Stack spacing={1}>
-        <Stack spacing={1} direction="row" alignItems="center">
+        <Stack
+          spacing={0.5}
+          direction="row"
+          alignItems="center"
+          sx={{
+            left: 16,
+            bottom: 17,
+            position: 'absolute',
+            backdropFilter: 'blur(4px)',
+            bgcolor: alpha('#FFFFFF', 0.7),
+            borderRadius: 6,
+            boxShadow: 1,
+            p: 0.25,
+            pr: 1.5
+          }}
+        >
           {loading ? (
             <>
               <CircularProgress size={14} sx={{ p: 1 }} />
@@ -126,21 +140,21 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
             </>
           )}
         </Stack>
-        <Box
-          sx={{
-            p: 1.25,
-            height: 280,
-            boxSizing: 'border-box',
-            bgcolor: 'background.default',
-            display: drawer ? 'block' : 'none',
-            border: 1,
-            borderRadius: 2,
-            borderColor: '#eee'
-          }}
-        >
-          cards carousel
-        </Box>
-      </Stack>
+      </Box>
+      <Box
+        sx={{
+          p: 1.25,
+          height: 280,
+          boxSizing: 'border-box',
+          bgcolor: 'background.default',
+          display: drawer ? 'block' : 'none',
+          border: 1,
+          borderRadius: 2,
+          borderColor: '#eee'
+        }}
+      >
+        cards carousel
+      </Box>
     </Stack>
   )
 }
