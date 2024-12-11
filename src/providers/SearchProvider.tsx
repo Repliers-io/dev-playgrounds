@@ -21,14 +21,17 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
+type Params = Filters & { apiKey: string; apiUrl: string }
+type ParamKeys = keyof Params
+
 type SearchContextType = SavedResponse & {
   loading: boolean
-  params: Partial<Filters>
-  setParam: (key: keyof Filters, value: any) => void
-  setParams: (params: Partial<Filters>) => void
-  addParams: (newParams: Partial<Filters>) => void
-  removeParam: (key: keyof Filters) => void
-  removeParams: (keys: (keyof Filters)[]) => void
+  params: Partial<Params>
+  setParam: (key: ParamKeys, value: any) => void
+  setParams: (params: Partial<Params>) => void
+  addParams: (newParams: Partial<Params>) => void
+  removeParam: (key: ParamKeys) => void
+  removeParams: (keys: ParamKeys[]) => void
   resetParams: () => void
   search: (params: any) => Promise<ApiQueryResponse | null>
   request: string
@@ -51,11 +54,11 @@ const emptySavedResponse = {
 }
 
 const SearchProvider = ({
-  filters,
+  params,
   polygon,
   children
 }: {
-  filters?: Filters
+  params?: Partial<Params>
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
@@ -67,28 +70,28 @@ const SearchProvider = ({
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
-  const [searchParams, setParams] = useState<Partial<Filters>>(
-    filters || defaults
+  const [searchParams, setParams] = useState<Partial<Params>>(
+    params || defaults
   )
 
   const [searchPolygon, setPolygon] = useState<Position[] | null>(
     polygon || null
   )
 
-  const setParam = (key: keyof Filters, value: any) =>
+  const setParam = (key: ParamKeys, value: any) =>
     setParams((prev) => ({ ...prev, [key]: value }))
 
-  const addParams = (newParams: Partial<Filters>) =>
+  const addParams = (newParams: Partial<Params>) =>
     setParams((prev) => ({ ...prev, ...newParams }))
 
-  const removeParam = (key: keyof Filters) =>
+  const removeParam = (key: ParamKeys) =>
     setParams((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _, ...rest } = prev
       return rest
     })
 
-  const removeParams = (keys: (keyof Filters)[]) =>
+  const removeParams = (keys: ParamKeys[]) =>
     setParams((prev) => {
       const newFilters = { ...prev }
       keys.forEach((key) => {
@@ -106,24 +109,26 @@ const SearchProvider = ({
       setLoading(true)
       abortController.current?.abort()
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { apiKey, apiUrl, ...rest } = params
+
       const controller = new AbortController()
       abortController.current = controller
       const response = await APISearch.fetch(
-        { get: params },
+        { get: rest },
         {
+          headers: { 'REPLIERS-API-KEY': apiKey },
           signal: controller.signal
         }
       )
       setRequest(response.url)
       setStatusCode(response.status)
       const json = await response.json()
-      const parsed = JSON.parse(json)
-      setJson(parsed)
+      setJson(json)
       setLoading(false)
 
       if (response.ok && !disabled.current) {
-        const { listings, count, page, numPages, aggregates, statistics } =
-          parsed
+        const { listings, count, page, numPages, aggregates, statistics } = json
 
         const remappedResponse: SavedResponse = {
           page,
@@ -135,10 +140,8 @@ const SearchProvider = ({
         }
 
         setSaved(remappedResponse)
-        return parsed
-      } else {
-        return null
       }
+      return json
     } catch (error) {
       setLoading(false)
       console.error('SearchProvider error:', error)

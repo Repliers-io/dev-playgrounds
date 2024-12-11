@@ -16,7 +16,7 @@ class APISearch extends APIBase {
         ? JSON.stringify(params.post)
         : ''
 
-    const request = `/listings/search?${getParamsString}`
+    const request = `/listings?${getParamsString}`
     const response = await this.fetchRaw(request, {
       ...(postParamsString
         ? {

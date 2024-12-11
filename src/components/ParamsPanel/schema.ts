@@ -10,6 +10,11 @@ const schema = Joi.object({
     'string.empty': 'API URL cannot be empty',
     'string.uri': 'Please enter a valid URL',
     'any.required': 'API URL is required'
+  }),
+  boardId: Joi.number().integer().required().messages({
+    'number.base': 'Board ID must be a number',
+    'number.integer': 'Board ID must be an integer',
+    'any.required': 'Board ID is required'
   })
 })
 

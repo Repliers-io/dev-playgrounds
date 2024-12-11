@@ -143,35 +143,37 @@ const ResponsePanel = ({
             borderRadius: 2
           }}
         >
-          {statusCode !== 200 ? (
-            <Typography
-              textAlign="center"
-              variant="h3"
-              sx={{ width: '100%', color: '#C66' }}
-            >
-              {statusCode}
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                flex: 1,
-                overflow: 'auto',
+          <Box
+            sx={{
+              flex: 1,
+              width: '100%',
+              overflow: 'auto',
+              '& > *': {
+                background: 'transparent !important',
                 '& > *': {
-                  background: 'transparent !important',
-                  '& > *': {
-                    marginLeft: 0
-                  }
+                  marginLeft: 0
                 }
-              }}
-            >
+              }
+            }}
+          >
+            {statusCode !== 200 && (
+              <Typography
+                textAlign="center"
+                variant="h3"
+                sx={{ width: '100%', color: '#C66' }}
+              >
+                {statusCode}
+              </Typography>
+            )}
+            {json && (
               <JsonView
                 data={json}
                 clickToExpandNode={true}
                 style={customStyles}
                 shouldExpandNode={(level: number) => level < 3}
               />
-            </Box>
-          )}
+            )}
+          </Box>
         </Box>
       </Stack>
     </Box>

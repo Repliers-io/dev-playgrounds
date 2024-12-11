@@ -57,13 +57,13 @@ const typography: TypographyOptions = {
   // NOTE: `body1` is the default text size in Material UI
   body1: {
     fontWeight: 400,
-    fontSize: toRem(16),
-    lineHeight: toRem(24)
+    fontSize: toRem(14),
+    lineHeight: toRem(20)
   },
 
   body2: {
-    fontSize: toRem(14),
-    lineHeight: toRem(20)
+    fontSize: toRem(12),
+    lineHeight: toRem(18)
   },
 
   caption: {

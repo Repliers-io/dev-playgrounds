@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
-import { Box, InputLabel, Stack, TextField } from '@mui/material'
+import { Box, InputLabel, Stack, TextField, Typography } from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
@@ -10,10 +10,20 @@ import schema from './schema'
 
 const apiUrl = import.meta.env.VITE_REPLIERS_API_URL
 const apiKey = import.meta.env.VITE_REPLIERS_KEY
+const boardId = import.meta.env.VITE_REPLIERS_BOARD_ID
 
 type FormData = {
   apiUrl: string
   apiKey: string
+  boardId: number
+  // class: string | string[]
+  // status: string | string[]
+  // lastStatus: string | string[]
+  // type: string | string[]
+  // minPrice: number | null
+  // maxPrice: number | null
+  // minSoldPrice?: number | null
+  // maxSoldPrice?: number | null
 }
 
 const ParamsForm = () => {
@@ -26,13 +36,22 @@ const ParamsForm = () => {
     mode: 'onBlur',
     values: {
       apiUrl: apiUrl || '',
-      apiKey: apiKey || ''
+      apiKey: apiKey || '',
+      boardId: boardId || 0
+      // class: ''
+      // status: '',
+      // lastStatus: '',
+      // type: '',
+      // minPrice: 0,
+      // maxPrice: 0,
+      // minSoldPrice: 0,
+      // maxSoldPrice: 0
     },
     resolver: joiResolver(schema)
   })
 
   const onSubmit = (data: FormData) => {
-    setParams(data)
+    setParams(data as any)
   }
 
   useEffect(() => {
@@ -62,7 +81,12 @@ const ParamsForm = () => {
             }
           }}
         />
-        <InputLabel htmlFor="apiKey">REPLIERS-API-KEY</InputLabel>
+        <Stack spacing={2} direction="row" justifyContent="space-between">
+          <InputLabel htmlFor="apiKey">REPLIERS-API-KEY</InputLabel>
+          <Typography variant="body2" color="text.hint">
+            * passed as HTTP Header
+          </Typography>
+        </Stack>
         <TextField
           id="apiKey"
           placeholder="REPLIERS-API-KEY"
@@ -77,6 +101,46 @@ const ParamsForm = () => {
             }
           }}
         />
+        <InputLabel htmlFor="boardId">boardId</InputLabel>
+        <TextField
+          id="boardId"
+          placeholder="boardId"
+          {...register('boardId')}
+          fullWidth
+          size="small"
+        />
+        {/* <InputLabel htmlFor="class">class</InputLabel>
+        <TextField
+          id="class"
+          placeholder="class"
+          {...register('class')}
+          fullWidth
+          size="small"
+        /> */}
+        {/* <InputLabel htmlFor="status">status</InputLabel>
+        <TextField
+          id="status"
+          placeholder="status"
+          {...register('status')}
+          fullWidth
+          size="small"
+        />
+        <InputLabel htmlFor="lastStatus">lastStatus</InputLabel>
+        <TextField
+          id="lastStatus"
+          placeholder="lastStatus"
+          {...register('lastStatus')}
+          fullWidth
+          size="small"
+        />
+        <InputLabel htmlFor="type">type</InputLabel>
+        <TextField
+          id="type"
+          placeholder="type"
+          {...register('type')}
+          fullWidth
+          size="small"
+        /> */}
       </Stack>
     </form>
   )

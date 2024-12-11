@@ -3,7 +3,6 @@ import { type Position } from 'geojson'
 import { Box, Stack, Typography } from '@mui/material'
 
 import {
-  type Filters,
   getDefaultRectangle,
   getMapPolygon,
   getMapRectangle
@@ -19,7 +18,7 @@ const OptionsPanel = () => {
 
   const fetchData = async (
     position: MapPosition,
-    Params: Filters,
+    params: any,
     polygon: Position[] | null
   ) => {
     const { bounds } = position
@@ -31,15 +30,13 @@ const OptionsPanel = () => {
         : getDefaultRectangle()
 
     try {
-      const json = await search({
+      await search({
         ...params,
         ...fetchBounds
         // ...getPageParams(),
         // ...getListingFields()
         // ...getClusterParams(zoom)
       })
-
-      console.log('response', json)
     } catch (error) {
       console.error('fetchData error:', error)
     }
@@ -49,7 +46,6 @@ const OptionsPanel = () => {
   useDeepCompareEffect(() => {
     if (!position.bounds) return
     if (!params || !Object.keys(params).length) return
-    console.log('params', params)
     fetchData(position, params, polygon) // polygon is an optional parameter for future implementation
   }, [position.bounds, params])
 
