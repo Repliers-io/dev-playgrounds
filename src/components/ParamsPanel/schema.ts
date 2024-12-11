@@ -15,7 +15,11 @@ const schema = Joi.object({
     'number.base': 'Board ID must be a number',
     'number.integer': 'Board ID must be an integer',
     'any.required': 'Board ID is required'
-  })
+  }),
+  class: Joi.string().allow(''),
+  status: Joi.string().allow(''),
+  lastStatus: Joi.string().allow(''),
+  type: Joi.string().allow('')
 })
 
 export default schema

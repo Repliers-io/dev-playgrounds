@@ -11,7 +11,7 @@ export const primary = '#384248'
 // main coral
 export const secondary = '#EC6932'
 // markers color, normally the same as secondary
-export const marker = secondary
+export const marker = '#384248'
 
 export const hint = light
 export const disabled = light

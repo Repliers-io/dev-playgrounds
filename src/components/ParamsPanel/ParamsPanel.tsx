@@ -1,6 +1,6 @@
 import { type Position } from 'geojson'
 
-import { Box, Stack, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 
 import {
   getDefaultRectangle,
@@ -46,7 +46,8 @@ const OptionsPanel = () => {
   useDeepCompareEffect(() => {
     if (!position.bounds) return
     if (!params || !Object.keys(params).length) return
-    fetchData(position, params, polygon) // polygon is an optional parameter for future implementation
+    // polygon is an optional parameter for future implementation
+    fetchData(position, params, polygon)
   }, [position.bounds, params])
 
   return (
@@ -55,26 +56,7 @@ const OptionsPanel = () => {
         width: 280
       }}
     >
-      <Stack spacing={1}>
-        <Typography variant="h6" fontSize="12px" textTransform="uppercase">
-          Query Parameters
-        </Typography>
-        <Box
-          sx={{
-            p: 1.25,
-            width: '100%',
-            boxSizing: 'border-box',
-            bgcolor: 'background.default',
-            overflow: 'hidden',
-            border: 1,
-            borderRadius: 2,
-            borderColor: '#eee'
-            // boxShadow: 1
-          }}
-        >
-          <ParamsForm />
-        </Box>
-      </Stack>
+      <ParamsForm />
     </Box>
   )
 }

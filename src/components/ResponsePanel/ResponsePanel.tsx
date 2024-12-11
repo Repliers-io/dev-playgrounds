@@ -105,7 +105,7 @@ const ResponsePanel = ({
               <RequestParser request={'GET: ' + request} />
             ) : (
               <Typography color="primary.light" variant="body2">
-                loading...
+                Loading ...
               </Typography>
             )}
           </Box>

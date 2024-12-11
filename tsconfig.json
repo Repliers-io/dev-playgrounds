@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "esModuleInterop": false,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["jest", "node", "react", "react-dom"],

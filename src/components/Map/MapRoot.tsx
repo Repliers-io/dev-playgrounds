@@ -124,8 +124,11 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
               <Typography>Loading ...</Typography>
             </>
           ) : (
-            <>
-              <IconButton
+            <Typography sx={{ pl: 1, lineHeight: '30px' }}>
+              {count} Listings
+            </Typography>
+          )}
+          {/* <IconButton
                 size="small"
                 onClick={handleDrawerClick}
                 sx={{ width: 30, height: 30 }}
@@ -135,10 +138,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
                 ) : (
                   <ArrowUpwardIcon sx={{ fontSize: 24 }} />
                 )}
-              </IconButton>
-              <Typography>{count} Listings</Typography>
-            </>
-          )}
+              </IconButton> */}
         </Stack>
       </Box>
       <Box
