@@ -1,5 +1,5 @@
 import { type MouseEvent } from 'react'
-import { type Marker } from 'mapbox-gl'
+import { type Map, type Marker } from 'mapbox-gl'
 
 import { type Property } from 'services/API/types'
 import MarkerExtensionService, {
@@ -22,22 +22,22 @@ export class MapService {
   }
 
   showMarkers({
-    properties,
+    map,
+    listings,
     onClick,
-    onTap,
-    map
+    onTap
   }: {
-    properties: Property[]
+    map: Map
+    listings: Property[]
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
-    map: any
   }): void {
-    if (!map || !properties.length) return
+    if (!map || !listings.length) return
     // TODO: refactor markerExtension
     // TODO: remove store and map references
     this.markerExtension.showMarkers({
       map,
-      properties,
+      listings,
       onClick,
       onTap
     })

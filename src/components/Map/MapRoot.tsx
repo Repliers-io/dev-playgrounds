@@ -3,9 +3,17 @@ import { Map as MapboxMap } from 'mapbox-gl'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import { Box, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material'
 
+import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
+import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getDefaultBounds, getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
@@ -18,12 +26,9 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
   const { style, mapRef, setMapRef, setPosition } = useMapOptions()
+  const { count, listings, loading } = useSearch()
   const [drawer, setDrawer] = useState(false)
   const [loaded, setLoaded] = useState(false)
-
-  const handleDrawerClick = () => {
-    setDrawer(!drawer)
-  }
 
   const initializeMap = (container: HTMLElement) => {
     const map = new MapboxMap({
@@ -52,19 +57,30 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     setMapRef(map)
   }
 
+  const handleDrawerClick = () => {
+    setDrawer(!drawer)
+  }
+
   useEffect(() => {
-    if (!mapRef.current && mapContainerRef.current) {
-      initializeMap(mapContainerRef.current)
-    }
-  }, [mapContainerRef])
+    if (!mapRef.current) return
+    if (!listings?.length) return
+    // add markers to map
+    MapService.showMarkers({ map: mapRef.current, listings })
+  }, [listings])
+
+  useEffect(() => {
+    mapRef.current?.resize()
+  }, [mapVisible, drawer])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
   }, [style])
 
   useEffect(() => {
-    mapRef.current?.resize()
-  }, [mapVisible, drawer])
+    if (!mapRef.current && mapContainerRef.current) {
+      initializeMap(mapContainerRef.current)
+    }
+  }, [mapContainerRef])
 
   return (
     <Stack flex={1} spacing={1} sx={{ display: expanded ? 'none' : 'flex' }}>
@@ -74,7 +90,12 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
           display: 'flex',
           borderRadius: 2,
           overflow: 'hidden',
-          position: 'relative'
+          position: 'relative',
+          '& .mapboxgl-marker': {
+            position: 'absolute !important',
+            top: 0,
+            left: 0
+          }
         }}
       >
         <MapContainer ref={mapContainerRef} />
@@ -83,25 +104,27 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       </Box>
       <Stack spacing={1}>
         <Stack spacing={1} direction="row" alignItems="center">
-          <IconButton
-            size="small"
-            onClick={handleDrawerClick}
-            sx={{ width: 30, height: 30 }}
-          >
-            {drawer ? (
-              <ArrowDownwardIcon sx={{ fontSize: 24 }} />
-            ) : (
-              <ArrowUpwardIcon sx={{ fontSize: 24 }} />
-            )}
-          </IconButton>
-          <Typography
-            variant="h6"
-            fontSize="12px"
-            lineHeight="30px"
-            textTransform="uppercase"
-          >
-            12345 Listings
-          </Typography>
+          {loading ? (
+            <>
+              <CircularProgress size={14} sx={{ p: 1 }} />
+              <Typography>Loading ...</Typography>
+            </>
+          ) : (
+            <>
+              <IconButton
+                size="small"
+                onClick={handleDrawerClick}
+                sx={{ width: 30, height: 30 }}
+              >
+                {drawer ? (
+                  <ArrowDownwardIcon sx={{ fontSize: 24 }} />
+                ) : (
+                  <ArrowUpwardIcon sx={{ fontSize: 24 }} />
+                )}
+              </IconButton>
+              <Typography>{count} Listings</Typography>
+            </>
+          )}
         </Stack>
         <Box
           sx={{

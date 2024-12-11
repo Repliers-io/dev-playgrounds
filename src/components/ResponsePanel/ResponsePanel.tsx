@@ -5,7 +5,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
@@ -20,7 +27,7 @@ const ResponsePanel = ({
   expanded?: boolean
   onExpand?: () => void
 }) => {
-  const { request, statusCode, json } = useSearch()
+  const { request, statusCode, json, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
 
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
@@ -30,6 +37,7 @@ const ResponsePanel = ({
       navigator.clipboard.writeText(requestContainerRef.current.innerText)
     }
   }
+  // console.log('count', count, loading)
 
   return (
     <Box
@@ -102,7 +110,9 @@ const ResponsePanel = ({
             )}
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
-            <Box sx={{ width: 72 }} />
+            <Box sx={{ width: 56, px: 1, pt: 0.5 }}>
+              {loading && <CircularProgress size={14} />}
+            </Box>
             <Typography
               flex={1}
               variant="h6"

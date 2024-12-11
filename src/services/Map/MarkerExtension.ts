@@ -19,16 +19,16 @@ export class MarkerExtension {
 
   showMarkers({
     map,
-    properties,
+    listings,
     onClick,
     onTap
   }: {
     map: Map
-    properties: Property[]
+    listings: Property[]
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
   }): void {
-    properties.forEach((property) => {
+    listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
 
       const propertyCenter = {
@@ -79,7 +79,7 @@ export class MarkerExtension {
 
     // Clearing Marker Residues
     const markersToRemove = Object.keys(this.markers).filter(
-      (markerKey) => !properties.some((prop) => prop.mlsNumber === markerKey)
+      (markerKey) => !listings.some((prop) => prop.mlsNumber === markerKey)
     )
 
     this.removeMarkers(markersToRemove)
