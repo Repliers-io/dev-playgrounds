@@ -17,7 +17,8 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["jest", "node", "react", "react-dom"],
-    "baseUrl": "./src/"
+    "baseUrl": "./src/",
+    "allowImportingTsExtensions": true,
   },
   "include": ["src"],
   "exclude": ["node_modules"]
