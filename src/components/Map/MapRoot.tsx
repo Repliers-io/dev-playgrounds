@@ -19,6 +19,7 @@ import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getDefaultBounds, getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
 
+import CardsCarousel from './CardsCarousel'
 import MapContainer from './MapContainer'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
@@ -84,7 +85,11 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [mapContainerRef])
 
   return (
-    <Stack flex={1} spacing={1.5} sx={{ display: expanded ? 'none' : 'flex' }}>
+    <Stack
+      flex={1}
+      spacing={1.5}
+      sx={{ position: 'relative', display: expanded ? 'none' : 'flex' }}
+    >
       <Box
         sx={{
           flex: 1,
@@ -100,15 +105,13 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
-        <MapNavigation />
-        <MapStyleSwitch />
         <Stack
           spacing={0.5}
           direction="row"
           alignItems="center"
           sx={{
             left: 16,
-            bottom: 17,
+            top: 16,
             position: 'absolute',
             backdropFilter: 'blur(4px)',
             bgcolor: alpha('#FFFFFF', 0.7),
@@ -128,33 +131,43 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
               {count} Listings
             </Typography>
           )}
-          {/* <IconButton
+        </Stack>
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: drawer ? 98 : 0,
+            left: 0,
+            right: 0
+          }}
+        >
+          <MapNavigation />
+          <MapStyleSwitch />
+
+          {Boolean(count) && (
+            <Box sx={{ position: 'absolute', left: 16, bottom: 16 }}>
+              <IconButton
                 size="small"
                 onClick={handleDrawerClick}
-                sx={{ width: 30, height: 30 }}
+                sx={{
+                  width: 30,
+                  height: 30,
+                  backdropFilter: 'blur(4px)',
+                  bgcolor: alpha('#FFFFFF', 0.7),
+                  '&:hover': { bgcolor: '#fff' },
+                  boxShadow: 1
+                }}
               >
                 {drawer ? (
                   <ArrowDownwardIcon sx={{ fontSize: 24 }} />
                 ) : (
                   <ArrowUpwardIcon sx={{ fontSize: 24 }} />
                 )}
-              </IconButton> */}
-        </Stack>
+              </IconButton>
+            </Box>
+          )}
+        </Box>
       </Box>
-      <Box
-        sx={{
-          p: 1.25,
-          height: 280,
-          boxSizing: 'border-box',
-          bgcolor: 'background.default',
-          display: drawer ? 'block' : 'none',
-          border: 1,
-          borderRadius: 2,
-          borderColor: '#eee'
-        }}
-      >
-        cards carousel
-      </Box>
+      <CardsCarousel drawer={drawer} />
     </Stack>
   )
 }

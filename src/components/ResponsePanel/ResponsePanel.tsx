@@ -29,6 +29,7 @@ const ResponsePanel = ({
 }) => {
   const { request, statusCode, json, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
+  const error = statusCode && statusCode > 200
 
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -139,6 +140,7 @@ const ResponsePanel = ({
         <Box
           sx={{
             p: 1.25,
+            pr: 0.25,
             flex: 1,
             width: '100%',
             display: 'flex',
@@ -146,18 +148,20 @@ const ResponsePanel = ({
             lineHeight: '18px',
             fontFamily: 'ui-monospace, Menlo, Consolas, monospace',
             boxSizing: 'border-box',
-            bgcolor: 'background.default',
+            bgcolor: error ? '#FEE' : 'background.default',
             overflow: 'hidden',
             border: 1,
-            borderColor: '#eee',
+            borderColor: error ? '#EDD' : '#eee',
             borderRadius: 2
           }}
         >
           <Box
             sx={{
               flex: 1,
+              pr: 1,
               width: '100%',
               overflow: 'auto',
+              scrollbarWidth: 'thin',
               '& > *': {
                 background: 'transparent !important',
                 '& > *': {
@@ -166,13 +170,13 @@ const ResponsePanel = ({
               }
             }}
           >
-            {statusCode !== 200 && (
+            {error && (
               <Typography
                 textAlign="center"
                 variant="h3"
                 sx={{ width: '100%', color: '#C66' }}
               >
-                {statusCode}
+                HTTP {statusCode}
               </Typography>
             )}
             {json && (

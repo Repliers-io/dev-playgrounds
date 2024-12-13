@@ -131,7 +131,7 @@ const Marker = ({
             userSelect: 'none',
             fontSize: toRem(12),
             lineHeight: toRem(22),
-            fontFamily: 'Poppins',
+            fontFamily: 'sans-serif',
             textAlign: 'center',
             boxSizing: 'border-box',
             textOverflow: 'ellipsis',

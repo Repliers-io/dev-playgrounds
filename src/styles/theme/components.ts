@@ -72,7 +72,7 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
-          borderRadius: 1,
+          borderRadius: 2,
           color: 'common.black',
           bgcolor: 'common.white',
           border: 0,
@@ -129,7 +129,7 @@ const components = {
         theme.unstable_sx({
           p: 2,
           height: 48,
-          borderRadius: 1,
+          borderRadius: 2,
 
           '&.MuiButton-contained': {
             '& svg path': { fill: 'white' }
@@ -161,7 +161,7 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           border: 0,
-          borderRadius: 1,
+          borderRadius: 2,
           maxHeight: 48,
           color: 'text.primary',
           bgcolor: 'background.default',
@@ -199,7 +199,7 @@ const components = {
           p: 2,
           maxHeight: 48,
           border: 0,
-          borderRadius: 1,
+          borderRadius: 2,
           color: 'common.black',
 
           '&.Mui-selected': {
@@ -239,6 +239,7 @@ const components = {
         theme.unstable_sx({
           py: 0,
           px: 1,
+          bgcolor: 'background.paper',
           maxHeight: 48,
           lineHeight: 1,
           borderRadius: 1,
@@ -275,7 +276,8 @@ const components = {
       select: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           minHeight: 0,
-          py: 2
+          py: '3px',
+          px: 1
         }),
       multiple: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
@@ -437,6 +439,7 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
+          bgcolor: 'background.paper',
           '& input, & textarea': {
             px: 2,
             py: 1,
@@ -459,10 +462,11 @@ const components = {
               ml: 2,
               mr: 0
             },
-
-          '&.MuiInputBase-multiline': {
-            p: 0
-          },
+          '&.MuiInputBase-adornedStart, &.MuiInputBase-adornedEnd, &.MuiInputBase-multiline':
+            {
+              bgcolor: 'background.paper',
+              p: 0
+            },
           '&.MuiInputBase-sizeSmall': {
             maxHeight: 30,
             '& .MuiInputBase-input': {

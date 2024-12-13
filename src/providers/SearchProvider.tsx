@@ -8,9 +8,9 @@ import React, {
 } from 'react'
 import type { Position } from 'geojson'
 
-import { APISearch } from 'services/API'
 import type { ApiCluster, ApiQueryResponse, Property } from 'services/API/types'
 import type { Filters } from 'services/Search'
+import { apiFetch } from 'utils/api'
 
 export type SavedResponse = {
   count: number
@@ -114,7 +114,8 @@ const SearchProvider = ({
 
       const controller = new AbortController()
       abortController.current = controller
-      const response = await APISearch.fetch(
+      const response = await apiFetch(
+        `${apiUrl}/listings`,
         { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
