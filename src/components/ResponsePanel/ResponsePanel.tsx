@@ -116,7 +116,7 @@ const ResponsePanel = ({
                 <CircularProgress size={14} />
               ) : (
                 <Typography color="text.hint" variant="body2">
-                  {Math.round(time)}ms
+                  {time}ms
                 </Typography>
               )}
             </Box>
