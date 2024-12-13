@@ -135,7 +135,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         <Box
           sx={{
             position: 'absolute',
-            bottom: drawer ? 102 : 0,
+            bottom: drawer ? 98 : 0,
             left: 0,
             right: 0
           }}

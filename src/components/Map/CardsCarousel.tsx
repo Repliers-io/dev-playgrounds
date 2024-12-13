@@ -31,7 +31,7 @@ const CardsCarousel = ({ drawer }: { drawer: boolean }) => {
           key={i}
           sx={{
             flex: '0 0 auto',
-            p: 1.25,
+            p: 1,
             mr: 1,
             '&:last-child': { mr: 0 },
             width: 200,
