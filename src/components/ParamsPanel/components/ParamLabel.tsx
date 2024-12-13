@@ -14,7 +14,7 @@ const ParamLabel = ({
   link?: string
 }) => {
   return (
-    <Stack spacing={2} direction="row" alignItems="center" pb={1}>
+    <Stack spacing={1} direction="row" alignItems="center" pb={1}>
       {Boolean(label && nameFor) && (
         <InputLabel htmlFor={nameFor}>{label}</InputLabel>
       )}

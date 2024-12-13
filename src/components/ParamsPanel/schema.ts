@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-import { lastStatusValues } from './types'
+import { lastStatusOptions } from './types'
 
 const schema = Joi.object({
   apiKey: Joi.string().messages({
@@ -24,10 +24,10 @@ const schema = Joi.object({
   class: Joi.string().allow(''),
   status: Joi.string().allow(''),
   lastStatus: Joi.string()
-    .valid(...lastStatusValues)
+    .valid(...lastStatusOptions)
     .allow('')
     .messages({
-      'any.only': `Must be one of [${lastStatusValues.join(', ')}]`
+      'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
   type: Joi.string().allow(''),
   packageType: Joi.string().allow(''),

@@ -7,6 +7,12 @@ import { Box, Stack } from '@mui/material'
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from '../schema'
+import {
+  classOptions,
+  lastStatusOptions,
+  statusOptions,
+  typeOptions
+} from '../types'
 
 import ParamsField from './ParamsField'
 import ParamsSection from './ParamsSection'
@@ -14,10 +20,6 @@ import ParamsSelect from './ParamsSelect'
 
 const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
-
-const classOptions = ['condo', 'residential', 'commercial']
-const typeOptions = ['sale', 'lease']
-const statusOptions = ['A', 'U']
 
 type FormData = {
   apiUrl: string
@@ -90,8 +92,8 @@ const ParamsForm = () => {
               <ParamsField
                 noClear
                 name="apiKey"
-                label="REPILERS-API-KEY"
                 hint="* HTTP Header"
+                label="REPILERS-API-KEY"
                 onChange={handleChange}
               />
               <ParamsField name="apiUrl" onChange={handleChange} />
@@ -127,27 +129,34 @@ const ParamsForm = () => {
                   link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
                   onChange={handleChange}
                 />
+
+                <ParamsSelect
+                  name="type"
+                  options={
+                    [
+                      ...typeOptions
+                    ] /* WARN: `options` prop doesnt allow to pass readonly arrays, they should be mutable */
+                  }
+                  onChange={handleChange}
+                />
                 <ParamsSelect
                   name="class"
-                  options={classOptions}
+                  options={[...classOptions]}
                   onChange={handleChange}
                 />
                 <ParamsSelect
                   name="status"
-                  options={statusOptions}
+                  options={[...statusOptions]}
                   onChange={handleChange}
                 />
-                <ParamsField
+                <ParamsSelect
                   name="lastStatus"
+                  options={[...lastStatusOptions]}
                   hint="docs"
                   link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
                   onChange={handleChange}
                 />
-                <ParamsSelect
-                  name="type"
-                  options={typeOptions}
-                  onChange={handleChange}
-                />
+
                 <ParamsField
                   name="propertyType"
                   hint="docs"

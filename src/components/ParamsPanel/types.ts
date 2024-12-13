@@ -1,4 +1,4 @@
-export const lastStatusValues = [
+export const lastStatusOptions = [
   'Sus',
   'Exp',
   'Sld',
@@ -12,5 +12,13 @@ export const lastStatusValues = [
   'New',
   'Sce'
 ] as const
+export type LastStatusOption = (typeof lastStatusOptions)[number]
 
-export type LastStatus = (typeof lastStatusValues)[number]
+export const classOptions = ['condo', 'residential', 'commercial'] as const
+export type ClassOption = (typeof classOptions)[number] // `Class` is so fkin dangerous name to use in JS/TS
+
+export const typeOptions = ['sale', 'lease'] as const
+export type TypeOption = (typeof typeOptions)[number] // `Type`
+
+export const statusOptions = ['A', 'U'] as const
+export type StatusOption = (typeof statusOptions)[number]

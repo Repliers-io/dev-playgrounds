@@ -47,7 +47,7 @@ const ParamsSelect = ({
               onChange?.()
             }}
             SelectProps={{
-              displayEmpty: true, // Показываем значение при пустом поле
+              displayEmpty: true,
               renderValue: (selected) => {
                 if (!selected) {
                   return (
