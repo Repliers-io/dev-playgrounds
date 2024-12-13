@@ -30,20 +30,22 @@ const CardsCarousel = ({ drawer }: { drawer: boolean }) => {
         <Box
           key={i}
           sx={{
-            mr: 1.25,
-            '&:last-child': { mr: 0 },
             flex: '0 0 auto',
+            p: 1.25,
+            mr: 1,
+            '&:last-child': { mr: 0 },
             width: 200,
-            bgcolor: '#FFF',
-            borderRadius: 2,
             boxShadow: 1,
-            p: 1.25
+            borderRadius: 2,
+            bgcolor: '#FFFE',
+            backdropFilter: 'blur(4px)'
           }}
         >
           <Box
             sx={{
               borderRadius: 1,
               bgcolor: 'text.hint',
+
               backgroundPosition: 'center',
               backgroundSize: 'cover',
               backgroundImage: `url(${getCDNPath(listing.images[0], 'small')})`,
