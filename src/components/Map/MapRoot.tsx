@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+// import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+// import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import {
   alpha,
   Box,
   CircularProgress,
-  IconButton,
+  // IconButton,
   Stack,
   Typography
 } from '@mui/material'
@@ -28,7 +28,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
 
   const { style, mapRef, setMapRef, setPosition } = useMapOptions()
   const { count, listings, loading } = useSearch()
-  const [drawer, setDrawer] = useState(false)
+  const [drawer /*, setDrawer*/] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   const initializeMap = (container: HTMLElement) => {
@@ -58,9 +58,9 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     setMapRef(map)
   }
 
-  const handleDrawerClick = () => {
-    setDrawer(!drawer)
-  }
+  // const handleDrawerClick = () => {
+  //   setDrawer(!drawer)
+  // }
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -108,7 +108,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
           alignItems="center"
           sx={{
             left: 16,
-            bottom: 17,
+            top: 16,
             position: 'absolute',
             backdropFilter: 'blur(4px)',
             bgcolor: alpha('#FFFFFF', 0.7),

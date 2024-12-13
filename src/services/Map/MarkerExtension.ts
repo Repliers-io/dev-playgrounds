@@ -49,6 +49,7 @@ export class MarkerExtension {
         link,
         label,
         status,
+        size: 'point',
         onClick: (e: MouseEvent) => onClick?.(e, property),
         onTap: () => {
           const markerCenterPixels = map.project([

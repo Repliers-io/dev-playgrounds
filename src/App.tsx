@@ -5,7 +5,6 @@ import PageContent from 'components/PageContent'
 import MapOptionsProvider from 'providers/MapOptionsProvider'
 import SearchProvider from 'providers/SearchProvider'
 
-import '@fontsource/poppins/latin.css'
 import theme from 'styles/theme'
 import './App.css'
 

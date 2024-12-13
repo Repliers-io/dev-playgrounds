@@ -139,6 +139,7 @@ const ResponsePanel = ({
         <Box
           sx={{
             p: 1.25,
+            pr: 0.25,
             flex: 1,
             width: '100%',
             display: 'flex',
@@ -156,8 +157,10 @@ const ResponsePanel = ({
           <Box
             sx={{
               flex: 1,
+              pr: 1,
               width: '100%',
               overflow: 'auto',
+              scrollbarWidth: 'thin',
               '& > *': {
                 background: 'transparent !important',
                 '& > *': {

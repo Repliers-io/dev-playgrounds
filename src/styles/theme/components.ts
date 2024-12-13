@@ -459,10 +459,11 @@ const components = {
               ml: 2,
               mr: 0
             },
-
-          '&.MuiInputBase-multiline': {
-            p: 0
-          },
+          '&.MuiInputBase-adornedStart, &.MuiInputBase-adornedEnd, &.MuiInputBase-multiline':
+            {
+              bgcolor: 'background.paper',
+              p: 0
+            },
           '&.MuiInputBase-sizeSmall': {
             maxHeight: 30,
             '& .MuiInputBase-input': {

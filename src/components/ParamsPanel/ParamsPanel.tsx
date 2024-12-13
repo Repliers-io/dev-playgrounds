@@ -12,6 +12,7 @@ import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 
 import ParamsForm from './ParamsForm'
+
 const OptionsPanel = () => {
   const { position } = useMapOptions()
   const { search, params, polygon } = useSearch()
@@ -40,7 +41,6 @@ const OptionsPanel = () => {
     } catch (error) {
       console.error('fetchData error:', error)
     }
-    //   // MapService.update(list, clusters, count)
   }
 
   useDeepCompareEffect(() => {
@@ -51,11 +51,7 @@ const OptionsPanel = () => {
   }, [position.bounds, params])
 
   return (
-    <Box
-      sx={{
-        width: 280
-      }}
-    >
+    <Box sx={{ width: 280 }}>
       <ParamsForm />
     </Box>
   )

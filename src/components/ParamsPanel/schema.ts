@@ -1,9 +1,10 @@
 import Joi from 'joi'
 
+import { lastStatusValues } from './types'
+
 const schema = Joi.object({
-  apiKey: Joi.string().length(30).required().messages({
+  apiKey: Joi.string().required().messages({
     'string.empty': 'API key cannot be empty',
-    'string.length': 'API key must be 30 characters long',
     'any.required': 'API key is required'
   }),
   apiUrl: Joi.string().uri().required().messages({
@@ -18,8 +19,18 @@ const schema = Joi.object({
   }),
   class: Joi.string().allow(''),
   status: Joi.string().allow(''),
-  lastStatus: Joi.string().allow(''),
-  type: Joi.string().allow('')
+  lastStatus: Joi.string()
+    .valid(...lastStatusValues)
+    .allow('')
+    .messages({
+      'any.only': `Must be one of [${lastStatusValues.join(', ')}]`
+    }),
+  type: Joi.string().allow(''),
+  packageType: Joi.string().allow(''),
+  sortBy: Joi.string().allow(''),
+  propertyType: Joi.string().allow(''),
+  minPrice: Joi.number().integer().allow(null, false, ''),
+  maxPrice: Joi.number().integer().allow(null, false, '')
 })
 
 export default schema

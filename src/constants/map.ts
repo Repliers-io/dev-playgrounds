@@ -1,9 +1,10 @@
 import { type MapOptions } from 'mapbox-gl'
 
 import mapStyles, { type MapStyle } from 'constants/map-styles'
-import { mapboxToken } from 'constants/tokens'
 
-export { mapboxToken, type MapStyle, mapStyles }
+export { type MapStyle, mapStyles }
+
+export const mapboxToken = process.env.REACT_APP_MAPBOX_KEY || ''
 
 export const defaultAreaZoom = 13
 export const fallbackAreaZoom = 11
