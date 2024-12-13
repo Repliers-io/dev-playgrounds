@@ -13,7 +13,7 @@ export const propertyPageAddressZoom = 18
 
 export const mapboxDefaults: Partial<MapOptions> = {
   zoom: 8,
-  minZoom: 7,
+  minZoom: 5,
   maxZoom: 18,
   dragRotate: false,
   doubleClickZoom: true,

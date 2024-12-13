@@ -14,7 +14,6 @@ import ParamsSelect from './ParamsSelect'
 
 const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
-const boardId = process.env.REACT_APP_REPLIERS_BOARD_ID || 0
 
 const classOptions = ['condo', 'residential', 'commercial']
 const typeOptions = ['sale', 'lease']
@@ -45,7 +44,7 @@ const ParamsForm = () => {
   ) || {
     apiKey: apiKey || '',
     apiUrl: apiUrl || '',
-    boardId: boardId || 0,
+    boardId: null,
     class: '',
     status: '',
     lastStatus: '',
@@ -132,6 +131,8 @@ const ParamsForm = () => {
                 <ParamsField name="lastStatus" onChange={handleChange} />
                 <ParamsSelect
                   name="type"
+                  hint="type field hint"
+                  link="https://example.com"
                   options={typeOptions}
                   onChange={handleChange}
                 />

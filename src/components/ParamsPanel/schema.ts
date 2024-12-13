@@ -3,7 +3,7 @@ import Joi from 'joi'
 import { lastStatusValues } from './types'
 
 const schema = Joi.object({
-  apiKey: Joi.string().required().messages({
+  apiKey: Joi.string().messages({
     'string.empty': 'API key cannot be empty',
     'any.required': 'API key is required'
   }),
@@ -12,10 +12,8 @@ const schema = Joi.object({
     'string.uri': 'Please enter a valid URL',
     'any.required': 'API URL is required'
   }),
-  boardId: Joi.number().integer().required().messages({
-    'number.base': 'Board ID must be a number',
-    'number.integer': 'Board ID must be an integer',
-    'any.required': 'Board ID is required'
+  boardId: Joi.number().integer().positive().allow(null, false, '').messages({
+    'number.base': 'Board ID must be a number'
   }),
   class: Joi.string().allow(''),
   status: Joi.string().allow(''),
