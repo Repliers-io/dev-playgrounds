@@ -10,7 +10,8 @@ export const apiFetch = async (
   const getParamsString = queryString.stringify(params.get, {
     arrayFormat: 'none',
     skipEmptyString: true,
-    skipNull: true
+    skipNull: true,
+    sort: false
   })
   // POST params
   const postParamsString =

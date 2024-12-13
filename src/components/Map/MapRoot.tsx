@@ -143,7 +143,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
           <MapNavigation />
           <MapStyleSwitch />
 
-          {count && (
+          {Boolean(count) && (
             <Box sx={{ position: 'absolute', left: 16, bottom: 16 }}>
               <IconButton
                 size="small"

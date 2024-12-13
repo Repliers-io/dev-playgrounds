@@ -10,10 +10,15 @@ import schema from '../schema'
 
 import ParamsField from './ParamsField'
 import ParamsSection from './ParamsSection'
+import ParamsSelect from './ParamsSelect'
 
 const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 const boardId = process.env.REACT_APP_REPLIERS_BOARD_ID || 0
+
+const classOptions = ['condo', 'residential', 'commercial']
+const typeOptions = ['sale', 'lease']
+const statusOptions = ['a', 'u']
 
 type FormData = {
   apiUrl: string
@@ -114,10 +119,22 @@ const ParamsForm = () => {
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
                 <ParamsField name="sortBy" onChange={handleChange} />
-                <ParamsField name="class" onChange={handleChange} />
-                <ParamsField name="status" onChange={handleChange} />
+                <ParamsSelect
+                  name="class"
+                  options={classOptions}
+                  onChange={handleChange}
+                />
+                <ParamsSelect
+                  name="status"
+                  options={statusOptions}
+                  onChange={handleChange}
+                />
                 <ParamsField name="lastStatus" onChange={handleChange} />
-                <ParamsField name="type" onChange={handleChange} />
+                <ParamsSelect
+                  name="type"
+                  options={typeOptions}
+                  onChange={handleChange}
+                />
                 <ParamsField name="propertyType" onChange={handleChange} />
 
                 <Stack

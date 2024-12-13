@@ -43,6 +43,7 @@ const ParamsField = ({
     trigger(name)
     onChange?.()
   }
+
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
@@ -81,7 +82,7 @@ const ParamsField = ({
         fullWidth
         type={type}
         size="small"
-        placeholder={label}
+        placeholder={'null'}
         error={!!errors[name]}
         helperText={errors[name]?.message?.toString()}
         {...register(name)}

@@ -34,7 +34,7 @@ const CardsCarousel = ({ drawer }: { drawer: boolean }) => {
             p: 1,
             mr: 1,
             '&:last-child': { mr: 0 },
-            width: 200,
+            width: 220,
             boxShadow: 1,
             borderRadius: 2,
             bgcolor: '#FFFE',

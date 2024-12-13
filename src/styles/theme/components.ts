@@ -239,6 +239,7 @@ const components = {
         theme.unstable_sx({
           py: 0,
           px: 1,
+          bgcolor: 'background.paper',
           maxHeight: 48,
           lineHeight: 1,
           borderRadius: 1,
@@ -275,7 +276,8 @@ const components = {
       select: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           minHeight: 0,
-          py: 2
+          py: '3px',
+          px: 1
         }),
       multiple: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
@@ -437,6 +439,7 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
+          bgcolor: 'background.paper',
           '& input, & textarea': {
             px: 2,
             py: 1,
