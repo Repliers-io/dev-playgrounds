@@ -2,12 +2,14 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
+import schema from '../schema'
+
 import ParamsField from './ParamsField'
-import schema from './schema'
+import ParamsSection from './ParamsSection'
 
 const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
@@ -76,33 +78,14 @@ const ParamsForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={handleSubmit(onSubmit, onError)}
-        noValidate
-        style={{ height: '100%' }}
-      >
+      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
         <Stack
           spacing={1}
           alignItems="flex-start"
           justifyContent="stretch"
           height="100%"
         >
-          <Typography variant="h6" fontSize="12px" textTransform="uppercase">
-            credentials
-          </Typography>
-          <Box
-            sx={{
-              p: 1.25,
-              width: '100%',
-              boxSizing: 'border-box',
-              bgcolor: 'background.default',
-              overflow: 'hidden',
-              border: 1,
-              borderRadius: 2,
-              borderColor: '#eee'
-              // boxShadow: 1
-            }}
-          >
+          <ParamsSection title="credentials">
             <ParamsField
               noClear
               name="apiKey"
@@ -110,30 +93,11 @@ const ParamsForm = () => {
               hint="* HTTP Header"
               onChange={handleChange}
             />
-          </Box>
-          <Typography variant="h6" fontSize="12px" textTransform="uppercase">
-            query parameters
-          </Typography>
-          <Box
-            sx={{
-              flex: 1,
-              p: 1.25,
-              pr: 0.25,
-              width: '100%',
-              display: 'flex',
-              boxSizing: 'border-box',
-              bgcolor: 'background.default',
-              overflow: 'hidden',
-              border: 1,
-              borderRadius: 2,
-              borderColor: '#eee'
-              // boxShadow: 1
-            }}
-          >
+          </ParamsSection>
+          <ParamsSection title="query parameters">
             <Box
               sx={{
                 pr: 1,
-                flex: 1,
                 width: '100%',
                 overflow: 'auto',
                 scrollbarWidth: 'thin'
@@ -185,7 +149,7 @@ const ParamsForm = () => {
                 </Stack>
               </Stack>
             </Box>
-          </Box>
+          </ParamsSection>
         </Stack>
       </form>
     </FormProvider>

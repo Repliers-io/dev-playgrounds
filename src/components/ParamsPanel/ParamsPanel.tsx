@@ -1,6 +1,6 @@
 import { type Position } from 'geojson'
 
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import {
   getDefaultRectangle,
@@ -11,7 +11,8 @@ import { type MapPosition, useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 
-import ParamsForm from './ParamsForm'
+import BoundsForm from './components/BoundsForm'
+import ParamsForm from './components/ParamsForm'
 
 const OptionsPanel = () => {
   const { position } = useMapOptions()
@@ -51,8 +52,23 @@ const OptionsPanel = () => {
   }, [position.bounds, params])
 
   return (
-    <Box sx={{ width: 280 }}>
-      <ParamsForm />
+    <Box
+      sx={{
+        flex: 1,
+        maxWidth: 280,
+        mr: -1.75,
+        pr: 1.75,
+        height: '100%',
+        display: 'flex',
+        overflow: 'auto',
+        scrollbarWidth: 'thin',
+        flexDirection: 'column'
+      }}
+    >
+      <Stack spacing={1}>
+        <ParamsForm />
+        <BoundsForm />
+      </Stack>
     </Box>
   )
 }

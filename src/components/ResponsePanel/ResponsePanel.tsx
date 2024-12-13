@@ -29,7 +29,7 @@ const ResponsePanel = ({
 }) => {
   const { request, statusCode, json, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
-  const error = statusCode !== 200
+  const error = statusCode && statusCode > 200
 
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
 

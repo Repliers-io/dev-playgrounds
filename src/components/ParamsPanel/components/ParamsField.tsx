@@ -89,7 +89,7 @@ const ParamsField = ({
         onKeyDown={handleKeyDown}
         slotProps={{
           input: {
-            endAdornment: Boolean(!noClear && value?.length) && (
+            endAdornment: Boolean(!noClear && value) && (
               <InputAdornment position="end" sx={{ pr: 0.75 }}>
                 <IconButton
                   tabIndex={-1}
