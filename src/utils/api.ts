@@ -1,8 +1,8 @@
 import queryString from 'query-string'
-const API_URL = process.env.REACT_APP_REPLIERS_API_URL || ''
 
 // eslint-disable-next-line import/prefer-default-export
 export const apiFetch = async (
+  url: string,
   params: { get?: any; post?: any },
   options?: RequestInit
 ) => {
@@ -18,7 +18,7 @@ export const apiFetch = async (
       ? JSON.stringify(params.post)
       : ''
 
-  const request = `${API_URL}/listings?${getParamsString}`
+  const request = `${url}?${getParamsString}`
   try {
     const response = await fetch(request, {
       ...(postParamsString

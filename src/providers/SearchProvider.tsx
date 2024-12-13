@@ -115,6 +115,7 @@ const SearchProvider = ({
       const controller = new AbortController()
       abortController.current = controller
       const response = await apiFetch(
+        `${apiUrl}/listings`,
         { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
