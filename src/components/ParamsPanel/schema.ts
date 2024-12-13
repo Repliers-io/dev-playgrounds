@@ -29,8 +29,22 @@ const schema = Joi.object({
   packageType: Joi.string().allow(''),
   sortBy: Joi.string().allow(''),
   propertyType: Joi.string().allow(''),
-  minPrice: Joi.number().integer().allow(null, false, ''),
-  maxPrice: Joi.number().integer().allow(null, false, '')
+  minPrice: Joi.number().integer().positive().allow(null, false, ''),
+  maxPrice: Joi.number().integer().positive().allow(null, false, ''),
+  pageNum: Joi.number().integer().min(1).allow(null, false, '').messages({
+    'number.base': 'Page number must be a number',
+    'number.min': 'Page number must be at least 1'
+  }),
+  resultsPerPage: Joi.number()
+    .integer()
+    .min(1)
+    .max(100)
+    .allow(null, false, '')
+    .messages({
+      'number.base': 'Results per page must be a number',
+      'number.min': 'Results per page must be at least 1',
+      'number.max': 'Results per page must be at most 100'
+    })
 })
 
 export default schema

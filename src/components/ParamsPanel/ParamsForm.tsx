@@ -141,12 +141,20 @@ const ParamsForm = () => {
             >
               <Stack spacing={1.25}>
                 <ParamsField name="boardId" noClear onChange={handleChange} />
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  justifyContent="space-between"
+                >
+                  <ParamsField name="pageNum" onChange={handleChange} />
+                  <ParamsField name="resultsPerPage" onChange={handleChange} />
+                </Stack>
+                <ParamsField name="sortBy" onChange={handleChange} />
                 <ParamsField name="class" onChange={handleChange} />
                 <ParamsField name="status" onChange={handleChange} />
                 <ParamsField name="lastStatus" onChange={handleChange} />
                 <ParamsField name="type" onChange={handleChange} />
                 <ParamsField name="propertyType" onChange={handleChange} />
-                <ParamsField name="sortBy" onChange={handleChange} />
 
                 <Stack
                   spacing={1}
@@ -161,8 +169,19 @@ const ParamsForm = () => {
                   direction="row"
                   justifyContent="space-between"
                 >
-                  <ParamsField name="minBeds" onChange={handleChange} />
+                  <ParamsField name="minBedrooms" onChange={handleChange} />
                   <ParamsField name="minBaths" onChange={handleChange} />
+                </Stack>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  justifyContent="space-between"
+                >
+                  <ParamsField name="minGarageSpaces" onChange={handleChange} />
+                  <ParamsField
+                    name="minParkingSpaces"
+                    onChange={handleChange}
+                  />
                 </Stack>
               </Stack>
             </Box>

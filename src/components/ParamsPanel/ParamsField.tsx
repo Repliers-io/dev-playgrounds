@@ -17,6 +17,7 @@ const ParamsField = ({
   label,
   hint,
   link,
+  type = 'text',
   noClear = false,
   onChange
 }: {
@@ -24,6 +25,7 @@ const ParamsField = ({
   label?: string
   hint?: string
   link?: string
+  type?: string
   noClear?: boolean
   onChange?: () => void
 }) => {
@@ -77,6 +79,7 @@ const ParamsField = ({
         id={name}
         inputRef={inputRef}
         fullWidth
+        type={type}
         size="small"
         placeholder={label}
         error={!!errors[name]}
