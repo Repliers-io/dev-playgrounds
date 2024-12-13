@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "rimraf ./dist; parcel index.html",
+    "start": "rimraf ./dist && parcel index.html",
     "build": "parcel build index.html",
     "eslint": "eslint \"./**/*.{ts,tsx,js}\"",
     "eslint:fix": "eslint --fix \"./**/*.{ts,tsx,js}\"",

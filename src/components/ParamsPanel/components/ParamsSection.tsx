@@ -6,7 +6,7 @@ const BoxContainer = ({
   title,
   children,
   hint,
-  link,
+  link
 }: {
   title: string
   children: React.ReactNode
@@ -15,13 +15,8 @@ const BoxContainer = ({
 }) => {
   return (
     <Box width="100%">
-      <Stack spacing={2} direction="row" pb={1}>
-        <Typography
-          variant="h6"
-          fontSize="12px"
-          textTransform="uppercase"
-          pb={1}
-        >
+      <Stack spacing={2} direction="row" alignItems="center" pb={1}>
+        <Typography variant="h6" fontSize="12px" textTransform="uppercase">
           {title}
         </Typography>
         {(hint || link) && (
