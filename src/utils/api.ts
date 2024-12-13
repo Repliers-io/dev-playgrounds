@@ -21,6 +21,7 @@ export const apiFetch = async (
 
   const request = `${url}?${getParamsString}`
   try {
+    // const startTime = performance.now()
     const response = await fetch(request, {
       ...(postParamsString
         ? {
@@ -33,6 +34,8 @@ export const apiFetch = async (
           }),
       ...options
     })
+    // const endTime = performance.now()
+    // console.log('request time: ', endTime - startTime)
 
     if (!response.ok) {
       console.error(response.status)
