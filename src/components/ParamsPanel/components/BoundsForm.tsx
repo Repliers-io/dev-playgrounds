@@ -17,7 +17,11 @@ const BoundsForm = () => {
   const se = bounds.getSouthEast()
 
   return (
-    <ParamsSection title="Map Bounds">
+    <ParamsSection
+      title="Map Bounds"
+      hint="docs"
+      link="https://help.repliers.com/en/article/filtering-listings-geo-spatially-using-the-map-parameter-7sorw0/"
+    >
       <Stack spacing={1.25}>
         <BoundsPoint label="↗" point={ne} />
         <BoundsPoint label="↖" point={nw} />
