@@ -1,19 +1,36 @@
 import React from 'react'
 
-import { Box, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 
 const BoxContainer = ({
   title,
-  children
+  children,
+  hint,
+  link
 }: {
   title: string
   children: React.ReactNode
+  hint?: string
+  link?: string
 }) => {
   return (
     <Box width="100%">
-      <Typography variant="h6" fontSize="12px" textTransform="uppercase" pb={1}>
-        {title}
-      </Typography>
+      <Stack spacing={2} direction="row" alignItems="center" pb={1}>
+        <Typography variant="h6" fontSize="12px" textTransform="uppercase">
+          {title}
+        </Typography>
+        {(hint || link) && (
+          <Typography variant="body2" color="text.hint">
+            {link ? (
+              <a target="_blank" href={link}>
+                {hint} <b>↗</b>
+              </a>
+            ) : (
+              hint
+            )}
+          </Typography>
+        )}
+      </Stack>
       <Box
         sx={{
           p: 1.25,

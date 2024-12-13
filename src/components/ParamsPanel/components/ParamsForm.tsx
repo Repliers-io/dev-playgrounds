@@ -17,7 +17,7 @@ const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 
 const classOptions = ['condo', 'residential', 'commercial']
 const typeOptions = ['sale', 'lease']
-const statusOptions = ['a', 'u']
+const statusOptions = ['A', 'U']
 
 type FormData = {
   apiUrl: string
@@ -114,10 +114,20 @@ const ParamsForm = () => {
                   direction="row"
                   justifyContent="space-between"
                 >
-                  <ParamsField name="pageNum" onChange={handleChange} />
+                  <ParamsField
+                    name="pageNum"
+                    hint="docs"
+                    link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
+                    onChange={handleChange}
+                  />
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
-                <ParamsField name="sortBy" onChange={handleChange} />
+                <ParamsField
+                  name="sortBy"
+                  hint="docs"
+                  link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
+                  onChange={handleChange}
+                />
                 <ParamsSelect
                   name="class"
                   options={classOptions}
@@ -128,16 +138,23 @@ const ParamsForm = () => {
                   options={statusOptions}
                   onChange={handleChange}
                 />
-                <ParamsField name="lastStatus" onChange={handleChange} />
+                <ParamsField
+                  name="lastStatus"
+                  hint="docs"
+                  link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
+                  onChange={handleChange}
+                />
                 <ParamsSelect
                   name="type"
-                  hint="type field hint"
-                  link="https://example.com"
                   options={typeOptions}
                   onChange={handleChange}
                 />
-                <ParamsField name="propertyType" onChange={handleChange} />
-
+                <ParamsField
+                  hint="docs"
+                  link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
+                  name="propertyType"
+                  onChange={handleChange}
+                />
                 <Stack
                   spacing={1}
                   direction="row"

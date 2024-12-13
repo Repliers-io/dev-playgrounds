@@ -12,9 +12,15 @@ const schema = Joi.object({
     'string.uri': 'Please enter a valid URL',
     'any.required': 'API URL is required'
   }),
-  boardId: Joi.number().integer().positive().allow(null, false, '').messages({
-    'number.base': 'Board ID must be a number'
-  }),
+  boardId: Joi.number()
+    .integer()
+    .positive()
+    // .allow(null, false, '')
+    .allow('')
+    .optional()
+    .messages({
+      'number.base': 'Board ID must be a number'
+    }),
   class: Joi.string().allow(''),
   status: Joi.string().allow(''),
   lastStatus: Joi.string()

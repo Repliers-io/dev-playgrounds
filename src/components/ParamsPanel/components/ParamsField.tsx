@@ -97,8 +97,9 @@ const ParamsField = ({
                   onClick={handleClearClick}
                   edge="end"
                   size="small"
+                  sx={{ '&:hover': { bgcolor: 'transparent' } }}
                 >
-                  <ClearIcon sx={{ fontSize: 16 }} />
+                  <ClearIcon sx={{ fontSize: 18, color: 'rgb(56, 66, 72)' }} />
                 </IconButton>
               </InputAdornment>
             )

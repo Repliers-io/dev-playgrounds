@@ -27,7 +27,7 @@ const ResponsePanel = ({
   expanded?: boolean
   onExpand?: () => void
 }) => {
-  const { request, statusCode, json, loading } = useSearch()
+  const { request, statusCode, json, time, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
 
@@ -112,7 +112,13 @@ const ResponsePanel = ({
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
             <Box sx={{ width: 56, px: 1, pt: 0.5 }}>
-              {loading && <CircularProgress size={14} />}
+              {loading ? (
+                <CircularProgress size={14} />
+              ) : (
+                <Typography color="text.hint" variant="body2">
+                  {Math.round(time)}ms
+                </Typography>
+              )}
             </Box>
             <Typography
               flex={1}
