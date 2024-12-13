@@ -86,13 +86,16 @@ const ParamsForm = () => {
           height="100%"
         >
           <ParamsSection title="credentials">
-            <ParamsField
-              noClear
-              name="apiKey"
-              label="REPILERS-API-KEY"
-              hint="* HTTP Header"
-              onChange={handleChange}
-            />
+            <Stack spacing={1}>
+              <ParamsField
+                noClear
+                name="apiKey"
+                label="REPILERS-API-KEY"
+                hint="* HTTP Header"
+                onChange={handleChange}
+              />
+              <ParamsField name="apiUrl" onChange={handleChange} />
+            </Stack>
           </ParamsSection>
           <ParamsSection title="query parameters">
             <Box
