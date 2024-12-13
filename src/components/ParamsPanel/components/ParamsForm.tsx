@@ -31,10 +31,6 @@ type FormData = {
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
-  // minPrice: number | null
-  // maxPrice: number | null
-  // minSoldPrice?: number | null
-  // maxSoldPrice?: number | null
 }
 
 const ParamsForm = () => {
@@ -150,9 +146,9 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
                 <ParamsField
+                  name="propertyType"
                   hint="docs"
                   link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
-                  name="propertyType"
                   onChange={handleChange}
                 />
                 <Stack

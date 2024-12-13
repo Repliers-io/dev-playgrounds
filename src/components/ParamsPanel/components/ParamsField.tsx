@@ -2,15 +2,9 @@ import React, { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import ClearIcon from '@mui/icons-material/Clear'
-import {
-  Box,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
+
+import ParamLabel from './ParamLabel'
 
 const ParamsField = ({
   name,
@@ -62,20 +56,7 @@ const ParamsField = ({
 
   return (
     <Box flex={1}>
-      <Stack spacing={2} direction="row" pb={1}>
-        <InputLabel htmlFor={name}>{label}</InputLabel>
-        {(hint || link) && (
-          <Typography variant="body2" color="text.hint">
-            {link ? (
-              <a target="_blank" href={link}>
-                {hint} <b>↗</b>
-              </a>
-            ) : (
-              hint
-            )}
-          </Typography>
-        )}
-      </Stack>
+      <ParamLabel label={label} nameFor={name} hint={hint} link={link} />
       <TextField
         id={name}
         inputRef={inputRef}
