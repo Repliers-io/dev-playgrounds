@@ -75,7 +75,6 @@ const ParamsForm = () => {
   const { handleSubmit } = methods
 
   const onSubmit = (data: FormData) => {
-    localStorage.setItem('params', JSON.stringify(data))
     setParams(data as any)
   }
 
