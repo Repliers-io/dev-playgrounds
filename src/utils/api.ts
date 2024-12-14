@@ -1,5 +1,11 @@
-import queryString from 'query-string'
+import queryString, { type StringifyOptions } from 'query-string'
 
+export const queryStringOptions: StringifyOptions = {
+  arrayFormat: 'none',
+  skipEmptyString: true,
+  skipNull: true,
+  sort: false
+}
 // eslint-disable-next-line import/prefer-default-export
 export const apiFetch = async (
   url: string,
@@ -7,12 +13,7 @@ export const apiFetch = async (
   options?: RequestInit
 ) => {
   // GET params
-  const getParamsString = queryString.stringify(params.get, {
-    arrayFormat: 'none',
-    skipEmptyString: true,
-    skipNull: true,
-    sort: false
-  })
+  const getParamsString = queryString.stringify(params.get, queryStringOptions)
   // POST params
   const postParamsString =
     params.post && Object.keys(params.post).length

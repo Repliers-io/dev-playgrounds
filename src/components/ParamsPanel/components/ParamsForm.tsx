@@ -1,4 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import merge from 'deepmerge'
+import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
@@ -37,21 +39,32 @@ type FormData = {
 
 const ParamsForm = () => {
   const { setParams } = useSearch()
-  const defaultValues = JSON.parse(
-    localStorage.getItem('params') || 'false'
-  ) || {
-    apiKey: apiKey || '',
-    apiUrl: apiUrl || '',
-    boardId: null,
-    class: '',
-    status: '',
-    lastStatus: '',
-    type: '',
-    propertyType: '',
-    sortBy: '',
-    minPrice: null,
-    maxPrice: null
-  }
+  // cache them one time on first render
+  const params = useMemo(() => queryString.parse(window.location.search), [])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { lng, lat, zoom, ...apiParams } = params
+  const defaultValues = useMemo(
+    () =>
+      merge(
+        {
+          apiKey,
+          apiUrl,
+          boardId: null,
+          class: '',
+          status: '',
+          lastStatus: '',
+          type: '',
+          propertyType: '',
+          sortBy: '',
+          minPrice: null,
+          maxPrice: null
+        },
+        // cache them one time on first render
+        apiParams
+      ),
+    []
+  )
+
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
     reValidateMode: 'onBlur', // Re-validate on blur
@@ -96,7 +109,7 @@ const ParamsForm = () => {
                 label="REPILERS-API-KEY"
                 onChange={handleChange}
               />
-              <ParamsField name="apiUrl" onChange={handleChange} />
+              <ParamsField name="apiUrl" noClear onChange={handleChange} />
             </Stack>
           </ParamsSection>
           <ParamsSection title="query parameters">

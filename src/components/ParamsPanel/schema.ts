@@ -15,8 +15,7 @@ const schema = Joi.object({
   boardId: Joi.number()
     .integer()
     .positive()
-    // .allow(null, false, '')
-    .allow('')
+    .allow(null, false, '')
     .optional()
     .messages({
       'number.base': 'Board ID must be a number'
