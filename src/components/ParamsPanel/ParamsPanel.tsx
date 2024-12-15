@@ -3,12 +3,13 @@ import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
 
+import { type MapPosition } from 'services/Map/types'
 import {
   getDefaultRectangle,
   getMapPolygon,
   getMapRectangle
 } from 'services/Search'
-import { type MapPosition, useMapOptions } from 'providers/MapOptionsProvider'
+import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'

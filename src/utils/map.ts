@@ -4,6 +4,11 @@ import { type Map as MapboxMap } from 'mapbox-gl'
 
 import { lighten } from '@mui/material'
 
+import {
+  type ApiBounds,
+  type ApiCoords,
+  type ApiLocation
+} from 'services/API/types'
 import { toSafeNumber } from 'utils/formatters'
 import { info } from 'constants/colors'
 import { secondary } from 'constants/colors'
@@ -14,17 +19,7 @@ import {
   mapStyles
 } from 'constants/map'
 
-export type ApiCoords = {
-  latitude: number
-  longitude: number
-}
-
-export type ApiBounds = {
-  top_left: ApiCoords
-  bottom_right: ApiCoords
-}
-
-type Polygon = Array<{ lat: number; lng: number }>
+type Polygon = Array<ApiLocation>
 
 /**
  * @description Function to convert custom polygon object from 'constants/map' module to mapbox bounds

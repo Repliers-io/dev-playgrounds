@@ -5,22 +5,13 @@ import React, {
   useRef,
   useState
 } from 'react'
-import mapboxgl, {
-  type LngLat,
-  type LngLatBounds,
-  type Map as MapboxMap
-} from 'mapbox-gl'
+import mapboxgl, { type Map as MapboxMap } from 'mapbox-gl'
 import queryString from 'query-string'
 
+import { type MapPosition } from 'services/Map/types'
 import { getDefaultBounds, getLngLatCenter } from 'utils/map'
 import { mapboxDefaults } from 'constants/map'
 import { type MapStyle } from 'constants/map-styles'
-
-export type MapPosition = {
-  center: LngLat | null
-  bounds: LngLatBounds | undefined
-  zoom: number
-}
 
 type MapOptionsContextProps = {
   loaded: boolean
