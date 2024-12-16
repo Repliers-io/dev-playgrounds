@@ -36,6 +36,10 @@ type FormData = {
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
+  minBedrooms: number | null
+  minBaths: number | null
+  minGarageSpaces: number | null
+  minParkingSpaces: number | null
 }
 
 const ParamsForm = () => {
@@ -58,7 +62,11 @@ const ParamsForm = () => {
           propertyType: '',
           sortBy: '',
           minPrice: null,
-          maxPrice: null
+          maxPrice: null,
+          minBedrooms: null,
+          minBaths: null,
+          minGarageSpaces: null,
+          minParkingSpaces: null
         },
         // cache them one time on first render
         apiParams
