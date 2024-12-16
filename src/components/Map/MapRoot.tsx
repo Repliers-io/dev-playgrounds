@@ -71,7 +71,6 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     if (!mapRef.current) return
     if (!listings?.length) return
     // add markers to map
-    console.log('showMarkers:', listings)
     MapService.showMarkers({ map: mapRef.current, listings })
   }, [listings])
 
@@ -130,7 +129,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
             {loading ? (
               <>
                 <CircularProgress size={14} sx={{ p: 1 }} />
-                <Typography>Loading ...</Typography>
+                <Typography>Loading</Typography>
               </>
             ) : (
               <Typography sx={{ pl: 1, lineHeight: '30px' }}>

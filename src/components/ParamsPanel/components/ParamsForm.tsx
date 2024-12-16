@@ -144,26 +144,22 @@ const ParamsForm = () => {
 
                 <ParamsSelect
                   name="type"
-                  options={
-                    [
-                      ...typeOptions
-                    ] /* WARN: `options` prop doesnt allow to pass readonly arrays, they should be mutable */
-                  }
+                  options={typeOptions}
                   onChange={handleChange}
                 />
                 <ParamsSelect
                   name="class"
-                  options={[...classOptions]}
+                  options={classOptions}
                   onChange={handleChange}
                 />
                 <ParamsSelect
                   name="status"
-                  options={[...statusOptions]}
+                  options={statusOptions}
                   onChange={handleChange}
                 />
                 <ParamsSelect
                   name="lastStatus"
-                  options={[...lastStatusOptions]}
+                  options={lastStatusOptions}
                   hint="docs"
                   link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
                   onChange={handleChange}
