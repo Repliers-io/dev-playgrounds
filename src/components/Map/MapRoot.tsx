@@ -27,17 +27,21 @@ import MapStyleSwitch from './MapStyleSwitch'
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
-  const { style, mapRef, setMapRef, setPosition } = useMapOptions()
+  const { style, mapRef, setMapRef, position, setPosition, loaded, setLoaded } =
+    useMapOptions()
   const { count, listings, loading } = useSearch()
   const [drawer, setDrawer] = useState(false)
-  const [loaded, setLoaded] = useState(false)
 
   const initializeMap = (container: HTMLElement) => {
+    const { center, zoom } = position
+    const initialPosition =
+      center && zoom ? { center, zoom } : { bounds: getDefaultBounds() }
+
     const map = new MapboxMap({
       container,
-      ...mapboxDefaults,
       accessToken: mapboxToken,
-      bounds: getDefaultBounds(),
+      ...mapboxDefaults,
+      ...initialPosition,
       style: getMapStyleUrl(style)
     })
 
@@ -46,7 +50,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       const center = map.getCenter()
       const zoom = map.getZoom()
       setLoaded(true)
-      if (loaded) setPosition({ bounds, center, zoom })
+      setPosition({ bounds, center, zoom })
     })
 
     map.on('moveend', () => {
@@ -105,33 +109,35 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
-        <Stack
-          spacing={0.5}
-          direction="row"
-          alignItems="center"
-          sx={{
-            left: 16,
-            top: 16,
-            position: 'absolute',
-            backdropFilter: 'blur(4px)',
-            bgcolor: alpha('#FFFFFF', 0.7),
-            borderRadius: 6,
-            boxShadow: 1,
-            p: 0.25,
-            pr: 1.5
-          }}
-        >
-          {loading ? (
-            <>
-              <CircularProgress size={14} sx={{ p: 1 }} />
-              <Typography>Loading ...</Typography>
-            </>
-          ) : (
-            <Typography sx={{ pl: 1, lineHeight: '30px' }}>
-              {count} Listings
-            </Typography>
-          )}
-        </Stack>
+        {loaded && (
+          <Stack
+            spacing={0.5}
+            direction="row"
+            alignItems="center"
+            sx={{
+              left: 16,
+              top: 16,
+              position: 'absolute',
+              backdropFilter: 'blur(4px)',
+              bgcolor: alpha('#FFFFFF', 0.7),
+              borderRadius: 6,
+              boxShadow: 1,
+              p: 0.25,
+              pr: 1.5
+            }}
+          >
+            {loading ? (
+              <>
+                <CircularProgress size={14} sx={{ p: 1 }} />
+                <Typography>Loading</Typography>
+              </>
+            ) : (
+              <Typography sx={{ pl: 1, lineHeight: '30px' }}>
+                {count} Listings
+              </Typography>
+            )}
+          </Stack>
+        )}
         <Box
           sx={{
             position: 'absolute',

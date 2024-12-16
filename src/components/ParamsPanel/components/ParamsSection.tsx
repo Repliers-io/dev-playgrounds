@@ -1,19 +1,23 @@
 import React from 'react'
 
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
+
+import ParamLabel from './ParamLabel'
 
 const BoxContainer = ({
   title,
-  children
+  children,
+  hint,
+  link
 }: {
   title: string
   children: React.ReactNode
+  hint?: string
+  link?: string
 }) => {
   return (
     <Box width="100%">
-      <Typography variant="h6" fontSize="12px" textTransform="uppercase" pb={1}>
-        {title}
-      </Typography>
+      <ParamLabel title={title} hint={hint} link={link} />
       <Box
         sx={{
           p: 1.25,

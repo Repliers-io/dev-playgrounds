@@ -36,6 +36,7 @@ type SearchContextType = SavedResponse & {
   search: (params: any) => Promise<ApiQueryResponse | null>
   request: string
   statusCode: number | null
+  time: number
   json: string
   polygon: Position[] | null
   setPolygon: (polygon: Position[]) => void
@@ -65,6 +66,7 @@ const SearchProvider = ({
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
+  const [time, setTime] = useState(0)
   const [json, setJson] = useState<null | any>(null)
   const [saved, setSaved] = useState<SavedResponse>(emptySavedResponse)
   const abortController = useRef<AbortController | null>(null)
@@ -114,6 +116,8 @@ const SearchProvider = ({
 
       const controller = new AbortController()
       abortController.current = controller
+      const startTime = performance.now()
+
       const response = await apiFetch(
         `${apiUrl}/listings`,
         { get: rest },
@@ -122,6 +126,8 @@ const SearchProvider = ({
           signal: controller.signal
         }
       )
+      const endTime = performance.now()
+      setTime(Math.floor(endTime - startTime))
       setRequest(response.url)
       setStatusCode(response.status)
       const json = await response.json()
@@ -163,6 +169,7 @@ const SearchProvider = ({
       search,
       request,
       statusCode,
+      time,
       json,
       ...saved, // destructured saved object shorthands
       polygon: searchPolygon,

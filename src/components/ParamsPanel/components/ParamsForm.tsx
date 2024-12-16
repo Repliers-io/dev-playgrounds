@@ -1,4 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import merge from 'deepmerge'
+import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
@@ -7,6 +9,13 @@ import { Box, Stack } from '@mui/material'
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from '../schema'
+import {
+  classOptions,
+  lastStatusOptions,
+  sortByOptions,
+  statusOptions,
+  typeOptions
+} from '../types'
 
 import ParamsField from './ParamsField'
 import ParamsSection from './ParamsSection'
@@ -14,10 +23,6 @@ import ParamsSelect from './ParamsSelect'
 
 const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
-
-const classOptions = ['condo', 'residential', 'commercial']
-const typeOptions = ['sale', 'lease']
-const statusOptions = ['a', 'u']
 
 type FormData = {
   apiUrl: string
@@ -31,29 +36,36 @@ type FormData = {
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
-  // minPrice: number | null
-  // maxPrice: number | null
-  // minSoldPrice?: number | null
-  // maxSoldPrice?: number | null
 }
 
 const ParamsForm = () => {
   const { setParams } = useSearch()
-  const defaultValues = JSON.parse(
-    localStorage.getItem('params') || 'false'
-  ) || {
-    apiKey: apiKey || '',
-    apiUrl: apiUrl || '',
-    boardId: null,
-    class: '',
-    status: '',
-    lastStatus: '',
-    type: '',
-    propertyType: '',
-    sortBy: '',
-    minPrice: null,
-    maxPrice: null
-  }
+  // cache them one time on first render
+  const params = useMemo(() => queryString.parse(window.location.search), [])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { lng, lat, zoom, ...apiParams } = params
+  const defaultValues = useMemo(
+    () =>
+      merge(
+        {
+          apiKey,
+          apiUrl,
+          boardId: null,
+          class: '',
+          status: '',
+          lastStatus: '',
+          type: '',
+          propertyType: '',
+          sortBy: '',
+          minPrice: null,
+          maxPrice: null
+        },
+        // cache them one time on first render
+        apiParams
+      ),
+    []
+  )
+
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
     reValidateMode: 'onBlur', // Re-validate on blur
@@ -64,7 +76,6 @@ const ParamsForm = () => {
   const { handleSubmit } = methods
 
   const onSubmit = (data: FormData) => {
-    localStorage.setItem('params', JSON.stringify(data))
     setParams(data as any)
   }
 
@@ -90,13 +101,16 @@ const ParamsForm = () => {
           height="100%"
         >
           <ParamsSection title="credentials">
-            <ParamsField
-              noClear
-              name="apiKey"
-              label="REPILERS-API-KEY"
-              hint="* HTTP Header"
-              onChange={handleChange}
-            />
+            <Stack spacing={1}>
+              <ParamsField
+                noClear
+                name="apiKey"
+                hint="* HTTP Header"
+                label="REPILERS-API-KEY"
+                onChange={handleChange}
+              />
+              <ParamsField name="apiUrl" noClear onChange={handleChange} />
+            </Stack>
           </ParamsSection>
           <ParamsSection title="query parameters">
             <Box
@@ -114,30 +128,61 @@ const ParamsForm = () => {
                   direction="row"
                   justifyContent="space-between"
                 >
-                  <ParamsField name="pageNum" onChange={handleChange} />
+                  <ParamsField
+                    name="pageNum"
+                    hint="docs"
+                    link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
+                    onChange={handleChange}
+                  />
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
-                <ParamsField name="sortBy" onChange={handleChange} />
+
+                {/* TODO: Make Multi-Select */}
+                <ParamsSelect
+                  name="sortBy"
+                  hint="docs"
+                  link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
+                  options={sortByOptions}
+                  onChange={handleChange}
+                />
+
+                {/* TODO: Make Multi-Select */}
+                <ParamsSelect
+                  name="type"
+                  options={typeOptions}
+                  onChange={handleChange}
+                />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="class"
                   options={classOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="status"
                   options={statusOptions}
                   onChange={handleChange}
                 />
-                <ParamsField name="lastStatus" onChange={handleChange} />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
-                  name="type"
-                  hint="type field hint"
-                  link="https://example.com"
-                  options={typeOptions}
+                  name="lastStatus"
+                  options={lastStatusOptions}
+                  hint="docs"
+                  link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
                   onChange={handleChange}
                 />
-                <ParamsField name="propertyType" onChange={handleChange} />
 
+                {/* TODO: Make Multi-Select */}
+                <ParamsField
+                  name="propertyType"
+                  hint="docs"
+                  link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
+                  onChange={handleChange}
+                />
                 <Stack
                   spacing={1}
                   direction="row"

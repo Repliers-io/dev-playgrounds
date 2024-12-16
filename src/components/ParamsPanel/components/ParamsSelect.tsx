@@ -1,13 +1,8 @@
 import { Controller, useFormContext } from 'react-hook-form'
 
-import {
-  Box,
-  InputLabel,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Box, MenuItem, TextField, Typography } from '@mui/material'
+
+import ParamLabel from './ParamLabel'
 
 const ParamsSelect = ({
   name,
@@ -21,7 +16,7 @@ const ParamsSelect = ({
   label?: string
   hint?: string
   link?: string
-  options: string[]
+  options: readonly string[]
   onChange?: () => void
 }) => {
   const {
@@ -34,20 +29,7 @@ const ParamsSelect = ({
 
   return (
     <Box flex={1} sx={{ position: 'relative' }}>
-      <Stack spacing={2} direction="row" pb={1}>
-        <InputLabel htmlFor={name}>{label}</InputLabel>
-        {(hint || link) && (
-          <Typography variant="body2" color="text.hint">
-            {link ? (
-              <a target="_blank" href={link} rel="noopener noreferrer">
-                {hint} <b>↗</b>
-              </a>
-            ) : (
-              hint
-            )}
-          </Typography>
-        )}
-      </Stack>
+      <ParamLabel label={label} nameFor={name} hint={hint} link={link} />
       <Controller
         name={name}
         control={control}
@@ -64,17 +46,19 @@ const ParamsSelect = ({
               field.onChange(e)
               onChange?.()
             }}
-            SelectProps={{
-              displayEmpty: true, // Показываем значение при пустом поле
-              renderValue: (selected) => {
-                if (!selected) {
-                  return (
-                    <Typography variant="body2" color="#CCC">
-                      null
-                    </Typography>
-                  )
+            slotProps={{
+              select: {
+                displayEmpty: true,
+                renderValue: (selected) => {
+                  if (!selected) {
+                    return (
+                      <Typography variant="body2" color="#CCC">
+                        null
+                      </Typography>
+                    )
+                  }
+                  return <>{selected}</>
                 }
-                return selected
               }
             }}
           >
