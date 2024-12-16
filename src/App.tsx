@@ -3,7 +3,6 @@ import { ThemeProvider } from '@mui/system'
 import PageContent from 'components/PageContent'
 
 import MapOptionsProvider from 'providers/MapOptionsProvider'
-import PositionProvider from 'providers/PositionProvider.tsx'
 import SearchProvider from 'providers/SearchProvider'
 
 import theme from 'styles/theme'
@@ -28,13 +27,11 @@ function App() {
         />
       </div>
       <ThemeProvider theme={theme}>
-        <PositionProvider>
-          <MapOptionsProvider style="map">
-            <SearchProvider>
-              <PageContent />
-            </SearchProvider>
-          </MapOptionsProvider>
-        </PositionProvider>
+        <MapOptionsProvider style="map">
+          <SearchProvider>
+            <PageContent />
+          </SearchProvider>
+        </MapOptionsProvider>
       </ThemeProvider>
     </>
   )
