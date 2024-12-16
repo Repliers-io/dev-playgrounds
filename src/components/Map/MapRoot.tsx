@@ -29,7 +29,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
 
   const { style, mapRef, setMapRef, position, setPosition, loaded, setLoaded } =
     useMapOptions()
-  const { count, listings, loading } = useSearch()
+  const { count, listings, loading, firstLoadedListings } = useSearch()
   const [drawer, setDrawer] = useState(false)
 
   const initializeMap = (container: HTMLElement) => {
@@ -71,7 +71,6 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     if (!mapRef.current) return
     if (!listings?.length) return
     // add markers to map
-    console.log('showMarkers:', listings)
     MapService.showMarkers({ map: mapRef.current, listings })
   }, [listings])
 
@@ -84,10 +83,10 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [style])
 
   useEffect(() => {
-    if (!mapRef.current && mapContainerRef.current) {
+    if (!mapRef.current && mapContainerRef.current && firstLoadedListings) {
       initializeMap(mapContainerRef.current)
     }
-  }, [mapContainerRef])
+  }, [mapContainerRef, firstLoadedListings])
 
   return (
     <Stack

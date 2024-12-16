@@ -25,6 +25,7 @@ type Params = Filters & { apiKey: string; apiUrl: string }
 type ParamKeys = keyof Params
 
 type SearchContextType = SavedResponse & {
+  firstLoadedListings: boolean
   loading: boolean
   params: Partial<Params>
   setParam: (key: ParamKeys, value: any) => void
@@ -63,6 +64,7 @@ const SearchProvider = ({
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
+  const [firstLoadedListings, setFirstLoadedListings] = useState(false)
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -133,6 +135,7 @@ const SearchProvider = ({
       const json = await response.json()
       setJson(json)
       setLoading(false)
+      setFirstLoadedListings(true)
 
       if (response.ok && !disabled.current) {
         const { listings, count, page, numPages, aggregates, statistics } = json
@@ -158,6 +161,7 @@ const SearchProvider = ({
 
   const contextValue = useMemo(
     () => ({
+      firstLoadedListings,
       loading,
       params: searchParams,
       setParam,
@@ -176,7 +180,15 @@ const SearchProvider = ({
       setPolygon,
       clearPolygon
     }),
-    [searchParams, searchPolygon, loading, json, request, saved]
+    [
+      searchParams,
+      searchPolygon,
+      loading,
+      firstLoadedListings,
+      json,
+      request,
+      saved
+    ]
   )
 
   return (

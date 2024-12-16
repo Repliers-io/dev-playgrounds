@@ -6,7 +6,10 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Box, Stack } from '@mui/material'
 
+import { type ApiLocation, type Property } from 'services/API/types.ts'
+import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
+import { getPolygonBounds } from 'utils/map.ts'
 
 import schema from '../schema'
 import {
@@ -37,8 +40,23 @@ type FormData = {
   maxPrice: number | null
 }
 
+const getLocations = (listings: Property[]) => {
+  return listings.map((item: Property) => ({
+    lat: parseFloat(item.map.latitude),
+    lng: parseFloat(item.map.longitude)
+  }))
+}
+
+const getMapPosition = (locations: ApiLocation[]) => {
+  const bounds = getPolygonBounds(locations)
+  const center = bounds.getCenter()
+  const zoom = 5
+  return { bounds, center, zoom }
+}
+
 const ParamsForm = () => {
-  const { setParams } = useSearch()
+  const { setPosition } = useMapOptions()
+  const { setParams, search } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -74,8 +92,16 @@ const ParamsForm = () => {
   })
   const { handleSubmit } = methods
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     setParams(data as any)
+
+    const { listings = [] } = (await search(data)) ?? {}
+
+    // set bounds/center/zoom from listings
+    if (listings.length) {
+      const { bounds, center, zoom } = getMapPosition(getLocations(listings))
+      setPosition({ bounds, center, zoom })
+    }
   }
 
   const onError = (errors: any) => {
