@@ -1,6 +1,8 @@
 import React from 'react'
 
-import { Box, Stack, Typography } from '@mui/material'
+import { Box } from '@mui/material'
+
+import ParamLabel from './ParamLabel'
 
 const BoxContainer = ({
   title,
@@ -15,22 +17,7 @@ const BoxContainer = ({
 }) => {
   return (
     <Box width="100%">
-      <Stack spacing={2} direction="row" alignItems="center" pb={1}>
-        <Typography variant="h6" fontSize="12px" textTransform="uppercase">
-          {title}
-        </Typography>
-        {(hint || link) && (
-          <Typography variant="body2" color="text.hint">
-            {link ? (
-              <a target="_blank" href={link}>
-                {hint} <b>↗</b>
-              </a>
-            ) : (
-              hint
-            )}
-          </Typography>
-        )}
-      </Stack>
+      <ParamLabel title={title} hint={hint} link={link} />
       <Box
         sx={{
           p: 1.25,

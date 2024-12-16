@@ -5,11 +5,12 @@ import React, {
   useRef,
   useState
 } from 'react'
-import {
+import mapboxgl, {
   type LngLat,
   type LngLatBounds,
   type Map as MapboxMap
 } from 'mapbox-gl'
+import queryString from 'query-string'
 
 import { getDefaultBounds, getLngLatCenter } from 'utils/map'
 import { mapboxDefaults } from 'constants/map'
@@ -22,6 +23,8 @@ export type MapPosition = {
 }
 
 type MapOptionsContextProps = {
+  loaded: boolean
+  setLoaded: (loaded: boolean) => void
   position: MapPosition
   setPosition: (position: MapPosition) => void
   style: MapStyle
@@ -46,12 +49,17 @@ const MapOptionsProvider = ({
   children?: React.ReactNode
 }) => {
   const mapRef = useRef<MapboxMap | null>(null)
+  const [loaded, setLoaded] = useState(false)
   const [mapStyle, setStyle] = useState(style)
+  const params = useMemo(() => queryString.parse(window.location.search), [])
+  const { lng, lat } = params
 
-  // TODO: add url params extraction instead of defaults
   const bounds = getDefaultBounds()
-  const center = getLngLatCenter(bounds)
-  const zoom = mapboxDefaults.zoom!
+  const center =
+    lng && lat
+      ? new mapboxgl.LngLat(Number(lng), Number(lat))
+      : getLngLatCenter(bounds)
+  const zoom = Number(params.zoom) || mapboxDefaults.zoom!
 
   const initialPosition = useMemo(
     () => ({
@@ -68,6 +76,8 @@ const MapOptionsProvider = ({
 
   const contextValue = useMemo(
     () => ({
+      loaded,
+      setLoaded,
       position: mapPosition,
       setPosition,
       style: mapStyle,

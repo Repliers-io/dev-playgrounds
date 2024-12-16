@@ -127,7 +127,7 @@ const SearchProvider = ({
         }
       )
       const endTime = performance.now()
-      setTime(endTime - startTime)
+      setTime(Math.floor(endTime - startTime))
       setRequest(response.url)
       setStatusCode(response.status)
       const json = await response.json()
