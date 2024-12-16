@@ -27,10 +27,20 @@ import MapStyleSwitch from './MapStyleSwitch'
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
-  const { style, mapRef, setMapRef, position, setPosition, loaded, setLoaded } =
-    useMapOptions()
+  const {
+    style,
+    mapRef,
+    setMapContainerRef,
+    setMapRef,
+    position,
+    setPosition,
+    loaded,
+    setLoaded
+  } = useMapOptions()
   const { count, listings, loading, firstLoadedListings } = useSearch()
   const [drawer, setDrawer] = useState(false)
+
+  setMapContainerRef(mapContainerRef)
 
   const initializeMap = (container: HTMLElement) => {
     const { center, zoom } = position

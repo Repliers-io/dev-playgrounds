@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import merge from 'deepmerge'
+import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -9,7 +10,8 @@ import { Box, Stack } from '@mui/material'
 import { type ApiLocation, type Property } from 'services/API/types.ts'
 import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
-import { getPolygonBounds } from 'utils/map.ts'
+import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map.ts'
+import { mapboxDefaults } from 'constants/map.ts'
 
 import schema from '../schema'
 import {
@@ -47,15 +49,31 @@ const getLocations = (listings: Property[]) => {
   }))
 }
 
-const getMapPosition = (locations: ApiLocation[]) => {
+const getMapContainerSize = (container: HTMLElement | null) => {
+  return container
+    ? { width: container.clientWidth, height: container.clientHeight }
+    : null
+}
+
+const getMapZoom = (bounds: LngLatBounds, container: HTMLElement | null) => {
+  const size = getMapContainerSize(container)
+  return size
+    ? calcZoomLevelForBounds(bounds, size.width, size.height)
+    : mapboxDefaults.zoom!
+}
+
+const getMapPosition = (
+  locations: ApiLocation[],
+  container: HTMLElement | null
+) => {
   const bounds = getPolygonBounds(locations)
   const center = bounds.getCenter()
-  const zoom = 5
+  const zoom = getMapZoom(bounds, container)
   return { bounds, center, zoom }
 }
 
 const ParamsForm = () => {
-  const { setPosition } = useMapOptions()
+  const { setPosition, mapContainerRef } = useMapOptions()
   const { setParams, search } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
@@ -95,11 +113,18 @@ const ParamsForm = () => {
   const onSubmit = async (data: FormData) => {
     setParams(data as any)
 
+    // load listings for calculate bounds/center/zoom, need only once
     const { listings = [] } = (await search(data)) ?? {}
 
     // set bounds/center/zoom from listings
     if (listings.length) {
-      const { bounds, center, zoom } = getMapPosition(getLocations(listings))
+      const { bounds, center, zoom } = getMapPosition(
+        getLocations(listings),
+        mapContainerRef.current
+      )
+
+      // console.log(bounds, center, zoom)
+
       setPosition({ bounds, center, zoom })
     }
   }

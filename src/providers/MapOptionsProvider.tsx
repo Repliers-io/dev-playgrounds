@@ -21,7 +21,9 @@ type MapOptionsContextProps = {
   style: MapStyle
   setStyle: (style: MapStyle) => void
   mapRef: React.MutableRefObject<MapboxMap | null>
+  mapContainerRef: React.MutableRefObject<HTMLDivElement | null>
   setMapRef: (ref: MapboxMap) => void
+  setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) => void
 }
 
 const MapOptionsContext = createContext<MapOptionsContextProps | undefined>(
@@ -39,6 +41,7 @@ const MapOptionsProvider = ({
   position?: MapPosition
   children?: React.ReactNode
 }) => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [mapStyle, setStyle] = useState(style)
@@ -74,7 +77,10 @@ const MapOptionsProvider = ({
       style: mapStyle,
       setStyle,
       mapRef,
-      setMapRef: (ref: MapboxMap) => (mapRef.current = ref)
+      mapContainerRef,
+      setMapRef: (ref: MapboxMap) => (mapRef.current = ref),
+      setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
+        (mapContainerRef.current = ref.current)
     }),
     [mapPosition, mapStyle]
   )

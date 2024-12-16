@@ -135,7 +135,10 @@ const SearchProvider = ({
       const json = await response.json()
       setJson(json)
       setLoading(false)
-      setFirstLoadedListings(true)
+
+      if (!firstLoadedListings) {
+        setFirstLoadedListings(true)
+      }
 
       if (response.ok && !disabled.current) {
         const { listings, count, page, numPages, aggregates, statistics } = json
