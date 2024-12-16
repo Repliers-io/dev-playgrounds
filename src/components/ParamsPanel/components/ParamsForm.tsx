@@ -10,7 +10,11 @@ import { Box, Stack } from '@mui/material'
 import { type ApiLocation, type Property } from 'services/API/types.ts'
 import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
-import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map.ts'
+import {
+  calcZoomLevelForBounds,
+  getPolygonBounds,
+  updateMapboxPosition
+} from 'utils/map.ts'
 import { mapboxDefaults } from 'constants/map.ts'
 
 import schema from '../schema'
@@ -73,7 +77,7 @@ const getMapPosition = (
 }
 
 const ParamsForm = () => {
-  const { setPosition, mapContainerRef } = useMapOptions()
+  const { setPosition, mapContainerRef, mapRef } = useMapOptions()
   const { setParams, search } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
@@ -123,9 +127,8 @@ const ParamsForm = () => {
         mapContainerRef.current
       )
 
-      // console.log(bounds, center, zoom)
-
       setPosition({ bounds, center, zoom })
+      updateMapboxPosition(mapRef.current, { bounds, center, zoom })
     }
   }
 

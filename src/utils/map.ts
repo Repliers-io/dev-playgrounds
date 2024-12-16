@@ -9,6 +9,7 @@ import {
   type ApiCoords,
   type ApiLocation
 } from 'services/API/types'
+import { type MapPosition } from 'services/Map/types.ts'
 import { toSafeNumber } from 'utils/formatters'
 import { info } from 'constants/colors'
 import { secondary } from 'constants/colors'
@@ -280,4 +281,17 @@ export const addPolygon = (map: MapboxMap, polygon: Position[]) => {
       }
     })
   }
+}
+
+export const updateMapboxPosition = (
+  map: MapboxMap | null,
+  position: MapPosition
+) => {
+  const { center, zoom, bounds } = position
+
+  if (!map || !center || !bounds) return
+
+  map.setCenter(center)
+  map.setZoom(zoom)
+  map.fitBounds(bounds, { animate: true })
 }
