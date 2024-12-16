@@ -12,6 +12,7 @@ import schema from '../schema'
 import {
   classOptions,
   lastStatusOptions,
+  sortByOptions,
   statusOptions,
   typeOptions
 } from '../types'
@@ -135,28 +136,38 @@ const ParamsForm = () => {
                   />
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
-                <ParamsField
+
+                {/* TODO: Make Multi-Select */}
+                <ParamsSelect
                   name="sortBy"
                   hint="docs"
                   link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
+                  options={sortByOptions}
                   onChange={handleChange}
                 />
 
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="type"
                   options={typeOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="class"
                   options={classOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="status"
                   options={statusOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="lastStatus"
                   options={lastStatusOptions}
@@ -165,6 +176,7 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
+                {/* TODO: Make Multi-Select */}
                 <ParamsField
                   name="propertyType"
                   hint="docs"
