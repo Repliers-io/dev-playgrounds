@@ -25,7 +25,6 @@ type Params = Filters & { apiKey: string; apiUrl: string }
 type ParamKeys = keyof Params
 
 type SearchContextType = SavedResponse & {
-  firstLoadedListings: boolean
   loading: boolean
   params: Partial<Params>
   setParam: (key: ParamKeys, value: any) => void
@@ -42,6 +41,7 @@ type SearchContextType = SavedResponse & {
   polygon: Position[] | null
   setPolygon: (polygon: Position[]) => void
   clearPolygon: () => void
+  clearData: () => void
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
@@ -64,7 +64,6 @@ const SearchProvider = ({
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
-  const [firstLoadedListings, setFirstLoadedListings] = useState(false)
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -108,6 +107,14 @@ const SearchProvider = ({
 
   const clearPolygon = () => setPolygon(null)
 
+  const clearData = () => {
+    setRequest('')
+    setTime(0)
+    setStatusCode(null)
+    setSaved(emptySavedResponse)
+    setJson(null)
+  }
+
   const search = async (params: any) => {
     try {
       setLoading(true)
@@ -136,10 +143,6 @@ const SearchProvider = ({
       setJson(json)
       setLoading(false)
 
-      if (!firstLoadedListings) {
-        setFirstLoadedListings(true)
-      }
-
       if (response.ok && !disabled.current) {
         const { listings, count, page, numPages, aggregates, statistics } = json
 
@@ -164,7 +167,6 @@ const SearchProvider = ({
 
   const contextValue = useMemo(
     () => ({
-      firstLoadedListings,
       loading,
       params: searchParams,
       setParam,
@@ -181,17 +183,10 @@ const SearchProvider = ({
       ...saved, // destructured saved object shorthands
       polygon: searchPolygon,
       setPolygon,
-      clearPolygon
+      clearPolygon,
+      clearData
     }),
-    [
-      searchParams,
-      searchPolygon,
-      loading,
-      firstLoadedListings,
-      json,
-      request,
-      saved
-    ]
+    [searchParams, searchPolygon, loading, json, request, saved]
   )
 
   return (
