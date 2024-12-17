@@ -56,13 +56,9 @@ const fetchLocations = async ({
   apiUrl: string
 }) => {
   try {
-    const response = await apiFetch(
-      `${apiUrl}/listings`,
-      { get: { fields: 'map' } },
-      {
-        headers: { 'REPLIERS-API-KEY': apiKey }
-      }
-    )
+    const getOptions = { get: { fields: 'map,mlsNumber' } }
+    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
+    const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
     if (!response.ok) {
       throw new Error('[fetchLocations]: could not fetch locations')
     }
@@ -71,7 +67,7 @@ const fetchLocations = async ({
     return getLocations(listings)
   } catch (error) {
     console.error(error)
-    return null
+    throw error
   }
 }
 
@@ -124,7 +120,9 @@ const ParamsPanel = () => {
     }
   }
 
-  // subscribe for apiKey changes must refetch listings, calculate new position and reinitialize map
+  // subscribe for apiKey changes must refetch listings
+  // for calculate position/bounds/zoom
+  // and clear old response
   useEffect(() => {
     const { apiKey = '', apiUrl = '' } = params
     if (!apiKey || !apiUrl || !mapContainerRef.current) return
