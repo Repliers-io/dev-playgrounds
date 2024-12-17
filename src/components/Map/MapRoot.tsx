@@ -79,7 +79,10 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
 
   useEffect(() => {
     if (!mapRef.current) return
-    if (!listings?.length) return
+    if (!listings?.length) {
+      MapService.resetMarkers()
+      return
+    }
     // add markers to map
     MapService.showMarkers({ map: mapRef.current, listings })
   }, [listings])
