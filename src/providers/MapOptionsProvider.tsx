@@ -1,28 +1,27 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useRef,
   useState
 } from 'react'
-import mapboxgl, { type Map as MapboxMap } from 'mapbox-gl'
-import queryString from 'query-string'
+import { type Map as MapboxMap } from 'mapbox-gl'
 
 import { type MapPosition } from 'services/Map/types'
-import { getDefaultBounds, getLngLatCenter } from 'utils/map'
-import { mapboxDefaults } from 'constants/map'
 import { type MapStyle } from 'constants/map-styles'
 
 type MapOptionsContextProps = {
-  loaded: boolean
-  setLoaded: (loaded: boolean) => void
-  position: MapPosition
+  canRenderMap: boolean
+  position?: MapPosition
   setPosition: (position: MapPosition) => void
+  setCanRenderMap: (loaded: boolean) => void
   style: MapStyle
   setStyle: (style: MapStyle) => void
   mapRef: React.MutableRefObject<MapboxMap | null>
   mapContainerRef: React.MutableRefObject<HTMLDivElement | null>
-  setMapRef: (ref: MapboxMap) => void
+  destroyMap: () => void
+  setMapRef: (ref: MapboxMap | null) => void
   setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) => void
 }
 
@@ -41,48 +40,39 @@ const MapOptionsProvider = ({
   position?: MapPosition
   children?: React.ReactNode
 }) => {
+  const [canRenderMap, setCanRenderMap] = useState(false)
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapboxMap | null>(null)
-  const [loaded, setLoaded] = useState(false)
   const [mapStyle, setStyle] = useState(style)
-  const params = useMemo(() => queryString.parse(window.location.search), [])
-  const { lng, lat } = params
 
-  const bounds = getDefaultBounds()
-  const center =
-    lng && lat
-      ? new mapboxgl.LngLat(Number(lng), Number(lat))
-      : getLngLatCenter(bounds)
-  const zoom = Number(params.zoom) || mapboxDefaults.zoom!
-
-  const initialPosition = useMemo(
-    () => ({
-      bounds,
-      center,
-      zoom
-    }),
-    []
+  const [mapPosition, setPosition] = useState<MapPosition | undefined>(
+    position || undefined
   )
 
-  const [mapPosition, setPosition] = useState<MapPosition>(
-    position || initialPosition
-  )
+  const destroyMap = useCallback(() => {
+    const map = mapRef.current
+    if (map) {
+      map.remove()
+      mapRef.current = null
+    }
+  }, [mapRef])
 
   const contextValue = useMemo(
     () => ({
-      loaded,
-      setLoaded,
+      canRenderMap,
       position: mapPosition,
       setPosition,
+      setCanRenderMap,
       style: mapStyle,
       setStyle,
       mapRef,
       mapContainerRef,
-      setMapRef: (ref: MapboxMap) => (mapRef.current = ref),
+      destroyMap,
+      setMapRef: (ref: MapboxMap | null) => (mapRef.current = ref),
       setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
         (mapContainerRef.current = ref.current)
     }),
-    [mapPosition, mapStyle]
+    [mapPosition, mapStyle, canRenderMap]
   )
 
   return (
