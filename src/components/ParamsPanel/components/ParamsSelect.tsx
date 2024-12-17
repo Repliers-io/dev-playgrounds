@@ -16,7 +16,7 @@ const ParamsSelect = ({
   label?: string
   hint?: string
   link?: string
-  options: string[]
+  options: readonly string[]
   onChange?: () => void
 }) => {
   const {
@@ -46,17 +46,19 @@ const ParamsSelect = ({
               field.onChange(e)
               onChange?.()
             }}
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected) => {
-                if (!selected) {
-                  return (
-                    <Typography variant="body2" color="#CCC">
-                      null
-                    </Typography>
-                  )
+            slotProps={{
+              select: {
+                displayEmpty: true,
+                renderValue: (selected) => {
+                  if (!selected) {
+                    return (
+                      <Typography variant="body2" color="#CCC">
+                        null
+                      </Typography>
+                    )
+                  }
+                  return <>{selected}</>
                 }
-                return selected
               }
             }}
           >

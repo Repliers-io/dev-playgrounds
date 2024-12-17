@@ -29,7 +29,6 @@ const schema = Joi.object({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
   type: Joi.string().allow(''),
-  packageType: Joi.string().allow(''),
   sortBy: Joi.string().allow(''),
   propertyType: Joi.string().allow(''),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
@@ -47,7 +46,11 @@ const schema = Joi.object({
       'number.base': 'Results per page must be a number',
       'number.min': 'Results per page must be at least 1',
       'number.max': 'Results per page must be at most 100'
-    })
+    }),
+  minBedrooms: Joi.number().integer().positive().allow(null, false, ''),
+  minBaths: Joi.number().integer().positive().allow(null, false, ''),
+  minGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
+  minParkingSpaces: Joi.number().integer().positive().allow(null, false, '')
 })
 
 export default schema

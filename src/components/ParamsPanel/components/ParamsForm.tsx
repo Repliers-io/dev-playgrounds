@@ -12,6 +12,7 @@ import schema from '../schema'
 import {
   classOptions,
   lastStatusOptions,
+  sortByOptions,
   statusOptions,
   typeOptions
 } from '../types'
@@ -35,6 +36,10 @@ type FormData = {
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
+  minBedrooms: number | null
+  minBaths: number | null
+  minGarageSpaces: number | null
+  minParkingSpaces: number | null
 }
 
 const ParamsForm = () => {
@@ -57,7 +62,11 @@ const ParamsForm = () => {
           propertyType: '',
           sortBy: '',
           minPrice: null,
-          maxPrice: null
+          maxPrice: null,
+          minBedrooms: null,
+          minBaths: null,
+          minGarageSpaces: null,
+          minParkingSpaces: null
         },
         // cache them one time on first render
         apiParams
@@ -135,40 +144,47 @@ const ParamsForm = () => {
                   />
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
-                <ParamsField
+
+                {/* TODO: Make Multi-Select */}
+                <ParamsSelect
                   name="sortBy"
                   hint="docs"
                   link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
+                  options={sortByOptions}
                   onChange={handleChange}
                 />
 
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="type"
-                  options={
-                    [
-                      ...typeOptions
-                    ] /* WARN: `options` prop doesnt allow to pass readonly arrays, they should be mutable */
-                  }
+                  options={typeOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="class"
-                  options={[...classOptions]}
+                  options={classOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="status"
-                  options={[...statusOptions]}
+                  options={statusOptions}
                   onChange={handleChange}
                 />
+
+                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="lastStatus"
-                  options={[...lastStatusOptions]}
+                  options={lastStatusOptions}
                   hint="docs"
                   link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
                   onChange={handleChange}
                 />
 
+                {/* TODO: Make Multi-Select */}
                 <ParamsField
                   name="propertyType"
                   hint="docs"

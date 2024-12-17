@@ -22,3 +22,34 @@ export type TypeOption = (typeof typeOptions)[number] // `Type`
 
 export const statusOptions = ['A', 'U'] as const
 export type StatusOption = (typeof statusOptions)[number]
+
+export const sortByOptions = [
+  'createdOnDesc',
+  'updatedOnDesc',
+  'createdOnAsc',
+  'distanceAsc',
+  'distanceDesc',
+  'updatedOnAsc',
+  'soldDateAsc',
+  'soldDateDesc',
+  'soldPriceAsc',
+  'soldPriceDesc',
+  'sqftAsc',
+  'sqftDesc',
+  'listPriceAsc',
+  'listPriceDesc',
+  'bedsAsc',
+  'bedsDesc',
+  'bathsDesc',
+  'bathsAsc',
+  'yearBuiltDesc',
+  'yearBuiltAsc',
+  'random',
+  'statusAscListDateAsc',
+  'statusAscListDateDesc',
+  'statusAscListPriceAsc',
+  'statusAscListPriceDesc',
+  'repliersUpdatedOnAsc',
+  'repliersUpdatedOnDesc'
+] as const
+export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
