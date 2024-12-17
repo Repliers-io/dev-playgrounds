@@ -6,9 +6,7 @@ import BoundsPoint from './BoundsPoint'
 import ParamsSection from './ParamsSection'
 
 const BoundsForm = () => {
-  const {
-    position: { bounds }
-  } = useMapOptions()
+  const { position: { bounds } = {} } = useMapOptions()
   if (!bounds) return null
 
   const ne = bounds.getNorthEast()

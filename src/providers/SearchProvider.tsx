@@ -41,6 +41,7 @@ type SearchContextType = SavedResponse & {
   polygon: Position[] | null
   setPolygon: (polygon: Position[]) => void
   clearPolygon: () => void
+  clearData: () => void
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
@@ -105,6 +106,14 @@ const SearchProvider = ({
   const resetParams = () => setParams(defaults)
 
   const clearPolygon = () => setPolygon(null)
+
+  const clearData = () => {
+    setRequest('')
+    setTime(0)
+    setStatusCode(null)
+    setSaved(emptySavedResponse)
+    setJson(null)
+  }
 
   const search = async (params: any) => {
     try {
@@ -174,7 +183,8 @@ const SearchProvider = ({
       ...saved, // destructured saved object shorthands
       polygon: searchPolygon,
       setPolygon,
-      clearPolygon
+      clearPolygon,
+      clearData
     }),
     [searchParams, searchPolygon, loading, json, request, saved]
   )

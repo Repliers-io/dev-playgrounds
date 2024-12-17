@@ -46,7 +46,11 @@ export class MapService {
         label,
         status,
         size: 'point',
-        onClick: (e: MouseEvent) => onClick?.(e, property),
+        onClick: (e: MouseEvent) => {
+          // Prevent redirect on click
+          e.preventDefault()
+          onClick?.(e, property)
+        },
         onTap: () => {
           const markerCenterPixels = map.project([
             propertyCenter.lng,
