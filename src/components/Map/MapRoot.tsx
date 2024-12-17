@@ -16,7 +16,7 @@ import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import { highlightElementByText, scrollToElementByText } from 'utils/dom'
+import { highlightJsonItem, scrollToElementByText } from 'utils/dom'
 import { getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
 
@@ -90,7 +90,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       listings,
       onClick: (e, property) => {
         scrollToElementByText(`${property.mlsNumber}`)
-        highlightElementByText(`${property.mlsNumber}`)
+        highlightJsonItem(`${property.mlsNumber}`)
       }
     })
   }, [listings])

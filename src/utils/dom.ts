@@ -33,8 +33,18 @@ export const scrollToElementByText = (text: string) => {
   }
 }
 
-// TODO: refactor, remove hard-coded logic inside
 export const highlightElementByText = (text: string) => {
+  const element = findElementByText(text)
+  const oldHighlight = document.querySelector('.highlight')
+  if (element) {
+    oldHighlight?.classList.remove('highlight')
+    element.classList.add('highlight')
+  } else {
+    console.error('Element with the specified text not found.')
+  }
+}
+
+export const highlightJsonItem = (text: string) => {
   const element = findElementByText(text)
   const parent = element?.closest('ul')?.parentElement
   const oldHighlight = document.querySelector('.highlight')
