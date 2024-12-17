@@ -1,21 +1,12 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import merge from 'deepmerge'
-import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Box, Stack } from '@mui/material'
 
-import { type ApiLocation, type Property } from 'services/API/types.ts'
-import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
-import {
-  calcZoomLevelForBounds,
-  getPolygonBounds,
-  updateMapboxPosition
-} from 'utils/map.ts'
-import { mapboxDefaults } from 'constants/map.ts'
 
 import schema from '../schema'
 import {
@@ -46,39 +37,8 @@ type FormData = {
   maxPrice: number | null
 }
 
-const getLocations = (listings: Property[]) => {
-  return listings.map((item: Property) => ({
-    lat: parseFloat(item.map.latitude),
-    lng: parseFloat(item.map.longitude)
-  }))
-}
-
-const getMapContainerSize = (container: HTMLElement | null) => {
-  return container
-    ? { width: container.clientWidth, height: container.clientHeight }
-    : null
-}
-
-const getMapZoom = (bounds: LngLatBounds, container: HTMLElement | null) => {
-  const size = getMapContainerSize(container)
-  return size
-    ? calcZoomLevelForBounds(bounds, size.width, size.height)
-    : mapboxDefaults.zoom!
-}
-
-const getMapPosition = (
-  locations: ApiLocation[],
-  container: HTMLElement | null
-) => {
-  const bounds = getPolygonBounds(locations)
-  const center = bounds.getCenter()
-  const zoom = getMapZoom(bounds, container)
-  return { bounds, center, zoom }
-}
-
 const ParamsForm = () => {
-  const { setPosition, mapContainerRef, mapRef } = useMapOptions()
-  const { setParams, search } = useSearch()
+  const { setParams } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -114,22 +74,8 @@ const ParamsForm = () => {
   })
   const { handleSubmit } = methods
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     setParams(data as any)
-
-    // load listings for calculate bounds/center/zoom, need only once
-    const { listings = [] } = (await search(data)) ?? {}
-
-    // set bounds/center/zoom from listings
-    if (listings.length) {
-      const { bounds, center, zoom } = getMapPosition(
-        getLocations(listings),
-        mapContainerRef.current
-      )
-
-      setPosition({ bounds, center, zoom })
-      updateMapboxPosition(mapRef.current, { bounds, center, zoom })
-    }
   }
 
   const onError = (errors: any) => {
