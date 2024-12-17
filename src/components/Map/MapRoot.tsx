@@ -16,7 +16,7 @@ import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import { getDefaultBounds, getMapStyleUrl } from 'utils/map'
+import { getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
 
 import CardsCarousel from './CardsCarousel'
@@ -27,30 +27,33 @@ import MapStyleSwitch from './MapStyleSwitch'
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
-  const { style, mapRef, setMapRef, position, setPosition, loaded, setLoaded } =
-    useMapOptions()
+  const {
+    canRenderMap,
+    style,
+    mapRef,
+    setMapContainerRef,
+    setMapRef,
+    position,
+    setPosition,
+    destroyMap
+  } = useMapOptions()
   const { count, listings, loading } = useSearch()
   const [drawer, setDrawer] = useState(false)
 
+  setMapContainerRef(mapContainerRef)
+
   const initializeMap = (container: HTMLElement) => {
-    const { center, zoom } = position
-    const initialPosition =
-      center && zoom ? { center, zoom } : { bounds: getDefaultBounds() }
+    const { center, zoom, bounds } = position ?? {}
+    if (!bounds || !zoom || !center) return
 
     const map = new MapboxMap({
       container,
       accessToken: mapboxToken,
       ...mapboxDefaults,
-      ...initialPosition,
+      center,
+      zoom,
+      bounds,
       style: getMapStyleUrl(style)
-    })
-
-    map.on('load', () => {
-      const bounds = map.getBounds()!
-      const center = map.getCenter()
-      const zoom = map.getZoom()
-      setLoaded(true)
-      setPosition({ bounds, center, zoom })
     })
 
     map.on('moveend', () => {
@@ -61,6 +64,13 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     })
 
     setMapRef(map)
+  }
+
+  const reinitializeMap = () => {
+    const container = mapContainerRef.current
+    if (!container) return
+    destroyMap()
+    initializeMap(container)
   }
 
   const handleDrawerClick = () => {
@@ -83,10 +93,21 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [style])
 
   useEffect(() => {
-    if (!mapRef.current && mapContainerRef.current) {
-      initializeMap(mapContainerRef.current)
+    const map = mapRef.current
+    const container = mapContainerRef.current
+
+    if (!container) return
+
+    if (canRenderMap) {
+      if (map) {
+        reinitializeMap()
+      } else {
+        initializeMap(container)
+      }
+    } else {
+      destroyMap()
     }
-  }, [mapContainerRef])
+  }, [canRenderMap, mapContainerRef])
 
   return (
     <Stack
@@ -109,35 +130,33 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
-        {loaded && (
-          <Stack
-            spacing={0.5}
-            direction="row"
-            alignItems="center"
-            sx={{
-              left: 16,
-              top: 16,
-              position: 'absolute',
-              backdropFilter: 'blur(4px)',
-              bgcolor: alpha('#FFFFFF', 0.7),
-              borderRadius: 6,
-              boxShadow: 1,
-              p: 0.25,
-              pr: 1.5
-            }}
-          >
-            {loading ? (
-              <>
-                <CircularProgress size={14} sx={{ p: 1 }} />
-                <Typography>Loading</Typography>
-              </>
-            ) : (
-              <Typography sx={{ pl: 1, lineHeight: '30px' }}>
-                {count} Listings
-              </Typography>
-            )}
-          </Stack>
-        )}
+        <Stack
+          spacing={0.5}
+          direction="row"
+          alignItems="center"
+          sx={{
+            left: 16,
+            top: 16,
+            position: 'absolute',
+            backdropFilter: 'blur(4px)',
+            bgcolor: alpha('#FFFFFF', 0.7),
+            borderRadius: 6,
+            boxShadow: 1,
+            p: 0.25,
+            pr: 1.5
+          }}
+        >
+          {loading ? (
+            <>
+              <CircularProgress size={14} sx={{ p: 1 }} />
+              <Typography>Loading ...</Typography>
+            </>
+          ) : (
+            <Typography sx={{ pl: 1, lineHeight: '30px' }}>
+              {count} Listings
+            </Typography>
+          )}
+        </Stack>
         <Box
           sx={{
             position: 'absolute',

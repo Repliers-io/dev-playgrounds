@@ -4,6 +4,12 @@ import { type Map as MapboxMap } from 'mapbox-gl'
 
 import { lighten } from '@mui/material'
 
+import {
+  type ApiBounds,
+  type ApiCoords,
+  type ApiLocation
+} from 'services/API/types'
+import { type MapPosition } from 'services/Map/types.ts'
 import { toSafeNumber } from 'utils/formatters'
 import { info } from 'constants/colors'
 import { secondary } from 'constants/colors'
@@ -14,17 +20,7 @@ import {
   mapStyles
 } from 'constants/map'
 
-export type ApiCoords = {
-  latitude: number
-  longitude: number
-}
-
-export type ApiBounds = {
-  top_left: ApiCoords
-  bottom_right: ApiCoords
-}
-
-type Polygon = Array<{ lat: number; lng: number }>
+type Polygon = Array<ApiLocation>
 
 /**
  * @description Function to convert custom polygon object from 'constants/map' module to mapbox bounds
@@ -285,4 +281,17 @@ export const addPolygon = (map: MapboxMap, polygon: Position[]) => {
       }
     })
   }
+}
+
+export const updateMapboxPosition = (
+  map: MapboxMap | null,
+  position: MapPosition
+) => {
+  const { center, zoom, bounds } = position
+
+  if (!map || !center || !bounds) return
+
+  map.setCenter(center)
+  map.setZoom(zoom)
+  map.fitBounds(bounds, { animate: true })
 }
