@@ -12,11 +12,16 @@ import {
   Typography
 } from '@mui/material'
 
+import { type Property } from 'services/API/types.ts'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import { highlightJsonItem, scrollToElementByText } from 'utils/dom'
+import {
+  highlightJsonItem,
+  removeHighlight,
+  scrollToElementByText
+} from 'utils/dom'
 import { getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
 
@@ -25,6 +30,14 @@ import MapContainer from './MapContainer'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
 
+const getHighlightedMarker = (
+  listings: Property[],
+  highlightedMarker: string | number | null
+) => {
+  if (!highlightedMarker) return null
+  return listings.find((item) => item.mlsNumber === highlightedMarker)
+}
+
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
@@ -32,6 +45,8 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     canRenderMap,
     style,
     mapRef,
+    highlightedMarker,
+    setHighlightedMarker,
     setMapContainerRef,
     setMapRef,
     position,
@@ -82,6 +97,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     if (!mapRef.current) return
     if (!listings?.length) {
       MapService.resetMarkers()
+      setHighlightedMarker(null)
       return
     }
     // add markers to map
@@ -91,9 +107,18 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       onClick: (e, property) => {
         scrollToElementByText(`${property.mlsNumber}`)
         highlightJsonItem(`${property.mlsNumber}`)
+        setHighlightedMarker(property.mlsNumber)
       }
     })
   }, [listings])
+
+  useEffect(() => {
+    const highlighted = getHighlightedMarker(listings, highlightedMarker)
+    if (!highlighted) {
+      setHighlightedMarker(null)
+      removeHighlight()
+    }
+  }, [listings, highlightedMarker])
 
   useEffect(() => {
     mapRef.current?.resize()
