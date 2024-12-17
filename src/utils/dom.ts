@@ -55,3 +55,8 @@ export const highlightJsonItem = (text: string) => {
     console.error('Element with the specified text not found.')
   }
 }
+
+export const removeHighlight = () => {
+  const oldHighlight = document.querySelector('.highlight')
+  oldHighlight?.classList.remove('highlight')
+}
