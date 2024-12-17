@@ -16,6 +16,8 @@ type MapOptionsContextProps = {
   position?: MapPosition
   setPosition: (position: MapPosition) => void
   setCanRenderMap: (loaded: boolean) => void
+  highlightedMarker: string | null
+  setHighlightedMarker: (mls: string | null) => void
   style: MapStyle
   setStyle: (style: MapStyle) => void
   mapRef: React.MutableRefObject<MapboxMap | null>
@@ -45,6 +47,10 @@ const MapOptionsProvider = ({
   const mapRef = useRef<MapboxMap | null>(null)
   const [mapStyle, setStyle] = useState(style)
 
+  const [highlightedMarker, setHighlightedMarker] = useState<string | null>(
+    null
+  )
+
   const [mapPosition, setPosition] = useState<MapPosition | undefined>(
     position || undefined
   )
@@ -59,6 +65,8 @@ const MapOptionsProvider = ({
 
   const contextValue = useMemo(
     () => ({
+      highlightedMarker,
+      setHighlightedMarker,
       canRenderMap,
       position: mapPosition,
       setPosition,
@@ -72,7 +80,7 @@ const MapOptionsProvider = ({
       setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
         (mapContainerRef.current = ref.current)
     }),
-    [mapPosition, mapStyle, canRenderMap]
+    [mapPosition, mapStyle, canRenderMap, highlightedMarker]
   )
 
   return (
