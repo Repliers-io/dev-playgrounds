@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { type Position } from 'geojson'
+import _ from 'lodash'
 import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 
@@ -19,10 +20,13 @@ import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
 
 const getLocations = (listings: Property[]) => {
-  return listings.map((item: Property) => ({
-    lat: parseFloat(item.map.latitude),
-    lng: parseFloat(item.map.longitude)
-  }))
+  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
+  return listings
+    .map((item: Property) => ({
+      lat: parseFloat(item.map.latitude),
+      lng: parseFloat(item.map.longitude)
+    }))
+    .filter(({ lat, lng }) => lat > 0 && lng < 0)
 }
 
 const getMapContainerSize = (container: HTMLElement | null) => {
@@ -48,13 +52,9 @@ const getMapPosition = (
   return { bounds, center, zoom }
 }
 
-const fetchLocations = async ({
-  apiKey,
-  apiUrl
-}: {
-  apiKey: string
-  apiUrl: string
-}) => {
+type APIHost = { apiUrl: string; apiKey: string }
+
+const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
     const getOptions = { get: { fields: 'map,mlsNumber' } }
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
@@ -65,6 +65,70 @@ const fetchLocations = async ({
 
     const { listings } = await response.json()
     return getLocations(listings)
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+interface AllowedRepliersValuesRequest {
+  appField: string
+  repliersField: string
+}
+
+const fields: AllowedRepliersValuesRequest[] = [
+  {
+    appField: 'propertyType',
+    repliersField: 'details.propertyType'
+  },
+  {
+    appField: 'style',
+    repliersField: 'details.style'
+  },
+  {
+    appField: 'lastStatus',
+    repliersField: 'lastStatus'
+  }
+]
+
+const flattenAllowedFieldValues = (
+  aggregates: object,
+  fields: AllowedRepliersValuesRequest[]
+) => {
+  const flatObj = fields.reduce(
+    (acc: Record<string, string[]>, { appField, repliersField }) => {
+      const obj = _.get(aggregates, repliersField)
+      if (obj && typeof obj == 'object') {
+        acc[appField] = Object.keys(obj)
+      }
+      return acc
+    },
+    {}
+  )
+  return flatObj
+}
+
+const fetchAllowedFieldValues = async ({
+  apiKey,
+  apiUrl,
+  fields
+}: APIHost & { fields: AllowedRepliersValuesRequest[] }) => {
+  const fieldNames = fields.map(({ repliersField }) => repliersField)
+  try {
+    const getOptions = {
+      get: {
+        listings: 'false',
+        aggregates: fieldNames.join(','),
+        status: ['A', 'U']
+      }
+    }
+    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
+    const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
+    if (!response.ok) {
+      throw new Error('[fetchAllowedFieldValue]: could not fetch locations')
+    }
+    const { aggregates } = await response.json()
+    return flattenAllowedFieldValues(aggregates, fields)
   } catch (error) {
     console.error(error)
     throw error
@@ -135,6 +199,15 @@ const ParamsPanel = () => {
       savePosition(locations, mapContainerRef.current)
 
       setCanRenderMap(true)
+    })
+
+    fetchAllowedFieldValues({
+      apiKey,
+      apiUrl,
+      fields: fields
+    }).then((values) => {
+      // eslint-disable-next-line no-console
+      console.log('values: ', values)
     })
   }, [params.apiKey])
 
