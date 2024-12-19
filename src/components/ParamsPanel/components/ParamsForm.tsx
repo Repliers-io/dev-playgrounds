@@ -59,10 +59,10 @@ const ParamsForm = () => {
           boardId: null,
           class: [],
           status: [],
-          lastStatus: '',
+          lastStatus: [],
           type: [],
           propertyType: '',
-          sortBy: '',
+          sortBy: [],
           minPrice: null,
           maxPrice: null,
           minBedrooms: null,
@@ -147,8 +147,7 @@ const ParamsForm = () => {
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="sortBy"
                   hint="docs"
                   link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
@@ -174,8 +173,7 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="lastStatus"
                   options={lastStatusOptions}
                   hint="docs"

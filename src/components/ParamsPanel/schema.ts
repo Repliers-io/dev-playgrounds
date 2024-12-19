@@ -3,6 +3,7 @@ import Joi from 'joi'
 import {
   classOptions,
   lastStatusOptions,
+  sortByOptions,
   statusOptions,
   typeOptions
 } from './types'
@@ -31,16 +32,18 @@ const schema = Joi.object({
   status: Joi.array()
     .items(Joi.string().valid(...statusOptions))
     .allow(null, ''),
-  lastStatus: Joi.string()
-    .valid(...lastStatusOptions)
-    .allow('')
+  lastStatus: Joi.array()
+    .items(Joi.string().valid(...lastStatusOptions))
+    .allow(null, '')
     .messages({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),
-  sortBy: Joi.string().allow(''),
+  sortBy: Joi.array()
+    .items(Joi.string().valid(...sortByOptions))
+    .allow(null, ''),
   propertyType: Joi.string().allow(''),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
   maxPrice: Joi.number().integer().positive().allow(null, false, ''),
