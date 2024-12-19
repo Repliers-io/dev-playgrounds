@@ -46,7 +46,8 @@ type FormData = {
 }
 
 const ParamsForm = () => {
-  const { propertyTypeOptions } = useAllowedFieldValues()
+  const { propertyTypeOptions, styleOptions, lastStatusOptions } =
+    useAllowedFieldValues()
   const { setParams } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
@@ -63,6 +64,7 @@ const ParamsForm = () => {
           status: [],
           lastStatus: [],
           type: [],
+          style: [],
           propertyType: [],
           sortBy: '',
           minPrice: null,
@@ -166,6 +168,12 @@ const ParamsForm = () => {
                 <ParamsMultiselect
                   name="class"
                   options={classOptions}
+                  onChange={handleChange}
+                />
+
+                <ParamsMultiselect
+                  name="style"
+                  options={styleOptions}
                   onChange={handleChange}
                 />
 

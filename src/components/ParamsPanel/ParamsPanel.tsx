@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { type Position } from 'geojson'
-import _ from 'lodash'
 import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 

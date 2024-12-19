@@ -41,6 +41,7 @@ const schema = Joi.object({
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),
+  style: Joi.array().items(Joi.string()).allow(null, ''),
   sortBy: Joi.string()
     .valid(...sortByOptions)
     .allow(null, ''),

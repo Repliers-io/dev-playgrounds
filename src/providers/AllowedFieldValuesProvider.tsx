@@ -76,9 +76,13 @@ export const AllowedFieldValuesProvider: React.FC<Props> = ({
     if (!apiKey || !apiUrl) return
     fetchAllowedFieldValues(apiKey, apiUrl)
       .then((values) => {
-        setPropertyTypeOptions(values.propertyType || [])
-        setStyleOptions(values.style || [])
-        setLastStatusOptions(values.lastStatus || [])
+        const { propertyType = [], style = [], lastStatus = [] } = values
+        setPropertyTypeOptions(propertyType)
+        setStyleOptions(style)
+        setLastStatusOptions(lastStatus)
+
+        // eslint-disable-next-line no-console
+        console.log('Allowed field values fetched:', values)
       })
       .catch((error) => {
         console.error('Error fetching allowed field values:', error)
