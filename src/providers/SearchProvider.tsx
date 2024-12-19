@@ -8,7 +8,12 @@ import React, {
 } from 'react'
 import type { Position } from 'geojson'
 
-import type { ApiCluster, ApiQueryResponse, Property } from 'services/API/types'
+import type {
+  ApiCluster,
+  APIHost,
+  ApiQueryResponse,
+  Property
+} from 'services/API/types'
 import type { Filters } from 'services/Search'
 import { apiFetch } from 'utils/api'
 
@@ -21,7 +26,7 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
-type Params = Filters & { apiKey: string; apiUrl: string }
+type Params = Filters & APIHost
 type ParamKeys = keyof Params
 
 type SearchContextType = SavedResponse & {
