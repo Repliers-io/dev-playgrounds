@@ -1,6 +1,12 @@
 import Joi from 'joi'
 
-import { lastStatusOptions } from './types'
+import {
+  classOptions,
+  lastStatusOptions,
+  sortByOptions,
+  statusOptions,
+  typeOptions
+} from './types'
 
 const schema = Joi.object({
   apiKey: Joi.string().messages({
@@ -20,16 +26,24 @@ const schema = Joi.object({
     .messages({
       'number.base': 'Board ID must be a number'
     }),
-  class: Joi.string().allow(''),
-  status: Joi.string().allow(''),
-  lastStatus: Joi.string()
-    .valid(...lastStatusOptions)
-    .allow('')
+  class: Joi.array()
+    .items(Joi.string().valid(...classOptions))
+    .allow(null, ''),
+  status: Joi.array()
+    .items(Joi.string().valid(...statusOptions))
+    .allow(null, ''),
+  lastStatus: Joi.array()
+    .items(Joi.string().valid(...lastStatusOptions))
+    .allow(null, '')
     .messages({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
-  type: Joi.string().allow(''),
-  sortBy: Joi.string().allow(''),
+  type: Joi.array()
+    .items(Joi.string().valid(...typeOptions))
+    .allow(null, ''),
+  sortBy: Joi.string()
+    .valid(...sortByOptions)
+    .allow(null, ''),
   propertyType: Joi.string().allow(''),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
   maxPrice: Joi.number().integer().positive().allow(null, false, ''),
