@@ -8,6 +8,7 @@ import { Box, Stack } from '@mui/material'
 
 import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
 
+import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from '../schema'
@@ -45,6 +46,7 @@ type FormData = {
 }
 
 const ParamsForm = () => {
+  const { propertyTypeOptions } = useAllowedFieldValues()
   const { setParams } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
@@ -61,7 +63,7 @@ const ParamsForm = () => {
           status: [],
           lastStatus: [],
           type: [],
-          propertyType: '',
+          propertyType: [],
           sortBy: '',
           minPrice: null,
           maxPrice: null,
@@ -181,9 +183,9 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsField
+                <ParamsMultiselect
                   name="propertyType"
+                  options={propertyTypeOptions}
                   hint="docs"
                   link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
                   onChange={handleChange}
