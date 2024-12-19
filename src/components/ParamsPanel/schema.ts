@@ -41,8 +41,8 @@ const schema = Joi.object({
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),
-  sortBy: Joi.array()
-    .items(Joi.string().valid(...sortByOptions))
+  sortBy: Joi.string()
+    .valid(...sortByOptions)
     .allow(null, ''),
   propertyType: Joi.string().allow(''),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
