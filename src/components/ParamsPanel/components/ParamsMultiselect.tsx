@@ -1,6 +1,7 @@
+import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { Box, MenuItem, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, MenuItem, TextField, Typography } from '@mui/material'
 
 import ParamLabel from './ParamLabel'
 
@@ -76,10 +77,26 @@ const ParamsMultiSelect = ({
             }}
           >
             <MenuItem value="">
+              <Checkbox
+                checked={field.value.includes('')}
+                size="small"
+                sx={{
+                  '&.MuiCheckbox-root': { py: 0, px: 1 },
+                  '& .MuiSvgIcon-root': { fontSize: 20 }
+                }}
+              />
               <em>null</em>
             </MenuItem>
             {options.map((option) => (
               <MenuItem key={option} value={option}>
+                <Checkbox
+                  checked={field.value.includes(option)}
+                  size="small"
+                  sx={{
+                    '&.MuiCheckbox-root': { py: 0, px: 1 },
+                    '& .MuiSvgIcon-root': { fontSize: 20 }
+                  }}
+                />
                 {option}
               </MenuItem>
             ))}
