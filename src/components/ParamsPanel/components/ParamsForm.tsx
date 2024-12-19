@@ -14,7 +14,6 @@ import { useSearch } from 'providers/SearchProvider'
 import schema from '../schema'
 import {
   classOptions,
-  lastStatusOptions,
   sortByOptions,
   statusOptions,
   typeOptions
@@ -53,32 +52,48 @@ const ParamsForm = () => {
   const params = useMemo(() => queryString.parse(window.location.search), [])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = useMemo(
-    () =>
-      merge(
-        {
-          apiKey,
-          apiUrl,
-          boardId: null,
-          class: [],
-          status: [],
-          lastStatus: [],
-          type: [],
-          style: [],
-          propertyType: [],
-          sortBy: '',
-          minPrice: null,
-          maxPrice: null,
-          minBedrooms: null,
-          minBaths: null,
-          minGarageSpaces: null,
-          minParkingSpaces: null
-        },
-        // cache them one time on first render
-        apiParams
-      ),
-    []
-  )
+  const defaultValues = useMemo(() => {
+    const convertToArray = (value: any) => {
+      if (value === null || value === undefined) {
+        return []
+      }
+      return typeof value === 'string' ? [value] : value
+    }
+
+    return merge(
+      {
+        apiKey,
+        apiUrl,
+        boardId: null,
+        class: [],
+        status: [],
+        lastStatus: [],
+        type: [],
+        style: [],
+        propertyType: [],
+        sortBy: '',
+        minPrice: null,
+        maxPrice: null,
+        minBedrooms: null,
+        minBaths: null,
+        minGarageSpaces: null,
+        minParkingSpaces: null
+      },
+      {
+        ...apiParams,
+
+        // TODO: maybe exist a better way to do this, need to check
+        // force transform query string single values to arrays
+        // for prevent crash multi-select rendering with single value after reload page
+        propertyType: convertToArray(apiParams.propertyType),
+        style: convertToArray(apiParams.style),
+        type: convertToArray(apiParams.type),
+        lastStatus: convertToArray(apiParams.lastStatus),
+        status: convertToArray(apiParams.status),
+        class: convertToArray(apiParams.class)
+      }
+    )
+  }, [])
 
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
