@@ -6,6 +6,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Box, Stack } from '@mui/material'
 
+import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
+
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from '../schema'
@@ -55,10 +57,10 @@ const ParamsForm = () => {
           apiKey,
           apiUrl,
           boardId: null,
-          class: '',
-          status: '',
+          class: [],
+          status: [],
           lastStatus: '',
-          type: '',
+          type: [],
           propertyType: '',
           sortBy: '',
           minPrice: null,
@@ -154,22 +156,19 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="type"
                   options={typeOptions}
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="class"
                   options={classOptions}
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="status"
                   options={statusOptions}
                   onChange={handleChange}
