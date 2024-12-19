@@ -1,5 +1,7 @@
 import type { Position } from 'geojson'
 
+export type APIHost = { apiUrl: string; apiKey: string }
+
 export type ApiClass = 'condo' | 'residential' | 'commercial'
 
 export type ApiClassResponse =

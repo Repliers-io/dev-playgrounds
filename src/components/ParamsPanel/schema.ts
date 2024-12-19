@@ -41,10 +41,11 @@ const schema = Joi.object({
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),
+  style: Joi.array().items(Joi.string()).allow(null, ''),
   sortBy: Joi.string()
     .valid(...sortByOptions)
     .allow(null, ''),
-  propertyType: Joi.string().allow(''),
+  propertyType: Joi.array().items(Joi.string()).allow(null, ''),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
   maxPrice: Joi.number().integer().positive().allow(null, false, ''),
   pageNum: Joi.number().integer().min(1).allow(null, false, '').messages({

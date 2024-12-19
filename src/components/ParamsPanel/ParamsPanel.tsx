@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { type Position } from 'geojson'
-import _ from 'lodash'
 import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 
@@ -9,6 +8,7 @@ import { Box, Stack } from '@mui/material'
 import type { ApiLocation, Property } from 'services/API/types.ts'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
+import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
@@ -65,70 +65,6 @@ const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
 
     const { listings } = await response.json()
     return getLocations(listings)
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
-}
-
-interface AllowedRepliersValuesRequest {
-  appField: string
-  repliersField: string
-}
-
-const fields: AllowedRepliersValuesRequest[] = [
-  {
-    appField: 'propertyType',
-    repliersField: 'details.propertyType'
-  },
-  {
-    appField: 'style',
-    repliersField: 'details.style'
-  },
-  {
-    appField: 'lastStatus',
-    repliersField: 'lastStatus'
-  }
-]
-
-const flattenAllowedFieldValues = (
-  aggregates: object,
-  fields: AllowedRepliersValuesRequest[]
-) => {
-  const flatObj = fields.reduce(
-    (acc: Record<string, string[]>, { appField, repliersField }) => {
-      const obj = _.get(aggregates, repliersField)
-      if (obj && typeof obj == 'object') {
-        acc[appField] = Object.keys(obj)
-      }
-      return acc
-    },
-    {}
-  )
-  return flatObj
-}
-
-const fetchAllowedFieldValues = async ({
-  apiKey,
-  apiUrl,
-  fields
-}: APIHost & { fields: AllowedRepliersValuesRequest[] }) => {
-  const fieldNames = fields.map(({ repliersField }) => repliersField)
-  try {
-    const getOptions = {
-      get: {
-        listings: 'false',
-        aggregates: fieldNames.join(','),
-        status: ['A', 'U']
-      }
-    }
-    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
-    const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
-    if (!response.ok) {
-      throw new Error('[fetchAllowedFieldValue]: could not fetch locations')
-    }
-    const { aggregates } = await response.json()
-    return flattenAllowedFieldValues(aggregates, fields)
   } catch (error) {
     console.error(error)
     throw error
@@ -200,15 +136,6 @@ const ParamsPanel = () => {
 
       setCanRenderMap(true)
     })
-
-    fetchAllowedFieldValues({
-      apiKey,
-      apiUrl,
-      fields: fields
-    }).then((values) => {
-      // eslint-disable-next-line no-console
-      console.log('values: ', values)
-    })
   }, [params.apiKey])
 
   useDeepCompareEffect(() => {
@@ -234,7 +161,12 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <ParamsForm />
+        <AllowedFieldValuesProvider
+          apiUrl={params.apiUrl || ''}
+          apiKey={params.apiKey || ''}
+        >
+          <ParamsForm />
+        </AllowedFieldValuesProvider>
         <BoundsForm />
       </Stack>
     </Box>
