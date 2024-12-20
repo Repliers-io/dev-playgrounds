@@ -117,7 +117,25 @@ const ParamsForm = () => {
   }
 
   const handleClear = () => {
-    methods.reset(defaultValues)
+    methods.reset({
+      ...defaultValues,
+      // TODO: maybe exist a better way to do this ???
+      // force reset params and cashed values(query string)
+      boardId: null,
+      class: [],
+      status: [],
+      lastStatus: [],
+      type: [],
+      style: [],
+      propertyType: [],
+      sortBy: '',
+      minPrice: null,
+      maxPrice: null,
+      minBedrooms: null,
+      minBaths: null,
+      minGarageSpaces: null,
+      minParkingSpaces: null
+    })
     handleSubmit(onSubmit, onError)()
   }
 
