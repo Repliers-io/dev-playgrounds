@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import ParamLabel from './ParamLabel'
 
@@ -8,16 +8,21 @@ const BoxContainer = ({
   title,
   children,
   hint,
-  link
+  link,
+  rightSlot
 }: {
   title: string
   children: React.ReactNode
   hint?: string
   link?: string
+  rightSlot?: React.ReactNode
 }) => {
   return (
     <Box width="100%">
-      <ParamLabel title={title} hint={hint} link={link} />
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <ParamLabel title={title} hint={hint} link={link} />
+        {rightSlot}
+      </Stack>
       <Box
         sx={{
           p: 1.25,
