@@ -147,7 +147,7 @@ const ParamsForm = () => {
                 }}
                 onClick={handleClear}
               >
-                Clear
+                Clear All
               </Button>
             }
           >
