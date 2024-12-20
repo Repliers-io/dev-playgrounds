@@ -29,12 +29,13 @@ const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 type FormData = {
   apiUrl: string
   apiKey: string
-  boardId: number
-  class: string | string[]
-  status: string
-  lastStatus: string
-  type: string | string[]
-  propertyType: string | string[]
+  boardId: number | null
+  class: string[]
+  status: string[]
+  lastStatus: string[]
+  type: string[]
+  propertyType: string[]
+  style: string[]
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
@@ -44,56 +45,56 @@ type FormData = {
   minParkingSpaces: number | null
 }
 
+const defaultFormState: FormData = {
+  apiUrl,
+  apiKey,
+  boardId: null,
+  class: [],
+  status: [],
+  lastStatus: [],
+  type: [],
+  style: [],
+  propertyType: [],
+  sortBy: '',
+  minPrice: null,
+  maxPrice: null,
+  minBedrooms: null,
+  minBaths: null,
+  minGarageSpaces: null,
+  minParkingSpaces: null
+}
+
+const formatMultiselectFields = (parsed: any, fields: readonly string[]) => {
+  fields.forEach((field) => {
+    const value = parsed[field]
+    parsed[field] = !value ? [] : Array.isArray(value) ? value : [value]
+  })
+  return parsed
+}
+
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
   const { setParams } = useSearch()
+
+  const multiselectFields = [
+    'propertyType',
+    'style',
+    'type',
+    'lastStatus',
+    'status',
+    'class'
+  ] as const
+
   // cache them one time on first render
-  const params = useMemo(() => queryString.parse(window.location.search), [])
+  const params = useMemo(() => {
+    const parsed = queryString.parse(window.location.search)
+    return formatMultiselectFields(parsed, multiselectFields)
+  }, [])
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = useMemo(() => {
-    const convertToArray = (value: any) => {
-      if (value === null || value === undefined) {
-        return []
-      }
-      return typeof value === 'string' ? [value] : value
-    }
-
-    return merge(
-      {
-        apiKey,
-        apiUrl,
-        boardId: null,
-        class: [],
-        status: [],
-        lastStatus: [],
-        type: [],
-        style: [],
-        propertyType: [],
-        sortBy: '',
-        minPrice: null,
-        maxPrice: null,
-        minBedrooms: null,
-        minBaths: null,
-        minGarageSpaces: null,
-        minParkingSpaces: null
-      },
-      {
-        ...apiParams,
-
-        // TODO: maybe exist a better way to do this, need to check
-        // force transform query string single values to arrays
-        // for prevent crash multi-select rendering with single value after reload page
-        propertyType: convertToArray(apiParams.propertyType),
-        style: convertToArray(apiParams.style),
-        type: convertToArray(apiParams.type),
-        lastStatus: convertToArray(apiParams.lastStatus),
-        status: convertToArray(apiParams.status),
-        class: convertToArray(apiParams.class)
-      }
-    )
-  }, [])
+  const defaultValues = useMemo(() => merge(defaultFormState, apiParams), [])
 
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
@@ -102,7 +103,8 @@ const ParamsForm = () => {
     defaultValues,
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-  const { handleSubmit } = methods
+
+  const { handleSubmit, watch } = methods
 
   const onSubmit = (data: FormData) => {
     setParams(data as any)
@@ -117,27 +119,30 @@ const ParamsForm = () => {
   }
 
   const handleClear = () => {
+    const { apiUrl: currentApiUrl, apiKey: currentApiKey } = methods.getValues()
     methods.reset({
-      ...defaultValues,
-      // TODO: maybe exist a better way to do this ???
-      // force reset params and cashed values(query string)
-      boardId: null,
-      class: [],
-      status: [],
-      lastStatus: [],
-      type: [],
-      style: [],
-      propertyType: [],
-      sortBy: '',
-      minPrice: null,
-      maxPrice: null,
-      minBedrooms: null,
-      minBaths: null,
-      minGarageSpaces: null,
-      minParkingSpaces: null
+      ...defaultFormState,
+      apiUrl: currentApiUrl,
+      apiKey: currentApiKey
     })
     handleSubmit(onSubmit, onError)()
   }
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      const { apiUrl, apiKey } = value
+      if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
+        methods.reset({
+          ...defaultFormState,
+          apiUrl,
+          apiKey
+        })
+        handleSubmit(onSubmit, onError)()
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
@@ -152,8 +157,20 @@ const ParamsForm = () => {
           justifyContent="stretch"
           height="100%"
         >
+          <ParamsSection title="credentials">
+            <Stack spacing={1}>
+              <ParamsField
+                noClear
+                name="apiKey"
+                hint="* HTTP Header"
+                label="REPILERS-API-KEY"
+                onChange={handleChange}
+              />
+              <ParamsField name="apiUrl" noClear onChange={handleChange} />
+            </Stack>
+          </ParamsSection>
           <ParamsSection
-            title="credentials"
+            title="query parameters"
             rightSlot={
               <Button
                 type="submit"
@@ -169,18 +186,6 @@ const ParamsForm = () => {
               </Button>
             }
           >
-            <Stack spacing={1}>
-              <ParamsField
-                noClear
-                name="apiKey"
-                hint="* HTTP Header"
-                label="REPILERS-API-KEY"
-                onChange={handleChange}
-              />
-              <ParamsField name="apiUrl" noClear onChange={handleChange} />
-            </Stack>
-          </ParamsSection>
-          <ParamsSection title="query parameters">
             <Box
               sx={{
                 pr: 1,
