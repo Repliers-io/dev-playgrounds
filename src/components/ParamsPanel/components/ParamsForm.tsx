@@ -154,8 +154,20 @@ const ParamsForm = () => {
           justifyContent="stretch"
           height="100%"
         >
+          <ParamsSection title="credentials">
+            <Stack spacing={1}>
+              <ParamsField
+                noClear
+                name="apiKey"
+                hint="* HTTP Header"
+                label="REPILERS-API-KEY"
+                onChange={handleChange}
+              />
+              <ParamsField name="apiUrl" noClear onChange={handleChange} />
+            </Stack>
+          </ParamsSection>
           <ParamsSection
-            title="credentials"
+            title="query parameters"
             rightSlot={
               <Button
                 type="submit"
@@ -171,18 +183,6 @@ const ParamsForm = () => {
               </Button>
             }
           >
-            <Stack spacing={1}>
-              <ParamsField
-                noClear
-                name="apiKey"
-                hint="* HTTP Header"
-                label="REPILERS-API-KEY"
-                onChange={handleChange}
-              />
-              <ParamsField name="apiUrl" noClear onChange={handleChange} />
-            </Stack>
-          </ParamsSection>
-          <ParamsSection title="query parameters">
             <Box
               sx={{
                 pr: 1,
