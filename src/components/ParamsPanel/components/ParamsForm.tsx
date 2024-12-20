@@ -4,14 +4,16 @@ import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
-import { Box, Stack } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 
+import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
+
+import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 
 import schema from '../schema'
 import {
   classOptions,
-  lastStatusOptions,
   sortByOptions,
   statusOptions,
   typeOptions
@@ -43,36 +45,55 @@ type FormData = {
 }
 
 const ParamsForm = () => {
+  const { propertyTypeOptions, styleOptions, lastStatusOptions } =
+    useAllowedFieldValues()
   const { setParams } = useSearch()
   // cache them one time on first render
   const params = useMemo(() => queryString.parse(window.location.search), [])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = useMemo(
-    () =>
-      merge(
-        {
-          apiKey,
-          apiUrl,
-          boardId: null,
-          class: '',
-          status: '',
-          lastStatus: '',
-          type: '',
-          propertyType: '',
-          sortBy: '',
-          minPrice: null,
-          maxPrice: null,
-          minBedrooms: null,
-          minBaths: null,
-          minGarageSpaces: null,
-          minParkingSpaces: null
-        },
-        // cache them one time on first render
-        apiParams
-      ),
-    []
-  )
+  const defaultValues = useMemo(() => {
+    const convertToArray = (value: any) => {
+      if (value === null || value === undefined) {
+        return []
+      }
+      return typeof value === 'string' ? [value] : value
+    }
+
+    return merge(
+      {
+        apiKey,
+        apiUrl,
+        boardId: null,
+        class: [],
+        status: [],
+        lastStatus: [],
+        type: [],
+        style: [],
+        propertyType: [],
+        sortBy: '',
+        minPrice: null,
+        maxPrice: null,
+        minBedrooms: null,
+        minBaths: null,
+        minGarageSpaces: null,
+        minParkingSpaces: null
+      },
+      {
+        ...apiParams,
+
+        // TODO: maybe exist a better way to do this, need to check
+        // force transform query string single values to arrays
+        // for prevent crash multi-select rendering with single value after reload page
+        propertyType: convertToArray(apiParams.propertyType),
+        style: convertToArray(apiParams.style),
+        type: convertToArray(apiParams.type),
+        lastStatus: convertToArray(apiParams.lastStatus),
+        status: convertToArray(apiParams.status),
+        class: convertToArray(apiParams.class)
+      }
+    )
+  }, [])
 
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
@@ -95,6 +116,29 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
+  const handleClear = () => {
+    methods.reset({
+      ...defaultValues,
+      // TODO: maybe exist a better way to do this ???
+      // force reset params and cashed values(query string)
+      boardId: null,
+      class: [],
+      status: [],
+      lastStatus: [],
+      type: [],
+      style: [],
+      propertyType: [],
+      sortBy: '',
+      minPrice: null,
+      maxPrice: null,
+      minBedrooms: null,
+      minBaths: null,
+      minGarageSpaces: null,
+      minParkingSpaces: null
+    })
+    handleSubmit(onSubmit, onError)()
+  }
+
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
   }, [])
@@ -108,7 +152,23 @@ const ParamsForm = () => {
           justifyContent="stretch"
           height="100%"
         >
-          <ParamsSection title="credentials">
+          <ParamsSection
+            title="credentials"
+            rightSlot={
+              <Button
+                type="submit"
+                size="small"
+                variant="text"
+                sx={{
+                  mb: 1,
+                  height: 32
+                }}
+                onClick={handleClear}
+              >
+                Clear All
+              </Button>
+            }
+          >
             <Stack spacing={1}>
               <ParamsField
                 noClear
@@ -145,7 +205,6 @@ const ParamsForm = () => {
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
 
-                {/* TODO: Make Multi-Select */}
                 <ParamsSelect
                   name="sortBy"
                   hint="docs"
@@ -154,29 +213,31 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="type"
                   options={typeOptions}
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="class"
                   options={classOptions}
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
+                  name="style"
+                  options={styleOptions}
+                  onChange={handleChange}
+                />
+
+                <ParamsMultiselect
                   name="status"
                   options={statusOptions}
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsSelect
+                <ParamsMultiselect
                   name="lastStatus"
                   options={lastStatusOptions}
                   hint="docs"
@@ -184,9 +245,9 @@ const ParamsForm = () => {
                   onChange={handleChange}
                 />
 
-                {/* TODO: Make Multi-Select */}
-                <ParamsField
+                <ParamsMultiselect
                   name="propertyType"
+                  options={propertyTypeOptions}
                   hint="docs"
                   link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
                   onChange={handleChange}

@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "rimraf ./dist && parcel index.html",
+    "start": "npm run clean && parcel index.html",
     "build": "parcel build index.html",
     "eslint": "eslint \"./**/*.{ts,tsx,js}\"",
     "eslint:fix": "eslint --fix \"./**/*.{ts,tsx,js}\"",
     "prettier": "prettier --check ./**/*.{ts,tsx,js}",
-    "prettier:fix": "prettier  --write ./**/*.{ts,tsx,js}"
+    "prettier:fix": "prettier  --write ./**/*.{ts,tsx,js}",
+    "clean": "rimraf ./dist && rimraf ./.parcel-cache"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
@@ -36,6 +37,7 @@
     "joi": "^17.13.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "mapbox-gl": "^3.8.0",
     "query-string": "^9.1.1",
     "react": "^18.3.1",

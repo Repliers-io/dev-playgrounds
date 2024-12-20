@@ -8,6 +8,7 @@ import { Box, Stack } from '@mui/material'
 import type { ApiLocation, Property } from 'services/API/types.ts'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
+import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
@@ -19,10 +20,13 @@ import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
 
 const getLocations = (listings: Property[]) => {
-  return listings.map((item: Property) => ({
-    lat: parseFloat(item.map.latitude),
-    lng: parseFloat(item.map.longitude)
-  }))
+  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
+  return listings
+    .map((item: Property) => ({
+      lat: parseFloat(item.map.latitude),
+      lng: parseFloat(item.map.longitude)
+    }))
+    .filter(({ lat, lng }) => lat > 0 && lng < 0)
 }
 
 const getMapContainerSize = (container: HTMLElement | null) => {
@@ -48,13 +52,9 @@ const getMapPosition = (
   return { bounds, center, zoom }
 }
 
-const fetchLocations = async ({
-  apiKey,
-  apiUrl
-}: {
-  apiKey: string
-  apiUrl: string
-}) => {
+type APIHost = { apiUrl: string; apiKey: string }
+
+const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
     const getOptions = { get: { fields: 'map,mlsNumber' } }
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
@@ -161,7 +161,12 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <ParamsForm />
+        <AllowedFieldValuesProvider
+          apiUrl={params.apiUrl || ''}
+          apiKey={params.apiKey || ''}
+        >
+          <ParamsForm />
+        </AllowedFieldValuesProvider>
         <BoundsForm />
       </Stack>
     </Box>
