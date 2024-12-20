@@ -64,6 +64,14 @@ const defaultFormState: FormData = {
   minParkingSpaces: null
 }
 
+const formatMultiselectFields = (parsed: any, fields: readonly string[]) => {
+  fields.forEach((field) => {
+    const value = parsed[field]
+    parsed[field] = !value ? [] : Array.isArray(value) ? value : [value]
+  })
+  return parsed
+}
+
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
@@ -78,15 +86,10 @@ const ParamsForm = () => {
     'class'
   ] as const
 
-  // extract and format multiselect fields from query params
+  // cache them one time on first render
   const params = useMemo(() => {
     const parsed = queryString.parse(window.location.search)
-
-    multiselectFields.forEach((field) => {
-      const value = parsed[field]
-      parsed[field] = !value ? [] : Array.isArray(value) ? value : [value]
-    })
-    return parsed
+    return formatMultiselectFields(parsed, multiselectFields)
   }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
