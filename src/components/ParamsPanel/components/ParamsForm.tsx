@@ -102,7 +102,8 @@ const ParamsForm = () => {
     defaultValues,
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-  const { handleSubmit } = methods
+
+  const { handleSubmit, watch } = methods
 
   const onSubmit = (data: FormData) => {
     setParams(data as any)
@@ -138,6 +139,35 @@ const ParamsForm = () => {
     })
     handleSubmit(onSubmit, onError)()
   }
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      const { apiUrl, apiKey } = value
+      if (name === 'apiKey' && apiKey !== defaultValues.apiKey) {
+        methods.reset({
+          apiUrl,
+          apiKey,
+          boardId: null,
+          class: [],
+          status: [],
+          lastStatus: [],
+          type: [],
+          style: [],
+          propertyType: [],
+          sortBy: '',
+          minPrice: null,
+          maxPrice: null,
+          minBedrooms: null,
+          minBaths: null,
+          minGarageSpaces: null,
+          minParkingSpaces: null
+        })
+        handleSubmit(onSubmit, onError)()
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
