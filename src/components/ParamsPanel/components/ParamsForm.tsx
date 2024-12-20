@@ -4,7 +4,7 @@ import queryString from 'query-string'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
-import { Box, Stack } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 
 import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
 
@@ -116,6 +116,11 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
+  const handleClear = () => {
+    methods.reset(defaultValues)
+    handleSubmit(onSubmit, onError)()
+  }
+
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
   }, [])
@@ -129,7 +134,23 @@ const ParamsForm = () => {
           justifyContent="stretch"
           height="100%"
         >
-          <ParamsSection title="credentials">
+          <ParamsSection
+            title="credentials"
+            rightSlot={
+              <Button
+                type="submit"
+                size="small"
+                variant="text"
+                sx={{
+                  mb: 1,
+                  height: 32
+                }}
+                onClick={handleClear}
+              >
+                Clear All
+              </Button>
+            }
+          >
             <Stack spacing={1}>
               <ParamsField
                 noClear

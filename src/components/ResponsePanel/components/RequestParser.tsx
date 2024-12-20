@@ -31,7 +31,7 @@ const RequestParser = ({ request }: { request: string }) => {
       <span style={{ color: baseColor }}>{baseUrl}</span>
       {params.map(([key, value], index) => {
         return (
-          <span key={key}>
+          <span key={`${key}-${index}`}>
             {index > 0 ? '&' : '?'}
             <span style={{ color: keyColor }}>{key}</span>=
             <span
