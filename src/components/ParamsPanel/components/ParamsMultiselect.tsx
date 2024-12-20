@@ -1,4 +1,3 @@
-import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { Box, Checkbox, MenuItem, TextField, Typography } from '@mui/material'
