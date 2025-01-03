@@ -53,7 +53,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     setPosition,
     destroyMap
   } = useMapOptions()
-  const { count, listings, loading } = useSearch()
+  const { count, listings, loading, clusters } = useSearch()
   const [drawer, setDrawer] = useState(false)
 
   setMapContainerRef(mapContainerRef)
@@ -111,6 +111,10 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       }
     })
   }, [listings])
+
+  useEffect(() => {
+    MapService.showClusterMarkers({ clusters, map: mapRef.current })
+  }, [clusters])
 
   useEffect(() => {
     const highlighted = getHighlightedMarker(listings, highlightedMarker)

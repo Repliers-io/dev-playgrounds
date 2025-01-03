@@ -65,7 +65,11 @@ const schema = Joi.object({
   minBedrooms: Joi.number().integer().positive().allow(null, false, ''),
   minBaths: Joi.number().integer().positive().allow(null, false, ''),
   minGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
-  minParkingSpaces: Joi.number().integer().positive().allow(null, false, '')
+  minParkingSpaces: Joi.number().integer().positive().allow(null, false, ''),
+
+  cluster: Joi.boolean().allow(null, false, ''),
+  clusterLimit: Joi.number().integer().positive().allow(null, false, ''),
+  clusterPrecision: Joi.number().integer().positive().allow(null, false, '')
 })
 
 export default schema
