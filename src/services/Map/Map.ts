@@ -11,9 +11,20 @@ import {
   toMapboxPoint
 } from 'utils/map'
 
+import { MapDataMode } from './types.ts'
+
 export class MapService {
   markers: Markers = {}
   clusterMarkers: Markers = {}
+
+  dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
+
+  settleDataMode(count: number): void {
+    this.dataMode =
+      count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+        ? MapDataMode.CLUSTER
+        : MapDataMode.SINGLE_MARKER
+  }
 
   private getClusterKey(cluster: ApiCluster): string {
     return `c-${cluster.count}-lat-${cluster.location.latitude}-lng-${cluster.location.longitude}`
@@ -34,6 +45,8 @@ export class MapService {
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
   }): void {
+    if (this.dataMode !== MapDataMode.SINGLE_MARKER) return
+
     listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
 
@@ -126,8 +139,11 @@ export class MapService {
     map
   }: {
     clusters: ApiCluster[]
-    map: Map
+    map: Map | null
   }): void {
+    if (!clusters.length || !map || this.dataMode !== MapDataMode.CLUSTER)
+      return
+
     clusters.forEach((cluster) => {
       if (this.clusterMarkers[this.getClusterKey(cluster)]) return
 
@@ -166,6 +182,38 @@ export class MapService {
     markers.forEach((marker) => marker.remove())
 
     this.clusterMarkers = {}
+  }
+
+  smartResetClusters(clusters: ApiCluster[]) {
+    const newClusterKeys = clusters.map((cluster) =>
+      this.getClusterKey(cluster)
+    )
+    const renderedClusterKeys = Object.keys(this.clusterMarkers)
+
+    renderedClusterKeys.forEach((key) => {
+      if (!newClusterKeys.includes(key)) {
+        this.clusterMarkers[key].remove()
+        delete this.clusterMarkers[key]
+      }
+    })
+  }
+
+  update(list: Property[], clusters: ApiCluster[], count: number): void {
+    // this.setProperties(list)
+    this.settleDataMode(count)
+
+    if (!count) {
+      // no listings
+      this.resetMarkers()
+      this.resetClusters()
+    } else if (count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING) {
+      // enable clustering
+      this.resetMarkers()
+      this.smartResetClusters(clusters)
+    } else {
+      // listings count is less then the clustering threshold
+      this.resetClusters()
+    }
   }
 }
 
