@@ -113,7 +113,6 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [listings])
 
   useEffect(() => {
-    if (!mapRef.current) return
     MapService.resetMarkers()
     MapService.showClusterMarkers({ clusters, map: mapRef.current })
   }, [clusters])

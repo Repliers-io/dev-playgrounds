@@ -6,6 +6,7 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 
 import type { ApiLocation, Property } from 'services/API/types.ts'
+import MapService from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
 import {
   getClusterParams,
@@ -105,11 +106,19 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
-      await search({
+      const response = await search({
         ...params,
         ...fetchBounds,
         ...getClusterParams(zoom)
       })
+
+      if (!response) return
+
+      const { listings, count, aggregates } = response
+      const { clusters = [] } = aggregates?.map || {}
+
+      MapService.update(listings, clusters, count)
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, ...rest } = params
       const { lng, lat } = center || {}
