@@ -10,6 +10,10 @@ import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultisele
 
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
+import {
+  defaultClusterLimit,
+  defaultClusterPrecision
+} from 'constants/search.ts'
 
 import schema from '../schema'
 import {
@@ -127,8 +131,8 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
-  const handleClear = () => {
-    const { apiUrl: currentApiUrl, apiKey: currentApiKey } = methods.getValues()
+  const handleClear = (currentValues = methods.getValues()) => {
+    const { apiUrl: currentApiUrl, apiKey: currentApiKey } = currentValues
     methods.reset({
       ...defaultFormState,
       apiUrl: currentApiUrl,
@@ -137,16 +141,43 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
+  const handleResetCluster = (currentValues: Partial<FormData>) => {
+    methods.reset({
+      ...currentValues,
+      cluster: null,
+      clusterLimit: null,
+      clusterPrecision: null
+    })
+    handleSubmit(onSubmit, onError)()
+  }
+
+  const handleRestoreCluster = (currentValues: Partial<FormData>) => {
+    methods.reset({
+      ...currentValues,
+      clusterLimit: defaultClusterLimit,
+      clusterPrecision: defaultClusterPrecision
+    })
+    handleSubmit(onSubmit, onError)()
+  }
+
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      const { apiUrl, apiKey } = value
+      const { apiKey, cluster } = value
+      // reset form if apiKey changed
       if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
-        methods.reset({
-          ...defaultFormState,
-          apiUrl,
-          apiKey
-        })
+        handleClear(value as FormData)
         handleSubmit(onSubmit, onError)()
+      }
+
+      // reset/restore cluster fields if cluster changed
+      if (name === 'cluster') {
+        if (cluster === false) {
+          handleResetCluster(value as FormData)
+          handleSubmit(onSubmit, onError)()
+        } else if (cluster === true) {
+          handleRestoreCluster(value as FormData)
+          handleSubmit(onSubmit, onError)()
+        }
       }
     })
 
