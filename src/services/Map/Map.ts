@@ -19,6 +19,16 @@ export class MapService {
 
   dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
 
+  private clusteringEnabled: boolean = true
+
+  updateViewMode(mode: MapDataMode): void {
+    this.dataMode = mode
+  }
+
+  setClusteringEnabled(enabled: boolean) {
+    this.clusteringEnabled = enabled
+  }
+
   settleDataMode(count: number): void {
     this.dataMode =
       count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
@@ -45,7 +55,10 @@ export class MapService {
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
   }): void {
-    if (this.dataMode !== MapDataMode.SINGLE_MARKER) return
+    const notSingleMarkerView = this.dataMode !== MapDataMode.SINGLE_MARKER
+    const forceEnableClustering = this.clusteringEnabled
+
+    if (notSingleMarkerView || forceEnableClustering) return
 
     listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
@@ -141,7 +154,10 @@ export class MapService {
     clusters: ApiCluster[]
     map: Map | null
   }): void {
-    if (!clusters.length || !map || this.dataMode !== MapDataMode.CLUSTER)
+    const notClusterView = this.dataMode !== MapDataMode.CLUSTER
+    const forceDisableClustering = !this.clusteringEnabled
+
+    if (!clusters.length || !map || notClusterView || forceDisableClustering)
       return
 
     clusters.forEach((cluster) => {
@@ -199,19 +215,24 @@ export class MapService {
   }
 
   update(list: Property[], clusters: ApiCluster[], count: number): void {
-    // this.setProperties(list)
-    this.settleDataMode(count)
-
     if (!count) {
-      // no listings
       this.resetMarkers()
       this.resetClusters()
-    } else if (count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING) {
-      // enable clustering
+      return
+    }
+
+    if (!this.clusteringEnabled) {
+      this.updateViewMode(MapDataMode.SINGLE_MARKER)
+      this.resetClusters()
+      return
+    }
+
+    if (count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING) {
+      this.updateViewMode(MapDataMode.CLUSTER)
       this.resetMarkers()
       this.smartResetClusters(clusters)
     } else {
-      // listings count is less then the clustering threshold
+      this.updateViewMode(MapDataMode.SINGLE_MARKER)
       this.resetClusters()
     }
   }

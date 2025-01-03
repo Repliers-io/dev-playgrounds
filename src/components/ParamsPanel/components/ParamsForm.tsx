@@ -132,11 +132,11 @@ const ParamsForm = () => {
   }
 
   const handleClear = (currentValues = methods.getValues()) => {
-    const { apiUrl: currentApiUrl, apiKey: currentApiKey } = currentValues
+    const { apiUrl, apiKey } = currentValues
     methods.reset({
       ...defaultFormState,
-      apiUrl: currentApiUrl,
-      apiKey: currentApiKey
+      apiUrl,
+      apiKey
     })
     handleSubmit(onSubmit, onError)()
   }
@@ -220,7 +220,7 @@ const ParamsForm = () => {
                   mb: 1,
                   height: 32
                 }}
-                onClick={handleClear}
+                onClick={() => handleClear()}
               >
                 Clear All
               </Button>

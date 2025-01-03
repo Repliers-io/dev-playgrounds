@@ -6,7 +6,7 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 
 import type { ApiLocation, Property } from 'services/API/types.ts'
-import MapService from 'services/Map'
+import MapService, { MAP_CONSTANTS } from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
@@ -112,16 +112,20 @@ const ParamsPanel = () => {
       const { listings, count, aggregates } = response
       const { clusters = [] } = aggregates?.map || {}
 
-      MapService.update(listings, clusters, count)
-
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, ...rest } = params
+      const { apiKey, cluster, ...rest } = params
       const { lng, lat } = center || {}
 
       const query = queryString.stringify(
         { lng, lat, zoom, ...rest },
         queryStringOptions
       )
+
+      const forceEnableClustering =
+        count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+
+      MapService.setClusteringEnabled(cluster && forceEnableClustering)
+      MapService.update(listings, clusters, count)
 
       window.history.pushState(null, '', `?${query}`)
     } catch (error) {
