@@ -19,7 +19,9 @@ import {
   typeOptions
 } from '../types'
 
+import ParamsCheckbox from './ParamsCheckbox.tsx'
 import ParamsField from './ParamsField'
+import ParamsRange from './ParamsRange.tsx'
 import ParamsSection from './ParamsSection'
 import ParamsSelect from './ParamsSelect'
 
@@ -43,6 +45,9 @@ type FormData = {
   minBaths: number | null
   minGarageSpaces: number | null
   minParkingSpaces: number | null
+  cluster: boolean | null
+  clusterLimit: number | null
+  clusterPrecision: number | null
 }
 
 const defaultFormState: FormData = {
@@ -61,7 +66,10 @@ const defaultFormState: FormData = {
   minBedrooms: null,
   minBaths: null,
   minGarageSpaces: null,
-  minParkingSpaces: null
+  minParkingSpaces: null,
+  cluster: null,
+  clusterLimit: null,
+  clusterPrecision: null
 }
 
 const formatMultiselectFields = (parsed: any, fields: readonly string[]) => {
@@ -105,6 +113,7 @@ const ParamsForm = () => {
   })
 
   const { handleSubmit, watch } = methods
+  const clusterEnabled = watch('cluster')
 
   const onSubmit = (data: FormData) => {
     setParams(data as any)
@@ -286,6 +295,37 @@ const ParamsForm = () => {
                 </Stack>
               </Stack>
             </Box>
+          </ParamsSection>
+          <ParamsSection
+            title="Cluster"
+            hint="docs"
+            link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
+            rightSlot={
+              <ParamsCheckbox
+                name="cluster"
+                label="Enable"
+                onChange={handleChange}
+              />
+            }
+          >
+            <Stack spacing={1.25}>
+              <ParamsRange
+                name="clusterLimit"
+                max={200}
+                min={0}
+                step={50}
+                onChange={handleChange}
+                disabled={!clusterEnabled}
+              />
+              <ParamsRange
+                name="clusterPrecision"
+                max={29}
+                min={0}
+                step={5}
+                onChange={handleChange}
+                disabled={!clusterEnabled}
+              />
+            </Stack>
           </ParamsSection>
         </Stack>
       </form>

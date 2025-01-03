@@ -8,11 +8,7 @@ import { Box, Stack } from '@mui/material'
 import type { ApiLocation, Property } from 'services/API/types.ts'
 import MapService from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
-import {
-  getClusterParams,
-  getMapPolygon,
-  getMapRectangle
-} from 'services/Search'
+import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -108,8 +104,7 @@ const ParamsPanel = () => {
     try {
       const response = await search({
         ...params,
-        ...fetchBounds,
-        ...getClusterParams(zoom)
+        ...fetchBounds
       })
 
       if (!response) return
