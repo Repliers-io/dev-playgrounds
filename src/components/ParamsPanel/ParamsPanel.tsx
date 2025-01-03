@@ -117,7 +117,7 @@ const ParamsPanel = () => {
       const { lng, lat } = center || {}
 
       const query = queryString.stringify(
-        { lng, lat, zoom, ...rest },
+        { lng, lat, zoom, cluster, ...rest },
         queryStringOptions
       )
 
