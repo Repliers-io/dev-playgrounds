@@ -1,13 +1,23 @@
 import { type MouseEvent } from 'react'
 import { type Map, Marker } from 'mapbox-gl'
 
-import { type Property } from 'services/API/types'
-import { createMarkerElement, type Markers } from 'services/Map'
+import { type ApiCluster, type Property } from 'services/API/types'
+import { createMarkerElement, MAP_CONSTANTS, type Markers } from 'services/Map'
 import { formatPrice } from 'utils/formatters'
-import { getMarkerName } from 'utils/map'
+import {
+  getMapUrl,
+  getMarkerName,
+  toMapboxBounds,
+  toMapboxPoint
+} from 'utils/map'
 
 export class MapService {
   markers: Markers = {}
+  clusterMarkers: Markers = {}
+
+  private getClusterKey(cluster: ApiCluster): string {
+    return `c-${cluster.count}-lat-${cluster.location.latitude}-lng-${cluster.location.longitude}`
+  }
 
   getMarker(mlsNumber: string): Marker | undefined {
     return this.markers[mlsNumber]
@@ -108,6 +118,54 @@ export class MapService {
     markers.forEach((marker) => marker.remove())
 
     this.markers = {}
+  }
+
+  // Clustering
+  showClusterMarkers({
+    clusters,
+    map
+  }: {
+    clusters: ApiCluster[]
+    map: Map
+  }): void {
+    clusters.forEach((cluster) => {
+      if (this.clusterMarkers[this.getClusterKey(cluster)]) return
+
+      const { bounds, location } = cluster
+      const center = toMapboxPoint(location)
+      const zoom = map.getZoom()
+
+      const diff = bounds.bottom_right.longitude - bounds.top_left.longitude
+      const buffer = diff * MAP_CONSTANTS.ZOOM_TO_MARKER_BUFFER
+      const mapboxBounds = toMapboxBounds(bounds, buffer)
+
+      const markerElement = createMarkerElement({
+        size: 'cluster',
+        link: getMapUrl(center, zoom),
+        label: cluster.count.toString(),
+        onClick: (e) => {
+          map.fitBounds(mapboxBounds)
+          e.preventDefault()
+        }
+      })
+
+      const marker = new Marker(markerElement).setLngLat(center).addTo(map)
+
+      this.addCluster(this.getClusterKey(cluster), marker)
+    })
+  }
+
+  addCluster(key: string, marker: Marker) {
+    if (!this.clusterMarkers[key]) {
+      this.clusterMarkers[key] = marker
+    }
+  }
+
+  resetClusters() {
+    const markers: Marker[] = Object.values(this.clusterMarkers)
+    markers.forEach((marker) => marker.remove())
+
+    this.clusterMarkers = {}
   }
 }
 
