@@ -118,6 +118,7 @@ const ParamsForm = () => {
 
     // remove cluster manually for exclude it from query params
     const paramsToSet = cluster === false ? rest : data
+    localStorage.setItem('params', JSON.stringify(paramsToSet))
     setParams(paramsToSet as any)
   }
 
