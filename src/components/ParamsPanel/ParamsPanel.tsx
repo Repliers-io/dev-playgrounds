@@ -102,7 +102,7 @@ const ParamsPanel = () => {
   // and clear old response
   useEffect(() => {
     const { apiKey = '', apiUrl = '' } = params
-    if (!apiKey || !apiUrl || !mapContainerRef.current) return
+    if (!apiKey || !apiUrl) return
 
     setCanRenderMap(false)
     clearData()
