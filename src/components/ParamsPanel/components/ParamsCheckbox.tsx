@@ -18,10 +18,10 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
     trigger,
     formState: { errors }
   } = useFormContext()
-  const checked = getValues(name)
+  const checked = Boolean(getValues(name))
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(name, event.target.checked)
+    setValue(name, Boolean(event.target.checked))
     await trigger(name)
     onChange?.()
   }

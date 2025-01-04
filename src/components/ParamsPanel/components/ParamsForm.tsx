@@ -84,6 +84,23 @@ const formatMultiselectFields = (parsed: any, fields: readonly string[]) => {
   return parsed
 }
 
+const formatBooleanFields = (parsed: any) => {
+  if (!parsed || typeof parsed !== 'object') return parsed
+
+  const clone = { ...parsed }
+
+  Object.keys(clone).forEach((key) => {
+    const value = clone[key]
+    if (value === 'true') {
+      clone[key] = true
+    } else if (value === 'false') {
+      clone[key] = false
+    }
+  })
+
+  return clone
+}
+
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
@@ -101,7 +118,8 @@ const ParamsForm = () => {
   // cache them one time on first render
   const params = useMemo(() => {
     const parsed = queryString.parse(window.location.search)
-    return formatMultiselectFields(parsed, multiselectFields)
+    const formatedFields = formatBooleanFields(parsed)
+    return formatMultiselectFields(formatedFields, multiselectFields)
   }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -120,7 +138,11 @@ const ParamsForm = () => {
   const clusterEnabled = watch('cluster')
 
   const onSubmit = (data: FormData) => {
-    setParams(data as any)
+    const { cluster, ...rest } = data
+
+    // remove cluster manually for exclude it from query params
+    const paramsToSet = cluster === false ? rest : data
+    setParams(paramsToSet as any)
   }
 
   const onError = (errors: any) => {
@@ -154,6 +176,7 @@ const ParamsForm = () => {
   const handleRestoreCluster = (currentValues: Partial<FormData>) => {
     methods.reset({
       ...currentValues,
+      cluster: true,
       clusterLimit: defaultClusterLimit,
       clusterPrecision: defaultClusterPrecision
     })
@@ -166,17 +189,14 @@ const ParamsForm = () => {
       // reset form if apiKey changed
       if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
         handleClear(value as FormData)
-        handleSubmit(onSubmit, onError)()
       }
 
       // reset/restore cluster fields if cluster changed
       if (name === 'cluster') {
         if (cluster === false) {
           handleResetCluster(value as FormData)
-          handleSubmit(onSubmit, onError)()
         } else if (cluster === true) {
           handleRestoreCluster(value as FormData)
-          handleSubmit(onSubmit, onError)()
         }
       }
     })

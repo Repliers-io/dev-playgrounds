@@ -5,16 +5,16 @@ import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
 
-import type { ApiLocation, Property } from 'services/API/types.ts'
+import type { APIHost, ApiLocation, Property } from 'services/API/types'
 import MapService, { MAP_CONSTANTS } from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
-import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
+import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
-import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map.ts'
+import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map'
 import { mapboxDefaults } from 'constants/map.ts'
 
 import BoundsForm from './components/BoundsForm'
@@ -52,8 +52,6 @@ const getMapPosition = (
   const zoom = getMapZoom(bounds, container)
   return { bounds, center, zoom }
 }
-
-type APIHost = { apiUrl: string; apiKey: string }
 
 const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
