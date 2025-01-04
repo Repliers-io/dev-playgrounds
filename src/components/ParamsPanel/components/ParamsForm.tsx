@@ -22,6 +22,7 @@ import {
   statusOptions,
   typeOptions
 } from '../types'
+import { formatBooleanFields, formatMultiselectFields } from '../utils.ts'
 
 import ParamsCheckbox from './ParamsCheckbox.tsx'
 import ParamsField from './ParamsField'
@@ -74,31 +75,6 @@ const defaultFormState: FormData = {
   cluster: null,
   clusterLimit: null,
   clusterPrecision: null
-}
-
-const formatMultiselectFields = (parsed: any, fields: readonly string[]) => {
-  fields.forEach((field) => {
-    const value = parsed[field]
-    parsed[field] = !value ? [] : Array.isArray(value) ? value : [value]
-  })
-  return parsed
-}
-
-const formatBooleanFields = (parsed: any) => {
-  if (!parsed || typeof parsed !== 'object') return parsed
-
-  const clone = { ...parsed }
-
-  Object.keys(clone).forEach((key) => {
-    const value = clone[key]
-    if (value === 'true') {
-      clone[key] = true
-    } else if (value === 'false') {
-      clone[key] = false
-    }
-  })
-
-  return clone
 }
 
 const ParamsForm = () => {

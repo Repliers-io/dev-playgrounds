@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Slider, Stack, Typography } from '@mui/material'
+import { Box, FormHelperText, Slider, Stack, Typography } from '@mui/material'
 
 import ParamLabel from './ParamLabel'
 
@@ -69,15 +69,9 @@ const ParamsRange: React.FC<RangeProps> = ({
         </Typography>
       </Stack>
       {errors[name] && (
-        <Typography
-          color="error"
-          variant="h6"
-          fontSize="12px"
-          textTransform="uppercase"
-          sx={{ mt: 0.5 }}
-        >
+        <FormHelperText error>
           {errors[name]?.message?.toString()}
-        </Typography>
+        </FormHelperText>
       )}
     </Box>
   )

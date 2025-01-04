@@ -29,13 +29,6 @@ export class MapService {
     this.clusteringEnabled = enabled
   }
 
-  settleDataMode(count: number): void {
-    this.dataMode =
-      count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
-        ? MapDataMode.CLUSTER
-        : MapDataMode.SINGLE_MARKER
-  }
-
   private getClusterKey(cluster: ApiCluster): string {
     return `c-${cluster.count}-lat-${cluster.location.latitude}-lng-${cluster.location.longitude}`
   }

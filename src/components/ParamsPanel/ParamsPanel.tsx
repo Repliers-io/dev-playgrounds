@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
 import { type Position } from 'geojson'
-import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
 
-import type { APIHost, ApiLocation, Property } from 'services/API/types'
+import type { APIHost, ApiLocation } from 'services/API/types'
 import MapService, { MAP_CONSTANTS } from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
@@ -14,44 +13,10 @@ import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
-import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map'
-import { mapboxDefaults } from 'constants/map.ts'
 
 import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
-
-const getLocations = (listings: Property[]) => {
-  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
-  return listings
-    .map((item: Property) => ({
-      lat: parseFloat(item.map.latitude),
-      lng: parseFloat(item.map.longitude)
-    }))
-    .filter(({ lat, lng }) => lat > 0 && lng < 0)
-}
-
-const getMapContainerSize = (container: HTMLElement | null) => {
-  return container
-    ? { width: container.clientWidth, height: container.clientHeight }
-    : null
-}
-
-const getMapZoom = (bounds: LngLatBounds, container: HTMLElement | null) => {
-  const size = getMapContainerSize(container)
-  return size
-    ? calcZoomLevelForBounds(bounds, size.width, size.height)
-    : mapboxDefaults.zoom!
-}
-
-const getMapPosition = (
-  locations: ApiLocation[],
-  container: HTMLElement | null
-) => {
-  const bounds = getPolygonBounds(locations)
-  const center = bounds.getCenter()
-  const zoom = getMapZoom(bounds, container)
-  return { bounds, center, zoom }
-}
+import { getLocations, getMapPosition } from './utils.ts'
 
 const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
@@ -122,6 +87,7 @@ const ParamsPanel = () => {
       const forceEnableClustering =
         count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
 
+      // Force toggle clustering view
       MapService.setClusteringEnabled(cluster && forceEnableClustering)
       MapService.update(listings, clusters, count)
 

@@ -26,6 +26,15 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
     onChange?.()
   }
 
+  const handleKeyDown = async (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault() // Prevent form submission
+      setValue(name, !checked)
+      await trigger(name)
+      onChange?.()
+    }
+  }
+
   return (
     <>
       <FormControlLabel
@@ -35,6 +44,7 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
             inputRef={inputRef}
             {...register(name)}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
         }
         label={label || name}
