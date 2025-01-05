@@ -77,10 +77,21 @@ const defaultFormState: FormData = {
   clusterPrecision: null
 }
 
+const processSubmitFormData = (data: FormData) => {
+  const { cluster, ...rest } = data
+
+  // remove cluster manually for exclude it from query params
+  if (cluster === false) {
+    return rest
+  }
+
+  return data
+}
+
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
-  const { setParams } = useSearch()
+  const { setParams, params: localStorageParams } = useSearch()
 
   const multiselectFields = [
     'propertyType',
@@ -100,7 +111,8 @@ const ParamsForm = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = useMemo(() => merge(defaultFormState, apiParams), [])
+  const mergedApiParams = { ...localStorageParams, ...apiParams }
+  const defaultValues = merge(defaultFormState, mergedApiParams)
 
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
@@ -114,12 +126,9 @@ const ParamsForm = () => {
   const clusterEnabled = watch('cluster')
 
   const onSubmit = (data: FormData) => {
-    const { cluster, ...rest } = data
-
-    // remove cluster manually for exclude it from query params
-    const paramsToSet = cluster === false ? rest : data
-    localStorage.setItem('params', JSON.stringify(paramsToSet))
-    setParams(paramsToSet as any)
+    const formParams = processSubmitFormData(data)
+    localStorage.setItem('params', JSON.stringify(formParams))
+    setParams(formParams as any)
   }
 
   const onError = (errors: any) => {
