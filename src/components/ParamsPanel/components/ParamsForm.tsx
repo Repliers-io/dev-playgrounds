@@ -11,6 +11,7 @@ import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultisele
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 import {
+  defaultClusterChangeStep,
   defaultClusterLimit,
   defaultClusterPrecision
 } from 'constants/search.ts'
@@ -350,7 +351,7 @@ const ParamsForm = () => {
                 name="clusterLimit"
                 max={200}
                 min={0}
-                step={50}
+                step={defaultClusterChangeStep}
                 onChange={handleChange}
                 disabled={!clusterEnabled}
               />
@@ -358,7 +359,7 @@ const ParamsForm = () => {
                 name="clusterPrecision"
                 max={29}
                 min={0}
-                step={5}
+                step={defaultClusterChangeStep}
                 onChange={handleChange}
                 disabled={!clusterEnabled}
               />
