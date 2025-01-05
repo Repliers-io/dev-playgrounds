@@ -11,6 +11,7 @@ import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultisele
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 import {
+  defaultClusterChangeStep,
   defaultClusterLimit,
   defaultClusterPrecision
 } from 'constants/search.ts'
@@ -171,12 +172,7 @@ const ParamsForm = () => {
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      const { apiKey, cluster } = value
-      // reset form if apiKey changed
-      if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
-        handleClear(value as FormData)
-      }
-
+      const { cluster } = value
       // reset/restore cluster fields if cluster changed
       if (name === 'cluster') {
         if (cluster === false) {
@@ -350,7 +346,7 @@ const ParamsForm = () => {
                 name="clusterLimit"
                 max={200}
                 min={0}
-                step={50}
+                step={defaultClusterChangeStep}
                 onChange={handleChange}
                 disabled={!clusterEnabled}
               />
@@ -358,7 +354,7 @@ const ParamsForm = () => {
                 name="clusterPrecision"
                 max={29}
                 min={0}
-                step={5}
+                step={defaultClusterChangeStep}
                 onChange={handleChange}
                 disabled={!clusterEnabled}
               />
