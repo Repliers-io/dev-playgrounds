@@ -172,12 +172,7 @@ const ParamsForm = () => {
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
-      const { apiKey, cluster } = value
-      // reset form if apiKey changed
-      if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
-        handleClear(value as FormData)
-      }
-
+      const { cluster } = value
       // reset/restore cluster fields if cluster changed
       if (name === 'cluster') {
         if (cluster === false) {
