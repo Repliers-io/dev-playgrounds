@@ -1,58 +1,22 @@
 import { useEffect } from 'react'
 import { type Position } from 'geojson'
-import type { LngLatBounds } from 'mapbox-gl'
 import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
 
-import type { ApiLocation, Property } from 'services/API/types.ts'
+import type { APIHost, ApiLocation } from 'services/API/types'
+import MapService, { MAP_CONSTANTS } from 'services/Map'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
-import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider.tsx'
+import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
-import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map.ts'
-import { mapboxDefaults } from 'constants/map.ts'
 
 import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
-
-const getLocations = (listings: Property[]) => {
-  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
-  return listings
-    .map((item: Property) => ({
-      lat: parseFloat(item.map.latitude),
-      lng: parseFloat(item.map.longitude)
-    }))
-    .filter(({ lat, lng }) => lat > 0 && lng < 0)
-}
-
-const getMapContainerSize = (container: HTMLElement | null) => {
-  return container
-    ? { width: container.clientWidth, height: container.clientHeight }
-    : null
-}
-
-const getMapZoom = (bounds: LngLatBounds, container: HTMLElement | null) => {
-  const size = getMapContainerSize(container)
-  return size
-    ? calcZoomLevelForBounds(bounds, size.width, size.height)
-    : mapboxDefaults.zoom!
-}
-
-const getMapPosition = (
-  locations: ApiLocation[],
-  container: HTMLElement | null
-) => {
-  const bounds = getPolygonBounds(locations)
-  const center = bounds.getCenter()
-  const zoom = getMapZoom(bounds, container)
-  return { bounds, center, zoom }
-}
-
-type APIHost = { apiUrl: string; apiKey: string }
+import { getLocations, getMapPosition } from './utils.ts'
 
 const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
@@ -101,18 +65,31 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
-      await search({
+      const response = await search({
         ...params,
         ...fetchBounds
       })
+
+      if (!response) return
+
+      const { listings, count, aggregates } = response
+      const { clusters = [] } = aggregates?.map || {}
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, ...rest } = params
+      const { apiKey, cluster, ...rest } = params
       const { lng, lat } = center || {}
 
       const query = queryString.stringify(
-        { lng, lat, zoom, ...rest },
+        { lng, lat, zoom, cluster, ...rest },
         queryStringOptions
       )
+
+      const forceEnableClustering =
+        count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+
+      // Force toggle clustering view
+      MapService.setClusteringEnabled(cluster && forceEnableClustering)
+      MapService.update(listings, clusters, count)
 
       window.history.pushState(null, '', `?${query}`)
     } catch (error) {
@@ -125,7 +102,7 @@ const ParamsPanel = () => {
   // and clear old response
   useEffect(() => {
     const { apiKey = '', apiUrl = '' } = params
-    if (!apiKey || !apiUrl || !mapContainerRef.current) return
+    if (!apiKey || !apiUrl) return
 
     setCanRenderMap(false)
     clearData()

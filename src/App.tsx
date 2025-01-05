@@ -9,6 +9,10 @@ import theme from 'styles/theme'
 import './App.css'
 
 function App() {
+  const params =
+    localStorage.getItem('params') &&
+    JSON.parse(localStorage.getItem('params') as string)
+
   return (
     <>
       <div
@@ -28,7 +32,7 @@ function App() {
       </div>
       <ThemeProvider theme={theme}>
         <MapOptionsProvider style="map">
-          <SearchProvider>
+          <SearchProvider params={params}>
             <PageContent />
           </SearchProvider>
         </MapOptionsProvider>

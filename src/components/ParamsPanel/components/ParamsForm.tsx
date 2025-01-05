@@ -10,6 +10,10 @@ import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultisele
 
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
+import {
+  defaultClusterLimit,
+  defaultClusterPrecision
+} from 'constants/search.ts'
 
 import schema from '../schema'
 import {
@@ -18,8 +22,11 @@ import {
   statusOptions,
   typeOptions
 } from '../types'
+import { formatBooleanFields, formatMultiselectFields } from '../utils.ts'
 
+import ParamsCheckbox from './ParamsCheckbox.tsx'
 import ParamsField from './ParamsField'
+import ParamsRange from './ParamsRange.tsx'
 import ParamsSection from './ParamsSection'
 import ParamsSelect from './ParamsSelect'
 
@@ -29,12 +36,13 @@ const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 type FormData = {
   apiUrl: string
   apiKey: string
-  boardId: number
-  class: string | string[]
-  status: string
-  lastStatus: string
-  type: string | string[]
-  propertyType: string | string[]
+  boardId: number | null
+  class: string[]
+  status: string[]
+  lastStatus: string[]
+  type: string[]
+  propertyType: string[]
+  style: string[]
   sortBy: string
   minPrice: number | null
   maxPrice: number | null
@@ -42,58 +50,69 @@ type FormData = {
   minBaths: number | null
   minGarageSpaces: number | null
   minParkingSpaces: number | null
+  cluster: boolean | null
+  clusterLimit: number | null
+  clusterPrecision: number | null
+}
+
+const defaultFormState: FormData = {
+  apiUrl,
+  apiKey,
+  boardId: null,
+  class: [],
+  status: [],
+  lastStatus: [],
+  type: [],
+  style: [],
+  propertyType: [],
+  sortBy: '',
+  minPrice: null,
+  maxPrice: null,
+  minBedrooms: null,
+  minBaths: null,
+  minGarageSpaces: null,
+  minParkingSpaces: null,
+  cluster: null,
+  clusterLimit: null,
+  clusterPrecision: null
+}
+
+const processSubmitFormData = (data: FormData) => {
+  const { cluster, ...rest } = data
+
+  // remove cluster manually for exclude it from query params
+  if (cluster === false) {
+    return rest
+  }
+
+  return data
 }
 
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
-  const { setParams } = useSearch()
+  const { setParams, params: localStorageParams } = useSearch()
+
+  const multiselectFields = [
+    'propertyType',
+    'style',
+    'type',
+    'lastStatus',
+    'status',
+    'class'
+  ] as const
+
   // cache them one time on first render
-  const params = useMemo(() => queryString.parse(window.location.search), [])
+  const params = useMemo(() => {
+    const parsed = queryString.parse(window.location.search)
+    const formatedFields = formatBooleanFields(parsed)
+    return formatMultiselectFields(formatedFields, multiselectFields)
+  }, [])
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = useMemo(() => {
-    const convertToArray = (value: any) => {
-      if (value === null || value === undefined) {
-        return []
-      }
-      return typeof value === 'string' ? [value] : value
-    }
-
-    return merge(
-      {
-        apiKey,
-        apiUrl,
-        boardId: null,
-        class: [],
-        status: [],
-        lastStatus: [],
-        type: [],
-        style: [],
-        propertyType: [],
-        sortBy: '',
-        minPrice: null,
-        maxPrice: null,
-        minBedrooms: null,
-        minBaths: null,
-        minGarageSpaces: null,
-        minParkingSpaces: null
-      },
-      {
-        ...apiParams,
-
-        // TODO: maybe exist a better way to do this, need to check
-        // force transform query string single values to arrays
-        // for prevent crash multi-select rendering with single value after reload page
-        propertyType: convertToArray(apiParams.propertyType),
-        style: convertToArray(apiParams.style),
-        type: convertToArray(apiParams.type),
-        lastStatus: convertToArray(apiParams.lastStatus),
-        status: convertToArray(apiParams.status),
-        class: convertToArray(apiParams.class)
-      }
-    )
-  }, [])
+  const mergedApiParams = { ...localStorageParams, ...apiParams }
+  const defaultValues = merge(defaultFormState, mergedApiParams)
 
   const methods = useForm<FormData>({
     mode: 'onBlur', // Validate on blur
@@ -102,10 +121,14 @@ const ParamsForm = () => {
     defaultValues,
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-  const { handleSubmit } = methods
+
+  const { handleSubmit, watch } = methods
+  const clusterEnabled = watch('cluster')
 
   const onSubmit = (data: FormData) => {
-    setParams(data as any)
+    const formParams = processSubmitFormData(data)
+    localStorage.setItem('params', JSON.stringify(formParams))
+    setParams(formParams as any)
   }
 
   const onError = (errors: any) => {
@@ -116,28 +139,56 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
-  const handleClear = () => {
+  const handleClear = (currentValues = methods.getValues()) => {
+    const { apiUrl, apiKey } = currentValues
     methods.reset({
-      ...defaultValues,
-      // TODO: maybe exist a better way to do this ???
-      // force reset params and cashed values(query string)
-      boardId: null,
-      class: [],
-      status: [],
-      lastStatus: [],
-      type: [],
-      style: [],
-      propertyType: [],
-      sortBy: '',
-      minPrice: null,
-      maxPrice: null,
-      minBedrooms: null,
-      minBaths: null,
-      minGarageSpaces: null,
-      minParkingSpaces: null
+      ...defaultFormState,
+      apiUrl,
+      apiKey
     })
     handleSubmit(onSubmit, onError)()
   }
+
+  const handleResetCluster = (currentValues: Partial<FormData>) => {
+    methods.reset({
+      ...currentValues,
+      cluster: null,
+      clusterLimit: null,
+      clusterPrecision: null
+    })
+    handleSubmit(onSubmit, onError)()
+  }
+
+  const handleRestoreCluster = (currentValues: Partial<FormData>) => {
+    methods.reset({
+      ...currentValues,
+      cluster: true,
+      clusterLimit: defaultClusterLimit,
+      clusterPrecision: defaultClusterPrecision
+    })
+    handleSubmit(onSubmit, onError)()
+  }
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      const { apiKey, cluster } = value
+      // reset form if apiKey changed
+      if (name === 'apiKey' && apiKey !== defaultFormState.apiKey) {
+        handleClear(value as FormData)
+      }
+
+      // reset/restore cluster fields if cluster changed
+      if (name === 'cluster') {
+        if (cluster === false) {
+          handleResetCluster(value as FormData)
+        } else if (cluster === true) {
+          handleRestoreCluster(value as FormData)
+        }
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
@@ -152,23 +203,7 @@ const ParamsForm = () => {
           justifyContent="stretch"
           height="100%"
         >
-          <ParamsSection
-            title="credentials"
-            rightSlot={
-              <Button
-                type="submit"
-                size="small"
-                variant="text"
-                sx={{
-                  mb: 1,
-                  height: 32
-                }}
-                onClick={handleClear}
-              >
-                Clear All
-              </Button>
-            }
-          >
+          <ParamsSection title="credentials">
             <Stack spacing={1}>
               <ParamsField
                 noClear
@@ -180,7 +215,23 @@ const ParamsForm = () => {
               <ParamsField name="apiUrl" noClear onChange={handleChange} />
             </Stack>
           </ParamsSection>
-          <ParamsSection title="query parameters">
+          <ParamsSection
+            title="query parameters"
+            rightSlot={
+              <Button
+                type="submit"
+                size="small"
+                variant="text"
+                sx={{
+                  mb: 1,
+                  height: 32
+                }}
+                onClick={() => handleClear()}
+              >
+                Clear All
+              </Button>
+            }
+          >
             <Box
               sx={{
                 pr: 1,
@@ -281,6 +332,37 @@ const ParamsForm = () => {
                 </Stack>
               </Stack>
             </Box>
+          </ParamsSection>
+          <ParamsSection
+            title="Cluster"
+            hint="docs"
+            link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
+            rightSlot={
+              <ParamsCheckbox
+                name="cluster"
+                label="Enable"
+                onChange={handleChange}
+              />
+            }
+          >
+            <Stack spacing={1.25}>
+              <ParamsRange
+                name="clusterLimit"
+                max={200}
+                min={0}
+                step={50}
+                onChange={handleChange}
+                disabled={!clusterEnabled}
+              />
+              <ParamsRange
+                name="clusterPrecision"
+                max={29}
+                min={0}
+                step={5}
+                onChange={handleChange}
+                disabled={!clusterEnabled}
+              />
+            </Stack>
           </ParamsSection>
         </Stack>
       </form>

@@ -2,26 +2,35 @@ import React, { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import ClearIcon from '@mui/icons-material/Clear'
-import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  TextField,
+  type TextFieldProps
+} from '@mui/material'
 
 import ParamLabel from './ParamLabel'
 
-const ParamsField = ({
+type InputProps = TextFieldProps & {
+  name: string
+  label?: string
+  hint?: string
+  link?: string
+  noClear?: boolean
+  disabled?: boolean
+  onChange?: () => void
+}
+
+const ParamsField: React.FC<InputProps> = ({
   name,
   label,
   hint,
   link,
   type = 'text',
   noClear = false,
-  onChange
-}: {
-  name: string
-  label?: string
-  hint?: string
-  link?: string
-  type?: string
-  noClear?: boolean
-  onChange?: () => void
+  onChange,
+  ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const {
@@ -67,6 +76,7 @@ const ParamsField = ({
         error={!!errors[name]}
         helperText={errors[name]?.message?.toString()}
         {...register(name)}
+        {...rest}
         onBlur={handleFocus}
         onKeyDown={handleKeyDown}
         slotProps={{

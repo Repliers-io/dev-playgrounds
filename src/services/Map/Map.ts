@@ -1,13 +1,37 @@
 import { type MouseEvent } from 'react'
 import { type Map, Marker } from 'mapbox-gl'
 
-import { type Property } from 'services/API/types'
-import { createMarkerElement, type Markers } from 'services/Map'
+import { type ApiCluster, type Property } from 'services/API/types'
+import { createMarkerElement, MAP_CONSTANTS, type Markers } from 'services/Map'
 import { formatPrice } from 'utils/formatters'
-import { getMarkerName } from 'utils/map'
+import {
+  getMapUrl,
+  getMarkerName,
+  toMapboxBounds,
+  toMapboxPoint
+} from 'utils/map'
+
+import { MapDataMode } from './types.ts'
 
 export class MapService {
   markers: Markers = {}
+  clusterMarkers: Markers = {}
+
+  dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
+
+  private clusteringEnabled: boolean = true
+
+  updateViewMode(mode: MapDataMode): void {
+    this.dataMode = mode
+  }
+
+  setClusteringEnabled(enabled: boolean) {
+    this.clusteringEnabled = enabled
+  }
+
+  private getClusterKey(cluster: ApiCluster): string {
+    return `c-${cluster.count}-lat-${cluster.location.latitude}-lng-${cluster.location.longitude}`
+  }
 
   getMarker(mlsNumber: string): Marker | undefined {
     return this.markers[mlsNumber]
@@ -24,6 +48,11 @@ export class MapService {
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
   }): void {
+    const notSingleMarkerView = this.dataMode !== MapDataMode.SINGLE_MARKER
+    const forceEnableClustering = this.clusteringEnabled
+
+    if (notSingleMarkerView || forceEnableClustering) return
+
     listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
 
@@ -108,6 +137,97 @@ export class MapService {
     markers.forEach((marker) => marker.remove())
 
     this.markers = {}
+  }
+
+  // Clustering
+  showClusterMarkers({
+    clusters,
+    map
+  }: {
+    clusters: ApiCluster[]
+    map: Map | null
+  }): void {
+    const notClusterView = this.dataMode !== MapDataMode.CLUSTER
+    const forceDisableClustering = !this.clusteringEnabled
+
+    if (!clusters.length || !map || notClusterView || forceDisableClustering)
+      return
+
+    clusters.forEach((cluster) => {
+      if (this.clusterMarkers[this.getClusterKey(cluster)]) return
+
+      const { bounds, location } = cluster
+      const center = toMapboxPoint(location)
+      const zoom = map.getZoom()
+
+      const diff = bounds.bottom_right.longitude - bounds.top_left.longitude
+      const buffer = diff * MAP_CONSTANTS.ZOOM_TO_MARKER_BUFFER
+      const mapboxBounds = toMapboxBounds(bounds, buffer)
+
+      const markerElement = createMarkerElement({
+        size: 'cluster',
+        link: getMapUrl(center, zoom),
+        label: cluster.count.toString(),
+        onClick: (e) => {
+          map.fitBounds(mapboxBounds)
+          e.preventDefault()
+        }
+      })
+
+      const marker = new Marker(markerElement).setLngLat(center).addTo(map)
+
+      this.addCluster(this.getClusterKey(cluster), marker)
+    })
+  }
+
+  addCluster(key: string, marker: Marker) {
+    if (!this.clusterMarkers[key]) {
+      this.clusterMarkers[key] = marker
+    }
+  }
+
+  resetClusters() {
+    const markers: Marker[] = Object.values(this.clusterMarkers)
+    markers.forEach((marker) => marker.remove())
+
+    this.clusterMarkers = {}
+  }
+
+  smartResetClusters(clusters: ApiCluster[]) {
+    const newClusterKeys = clusters.map((cluster) =>
+      this.getClusterKey(cluster)
+    )
+    const renderedClusterKeys = Object.keys(this.clusterMarkers)
+
+    renderedClusterKeys.forEach((key) => {
+      if (!newClusterKeys.includes(key)) {
+        this.clusterMarkers[key].remove()
+        delete this.clusterMarkers[key]
+      }
+    })
+  }
+
+  update(list: Property[], clusters: ApiCluster[], count: number): void {
+    if (!count) {
+      this.resetMarkers()
+      this.resetClusters()
+      return
+    }
+
+    if (!this.clusteringEnabled) {
+      this.updateViewMode(MapDataMode.SINGLE_MARKER)
+      this.resetClusters()
+      return
+    }
+
+    if (count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING) {
+      this.updateViewMode(MapDataMode.CLUSTER)
+      this.resetMarkers()
+      this.smartResetClusters(clusters)
+    } else {
+      this.updateViewMode(MapDataMode.SINGLE_MARKER)
+      this.resetClusters()
+    }
   }
 }
 
