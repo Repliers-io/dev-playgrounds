@@ -1,20 +1,27 @@
+import React from 'react'
+
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import { InputLabel, Stack, Typography } from '@mui/material'
-const ParamLabel = ({
-  nameFor,
-  label,
-  title,
-  hint,
-  link
-}: {
+import { type StackOwnProps } from '@mui/material/Stack/Stack'
+
+interface ParamLabelProps extends StackOwnProps {
   nameFor?: string
   label?: string
   title?: string
   hint?: string
   link?: string
+}
+
+const ParamLabel: React.FC<ParamLabelProps> = ({
+  nameFor,
+  label,
+  title,
+  hint,
+  link,
+  ...rest
 }) => {
   return (
-    <Stack spacing={1} direction="row" alignItems="center" pb={1}>
+    <Stack spacing={1} direction="row" alignItems="center" pb={1} {...rest}>
       {Boolean(label && nameFor) && (
         <InputLabel htmlFor={nameFor}>{label}</InputLabel>
       )}
