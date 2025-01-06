@@ -330,18 +330,28 @@ const ParamsForm = () => {
             </Box>
           </ParamsSection>
           <ParamsSection
-            title="Cluster"
+            title="Clusters"
             hint="docs"
             link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
+            sx={{ '& .MuiStack-root > .MuiStack-root': { pb: 0 } }}
             rightSlot={
               <ParamsCheckbox
                 name="cluster"
                 label="Enable"
+                size="small"
                 onChange={handleChange}
               />
             }
           >
             <Stack spacing={1.25}>
+              <Stack mx="-11px">
+                <ParamsCheckbox
+                  name="clusterAutoSwitch"
+                  label="Auto-Switch off clusters on Map"
+                  size="small"
+                  onChange={handleChange}
+                />
+              </Stack>
               <ParamsRange
                 name="clusterLimit"
                 max={200}
