@@ -6,7 +6,7 @@ import { Box, Stack } from '@mui/material'
 
 import type { APIHost, ApiLocation } from 'services/API/types'
 import MapService, { MAP_CONSTANTS } from 'services/Map'
-import { type MapPosition } from 'services/Map/types'
+import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -76,7 +76,7 @@ const ParamsPanel = () => {
       const { clusters = [] } = aggregates?.map || {}
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, cluster, ...rest } = params
+      const { apiKey, cluster, clusterAutoSwitch, ...rest } = params
       const { lng, lat } = center || {}
 
       const query = queryString.stringify(
@@ -84,11 +84,11 @@ const ParamsPanel = () => {
         queryStringOptions
       )
 
-      const forceEnableClustering =
-        count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
-
-      // Force toggle clustering view
-      MapService.setClusteringEnabled(cluster && forceEnableClustering)
+      const clusterViewMode = cluster
+        ? MapDataMode.CLUSTER
+        : MapDataMode.SINGLE_MARKER
+      MapService.setViewMode(clusterViewMode)
+      MapService.setClusterAutoSwitch(clusterAutoSwitch)
       MapService.update(listings, clusters, count)
 
       window.history.pushState(null, '', `?${query}`)
