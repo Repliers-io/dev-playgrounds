@@ -5,7 +5,7 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 
 import type { APIHost, ApiLocation } from 'services/API/types'
-import MapService, { MAP_CONSTANTS } from 'services/Map'
+import MapService from 'services/Map'
 import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
@@ -65,8 +65,10 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
+      const { clusterAutoSwitch, ...filteredParams } = params
+
       const response = await search({
-        ...params,
+        ...filteredParams,
         ...fetchBounds
       })
 
@@ -76,7 +78,7 @@ const ParamsPanel = () => {
       const { clusters = [] } = aggregates?.map || {}
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, cluster, clusterAutoSwitch, ...rest } = params
+      const { apiKey, cluster, ...rest } = params
       const { lng, lat } = center || {}
 
       const query = queryString.stringify(

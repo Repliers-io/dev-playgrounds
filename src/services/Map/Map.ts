@@ -19,7 +19,8 @@ export class MapService {
 
   dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
 
-  // force toggle to single marker view when count is less than 100
+  // In cluster view, if count is less than 100, we automatically switch to single marker view
+  // we can disable this feature by setting clusterAutoSwitch to false
   private clusterAutoSwitch: boolean = true
 
   get singleMarkerView() {

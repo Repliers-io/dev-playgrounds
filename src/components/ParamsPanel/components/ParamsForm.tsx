@@ -35,6 +35,10 @@ const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 
 type FormData = {
+  // Internal use only: manages cluster/marker view on the UI
+  // Exclude from request parameters
+  clusterAutoSwitch: boolean
+
   apiUrl: string
   apiKey: string
   boardId: number | null
@@ -57,6 +61,8 @@ type FormData = {
 }
 
 const defaultFormState: FormData = {
+  // internal usage only
+  clusterAutoSwitch: true,
   apiUrl,
   apiKey,
   boardId: null,
