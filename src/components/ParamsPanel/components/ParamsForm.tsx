@@ -160,6 +160,7 @@ const ParamsForm = () => {
     methods.reset({
       ...currentValues,
       cluster: null,
+      clusterAutoSwitch: false,
       clusterLimit: null,
       clusterPrecision: null
     })
@@ -170,6 +171,7 @@ const ParamsForm = () => {
     methods.reset({
       ...currentValues,
       cluster: true,
+      clusterAutoSwitch: true,
       clusterLimit: defaultClusterLimit,
       clusterPrecision: defaultClusterPrecision
     })
@@ -355,6 +357,7 @@ const ParamsForm = () => {
                   name="clusterAutoSwitch"
                   label="Auto-Switch off clusters on Map"
                   size="small"
+                  disabled={!clusterEnabled}
                   onChange={handleChange}
                 />
               </Stack>
@@ -363,16 +366,16 @@ const ParamsForm = () => {
                 max={200}
                 min={0}
                 step={defaultClusterChangeStep}
-                onChange={handleChange}
                 disabled={!clusterEnabled}
+                onMouseUp={handleChange}
               />
               <ParamsRange
                 name="clusterPrecision"
                 max={29}
                 min={0}
                 step={defaultClusterChangeStep}
-                onChange={handleChange}
                 disabled={!clusterEnabled}
+                onMouseUp={handleChange}
               />
             </Stack>
           </ParamsSection>
