@@ -1,15 +1,21 @@
-import React, { type InputHTMLAttributes, useRef } from 'react'
+import React, { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Checkbox, FormControlLabel, FormHelperText } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, FormHelperText } from '@mui/material'
+import { type CheckboxProps } from '@mui/material/Checkbox/Checkbox'
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends CheckboxProps {
   name: string
   label?: string
   onChange?: () => void
 }
 
-const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
+const ParamsCheckbox: React.FC<InputProps> = ({
+  name,
+  label,
+  onChange,
+  ...rest
+}) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const {
     register,
@@ -36,13 +42,16 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
   }
 
   return (
-    <>
+    <Box>
       <FormControlLabel
+        sx={{ m: 0 }}
         control={
           <Checkbox
             checked={checked}
             inputRef={inputRef}
+            sx={{ m: 0 }}
             {...register(name)}
+            {...rest}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -50,11 +59,11 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
         label={label || name}
       />
       {errors[name] && (
-        <FormHelperText error>
+        <FormHelperText error sx={{ mt: -0.5 }}>
           {errors[name]?.message?.toString()}
         </FormHelperText>
       )}
-    </>
+    </Box>
   )
 }
 

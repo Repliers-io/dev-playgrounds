@@ -48,7 +48,7 @@ const ParamsRange: React.FC<RangeProps> = ({
 
   return (
     <Box flex={1}>
-      <ParamLabel label={label} nameFor={name} hint={hint} link={link} />
+      <ParamLabel label={label} nameFor={name} hint={hint} link={link} pb={0} />
       <Stack px={1} direction="row" gap={1} alignItems="center" p={0}>
         <Slider
           value={value}
