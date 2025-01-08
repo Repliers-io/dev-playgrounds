@@ -35,6 +35,10 @@ const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 
 type FormData = {
+  // Internal use only: manages cluster/marker view on the UI
+  // Exclude from request parameters
+  clusterAutoSwitch: boolean
+
   apiUrl: string
   apiKey: string
   boardId: number | null
@@ -57,6 +61,8 @@ type FormData = {
 }
 
 const defaultFormState: FormData = {
+  // internal usage only
+  clusterAutoSwitch: true,
   apiUrl,
   apiKey,
   boardId: null,
@@ -154,6 +160,7 @@ const ParamsForm = () => {
     methods.reset({
       ...currentValues,
       cluster: null,
+      clusterAutoSwitch: false,
       clusterLimit: null,
       clusterPrecision: null
     })
@@ -164,6 +171,7 @@ const ParamsForm = () => {
     methods.reset({
       ...currentValues,
       cluster: true,
+      clusterAutoSwitch: true,
       clusterLimit: defaultClusterLimit,
       clusterPrecision: defaultClusterPrecision
     })
@@ -330,33 +338,44 @@ const ParamsForm = () => {
             </Box>
           </ParamsSection>
           <ParamsSection
-            title="Cluster"
+            title="Clusters"
             hint="docs"
             link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
+            sx={{ '& .MuiStack-root > .MuiStack-root': { pb: 0 } }}
             rightSlot={
               <ParamsCheckbox
                 name="cluster"
                 label="Enable"
+                size="small"
                 onChange={handleChange}
               />
             }
           >
             <Stack spacing={1.25}>
+              <Stack mx="-11px">
+                <ParamsCheckbox
+                  name="clusterAutoSwitch"
+                  label="Auto-Switch off clusters on Map"
+                  size="small"
+                  disabled={!clusterEnabled}
+                  onChange={handleChange}
+                />
+              </Stack>
               <ParamsRange
                 name="clusterLimit"
                 max={200}
                 min={0}
                 step={defaultClusterChangeStep}
-                onChange={handleChange}
                 disabled={!clusterEnabled}
+                onMouseUp={handleChange}
               />
               <ParamsRange
                 name="clusterPrecision"
                 max={29}
                 min={0}
                 step={defaultClusterChangeStep}
-                onChange={handleChange}
                 disabled={!clusterEnabled}
+                onMouseUp={handleChange}
               />
             </Stack>
           </ParamsSection>

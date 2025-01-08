@@ -19,14 +19,55 @@ export class MapService {
 
   dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
 
-  private clusteringEnabled: boolean = true
+  // In cluster view, if count is less than 100, we automatically switch to single marker view
+  // we can disable this feature by setting clusterAutoSwitch to false
+  private clusterAutoSwitch: boolean = true
 
-  updateViewMode(mode: MapDataMode): void {
+  get singleMarkerView() {
+    return this.dataMode === MapDataMode.SINGLE_MARKER
+  }
+
+  get clusterView() {
+    return this.dataMode === MapDataMode.CLUSTER
+  }
+
+  setViewMode(mode: MapDataMode): void {
     this.dataMode = mode
   }
 
-  setClusteringEnabled(enabled: boolean) {
-    this.clusteringEnabled = enabled
+  setClusterAutoSwitch(enabled: boolean) {
+    this.clusterAutoSwitch = enabled
+  }
+
+  resetAllMarkers() {
+    this.resetMarkers()
+    this.resetClusters()
+  }
+
+  shouldSwitchToSingleMarkerView(count: number) {
+    if (this.singleMarkerView) return true
+    return (
+      this.clusterView &&
+      this.clusterAutoSwitch &&
+      count < MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+    )
+  }
+
+  shouldSwitchToClusterView() {
+    return this.clusterView
+  }
+
+  switchToSingleMarkerView() {
+    this.setViewMode(MapDataMode.SINGLE_MARKER)
+    this.resetClusters()
+  }
+
+  switchToClusterView(clusters?: ApiCluster[]) {
+    this.setViewMode(MapDataMode.CLUSTER)
+    this.resetMarkers()
+    if (clusters) {
+      this.smartResetClusters(clusters)
+    }
   }
 
   private getClusterKey(cluster: ApiCluster): string {
@@ -48,10 +89,7 @@ export class MapService {
     onClick?: (e: MouseEvent, property: Property) => void
     onTap?: (property: Property) => void
   }): void {
-    const notSingleMarkerView = this.dataMode !== MapDataMode.SINGLE_MARKER
-    const forceEnableClustering = this.clusteringEnabled
-
-    if (notSingleMarkerView || forceEnableClustering) return
+    if (!this.singleMarkerView) return
 
     listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
@@ -147,11 +185,9 @@ export class MapService {
     clusters: ApiCluster[]
     map: Map | null
   }): void {
-    const notClusterView = this.dataMode !== MapDataMode.CLUSTER
-    const forceDisableClustering = !this.clusteringEnabled
+    if (!clusters.length || !map || !this.clusterView) return
 
-    if (!clusters.length || !map || notClusterView || forceDisableClustering)
-      return
+    this.smartResetClusters(clusters)
 
     clusters.forEach((cluster) => {
       if (this.clusterMarkers[this.getClusterKey(cluster)]) return
@@ -209,24 +245,18 @@ export class MapService {
 
   update(list: Property[], clusters: ApiCluster[], count: number): void {
     if (!count) {
-      this.resetMarkers()
-      this.resetClusters()
+      this.resetAllMarkers()
       return
     }
 
-    if (!this.clusteringEnabled) {
-      this.updateViewMode(MapDataMode.SINGLE_MARKER)
-      this.resetClusters()
+    if (this.shouldSwitchToSingleMarkerView(count)) {
+      this.switchToSingleMarkerView()
       return
     }
 
-    if (count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING) {
-      this.updateViewMode(MapDataMode.CLUSTER)
-      this.resetMarkers()
-      this.smartResetClusters(clusters)
-    } else {
-      this.updateViewMode(MapDataMode.SINGLE_MARKER)
-      this.resetClusters()
+    if (this.shouldSwitchToClusterView()) {
+      this.switchToClusterView(clusters)
+      return
     }
   }
 }

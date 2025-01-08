@@ -5,8 +5,8 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 
 import type { APIHost, ApiLocation } from 'services/API/types'
-import MapService, { MAP_CONSTANTS } from 'services/Map'
-import { type MapPosition } from 'services/Map/types'
+import MapService from 'services/Map'
+import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -65,8 +65,10 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
+      const { clusterAutoSwitch, ...filteredParams } = params
+
       const response = await search({
-        ...params,
+        ...filteredParams,
         ...fetchBounds
       })
 
@@ -84,11 +86,11 @@ const ParamsPanel = () => {
         queryStringOptions
       )
 
-      const forceEnableClustering =
-        count > MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
-
-      // Force toggle clustering view
-      MapService.setClusteringEnabled(cluster && forceEnableClustering)
+      const clusterViewMode = cluster
+        ? MapDataMode.CLUSTER
+        : MapDataMode.SINGLE_MARKER
+      MapService.setViewMode(clusterViewMode)
+      MapService.setClusterAutoSwitch(clusterAutoSwitch)
       MapService.update(listings, clusters, count)
 
       window.history.pushState(null, '', `?${query}`)
