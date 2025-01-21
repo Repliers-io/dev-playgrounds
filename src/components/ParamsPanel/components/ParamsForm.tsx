@@ -21,6 +21,7 @@ import {
   classOptions,
   sortByOptions,
   statusOptions,
+  trueFalseOptions,
   typeOptions
 } from '../types'
 import { formatBooleanFields, formatMultiselectFields } from '../utils.ts'
@@ -246,6 +247,11 @@ const ParamsForm = () => {
             >
               <Stack spacing={1.25}>
                 <ParamsField name="boardId" noClear onChange={handleChange} />
+                <ParamsSelect
+                  name="listings"
+                  options={trueFalseOptions}
+                  onChange={handleChange}
+                />
                 <Stack
                   spacing={1}
                   direction="row"
