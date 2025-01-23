@@ -9,6 +9,7 @@ import { Box, Button, Stack } from '@mui/material'
 import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
 
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
+import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 import {
   defaultClusterChangeStep,
@@ -106,7 +107,9 @@ const processSubmitFormData = (data: FormData) => {
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
-  const { setParams, params: localStorageParams } = useSearch()
+  const { setParams, params: localStorageParams, setParam } = useSearch()
+
+  const { position } = useMapOptions()
 
   const multiselectFields = [
     'propertyType',
@@ -137,8 +140,9 @@ const ParamsForm = () => {
     resolver: joiResolver(schema, { allowUnknown: true })
   })
 
-  const { handleSubmit, watch } = methods
+  const { handleSubmit, watch, setValue } = methods
   const clusterEnabled = watch('cluster')
+  const slidingClusterPrecision = watch('slidingClusterPrecision')
 
   const onSubmit = (data: FormData) => {
     const formParams = processSubmitFormData(data)
@@ -207,6 +211,13 @@ const ParamsForm = () => {
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
   }, [])
+
+  useEffect(() => {
+    if (slidingClusterPrecision) {
+      setParam('clusterPrecision', Math.round(position?.zoom || 0) + 2)
+      setValue('clusterPrecision', Math.round(position?.zoom || 0) + 2)
+    }
+  }, [position?.zoom, slidingClusterPrecision])
 
   return (
     <FormProvider {...methods}>

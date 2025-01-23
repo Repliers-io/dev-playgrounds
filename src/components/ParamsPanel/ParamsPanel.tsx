@@ -65,15 +65,11 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
-      const { clusterAutoSwitch, slidingClusterPrecision, ...filteredParams } =
-        params
+      const { clusterAutoSwitch, ...filteredParams } = params
 
       const response = await search({
         ...filteredParams,
-        ...fetchBounds,
-        ...(slidingClusterPrecision
-          ? { clusterPrecision: Math.round(zoom) + 2 }
-          : {})
+        ...fetchBounds
       })
 
       if (!response) return
