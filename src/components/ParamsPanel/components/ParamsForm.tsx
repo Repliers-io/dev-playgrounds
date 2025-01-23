@@ -40,6 +40,10 @@ type FormData = {
   // Exclude from request parameters
   clusterAutoSwitch: boolean
 
+  // Internal use only: examplifies sliding cluster precision bazed on zool level
+  // Exclude from request parameters
+  slidingClusterPrecision: boolean
+
   apiUrl: string
   apiKey: string
   boardId: number | null
@@ -64,6 +68,9 @@ type FormData = {
 const defaultFormState: FormData = {
   // internal usage only
   clusterAutoSwitch: true,
+  slidingClusterPrecision: true,
+
+  // request parameters
   apiUrl,
   apiKey,
   boardId: null,
@@ -162,6 +169,7 @@ const ParamsForm = () => {
       ...currentValues,
       cluster: null,
       clusterAutoSwitch: false,
+      slidingClusterPrecision: false,
       clusterLimit: null,
       clusterPrecision: null
     })
@@ -173,6 +181,7 @@ const ParamsForm = () => {
       ...currentValues,
       cluster: true,
       clusterAutoSwitch: true,
+      slidingClusterPrecision: true,
       clusterLimit: defaultClusterLimit,
       clusterPrecision: defaultClusterPrecision
     })
@@ -362,6 +371,13 @@ const ParamsForm = () => {
                 <ParamsCheckbox
                   name="clusterAutoSwitch"
                   label="Auto-Switch off clusters on Map"
+                  size="small"
+                  disabled={!clusterEnabled}
+                  onChange={handleChange}
+                />
+                <ParamsCheckbox
+                  name="slidingClusterPrecision"
+                  label="Sliding Cluster Precision"
                   size="small"
                   disabled={!clusterEnabled}
                   onChange={handleChange}
