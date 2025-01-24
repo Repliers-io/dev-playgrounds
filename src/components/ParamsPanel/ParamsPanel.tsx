@@ -5,7 +5,7 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 
 import type { APIHost, ApiLocation } from 'services/API/types'
-import MapService from 'services/Map'
+import MapService, { MAP_CONSTANTS } from 'services/Map'
 import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
@@ -66,6 +66,7 @@ const ParamsPanel = () => {
 
     try {
       const { clusterAutoSwitch, ...filteredParams } = params
+      const paramsListings = filteredParams.listings === 'true'
 
       const response = await search({
         ...filteredParams,
@@ -76,6 +77,19 @@ const ParamsPanel = () => {
 
       const { listings, count, aggregates } = response
       const { clusters = [] } = aggregates?.map || {}
+
+      // eslint-disable-next-line no-console
+      console.log('count: ', count)
+      if (
+        !paramsListings &&
+        count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
+      ) {
+        // TODO: this shall be transferred to big warning toast
+        // eslint-disable-next-line no-console
+        console.warn(
+          "You don't see listings on map because 'listngs === false'"
+        )
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, cluster, ...rest } = params

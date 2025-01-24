@@ -49,7 +49,7 @@ export class MapService {
     return (
       this.clusterView &&
       this.clusterAutoSwitch &&
-      count < MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+      count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
     )
   }
 
