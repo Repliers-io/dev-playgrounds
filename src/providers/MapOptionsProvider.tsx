@@ -8,6 +8,8 @@ import React, {
 } from 'react'
 import { type Map as MapboxMap } from 'mapbox-gl'
 
+import { Alert, AlertColor, Snackbar, type SnackbarOrigin } from '@mui/material'
+
 import { type MapPosition } from 'services/Map/types'
 import { type MapStyle } from 'constants/map-styles'
 
@@ -25,6 +27,14 @@ type MapOptionsContextProps = {
   destroyMap: () => void
   setMapRef: (ref: MapboxMap | null) => void
   setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) => void
+  showSnackbar: (message: string, severity: AlertColor) => void
+  hideSnackbar: () => void
+}
+
+interface SnackbarState extends SnackbarOrigin {
+  open: boolean
+  message: string | null
+  severity: AlertColor
 }
 
 const MapOptionsContext = createContext<MapOptionsContextProps | undefined>(
@@ -55,6 +65,23 @@ const MapOptionsProvider = ({
     position || undefined
   )
 
+  const [snackbarState, setSnackbarState] = React.useState<SnackbarState>({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center',
+    message: '',
+    severity: 'info'
+  })
+  const { vertical, horizontal, open, message: snackbarMessage } = snackbarState
+
+  const showSnackbar = (message: string, severity: AlertColor = 'info') => {
+    setSnackbarState({ ...snackbarState, open: true, message, severity })
+  }
+
+  const hideSnackbar = () => {
+    setSnackbarState({ ...snackbarState, open: false, message: null })
+  }
+
   const destroyMap = useCallback(() => {
     const map = mapRef.current
     if (map) {
@@ -78,7 +105,9 @@ const MapOptionsProvider = ({
       destroyMap,
       setMapRef: (ref: MapboxMap | null) => (mapRef.current = ref),
       setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
-        (mapContainerRef.current = ref.current)
+        (mapContainerRef.current = ref.current),
+      showSnackbar,
+      hideSnackbar
     }),
     [mapPosition, mapStyle, canRenderMap, highlightedMarker]
   )
@@ -86,6 +115,11 @@ const MapOptionsProvider = ({
   return (
     <MapOptionsContext.Provider value={contextValue}>
       {children}
+      <Snackbar open={open} anchorOrigin={{ vertical, horizontal }}>
+        <Alert severity="warning" variant="filled" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </MapOptionsContext.Provider>
   )
 }

@@ -2,6 +2,11 @@ import type { Position } from 'geojson'
 
 export type APIHost = { apiUrl: string; apiKey: string }
 
+export type ParamsPanelControls = {
+  clusterAutoSwitch: boolean
+  slidingClusterPrecision: boolean
+}
+
 export type ApiClass = 'condo' | 'residential' | 'commercial'
 
 export type ApiClassResponse =

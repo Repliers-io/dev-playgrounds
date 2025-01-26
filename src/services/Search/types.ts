@@ -40,5 +40,7 @@ export interface Filters {
   maxYearBuilt?: number | null
   coverImage?: string
   imageSearchItems?: any[]
-  clusterPrecision: number
+  clusterPrecision?: number
+  listings?: string | null
+  cluster?: boolean | null
 }

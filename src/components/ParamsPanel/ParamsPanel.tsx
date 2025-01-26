@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
@@ -41,9 +41,13 @@ const ParamsPanel = () => {
     position,
     mapContainerRef,
     setPosition,
-    setCanRenderMap
+    setCanRenderMap,
+    showSnackbar,
+    hideSnackbar
   } = useMapOptions()
   const { search, params, polygon, clearData } = useSearch()
+
+  const { listingCount, setListingCount } = useState(0)
 
   const savePosition = (
     locations: ApiLocation[],
@@ -66,7 +70,11 @@ const ParamsPanel = () => {
 
     try {
       const { clusterAutoSwitch, ...filteredParams } = params
-      const paramsListings = filteredParams.listings === 'true'
+
+      // const paramsListings =
+      //   filteredParams.listings === 'true' || filteredParams.listings === ''
+
+      // const paramsCluster = filteredParams.cluster === true
 
       const response = await search({
         ...filteredParams,
@@ -77,19 +85,36 @@ const ParamsPanel = () => {
 
       const { listings, count, aggregates } = response
       const { clusters = [] } = aggregates?.map || {}
+      // setListingCount(count)
 
       // eslint-disable-next-line no-console
-      console.log('count: ', count)
-      if (
-        !paramsListings &&
-        count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
-      ) {
-        // TODO: this shall be transferred to big warning toast
-        // eslint-disable-next-line no-console
-        console.warn(
-          "You don't see listings on map because 'listngs === false'"
-        )
-      }
+      // console.log('count: ', count)
+      // console.log('paramsListings: ', paramsListings)
+      // console.log('paramsCluster: ', paramsCluster)
+      // console.log('clusterAutoSwitch: ', clusterAutoSwitch)
+
+      // if (paramsListings) {
+      //   hideSnackbar()
+      // } else {
+      //   /* !paramsListings */
+      //   if (!paramsCluster) {
+      //     showSnackbar(
+      //       "You don't see listings on map because 'listngs === false'",
+      //       'warning'
+      //     )
+      //   } else if (
+      //     /* paramsCluster */
+      //     clusterAutoSwitch &&
+      //     count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
+      //   ) {
+      //     showSnackbar(
+      //       "You don't see listings on map because 'listngs === false'",
+      //       'warning'
+      //     )
+      //   } else {
+      //     hideSnackbar()
+      //   }
+      // }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, cluster, ...rest } = params
@@ -112,6 +137,38 @@ const ParamsPanel = () => {
       console.error('fetchData error:', error)
     }
   }
+
+  // useEffect(() => {
+  //   console.log('useEffect: [params, listingCount]')
+  //   const { clusterAutoSwitch, ...filteredParams } = params
+
+  //   const paramsListings =
+  //     filteredParams.listings === 'true' || filteredParams.listings === ''
+  //   const paramsCluster = filteredParams.cluster === true
+
+  //   if (paramsListings) {
+  //     hideSnackbar()
+  //   } else {
+  //     /* !paramsListings */
+  //     if (!paramsCluster) {
+  //       showSnackbar(
+  //         "You don't see listings on map because 'listngs === false'",
+  //         'warning'
+  //       )
+  //     } else if (
+  //       /* paramsCluster */
+  //       clusterAutoSwitch &&
+  //       listingCount < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
+  //     ) {
+  //       showSnackbar(
+  //         "You don't see listings on map because 'listngs === false'",
+  //         'warning'
+  //       )
+  //     } else {
+  //       hideSnackbar()
+  //     }
+  //   }
+  // }, [params, listingCount])
 
   // subscribe for apiKey changes must refetch listings
   // for calculate position/bounds/zoom

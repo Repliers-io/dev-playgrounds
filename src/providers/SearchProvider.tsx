@@ -12,6 +12,7 @@ import type {
   ApiCluster,
   APIHost,
   ApiQueryResponse,
+  ParamsPanelControls,
   Property
 } from 'services/API/types'
 import type { Filters } from 'services/Search'
@@ -26,7 +27,7 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
-type Params = Filters & APIHost
+type Params = Filters & APIHost & ParamsPanelControls
 type ParamKeys = keyof Params
 
 type SearchContextType = SavedResponse & {
