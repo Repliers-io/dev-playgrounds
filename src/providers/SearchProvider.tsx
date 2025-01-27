@@ -114,11 +114,11 @@ const SearchProvider = ({
   const clearPolygon = () => setPolygon(null)
 
   const clearData = () => {
-    setRequest('')
-    setTime(0)
-    setStatusCode(null)
     setSaved(emptySavedResponse)
+    setStatusCode(null)
+    setRequest('')
     setJson(null)
+    setTime(0)
   }
 
   const search = async (params: any) => {

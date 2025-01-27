@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
 
 import type { APIHost, ApiLocation } from 'services/API/types'
-import MapService, { MAP_CONSTANTS } from 'services/Map'
+import MapService from 'services/Map'
 import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
@@ -41,13 +41,9 @@ const ParamsPanel = () => {
     position,
     mapContainerRef,
     setPosition,
-    setCanRenderMap,
-    showSnackbar,
-    hideSnackbar
+    setCanRenderMap
   } = useMapOptions()
   const { search, params, polygon, clearData } = useSearch()
-
-  const { listingCount, setListingCount } = useState(0)
 
   const savePosition = (
     locations: ApiLocation[],
@@ -81,11 +77,9 @@ const ParamsPanel = () => {
         ...fetchBounds
       })
 
-      if (!response) return
-
-      const { listings, count, aggregates } = response
-      const { clusters = [] } = aggregates?.map || {}
-      // setListingCount(count)
+      // if (!response) return
+      // const { listings, count, aggregates } = response
+      // const { clusters = [] } = aggregates?.map || {}
 
       // eslint-disable-next-line no-console
       // console.log('count: ', count)
@@ -125,12 +119,12 @@ const ParamsPanel = () => {
         queryStringOptions
       )
 
-      const clusterViewMode = cluster
-        ? MapDataMode.CLUSTER
-        : MapDataMode.SINGLE_MARKER
-      MapService.setViewMode(clusterViewMode)
-      MapService.setClusterAutoSwitch(clusterAutoSwitch)
-      MapService.update(listings, clusters, count)
+      // const clusterViewMode = cluster
+      //   ? MapDataMode.CLUSTER
+      //   : MapDataMode.SINGLE_MARKER
+      // MapService.setViewMode(clusterViewMode)
+      // MapService.setClusterAutoSwitch(clusterAutoSwitch)
+      // MapService.update(listings, clusters, count)
 
       window.history.pushState(null, '', `?${query}`)
     } catch (error) {

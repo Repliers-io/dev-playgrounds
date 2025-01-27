@@ -378,34 +378,34 @@ const ParamsForm = () => {
             }
           >
             <Stack spacing={1.25}>
-              <Stack mx="-11px">
+              <Stack sx={{ ml: -0.75 }}>
                 <ParamsCheckbox
+                  size="small"
                   name="clusterAutoSwitch"
                   label="Auto-Switch off clusters on Map"
-                  size="small"
                   disabled={!clusterEnabled}
                   onChange={handleChange}
                 />
                 <ParamsCheckbox
+                  size="small"
                   name="slidingClusterPrecision"
                   label="Sliding Cluster Precision"
-                  size="small"
                   disabled={!clusterEnabled}
                   onChange={handleChange}
                 />
               </Stack>
               <ParamsRange
-                name="clusterLimit"
+                min={1}
                 max={200}
-                min={0}
+                name="clusterLimit"
                 step={defaultClusterChangeStep}
                 disabled={!clusterEnabled}
                 onMouseUp={handleChange}
               />
               <ParamsRange
-                name="clusterPrecision"
-                max={29}
                 min={0}
+                max={29}
+                name="clusterPrecision"
                 step={defaultClusterChangeStep}
                 disabled={!clusterEnabled}
                 onMouseUp={handleChange}

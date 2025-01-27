@@ -2,7 +2,7 @@ import { type MouseEvent } from 'react'
 import { type Map, Marker } from 'mapbox-gl'
 
 import { type ApiCluster, type Property } from 'services/API/types'
-import { createMarkerElement, MAP_CONSTANTS, type Markers } from 'services/Map'
+import { createMarkerElement, type Markers } from 'services/Map'
 import { formatPrice } from 'utils/formatters'
 import {
   getMapUrl,
@@ -10,8 +10,12 @@ import {
   toMapboxBounds,
   toMapboxPoint
 } from 'utils/map'
+import {
+  markersBufferExtension,
+  markersClusteringThreshold
+} from 'constants/map'
 
-import { MapDataMode } from './types.ts'
+import { MapDataMode } from './types'
 
 export class MapService {
   markers: Markers = {}
@@ -49,7 +53,7 @@ export class MapService {
     return (
       this.clusterView &&
       this.clusterAutoSwitch &&
-      count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
+      count < markersClusteringThreshold
     )
   }
 
@@ -197,7 +201,7 @@ export class MapService {
       const zoom = map.getZoom()
 
       const diff = bounds.bottom_right.longitude - bounds.top_left.longitude
-      const buffer = diff * MAP_CONSTANTS.ZOOM_TO_MARKER_BUFFER
+      const buffer = diff * markersBufferExtension
       const mapboxBounds = toMapboxBounds(bounds, buffer)
 
       const markerElement = createMarkerElement({

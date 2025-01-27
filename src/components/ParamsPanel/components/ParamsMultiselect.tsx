@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { Box, Checkbox, MenuItem, TextField, Typography } from '@mui/material'
@@ -24,8 +25,8 @@ const ParamsMultiSelect = ({
     formState: { errors }
   } = useFormContext()
 
-  // eslint-disable-next-line no-param-reassign
   if (!label) label = name
+  options = Array.from(new Set(['', ...options]))
 
   return (
     <Box flex={1} sx={{ position: 'relative' }}>
@@ -58,9 +59,11 @@ const ParamsMultiSelect = ({
                     )
                   }
                   return (
-                    <>
-                      {Array.isArray(selected) ? selected.join(', ') : selected}
-                    </>
+                    <div>
+                      {Array.isArray(selected)
+                        ? (selected as string[]).join(', ')
+                        : selected?.toString()}
+                    </div>
                   )
                 }
               }
@@ -75,28 +78,20 @@ const ParamsMultiSelect = ({
               onChange?.()
             }}
           >
-            <MenuItem value="">
-              <Checkbox
-                checked={field.value.includes('')}
-                size="small"
-                sx={{
-                  '&.MuiCheckbox-root': { py: 0, px: 1 },
-                  '& .MuiSvgIcon-root': { fontSize: 20 }
-                }}
-              />
-              <em>null</em>
-            </MenuItem>
             {options.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox
-                  checked={field.value.includes(option)}
-                  size="small"
-                  sx={{
-                    '&.MuiCheckbox-root': { py: 0, px: 1 },
-                    '& .MuiSvgIcon-root': { fontSize: 20 }
-                  }}
-                />
-                {option}
+                {Boolean(option) && (
+                  <Checkbox
+                    disableRipple
+                    checked={field.value.includes(option)}
+                    size="small"
+                    sx={{
+                      '&.MuiCheckbox-root': { py: 0, pl: 0, pr: 2 },
+                      '& .MuiSvgIcon-root': { fontSize: 20 }
+                    }}
+                  />
+                )}
+                {!option ? <Typography color="#CCC">null</Typography> : option}
               </MenuItem>
             ))}
           </TextField>
