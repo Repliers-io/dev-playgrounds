@@ -91,6 +91,7 @@ const ParamsPanel = () => {
         { lng, lat, zoom, cluster, ...rest },
         queryStringOptions
       )
+      window.history.pushState(null, '', `?${query}`)
 
       const clusterViewMode = cluster
         ? MapDataMode.CLUSTER // NO ENUMS!
@@ -99,7 +100,6 @@ const ParamsPanel = () => {
       MapService.setClusterAutoSwitch(clusterAutoSwitch)
       MapService.update(listings, clusters, count)
 
-      window.history.pushState(null, '', `?${query}`)
     } catch (error) {
       console.error('fetchData error:', error)
     }

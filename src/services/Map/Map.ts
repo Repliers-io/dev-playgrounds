@@ -61,8 +61,6 @@ export class MapService {
       this.clusterView &&
       this.clusterAutoSwitch &&
       count < markersClusteringThreshold
-      // TODO: FIXME: WTF???? we should NOT use this const, but get the value FROM THE FORM!!!
-      // This const should NOT exist at all!
     )
   }
 
