@@ -286,9 +286,7 @@ const components = {
           py: 2,
 
           '&.MuiSelect-outlined': {
-            lineHeight: toRem(14),
-            border: 1,
-            borderColor: 'divider'
+            lineHeight: toRem(14)
           }
         }),
 

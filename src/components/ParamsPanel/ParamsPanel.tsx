@@ -3,9 +3,12 @@ import { type Position } from 'geojson'
 import queryString from 'query-string'
 
 import { Box, Stack } from '@mui/material'
+import { Alert, Snackbar } from '@mui/material'
 
-import type { APIHost, ApiLocation } from 'services/API/types'
-import MapService, { MAP_CONSTANTS } from 'services/Map'
+// why APIH..., but ApiL... names??? why didnt we export them from API module?
+import { type APIHost, type ApiLocation } from 'services/API/types'
+import MapService from 'services/Map'
+// enum shouldnt be exported from TYPES, and types shouldnt even be the point of export, but the module itself!
 import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
@@ -13,10 +16,11 @@ import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
+import { markersClusteringThreshold } from 'constants/map'
 
 import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
-import { getLocations, getMapPosition } from './utils.ts'
+import { getLocations, getMapPosition } from './utils'
 
 const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
   try {
@@ -41,13 +45,10 @@ const ParamsPanel = () => {
     position,
     mapContainerRef,
     setPosition,
-    setCanRenderMap,
-    showSnackbar,
-    hideSnackbar
+    setCanRenderMap
   } = useMapOptions()
-  const { search, params, polygon, clearData } = useSearch()
-
-  const { listingCount, setListingCount } = useState(0)
+  const { search, count, params, polygon, clearData } = useSearch()
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
 
   const savePosition = (
     locations: ApiLocation[],
@@ -71,11 +72,7 @@ const ParamsPanel = () => {
     try {
       const { clusterAutoSwitch, ...filteredParams } = params
 
-      // const paramsListings =
-      //   filteredParams.listings === 'true' || filteredParams.listings === ''
-
-      // const paramsCluster = filteredParams.cluster === true
-
+      // TODO: FIXME: `params.cluster` SHOULD NOT be part of the API query
       const response = await search({
         ...filteredParams,
         ...fetchBounds
@@ -85,36 +82,6 @@ const ParamsPanel = () => {
 
       const { listings, count, aggregates } = response
       const { clusters = [] } = aggregates?.map || {}
-      // setListingCount(count)
-
-      // eslint-disable-next-line no-console
-      // console.log('count: ', count)
-      // console.log('paramsListings: ', paramsListings)
-      // console.log('paramsCluster: ', paramsCluster)
-      // console.log('clusterAutoSwitch: ', clusterAutoSwitch)
-
-      // if (paramsListings) {
-      //   hideSnackbar()
-      // } else {
-      //   /* !paramsListings */
-      //   if (!paramsCluster) {
-      //     showSnackbar(
-      //       "You don't see listings on map because 'listngs === false'",
-      //       'warning'
-      //     )
-      //   } else if (
-      //     /* paramsCluster */
-      //     clusterAutoSwitch &&
-      //     count < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
-      //   ) {
-      //     showSnackbar(
-      //       "You don't see listings on map because 'listngs === false'",
-      //       'warning'
-      //     )
-      //   } else {
-      //     hideSnackbar()
-      //   }
-      // }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, cluster, ...rest } = params
@@ -126,8 +93,8 @@ const ParamsPanel = () => {
       )
 
       const clusterViewMode = cluster
-        ? MapDataMode.CLUSTER
-        : MapDataMode.SINGLE_MARKER
+        ? MapDataMode.CLUSTER // NO ENUMS!
+        : MapDataMode.SINGLE_MARKER // NO ENUMS!
       MapService.setViewMode(clusterViewMode)
       MapService.setClusterAutoSwitch(clusterAutoSwitch)
       MapService.update(listings, clusters, count)
@@ -138,39 +105,34 @@ const ParamsPanel = () => {
     }
   }
 
-  // useEffect(() => {
-  //   console.log('useEffect: [params, listingCount]')
-  //   const { clusterAutoSwitch, ...filteredParams } = params
+  useDeepCompareEffect(() => {
+    // default state of the (empty/non-existing) `listings` is true
+    const listingsParam = params.listings === 'false' ? false : true
 
-  //   const paramsListings =
-  //     filteredParams.listings === 'true' || filteredParams.listings === ''
-  //   const paramsCluster = filteredParams.cluster === true
+    if (listingsParam) {
+      // listings=true
+      setSnackbarMessage(null)
+    } else {
+      // listings=false
+      if (
+        params.clusterAutoSwitch &&
+        count > 0 &&
+        count < markersClusteringThreshold
+      ) {
+        setSnackbarMessage(
+          "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
+        )
+      } else if (!params.cluster) {
+        setSnackbarMessage(
+          "You don't see listings on the map because of the 'listings=false' flag"
+        )
+      } else {
+        setSnackbarMessage(null)
+      }
+    }
+  }, [count, params])
 
-  //   if (paramsListings) {
-  //     hideSnackbar()
-  //   } else {
-  //     /* !paramsListings */
-  //     if (!paramsCluster) {
-  //       showSnackbar(
-  //         "You don't see listings on map because 'listngs === false'",
-  //         'warning'
-  //       )
-  //     } else if (
-  //       /* paramsCluster */
-  //       clusterAutoSwitch &&
-  //       listingCount < MAP_CONSTANTS.API_LISTINGS_COUNT_TO_ENABLE_CLUSTERING
-  //     ) {
-  //       showSnackbar(
-  //         "You don't see listings on map because 'listngs === false'",
-  //         'warning'
-  //       )
-  //     } else {
-  //       hideSnackbar()
-  //     }
-  //   }
-  // }, [params, listingCount])
-
-  // subscribe for apiKey changes must refetch listings
+  // subscription to apiKey changes must refetch listings
   // for calculate position/bounds/zoom
   // and clear old response
   useEffect(() => {
@@ -183,7 +145,6 @@ const ParamsPanel = () => {
     fetchLocations({ apiKey, apiUrl }).then((locations) => {
       if (!locations?.length || !mapContainerRef.current) return
       savePosition(locations, mapContainerRef.current)
-
       setCanRenderMap(true)
     })
   }, [params.apiKey])
@@ -219,6 +180,14 @@ const ParamsPanel = () => {
         </AllowedFieldValuesProvider>
         <BoundsForm />
       </Stack>
+      <Snackbar
+        open={Boolean(snackbarMessage)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="warning" variant="filled" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

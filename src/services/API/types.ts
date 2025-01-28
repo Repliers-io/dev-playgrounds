@@ -1,8 +1,13 @@
+/**
+ * THIS FILE SHOULD NOT EXIST AT ALL
+ * THERE IS NO API SERVICE IN THE PROJECT
+ */
 import type { Position } from 'geojson'
 
 export type APIHost = { apiUrl: string; apiKey: string }
 
 export type ParamsPanelControls = {
+  cluster?: boolean
   clusterAutoSwitch: boolean
   slidingClusterPrecision: boolean
 }

@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import _ from 'lodash'
 
-import { type APIHost } from 'services/API/types.ts'
+import { type APIHost } from 'services/API/types'
 import { apiFetch } from 'utils/api'
 
 interface AllowedFieldValuesContextProps {

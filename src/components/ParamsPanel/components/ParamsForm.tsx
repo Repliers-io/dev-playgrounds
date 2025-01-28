@@ -15,7 +15,7 @@ import {
   defaultClusterChangeStep,
   defaultClusterLimit,
   defaultClusterPrecision
-} from 'constants/search.ts'
+} from 'constants/search'
 
 import schema from '../schema'
 import {
@@ -25,7 +25,7 @@ import {
   trueFalseOptions,
   typeOptions
 } from '../types'
-import { formatBooleanFields, formatMultiselectFields } from '../utils.ts'
+import { formatBooleanFields, formatMultiselectFields } from '../utils'
 
 import ParamsCheckbox from './ParamsCheckbox.tsx'
 import ParamsField from './ParamsField'
@@ -267,9 +267,9 @@ const ParamsForm = () => {
             >
               <Stack spacing={1.25}>
                 <ParamsField name="boardId" noClear onChange={handleChange} />
-                <ParamsSelect
-                  name="listings"
-                  options={trueFalseOptions}
+                <ParamsSelect // TODO: FIXME: WHY DO WE USE SELECT FOR BOOLEAN VALUES ????
+                  name="listings" // IT DOESNT ACCEPT THE BOOLEAN VALUE FROM THE FORM CONTROLLER (BY MUI COMPONENT DESIGN) !!!!
+                  options={trueFalseOptions} // THOSE OPTIONS SHOULD NOT EXIST
                   onChange={handleChange}
                 />
                 <Stack

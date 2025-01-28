@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material'
 
-import { type Property } from 'services/API/types.ts'
+import { type Property } from 'services/API/types'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'

@@ -9,7 +9,7 @@ import {
   type ApiCoords,
   type ApiLocation
 } from 'services/API/types'
-import { type MapPosition } from 'services/Map/types.ts'
+import { type MapPosition } from 'services/Map/types'
 import { toSafeNumber } from 'utils/formatters'
 import { info } from 'constants/colors'
 import { secondary } from 'constants/colors'
