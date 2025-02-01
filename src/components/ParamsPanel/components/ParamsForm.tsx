@@ -63,6 +63,7 @@ type FormData = {
    * for the full list of request parameters
    */
   boardId: number | null
+  listings: boolean | null
   class: string[]
   status: string[]
   lastStatus: string[]
@@ -94,6 +95,7 @@ const defaultFormState: FormData = {
   apiUrl,
   apiKey,
   boardId: null,
+  listings: null,
   class: [],
   status: [],
   lastStatus: [],

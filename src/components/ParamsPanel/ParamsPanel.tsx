@@ -6,23 +6,27 @@ import { Box, Stack } from '@mui/material'
 import { Alert, Snackbar } from '@mui/material'
 
 // why APIH..., but ApiL... names??? why didnt we export them from API module?
-import { type APIHost, type ApiLocation } from 'services/API/types'
+import {
+  type ApiHost,
+  type ApiLocation,
+  blockedFormFields
+} from 'services/API/types'
 import MapService from 'services/Map'
 // enum shouldnt be exported from TYPES, and types shouldnt even be the point of export, but the module itself!
 import { MapDataMode, type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
-import { useSearch } from 'providers/SearchProvider'
+import { type FormParams, useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
 import { markersClusteringThreshold } from 'constants/map'
 
 import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
-import { getLocations, getMapPosition } from './utils'
+import { filterBlockedFormParams, getLocations, getMapPosition } from './utils'
 
-const fetchLocations = async ({ apiKey, apiUrl }: APIHost) => {
+const fetchLocations = async ({ apiKey, apiUrl }: ApiHost) => {
   try {
     const getOptions = { get: { fields: 'map,mlsNumber' } }
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
@@ -58,9 +62,12 @@ const ParamsPanel = () => {
     setPosition(mapPosition)
   }
 
+  const filterListingParams = (params: Partial<FormParams>) =>
+    filterBlockedFormParams(blockedFormFields, params)
+
   const fetchData = async (
     position: MapPosition,
-    params: any,
+    params: Partial<FormParams>,
     polygon: Position[] | null
   ) => {
     const { bounds, center, zoom } = position
@@ -70,9 +77,9 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
-      const { clusterAutoSwitch, ...filteredParams } = params
+      const { clusterAutoSwitch, ...preFilteredParams } = params
+      const filteredParams = filterListingParams(preFilteredParams)
 
-      // TODO: FIXME: `params.cluster` SHOULD NOT be part of the API query
       const response = await search({
         ...filteredParams,
         ...fetchBounds
@@ -97,9 +104,8 @@ const ParamsPanel = () => {
         ? MapDataMode.CLUSTER // NO ENUMS!
         : MapDataMode.SINGLE_MARKER // NO ENUMS!
       MapService.setViewMode(clusterViewMode)
-      MapService.setClusterAutoSwitch(clusterAutoSwitch)
+      MapService.setClusterAutoSwitch(clusterAutoSwitch || false)
       MapService.update(listings, clusters, count)
-
     } catch (error) {
       console.error('fetchData error:', error)
     }

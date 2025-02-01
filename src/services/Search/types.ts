@@ -15,7 +15,6 @@ export const soldWithin = [...daysOnMarket] as const
 
 export type DaysOnMarket = (typeof daysOnMarket)[number]
 export type SoldWithin = (typeof soldWithin)[number]
-
 export interface Filters {
   sortBy?: ApiSortBy
   minPrice?: number
@@ -41,6 +40,8 @@ export interface Filters {
   coverImage?: string
   imageSearchItems?: any[]
   listings?: string | null
+  cluster?: boolean
   clusterPrecision?: number
   clusterLimit?: number
+  fields: string
 }
