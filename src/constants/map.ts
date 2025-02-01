@@ -11,6 +11,9 @@ export const fallbackAreaZoom = 11
 export const defaultAddressZoom = 15
 export const propertyPageAddressZoom = 18
 
+export const markersBoundsAreaExtension = 0.1 // +10%
+export const markersClusteringThreshold = 100
+
 export const mapboxDefaults: Partial<MapOptions> = {
   zoom: 8,
   minZoom: 5,

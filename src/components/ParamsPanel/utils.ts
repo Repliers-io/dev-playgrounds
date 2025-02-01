@@ -1,6 +1,11 @@
 import type { LngLatBounds } from 'mapbox-gl'
 
-import type { ApiLocation, Property } from 'services/API/types'
+import type {
+  ApiLocation,
+  Listing,
+  ParamsPanelControls
+} from 'services/API/types'
+import type { FormParams } from 'providers/SearchProvider'
 
 import { mapboxDefaults } from '../../constants/map'
 import { calcZoomLevelForBounds, getPolygonBounds } from '../../utils/map'
@@ -33,10 +38,10 @@ export const formatBooleanFields = (parsed: any) => {
   return clone
 }
 
-export const getLocations = (listings: Property[]) => {
+export const getLocations = (listings: Listing[]) => {
   /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
   return listings
-    .map((item: Property) => ({
+    .map((item: Listing) => ({
       lat: parseFloat(item.map.latitude),
       lng: parseFloat(item.map.longitude)
     }))
@@ -67,4 +72,16 @@ export const getMapPosition = (
   const center = bounds.getCenter()
   const zoom = getMapZoom(bounds, container)
   return { bounds, center, zoom }
+}
+
+export const filterBlockedFormParams = (
+  blockedKeys: (keyof ParamsPanelControls)[],
+  params: Partial<FormParams> = {}
+) => {
+  return Object.keys(params).reduce((acc, key) => {
+    if (!blockedKeys.includes(key as keyof ParamsPanelControls)) {
+      acc[key] = params[key]
+    }
+    return acc
+  }, {} as Partial<FormParams>)
 }

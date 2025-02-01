@@ -8,22 +8,25 @@ import { Box, Button, Stack } from '@mui/material'
 
 import ParamsMultiselect from 'components/ParamsPanel/components/ParamsMultiselect.tsx'
 
+import { listingFields } from 'services/Search/defaults.ts'
 import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider.tsx'
+import { useMapOptions } from 'providers/MapOptionsProvider.tsx'
 import { useSearch } from 'providers/SearchProvider'
 import {
   defaultClusterChangeStep,
   defaultClusterLimit,
   defaultClusterPrecision
-} from 'constants/search.ts'
+} from 'constants/search'
 
 import schema from '../schema'
 import {
   classOptions,
   sortByOptions,
   statusOptions,
+  trueFalseOptions,
   typeOptions
 } from '../types'
-import { formatBooleanFields, formatMultiselectFields } from '../utils.ts'
+import { formatBooleanFields, formatMultiselectFields } from '../utils'
 
 import ParamsCheckbox from './ParamsCheckbox.tsx'
 import ParamsField from './ParamsField'
@@ -35,13 +38,33 @@ const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 
 type FormData = {
-  // Internal use only: manages cluster/marker view on the UI
-  // Exclude from request parameters
+  /**
+   * manages cluster/marker view on the UI
+   * Excluded from request parameters
+   * @internal
+   */
   clusterAutoSwitch: boolean
 
+  /**
+   * examplifies sliding cluster precision bazed on zool level
+   * Excluded from request parameters
+   * @internal
+   */
+  slidingClusterPrecision: boolean
+
+  /**
+   * API connection parameters
+   */
   apiUrl: string
   apiKey: string
+
+  /**
+   * a subset of GET /listing request parameters
+   * @see {@link https://github.com/Repliers-io/api-types.ts/blob/72ebecbd911e1c4e28b85a99fca3bf2eae5211d9/types/listings.ts#L370}
+   * for the full list of request parameters
+   */
   boardId: number | null
+  listings: boolean | null
   class: string[]
   status: string[]
   lastStatus: string[]
@@ -58,14 +81,23 @@ type FormData = {
   cluster: boolean | null
   clusterLimit: number | null
   clusterPrecision: number | null
+  fields: string | null
 }
 
 const defaultFormState: FormData = {
-  // internal usage only
+  /**
+   * @internal
+   */
   clusterAutoSwitch: true,
+  slidingClusterPrecision: true,
+
+  /**
+   * request parameters
+   */
   apiUrl,
   apiKey,
   boardId: null,
+  listings: null,
   class: [],
   status: [],
   lastStatus: [],
@@ -81,7 +113,8 @@ const defaultFormState: FormData = {
   minParkingSpaces: null,
   cluster: null,
   clusterLimit: null,
-  clusterPrecision: null
+  clusterPrecision: null,
+  fields: listingFields.join(',')
 }
 
 const processSubmitFormData = (data: FormData) => {
@@ -98,7 +131,9 @@ const processSubmitFormData = (data: FormData) => {
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
-  const { setParams, params: localStorageParams } = useSearch()
+  const { setParams, params: localStorageParams, setParam } = useSearch()
+
+  const { position } = useMapOptions()
 
   const multiselectFields = [
     'propertyType',
@@ -129,11 +164,13 @@ const ParamsForm = () => {
     resolver: joiResolver(schema, { allowUnknown: true })
   })
 
-  const { handleSubmit, watch } = methods
+  const { handleSubmit, watch, setValue } = methods
   const clusterEnabled = watch('cluster')
+  const slidingClusterPrecision = watch('slidingClusterPrecision')
 
   const onSubmit = (data: FormData) => {
-    const formParams = processSubmitFormData(data)
+    // const formParams = processSubmitFormData(data)
+    const formParams = data
     localStorage.setItem('params', JSON.stringify(formParams))
     setParams(formParams as any)
   }
@@ -161,6 +198,7 @@ const ParamsForm = () => {
       ...currentValues,
       cluster: null,
       clusterAutoSwitch: false,
+      slidingClusterPrecision: false,
       clusterLimit: null,
       clusterPrecision: null
     })
@@ -172,6 +210,7 @@ const ParamsForm = () => {
       ...currentValues,
       cluster: true,
       clusterAutoSwitch: true,
+      slidingClusterPrecision: true,
       clusterLimit: defaultClusterLimit,
       clusterPrecision: defaultClusterPrecision
     })
@@ -197,6 +236,23 @@ const ParamsForm = () => {
   useEffect(() => {
     handleSubmit(onSubmit, onError)()
   }, [])
+
+  useEffect(() => {
+    if (!clusterEnabled) {
+      const currentValues = methods.getValues()
+      methods.reset({
+        ...currentValues,
+        clusterPrecision: null
+      })
+      return
+    } else {
+      // clusterEnabled
+      if (slidingClusterPrecision) {
+        setParam('clusterPrecision', Math.round(position?.zoom || 0) + 2)
+        setValue('clusterPrecision', Math.round(position?.zoom || 0) + 2)
+      }
+    }
+  }, [position?.zoom, slidingClusterPrecision, clusterEnabled])
 
   return (
     <FormProvider {...methods}>
@@ -246,6 +302,16 @@ const ParamsForm = () => {
             >
               <Stack spacing={1.25}>
                 <ParamsField name="boardId" noClear onChange={handleChange} />
+                {
+                  // TODO: there're actually three values - null | true | false - it's not strictly boolean
+                }
+                <ParamsSelect // TODO: FIXME: WHY DO WE USE SELECT FOR BOOLEAN VALUES ????
+                  name="listings" // IT DOESNT ACCEPT THE BOOLEAN VALUE FROM THE FORM CONTROLLER (BY MUI COMPONENT DESIGN) !!!!
+                  options={trueFalseOptions} // THOSE OPTIONS SHOULD NOT EXIST
+                  onChange={handleChange}
+                  hint="optimization"
+                  link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#6-map-only-experience"
+                />
                 <Stack
                   spacing={1}
                   direction="row"
@@ -259,7 +325,6 @@ const ParamsForm = () => {
                   />
                   <ParamsField name="resultsPerPage" onChange={handleChange} />
                 </Stack>
-
                 <ParamsSelect
                   name="sortBy"
                   hint="docs"
@@ -267,31 +332,26 @@ const ParamsForm = () => {
                   options={sortByOptions}
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="type"
                   options={typeOptions}
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="class"
                   options={classOptions}
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="style"
                   options={styleOptions}
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="status"
                   options={statusOptions}
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="lastStatus"
                   options={lastStatusOptions}
@@ -299,7 +359,6 @@ const ParamsForm = () => {
                   link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
                   onChange={handleChange}
                 />
-
                 <ParamsMultiselect
                   name="propertyType"
                   options={propertyTypeOptions}
@@ -312,7 +371,12 @@ const ParamsForm = () => {
                   direction="row"
                   justifyContent="space-between"
                 >
-                  <ParamsField name="minPrice" onChange={handleChange} />
+                  <ParamsField
+                    name="minPrice"
+                    onChange={handleChange}
+                    hint="docs"
+                    link="https://docs.repliers.io/reference/getting-started-with-your-api"
+                  />
                   <ParamsField name="maxPrice" onChange={handleChange} />
                 </Stack>
                 <Stack
@@ -334,6 +398,13 @@ const ParamsForm = () => {
                     onChange={handleChange}
                   />
                 </Stack>
+                <ParamsField
+                  name="fields"
+                  noClear
+                  onChange={handleChange}
+                  hint="optimization"
+                  link="https://help.repliers.com/en/article/optimizing-api-requests-with-the-fields-parameter-lq416x/"
+                />
               </Stack>
             </Box>
           </ParamsSection>
@@ -360,6 +431,13 @@ const ParamsForm = () => {
                   disabled={!clusterEnabled}
                   onChange={handleChange}
                 />
+                <ParamsCheckbox
+                  name="slidingClusterPrecision"
+                  label="Sliding Cluster Precision"
+                  size="small"
+                  disabled={!clusterEnabled}
+                  onChange={handleChange}
+                />
               </Stack>
               <ParamsRange
                 name="clusterLimit"
@@ -368,6 +446,8 @@ const ParamsForm = () => {
                 step={defaultClusterChangeStep}
                 disabled={!clusterEnabled}
                 onMouseUp={handleChange}
+                hint="docs"
+                link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-cluster-limit"
               />
               <ParamsRange
                 name="clusterPrecision"
@@ -376,6 +456,8 @@ const ParamsForm = () => {
                 step={defaultClusterChangeStep}
                 disabled={!clusterEnabled}
                 onMouseUp={handleChange}
+                hint="docs"
+                link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-cluster-precision"
               />
             </Stack>
           </ParamsSection>

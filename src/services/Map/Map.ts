@@ -1,8 +1,8 @@
 import { type MouseEvent } from 'react'
 import { type Map, Marker } from 'mapbox-gl'
 
-import { type ApiCluster, type Property } from 'services/API/types'
-import { createMarkerElement, MAP_CONSTANTS, type Markers } from 'services/Map'
+import { type ApiCluster, type Listing } from 'services/API/types'
+import { createMarkerElement, type Markers } from 'services/Map'
 import { formatPrice } from 'utils/formatters'
 import {
   getMapUrl,
@@ -10,31 +10,41 @@ import {
   toMapboxBounds,
   toMapboxPoint
 } from 'utils/map'
+import {
+  markersBoundsAreaExtension,
+  markersClusteringThreshold
+} from 'constants/map'
 
-import { MapDataMode } from './types.ts'
+import { MapDataMode } from './types'
 
 export class MapService {
   markers: Markers = {}
   clusterMarkers: Markers = {}
 
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   dataMode: MapDataMode = MapDataMode.SINGLE_MARKER
 
   // In cluster view, if count is less than 100, we automatically switch to single marker view
   // we can disable this feature by setting clusterAutoSwitch to false
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   private clusterAutoSwitch: boolean = true
 
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   get singleMarkerView() {
     return this.dataMode === MapDataMode.SINGLE_MARKER
   }
 
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   get clusterView() {
     return this.dataMode === MapDataMode.CLUSTER
   }
 
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   setViewMode(mode: MapDataMode): void {
     this.dataMode = mode
   }
 
+  // NO FUCKIN STATE SWITCHING, GET THE STATE FROM THE FORM!!!
   setClusterAutoSwitch(enabled: boolean) {
     this.clusterAutoSwitch = enabled
   }
@@ -44,15 +54,17 @@ export class MapService {
     this.resetClusters()
   }
 
+  // IT SHOULD NOT
   shouldSwitchToSingleMarkerView(count: number) {
     if (this.singleMarkerView) return true
     return (
       this.clusterView &&
       this.clusterAutoSwitch &&
-      count < MAP_CONSTANTS.API_COUNT_TO_ENABLE_CLUSTERING
+      count < markersClusteringThreshold
     )
   }
 
+  // IT SHOULD NOT
   shouldSwitchToClusterView() {
     return this.clusterView
   }
@@ -85,9 +97,9 @@ export class MapService {
     onTap
   }: {
     map: Map
-    listings: Property[]
-    onClick?: (e: MouseEvent, property: Property) => void
-    onTap?: (property: Property) => void
+    listings: Listing[]
+    onClick?: (e: MouseEvent, property: Listing) => void
+    onTap?: (property: Listing) => void
   }): void {
     if (!this.singleMarkerView) return
 
@@ -124,6 +136,7 @@ export class MapService {
             propertyCenter.lat
           ])
 
+          // WHUT???
           // markerCenterPixels.y += Number(propertyCardSizes.drawer.height) / 2 // half of the drawer height
           const markerCenterCoords = map.unproject(markerCenterPixels)
 
@@ -196,8 +209,12 @@ export class MapService {
       const center = toMapboxPoint(location)
       const zoom = map.getZoom()
 
+      // WHYDAFUQ we have some hidden buffers here???
+      // DO THEY HAVE REPRESENTATION IN THE FORM???
+      // WHY DO WE ADD SOME MAGIC SHIT TO API QUERIES WHICH WOULD CONFUSE DEVELOPERS????
+      // AAAAAAAAAAAAAARRRRR
       const diff = bounds.bottom_right.longitude - bounds.top_left.longitude
-      const buffer = diff * MAP_CONSTANTS.ZOOM_TO_MARKER_BUFFER
+      const buffer = diff * markersBoundsAreaExtension
       const mapboxBounds = toMapboxBounds(bounds, buffer)
 
       const markerElement = createMarkerElement({
@@ -243,7 +260,8 @@ export class MapService {
     })
   }
 
-  update(list: Property[], clusters: ApiCluster[], count: number): void {
+  // USELESS SHIT! WHYDAFUQ IT HAS list ARGUMENT!!???
+  update(list: Listing[], clusters: ApiCluster[], count: number): void {
     if (!count) {
       this.resetAllMarkers()
       return

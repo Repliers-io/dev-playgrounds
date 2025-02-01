@@ -10,9 +10,10 @@ import type { Position } from 'geojson'
 
 import type {
   ApiCluster,
-  APIHost,
+  ApiHost,
   ApiQueryResponse,
-  Property
+  Listing,
+  ParamsPanelControls
 } from 'services/API/types'
 import type { Filters } from 'services/Search'
 import { apiFetch } from 'utils/api'
@@ -21,22 +22,22 @@ export type SavedResponse = {
   count: number
   page: number
   pages: number
-  listings: Property[]
+  listings: Listing[]
   clusters: ApiCluster[]
   statistics: { [key: string]: any }
 }
 
-type Params = Filters & APIHost
-type ParamKeys = keyof Params
+export type FormParams = Filters & ApiHost & ParamsPanelControls
+type FormParamKeys = keyof FormParams
 
 type SearchContextType = SavedResponse & {
   loading: boolean
-  params: Partial<Params>
-  setParam: (key: ParamKeys, value: any) => void
-  setParams: (params: Partial<Params>) => void
-  addParams: (newParams: Partial<Params>) => void
-  removeParam: (key: ParamKeys) => void
-  removeParams: (keys: ParamKeys[]) => void
+  params: Partial<FormParams>
+  setParam: (key: FormParamKeys, value: any) => void
+  setParams: (params: Partial<FormParams>) => void
+  addParams: (newParams: Partial<FormParams>) => void
+  removeParam: (key: FormParamKeys) => void
+  removeParams: (keys: FormParamKeys[]) => void
   resetParams: () => void
   search: (params: any) => Promise<ApiQueryResponse | null>
   request: string
@@ -65,7 +66,7 @@ const SearchProvider = ({
   polygon,
   children
 }: {
-  params?: Partial<Params>
+  params?: Partial<FormParams>
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
@@ -78,7 +79,7 @@ const SearchProvider = ({
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
-  const [searchParams, setParams] = useState<Partial<Params>>(
+  const [searchParams, setParams] = useState<Partial<FormParams>>(
     params || defaults
   )
 
@@ -86,20 +87,20 @@ const SearchProvider = ({
     polygon || null
   )
 
-  const setParam = (key: ParamKeys, value: any) =>
+  const setParam = (key: FormParamKeys, value: any) =>
     setParams((prev) => ({ ...prev, [key]: value }))
 
-  const addParams = (newParams: Partial<Params>) =>
+  const addParams = (newParams: Partial<FormParams>) =>
     setParams((prev) => ({ ...prev, ...newParams }))
 
-  const removeParam = (key: ParamKeys) =>
+  const removeParam = (key: FormParamKeys) =>
     setParams((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _, ...rest } = prev
       return rest
     })
 
-  const removeParams = (keys: ParamKeys[]) =>
+  const removeParams = (keys: FormParamKeys[]) =>
     setParams((prev) => {
       const newFilters = { ...prev }
       keys.forEach((key) => {

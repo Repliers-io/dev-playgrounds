@@ -20,6 +20,9 @@ export type ClassOption = (typeof classOptions)[number] // `Class` is so fkin da
 export const typeOptions = ['sale', 'lease'] as const
 export type TypeOption = (typeof typeOptions)[number] // `Type`
 
+export const trueFalseOptions = ['true', 'false'] as const
+export type TrueFalseOption = (typeof trueFalseOptions)[number] // `True|False`
+
 export const statusOptions = ['A', 'U'] as const
 export type StatusOption = (typeof statusOptions)[number]
 

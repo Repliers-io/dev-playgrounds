@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import _ from 'lodash'
 
-import { type APIHost } from 'services/API/types.ts'
+import { type ApiHost } from 'services/API/types'
 import { apiFetch } from 'utils/api'
 
 interface AllowedFieldValuesContextProps {
@@ -61,7 +61,7 @@ const fetchAllowedFieldValues = async (apiKey: string, apiUrl: string) => {
   return flattenAllowedFieldValues(aggregates, fields)
 }
 
-type Props = APIHost & { children: React.ReactNode }
+type Props = ApiHost & { children: React.ReactNode }
 
 export const AllowedFieldValuesProvider: React.FC<Props> = ({
   apiKey,
