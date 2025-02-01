@@ -37,16 +37,31 @@ const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
 const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
 
 type FormData = {
-  // Internal use only: manages cluster/marker view on the UI
-  // Exclude from request parameters
+  /**
+   * manages cluster/marker view on the UI
+   * Excluded from request parameters
+   * @internal
+   */
   clusterAutoSwitch: boolean
 
-  // Internal use only: examplifies sliding cluster precision bazed on zool level
-  // Exclude from request parameters
+  /**
+   * examplifies sliding cluster precision bazed on zool level
+   * Excluded from request parameters
+   * @internal
+   */
   slidingClusterPrecision: boolean
 
+  /**
+   * API connection parameters
+   */
   apiUrl: string
   apiKey: string
+
+  /**
+   * a subset of GET /listing request parameters
+   * @see {@link https://github.com/Repliers-io/api-types.ts/blob/72ebecbd911e1c4e28b85a99fca3bf2eae5211d9/types/listings.ts#L370}
+   * for the full list of request parameters
+   */
   boardId: number | null
   class: string[]
   status: string[]
@@ -67,11 +82,15 @@ type FormData = {
 }
 
 const defaultFormState: FormData = {
-  // internal usage only
+  /**
+   * @internal
+   */
   clusterAutoSwitch: true,
   slidingClusterPrecision: true,
 
-  // request parameters
+  /**
+   * request parameters
+   */
   apiUrl,
   apiKey,
   boardId: null,
