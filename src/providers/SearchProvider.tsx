@@ -12,8 +12,8 @@ import type {
   ApiCluster,
   ApiHost,
   ApiQueryResponse,
-  ParamsPanelControls,
-  Property
+  Listing,
+  ParamsPanelControls
 } from 'services/API/types'
 import type { Filters } from 'services/Search'
 import { apiFetch } from 'utils/api'
@@ -22,7 +22,7 @@ export type SavedResponse = {
   count: number
   page: number
   pages: number
-  listings: Property[]
+  listings: Listing[]
   clusters: ApiCluster[]
   statistics: { [key: string]: any }
 }

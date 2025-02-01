@@ -2,8 +2,8 @@ import type { LngLatBounds } from 'mapbox-gl'
 
 import type {
   ApiLocation,
-  ParamsPanelControls,
-  Property
+  Listing,
+  ParamsPanelControls
 } from 'services/API/types'
 import type { FormParams } from 'providers/SearchProvider'
 
@@ -38,10 +38,10 @@ export const formatBooleanFields = (parsed: any) => {
   return clone
 }
 
-export const getLocations = (listings: Property[]) => {
+export const getLocations = (listings: Listing[]) => {
   /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
   return listings
-    .map((item: Property) => ({
+    .map((item: Listing) => ({
       lat: parseFloat(item.map.latitude),
       lng: parseFloat(item.map.longitude)
     }))

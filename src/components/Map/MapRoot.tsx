@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material'
 
-import { type Property } from 'services/API/types'
+import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -31,7 +31,7 @@ import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
 
 const getHighlightedMarker = (
-  listings: Property[],
+  listings: Listing[],
   highlightedMarker: string | number | null
 ) => {
   if (!highlightedMarker) return null

@@ -5,7 +5,6 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 import { Alert, Snackbar } from '@mui/material'
 
-// why APIH..., but ApiL... names??? why didnt we export them from API module?
 import {
   type ApiHost,
   type ApiLocation,

@@ -86,7 +86,7 @@ export interface ApiCondominium {
   ensuiteLaundry?: string
 }
 
-export interface PropertyDetails {
+export interface ListingDetails {
   airConditioning: string
   basement1: string
   basement2: string
@@ -139,7 +139,7 @@ export interface ApiLot {
   size?: number | null
 }
 
-export interface PropertyAddress {
+export interface ListingAddress {
   area: string
   city: string
   country: string
@@ -291,7 +291,7 @@ export interface HistoryItemType {
   type: string
 }
 
-export interface Property {
+export interface Listing {
   boardId: number
   mlsNumber: string
   status: string
@@ -306,9 +306,9 @@ export interface Property {
   soldPrice: string
   soldDate: null
   originalPrice: string
-  address: PropertyAddress
+  address: ListingAddress
   condominium: ApiCondominium
-  details: PropertyDetails
+  details: ListingDetails
   estimate?: PropertyEstimate
   history?: HistoryItemType[]
   lot: ApiLot
@@ -335,7 +335,7 @@ export interface Property {
   imagesScore?: number[]
   startImage?: number
   agents: ApiAgent[]
-  comparables?: Property[]
+  comparables?: Listing[]
   favoriteId?: string
   raw?: {
     [key: string]: string
@@ -489,7 +489,7 @@ export interface ApiQueryResponse {
     soldPrice?: ApiStatistic
     daysOnMarket?: ApiStatistic
   }
-  listings: Property[]
+  listings: Listing[]
   aggregates?: ApiAggregates
 }
 
@@ -501,7 +501,7 @@ export interface ApiV2QueryResponse {
 
 export interface BuildingMetadataAPIV2QueryResponse {
   types: {
-    [type: number]: Property[]
+    [type: number]: Listing[]
   }
 }
 
@@ -610,7 +610,7 @@ export interface ApiSimilarResponse {
   numPages: number
   pageSize: number
   count: number
-  similar: Property[]
+  similar: Listing[]
 }
 
 // TODO: Describe API types here. Divide into modules/sections if needed.
@@ -671,7 +671,7 @@ export type AutosuggestionOptionSource =
   | ApiBoardCity
   | ApiNeighborhood
   | MapboxAddress
-  | Property
+  | Listing
 
 export interface AutosuggestionGroupTitle {
   name: string
@@ -745,7 +745,7 @@ export interface ApiFavoritesRequest {
   numPages: number
   pageSize: number
   count: number
-  favorites: Property[]
+  favorites: Listing[]
 }
 
 export interface ApiAddToFavoritesRequest {

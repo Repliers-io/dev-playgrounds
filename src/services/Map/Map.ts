@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react'
 import { type Map, Marker } from 'mapbox-gl'
 
-import { type ApiCluster, type Property } from 'services/API/types'
+import { type ApiCluster, type Listing } from 'services/API/types'
 import { createMarkerElement, type Markers } from 'services/Map'
 import { formatPrice } from 'utils/formatters'
 import {
@@ -97,9 +97,9 @@ export class MapService {
     onTap
   }: {
     map: Map
-    listings: Property[]
-    onClick?: (e: MouseEvent, property: Property) => void
-    onTap?: (property: Property) => void
+    listings: Listing[]
+    onClick?: (e: MouseEvent, property: Listing) => void
+    onTap?: (property: Listing) => void
   }): void {
     if (!this.singleMarkerView) return
 
@@ -261,7 +261,7 @@ export class MapService {
   }
 
   // USELESS SHIT! WHYDAFUQ IT HAS list ARGUMENT!!???
-  update(list: Property[], clusters: ApiCluster[], count: number): void {
+  update(list: Listing[], clusters: ApiCluster[], count: number): void {
     if (!count) {
       this.resetAllMarkers()
       return
