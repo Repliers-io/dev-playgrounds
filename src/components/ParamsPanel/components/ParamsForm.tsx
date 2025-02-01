@@ -117,17 +117,6 @@ const defaultFormState: FormData = {
   fields: listingFields.join(',')
 }
 
-const processSubmitFormData = (data: FormData) => {
-  const { cluster, ...rest } = data
-
-  // remove cluster manually for exclude it from query params
-  if (cluster === false) {
-    return rest
-  }
-
-  return data
-}
-
 const ParamsForm = () => {
   const { propertyTypeOptions, styleOptions, lastStatusOptions } =
     useAllowedFieldValues()
@@ -169,7 +158,6 @@ const ParamsForm = () => {
   const slidingClusterPrecision = watch('slidingClusterPrecision')
 
   const onSubmit = (data: FormData) => {
-    // const formParams = processSubmitFormData(data)
     const formParams = data
     localStorage.setItem('params', JSON.stringify(formParams))
     setParams(formParams as any)
