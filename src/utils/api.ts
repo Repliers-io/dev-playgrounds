@@ -6,6 +6,7 @@ export const queryStringOptions: StringifyOptions = {
   skipNull: true,
   sort: false
 }
+
 // eslint-disable-next-line import/prefer-default-export
 export const apiFetch = async (
   url: string,

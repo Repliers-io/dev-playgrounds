@@ -6,37 +6,8 @@ import type {
   ParamsPanelControls
 } from 'services/API/types'
 import type { FormParams } from 'providers/SearchProvider'
-
-import { mapboxDefaults } from '../../constants/map'
-import { calcZoomLevelForBounds, getPolygonBounds } from '../../utils/map'
-
-export const formatMultiselectFields = (
-  parsed: any,
-  fields: readonly string[]
-) => {
-  fields.forEach((field) => {
-    const value = parsed[field]
-    parsed[field] = !value ? [] : Array.isArray(value) ? value : [value]
-  })
-  return parsed
-}
-
-export const formatBooleanFields = (parsed: any) => {
-  if (!parsed || typeof parsed !== 'object') return parsed
-
-  const clone = { ...parsed }
-
-  Object.keys(clone).forEach((key) => {
-    const value = clone[key]
-    if (value === 'true') {
-      clone[key] = true
-    } else if (value === 'false') {
-      clone[key] = false
-    }
-  })
-
-  return clone
-}
+import { calcZoomLevelForBounds, getPolygonBounds } from 'utils/map'
+import { mapboxDefaults } from 'constants/map'
 
 export const getLocations = (listings: Listing[]) => {
   /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */

@@ -10,10 +10,7 @@ import {
   toMapboxBounds,
   toMapboxPoint
 } from 'utils/map'
-import {
-  markersBoundsAreaExtension,
-  markersClusteringThreshold
-} from 'constants/map'
+import { markersClusteringThreshold } from 'constants/map'
 
 import { MapDataMode } from './types'
 
@@ -209,13 +206,7 @@ export class MapService {
       const center = toMapboxPoint(location)
       const zoom = map.getZoom()
 
-      // WHYDAFUQ we have some hidden buffers here???
-      // DO THEY HAVE REPRESENTATION IN THE FORM???
-      // WHY DO WE ADD SOME MAGIC SHIT TO API QUERIES WHICH WOULD CONFUSE DEVELOPERS????
-      // AAAAAAAAAAAAAARRRRR
-      const diff = bounds.bottom_right.longitude - bounds.top_left.longitude
-      const buffer = diff * markersBoundsAreaExtension
-      const mapboxBounds = toMapboxBounds(bounds, buffer)
+      const mapboxBounds = toMapboxBounds(bounds)
 
       const markerElement = createMarkerElement({
         size: 'cluster',
