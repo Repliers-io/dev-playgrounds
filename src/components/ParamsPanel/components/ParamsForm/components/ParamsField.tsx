@@ -10,13 +10,14 @@ import {
   type TextFieldProps
 } from '@mui/material'
 
-import ParamLabel from './ParamLabel'
+import ParamLabel from './ParamsLabel'
 
 type InputProps = TextFieldProps & {
   name: string
   label?: string
   hint?: string
   link?: string
+  tooltip?: string
   noClear?: boolean
   disabled?: boolean
   onChange?: () => void
@@ -27,6 +28,7 @@ const ParamsField: React.FC<InputProps> = ({
   label,
   hint,
   link,
+  tooltip,
   type = 'text',
   noClear = false,
   onChange,
@@ -65,7 +67,13 @@ const ParamsField: React.FC<InputProps> = ({
 
   return (
     <Box flex={1}>
-      <ParamLabel label={label} nameFor={name} hint={hint} link={link} />
+      <ParamLabel
+        label={label}
+        nameFor={name}
+        hint={hint}
+        link={link}
+        tooltip={tooltip}
+      />
       <TextField
         id={name}
         inputRef={inputRef}

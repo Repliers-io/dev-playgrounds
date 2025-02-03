@@ -21,9 +21,13 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { apiFetch, queryStringOptions } from 'utils/api'
 import { markersClusteringThreshold } from 'constants/map'
 
-import BoundsForm from './components/BoundsForm'
 import ParamsForm from './components/ParamsForm'
 import { filterBlockedFormParams, getLocations, getMapPosition } from './utils'
+
+const warningMessageListingsDisabled =
+  "You don't see listings on the map because of the 'listings=false' flag"
+const warningMessageClusteringThreshold =
+  "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
 
 const fetchLocations = async ({ apiKey, apiUrl }: ApiHost) => {
   try {
@@ -43,6 +47,7 @@ const fetchLocations = async ({ apiKey, apiUrl }: ApiHost) => {
 }
 
 const ParamsPanel = () => {
+  const { search, count, params, polygon, clearData } = useSearch()
   const {
     canRenderMap,
     position,
@@ -50,8 +55,28 @@ const ParamsPanel = () => {
     setPosition,
     setCanRenderMap
   } = useMapOptions()
-  const { search, count, params, polygon, clearData } = useSearch()
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
+
+  const urlApiKey = (() => {
+    const parsed = queryString.parse(window.location.search)
+    const { apiKey, ...rest } = parsed
+    if (apiKey) {
+      const sanitizedParams = queryString.stringify(rest)
+      window.history.replaceState(
+        null,
+        '',
+        `${window.location.pathname}${sanitizedParams ? '?' + sanitizedParams : ''}`
+      )
+      return String(apiKey)
+    }
+    return null
+  })()
+
+  if (urlApiKey) {
+    params.apiKey = urlApiKey
+    localStorage.setItem('params', JSON.stringify(params))
+  }
+  const { apiKey = '', apiUrl = '' } = params
 
   const savePosition = (
     locations: ApiLocation[],
@@ -124,13 +149,9 @@ const ParamsPanel = () => {
         count > 0 &&
         count < markersClusteringThreshold
       ) {
-        setSnackbarMessage(
-          "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
-        )
+        setSnackbarMessage(warningMessageClusteringThreshold)
       } else if (!params.cluster) {
-        setSnackbarMessage(
-          "You don't see listings on the map because of the 'listings=false' flag"
-        )
+        setSnackbarMessage(warningMessageListingsDisabled)
       } else {
         setSnackbarMessage(null)
       }
@@ -141,7 +162,6 @@ const ParamsPanel = () => {
   // for calculate position/bounds/zoom
   // and clear old response
   useEffect(() => {
-    const { apiKey = '', apiUrl = '' } = params
     if (!apiKey || !apiUrl) return
 
     setCanRenderMap(false)
@@ -152,7 +172,7 @@ const ParamsPanel = () => {
       savePosition(locations, mapContainerRef.current)
       setCanRenderMap(true)
     })
-  }, [params.apiKey])
+  }, [apiKey])
 
   useDeepCompareEffect(() => {
     if (!canRenderMap) return
@@ -177,13 +197,9 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <AllowedFieldValuesProvider
-          apiUrl={params.apiUrl || ''}
-          apiKey={params.apiKey || ''}
-        >
+        <AllowedFieldValuesProvider apiUrl={apiUrl} apiKey={apiKey}>
           <ParamsForm />
         </AllowedFieldValuesProvider>
-        <BoundsForm />
       </Stack>
       <Snackbar
         open={Boolean(snackbarMessage)}

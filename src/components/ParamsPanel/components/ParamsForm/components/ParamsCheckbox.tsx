@@ -42,14 +42,14 @@ const ParamsCheckbox: React.FC<InputProps> = ({
   }
 
   return (
-    <Box>
+    <Box sx={{ pb: 1 }}>
       <FormControlLabel
         sx={{ m: 0 }}
         control={
           <Checkbox
             checked={checked}
             inputRef={inputRef}
-            sx={{ m: 0 }}
+            sx={{ width: 32, height: 32 }}
             {...register(name)}
             {...rest}
             onChange={handleChange}

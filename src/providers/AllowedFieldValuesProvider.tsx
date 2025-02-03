@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState
 } from 'react'
+// TODO: remove lodash and use native JS functions to get path values
 import _ from 'lodash'
 
 import { type ApiHost } from 'services/API/types'
@@ -33,6 +34,7 @@ const fields = [
 const flattenAllowedFieldValues = (aggregates: object, fields: any[]) => {
   return fields.reduce(
     (acc: Record<string, string[]>, { appField, repliersField }) => {
+      // TODO: remove lodash and use native JS functions to get path values
       const obj = _.get(aggregates, repliersField)
       if (obj && typeof obj === 'object') {
         acc[appField] = Object.keys(obj)
@@ -68,21 +70,20 @@ export const AllowedFieldValuesProvider: React.FC<Props> = ({
   apiUrl,
   children
 }) => {
+  // TODO: we should not store these one by one, but use an object of key-value pairs
   const [propertyTypeOptions, setPropertyTypeOptions] = useState<string[]>([])
   const [styleOptions, setStyleOptions] = useState<string[]>([])
   const [lastStatusOptions, setLastStatusOptions] = useState<string[]>([])
 
   useEffect(() => {
     if (!apiKey || !apiUrl) return
+
     fetchAllowedFieldValues(apiKey, apiUrl)
       .then((values) => {
         const { propertyType = [], style = [], lastStatus = [] } = values
         setPropertyTypeOptions(propertyType)
         setStyleOptions(style)
         setLastStatusOptions(lastStatus)
-
-        // eslint-disable-next-line no-console
-        console.log('Allowed field values fetched:', values)
       })
       .catch((error) => {
         console.error('Error fetching allowed field values:', error)

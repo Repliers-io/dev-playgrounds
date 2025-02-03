@@ -4,13 +4,14 @@ import { useFormContext } from 'react-hook-form'
 import { Box, FormHelperText, Slider, Stack, Typography } from '@mui/material'
 import { type SliderProps } from '@mui/material/Slider/Slider'
 
-import ParamLabel from './ParamLabel'
+import ParamLabel from './ParamsLabel'
 
 interface RangeProps extends SliderProps {
   name: string
   label?: string
   hint?: string
   link?: string
+  tooltip?: string
   onChange?: () => void
 }
 
@@ -19,6 +20,7 @@ const ParamsRange: React.FC<RangeProps> = ({
   label,
   hint,
   link,
+  tooltip,
   disabled = false,
   onChange,
   ...rest
@@ -43,7 +45,14 @@ const ParamsRange: React.FC<RangeProps> = ({
 
   return (
     <Box flex={1}>
-      <ParamLabel label={label} nameFor={name} hint={hint} link={link} pb={0} />
+      <ParamLabel
+        label={label}
+        nameFor={name}
+        hint={hint}
+        link={link}
+        tooltip={tooltip}
+        pb={0}
+      />
       <Stack px={1} direction="row" gap={1.5} alignItems="center" p={0}>
         <Slider
           value={value}

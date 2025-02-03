@@ -1,14 +1,15 @@
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { Box, Checkbox, MenuItem, TextField, Typography } from '@mui/material'
+import { Box, MenuItem, TextField, Typography } from '@mui/material'
 
-import ParamLabel from './ParamLabel'
+import ParamLabel from './ParamsLabel'
 
-const ParamsMultiSelect = ({
+const ParamsSelect = ({
   name,
   label,
   hint,
   link,
+  tooltip,
   options,
   onChange
 }: {
@@ -16,6 +17,7 @@ const ParamsMultiSelect = ({
   label?: string
   hint?: string
   link?: string
+  tooltip?: string
   options: readonly string[]
   onChange?: () => void
 }) => {
@@ -29,7 +31,13 @@ const ParamsMultiSelect = ({
 
   return (
     <Box flex={1} sx={{ position: 'relative' }}>
-      <ParamLabel label={label} nameFor={name} hint={hint} link={link} />
+      <ParamLabel
+        label={label}
+        nameFor={name}
+        hint={hint}
+        link={link}
+        tooltip={tooltip}
+      />
       <Controller
         name={name}
         control={control}
@@ -42,60 +50,31 @@ const ParamsMultiSelect = ({
             error={!!errors[name]}
             helperText={errors[name]?.message?.toString()}
             {...field}
+            onChange={(e) => {
+              field.onChange(e)
+              onChange?.()
+            }}
             slotProps={{
               select: {
                 displayEmpty: true,
-                multiple: true,
                 renderValue: (selected) => {
-                  if (
-                    !selected ||
-                    (Array.isArray(selected) && selected.length === 0)
-                  ) {
+                  if (!selected) {
                     return (
                       <Typography variant="body2" color="#CCC">
                         null
                       </Typography>
                     )
                   }
-                  return (
-                    <>
-                      {Array.isArray(selected) ? selected.join(', ') : selected}
-                    </>
-                  )
+                  return <>{selected.toString()}</>
                 }
               }
             }}
-            onChange={(e) => {
-              const value = e.target.value
-              if (value.includes('')) {
-                field.onChange([])
-              } else {
-                field.onChange(value)
-              }
-              onChange?.()
-            }}
           >
             <MenuItem value="">
-              <Checkbox
-                checked={field.value.includes('')}
-                size="small"
-                sx={{
-                  '&.MuiCheckbox-root': { py: 0, px: 1 },
-                  '& .MuiSvgIcon-root': { fontSize: 20 }
-                }}
-              />
               <em>null</em>
             </MenuItem>
             {options.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox
-                  checked={field.value.includes(option)}
-                  size="small"
-                  sx={{
-                    '&.MuiCheckbox-root': { py: 0, px: 1 },
-                    '& .MuiSvgIcon-root': { fontSize: 20 }
-                  }}
-                />
                 {option}
               </MenuItem>
             ))}
@@ -106,4 +85,4 @@ const ParamsMultiSelect = ({
   )
 }
 
-export default ParamsMultiSelect
+export default ParamsSelect
