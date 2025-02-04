@@ -1,16 +1,25 @@
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import { defaultClusterChangeStep } from 'constants/search'
 
-import { ParamsCheckbox, ParamsRange } from '../components'
+import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 
 import Section from './SectionTemplate'
 
 const ClustersSection = ({ onChange }: { onChange: () => void }) => {
-  const { watch } = useFormContext()
+  const { watch, setValue, trigger } = useFormContext()
   const clusterEnabled = watch('cluster')
+
+  const handleSwitchChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue('cluster', Boolean(event.target.checked))
+    await trigger('cluster')
+    onChange?.()
+  }
 
   return (
     <Section
@@ -20,12 +29,9 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
       link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
       sx={{}}
       rightSlot={
-        <ParamsCheckbox
-          name="cluster"
-          label="Enable"
-          size="small"
-          onChange={onChange}
-        />
+        <Box sx={{ pb: 1, my: -1, mr: -1.25, transform: 'scale(0.8)' }}>
+          <AndroidSwitch onChange={handleSwitchChange} />
+        </Box>
       }
     >
       <Stack spacing={1}>

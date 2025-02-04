@@ -1,3 +1,4 @@
+export { default as AndroidSwitch } from './AndroidSwitch'
 export { default as ParamsCheckbox } from './ParamsCheckbox'
 export { default as ParamsField } from './ParamsField'
 export { default as ParamsLabel } from './ParamsLabel'
