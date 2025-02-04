@@ -30,7 +30,10 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
       sx={{}}
       rightSlot={
         <Box sx={{ pb: 1, my: -1, mr: -1.25, transform: 'scale(0.8)' }}>
-          <AndroidSwitch onChange={handleSwitchChange} />
+          <AndroidSwitch
+            checked={clusterEnabled}
+            onChange={handleSwitchChange}
+          />
         </Box>
       }
     >
