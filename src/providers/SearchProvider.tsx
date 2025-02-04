@@ -83,10 +83,9 @@ const SearchProvider = ({
   // extract apiKey from URL
   const urlApiKey = (() => {
     const parsed = queryString.parse(window.location.search)
-    const { apiKey } = parsed
-    if (apiKey) {
-      localStorage.setItem('params', JSON.stringify({ apiKey }))
-      return String(apiKey)
+    if (parsed.key) {
+      localStorage.setItem('params', JSON.stringify({ apiKey: parsed.key }))
+      return String(parsed.key)
     }
     return null
   })()
