@@ -6,7 +6,7 @@ import { Box, Stack } from '@mui/material'
 import { Alert, Snackbar } from '@mui/material'
 
 import {
-  type ApiHost,
+  type ApiCredentials,
   type ApiLocation,
   blockedFormFields
 } from 'services/API/types'
@@ -29,7 +29,8 @@ const warningMessageListingsDisabled =
 const warningMessageClusteringThreshold =
   "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
 
-const fetchLocations = async ({ apiKey, apiUrl }: ApiHost) => {
+const fetchLocations = async ({ apiKey, apiUrl }: ApiCredentials) => {
+  if (!apiKey || !apiUrl) return []
   try {
     const getOptions = { get: { fields: 'map,mlsNumber' } }
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
@@ -48,6 +49,7 @@ const fetchLocations = async ({ apiKey, apiUrl }: ApiHost) => {
 
 const ParamsPanel = () => {
   const { search, count, params, polygon, clearData } = useSearch()
+  const { apiKey = '', apiUrl = '' } = params
   const {
     canRenderMap,
     position,
@@ -56,27 +58,6 @@ const ParamsPanel = () => {
     setCanRenderMap
   } = useMapOptions()
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
-
-  const urlApiKey = (() => {
-    const parsed = queryString.parse(window.location.search)
-    const { apiKey, ...rest } = parsed
-    if (apiKey) {
-      const sanitizedParams = queryString.stringify(rest)
-      window.history.replaceState(
-        null,
-        '',
-        `${window.location.pathname}${sanitizedParams ? '?' + sanitizedParams : ''}`
-      )
-      return String(apiKey)
-    }
-    return null
-  })()
-
-  if (urlApiKey) {
-    params.apiKey = urlApiKey
-    localStorage.setItem('params', JSON.stringify(params))
-  }
-  const { apiKey = '', apiUrl = '' } = params
 
   const savePosition = (
     locations: ApiLocation[],

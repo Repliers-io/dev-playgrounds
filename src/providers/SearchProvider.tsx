@@ -1,4 +1,5 @@
 'use client'
+
 import React, {
   createContext,
   useContext,
@@ -7,10 +8,11 @@ import React, {
   useState
 } from 'react'
 import type { Position } from 'geojson'
+import queryString from 'query-string'
 
 import type {
   ApiCluster,
-  ApiHost,
+  ApiCredentials,
   ApiQueryResponse,
   Listing,
   ParamsPanelControls
@@ -27,7 +29,7 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
-export type FormParams = Filters & ApiHost & ParamsPanelControls
+export type FormParams = Filters & ApiCredentials & ParamsPanelControls
 type FormParamKeys = keyof FormParams
 
 type SearchContextType = SavedResponse & {
@@ -51,7 +53,9 @@ type SearchContextType = SavedResponse & {
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
-const defaults = {}
+
+const defaultParams = {}
+
 const emptySavedResponse = {
   count: 0,
   page: 0,
@@ -61,15 +65,38 @@ const emptySavedResponse = {
   statistics: {}
 }
 
+const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
+const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
+
 const SearchProvider = ({
-  params,
   polygon,
   children
 }: {
-  params?: Partial<FormParams>
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
+  const storedParams =
+    (localStorage.getItem('params') &&
+      JSON.parse(localStorage.getItem('params') as string)) ||
+    defaultParams
+
+  // extract apiKey from URL
+  const urlApiKey = (() => {
+    const parsed = queryString.parse(window.location.search)
+    const { apiKey } = parsed
+    if (apiKey) {
+      localStorage.setItem('params', JSON.stringify({ apiKey }))
+      return String(apiKey)
+    }
+    return null
+  })()
+
+  const [stateParams, setStateParams] = useState<Partial<FormParams>>({
+    apiUrl, // use default apiUrl from env file, which CAN be overriden by storedParams.apiUrl
+    ...storedParams,
+    apiKey: urlApiKey || storedParams.apiKey || apiKey // use urlApiKey, storedParams.apiKey or default apiKey from env file
+  })
+
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -79,29 +106,25 @@ const SearchProvider = ({
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
-  const [searchParams, setParams] = useState<Partial<FormParams>>(
-    params || defaults
-  )
-
   const [searchPolygon, setPolygon] = useState<Position[] | null>(
     polygon || null
   )
 
   const setParam = (key: FormParamKeys, value: any) =>
-    setParams((prev) => ({ ...prev, [key]: value }))
+    setStateParams((prev) => ({ ...prev, [key]: value }))
 
   const addParams = (newParams: Partial<FormParams>) =>
-    setParams((prev) => ({ ...prev, ...newParams }))
+    setStateParams((prev) => ({ ...prev, ...newParams }))
 
   const removeParam = (key: FormParamKeys) =>
-    setParams((prev) => {
+    setStateParams((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _, ...rest } = prev
       return rest
     })
 
   const removeParams = (keys: FormParamKeys[]) =>
-    setParams((prev) => {
+    setStateParams((prev) => {
       const newFilters = { ...prev }
       keys.forEach((key) => {
         delete newFilters[key]
@@ -109,7 +132,7 @@ const SearchProvider = ({
       return newFilters
     })
 
-  const resetParams = () => setParams(defaults)
+  const resetParams = () => setStateParams(defaultParams)
 
   const clearPolygon = () => setPolygon(null)
 
@@ -174,9 +197,9 @@ const SearchProvider = ({
   const contextValue = useMemo(
     () => ({
       loading,
-      params: searchParams,
+      params: stateParams,
+      setParams: setStateParams,
       setParam,
-      setParams,
       addParams,
       removeParam,
       removeParams,
@@ -192,7 +215,7 @@ const SearchProvider = ({
       clearPolygon,
       clearData
     }),
-    [searchParams, searchPolygon, loading, json, request, saved]
+    [stateParams, searchPolygon, loading, json, request, saved]
   )
 
   return (
