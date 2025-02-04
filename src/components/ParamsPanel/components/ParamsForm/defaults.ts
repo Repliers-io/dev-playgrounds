@@ -2,10 +2,7 @@ import { listingFields } from 'services/Search/defaults'
 
 import { type FormData } from './types'
 
-const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
-const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
-
-const defaultFormState: FormData = {
+const defaultFormState: Partial<FormData> = {
   /**
    * @internal
    */
@@ -15,8 +12,6 @@ const defaultFormState: FormData = {
   /**
    * request parameters
    */
-  apiUrl,
-  apiKey,
   boardId: null,
   listings: null,
   class: [],

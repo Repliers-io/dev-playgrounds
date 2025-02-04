@@ -35,6 +35,7 @@ const ParamsForm = () => {
     'propertyType'
   ] as const
 
+  //  TODO: form should not have access to window.location.search and do any params parsing
   // cache them one time on first render
   const params = useMemo(() => {
     const parsed = queryString.parse(window.location.search)
