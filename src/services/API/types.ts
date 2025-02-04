@@ -4,7 +4,7 @@
  */
 import type { Position } from 'geojson'
 
-export type ApiHost = { apiUrl: string; apiKey: string }
+export type ApiCredentials = { apiUrl: string; apiKey: string }
 
 export type ParamsPanelControls = {
   clusterAutoSwitch: boolean

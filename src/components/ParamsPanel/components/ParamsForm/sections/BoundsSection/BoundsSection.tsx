@@ -2,8 +2,11 @@ import { Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
 
+import ParamsSection from '../SectionTemplate'
+
 import BoundsPoint from './BoundsPoint'
-import ParamsSection from './ParamsSection'
+
+// NOTE: technically, this is not a form, but a section
 
 const BoundsForm = () => {
   const { position: { bounds } = {} } = useMapOptions()

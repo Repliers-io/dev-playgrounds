@@ -182,17 +182,15 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
             bgcolor: alpha('#FFFFFF', 0.7),
             borderRadius: 6,
             boxShadow: 1,
-            p: 0.25,
-            pr: 1.5
+            p: 0.25
           }}
         >
           {loading ? (
             <>
               <CircularProgress size={14} sx={{ p: 1 }} />
-              <Typography>Loading ...</Typography>
             </>
           ) : (
-            <Typography sx={{ pl: 1, lineHeight: '30px' }}>
+            <Typography sx={{ px: 1.25, lineHeight: '30px' }}>
               {count} Listings
             </Typography>
           )}

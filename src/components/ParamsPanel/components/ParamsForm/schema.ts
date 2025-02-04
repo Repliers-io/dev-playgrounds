@@ -9,7 +9,7 @@ import {
 } from './types'
 
 const schema = Joi.object({
-  apiKey: Joi.string().messages({
+  apiKey: Joi.string().required().messages({
     'string.empty': 'API key cannot be empty',
     'any.required': 'API key is required'
   }),

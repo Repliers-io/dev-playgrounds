@@ -3,28 +3,35 @@ import React from 'react'
 import { Box, Stack } from '@mui/material'
 import { type BoxProps } from '@mui/material/Box/Box'
 
-import ParamLabel from './ParamLabel'
+import { ParamsLabel } from '../components'
 
-interface BoxContainerProps extends BoxProps {
+interface ParamsSectionProps extends BoxProps {
   title: string
-  children: React.ReactNode
   hint?: string
   link?: string
+  tooltip?: string
+  children: React.ReactNode
   rightSlot?: React.ReactNode
 }
 
-const BoxContainer: React.FC<BoxContainerProps> = ({
+const ParamsSection: React.FC<ParamsSectionProps> = ({
   title,
   children,
   hint,
   link,
+  tooltip,
   rightSlot,
   ...rest
 }) => {
   return (
     <Box width="100%" {...rest}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <ParamLabel title={title} hint={hint} link={link} />
+      <Stack
+        direction="row"
+        sx={{ minHeight: '40px' }}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <ParamsLabel title={title} hint={hint} link={link} tooltip={tooltip} />
         {rightSlot}
       </Stack>
       <Box
@@ -45,4 +52,4 @@ const BoxContainer: React.FC<BoxContainerProps> = ({
   )
 }
 
-export default BoxContainer
+export default ParamsSection

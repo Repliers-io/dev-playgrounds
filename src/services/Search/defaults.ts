@@ -2,7 +2,7 @@ import type { ApiQueryParamsAllowedFields, Listing } from 'services/API/types'
 
 // eslint-disable-next-line import/prefer-default-export
 export const listingFields: Array<
-  keyof Listing | ApiQueryParamsAllowedFields | 'images[0]'
+  keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
 > = [
   'boardId',
   'mlsNumber',
