@@ -38,7 +38,6 @@ const ResponsePanel = ({
       navigator.clipboard.writeText(requestContainerRef.current.innerText)
     }
   }
-  // console.log('count', count, loading)
 
   return (
     <Box
@@ -111,7 +110,7 @@ const ResponsePanel = ({
             )}
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
-            <Box sx={{ width: 56, px: 1, pt: 0.5 }}>
+            <Box sx={{ width: 56, px: 1 }}>
               {loading ? (
                 <CircularProgress size={14} />
               ) : (

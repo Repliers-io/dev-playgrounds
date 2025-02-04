@@ -34,7 +34,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
         </Box>
       }
     >
-      <Stack spacing={1}>
+      <Stack spacing={1.25}>
         <Stack sx={{ ml: -0.75 }}>
           <ParamsCheckbox
             name="clusterAutoSwitch"
