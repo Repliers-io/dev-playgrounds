@@ -16,7 +16,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
     <Section
       title="Clusters"
       hint="docs"
-      tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      tooltip="Enable to cluster listings on the map"
       link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
       sx={{}}
       rightSlot={

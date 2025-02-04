@@ -52,7 +52,7 @@ const QueryParametersSection = ({
         <Stack spacing={1.25}>
           <ParamsField
             name="boardId"
-            tooltip="Lorem ipsum dolor sit amet"
+            tooltip="Can be useful if your API Key has access to multiple boards"
             noClear
             onChange={onChange}
           />
@@ -63,6 +63,7 @@ const QueryParametersSection = ({
             name="listings" // IT DOESNT ACCEPT THE BOOLEAN VALUE FROM THE FORM CONTROLLER (BY MUI COMPONENT DESIGN) !!!!
             options={trueFalseOptions} // THOSE OPTIONS SHOULD NOT EXIST
             onChange={onChange}
+            tooltip="Set to false to improve loading speed when using clusters"
             hint="optimization"
             link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#6-map-only-experience"
           />
@@ -77,7 +78,6 @@ const QueryParametersSection = ({
           </Stack>
           <ParamsSelect
             name="sortBy"
-            tooltip="Lorem ipsum dolor sit amet"
             link="https://github.com/Repliers-io/api-types.ts/blob/main/types/index.ts#L108"
             options={sortByOptions}
             onChange={onChange}
@@ -89,7 +89,6 @@ const QueryParametersSection = ({
           />
           <ParamsMultiSelect
             name="class"
-            tooltip="Lorem ipsum dolor sit amet"
             options={classOptions}
             onChange={onChange}
           />
