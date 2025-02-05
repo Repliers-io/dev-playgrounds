@@ -25,7 +25,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
     <Section
       title="Clusters"
       hint="docs"
-      tooltip="Enable to cluster listings on the map"
+      tooltip="Clusters listings together on map when enabled"
       link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
       sx={{}}
       rightSlot={
@@ -41,14 +41,14 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
         <Stack sx={{ ml: -0.75 }}>
           <ParamsCheckbox
             name="clusterAutoSwitch"
-            label="Auto-Switch off clusters on Map"
+            label="Auto disable clusters at street level"
             size="small"
             disabled={!clusterEnabled}
             onChange={onChange}
           />
           <ParamsCheckbox
             name="slidingClusterPrecision"
-            label="Sliding Cluster Precision"
+            label="Auto adjust precision based on zoom level"
             size="small"
             disabled={!clusterEnabled}
             onChange={onChange}
