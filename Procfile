@@ -1,0 +1,1 @@
+web: npx serve dist/
