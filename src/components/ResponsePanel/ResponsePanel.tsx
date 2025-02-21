@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -14,7 +14,13 @@ import {
   Typography
 } from '@mui/material'
 
+import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
+import {
+  highlightJsonItem,
+  removeHighlight,
+  scrollToElementByText
+} from 'utils/dom'
 
 import 'react-json-view-lite/dist/index.css'
 
@@ -27,6 +33,7 @@ const ResponsePanel = ({
   expanded?: boolean
   onExpand?: () => void
 }) => {
+  const { focusedMarker } = useMapOptions()
   const { request, statusCode, json, time, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
@@ -38,6 +45,15 @@ const ResponsePanel = ({
       navigator.clipboard.writeText(requestContainerRef.current.innerText)
     }
   }
+
+  useEffect(() => {
+    if (focusedMarker) {
+      highlightJsonItem(focusedMarker)
+      scrollToElementByText(focusedMarker)
+    } else {
+      removeHighlight()
+    }
+  }, [focusedMarker])
 
   return (
     <Box

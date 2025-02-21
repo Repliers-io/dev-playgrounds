@@ -66,6 +66,7 @@ const schema = Joi.object({
   minBaths: Joi.number().integer().positive().allow(null, false, ''),
   minGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
   minParkingSpaces: Joi.number().integer().positive().allow(null, false, ''),
+  fields: Joi.string().allow(null, false, ''),
 
   cluster: Joi.boolean().allow(null, false, ''),
   clusterLimit: Joi.number().integer().positive().allow(null, false, ''),

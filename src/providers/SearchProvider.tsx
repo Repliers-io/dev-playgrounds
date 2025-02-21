@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState
 } from 'react'
-import type { Position } from 'geojson'
+import { type Position } from 'geojson'
 import queryString from 'query-string'
 
 import type {
@@ -17,7 +17,7 @@ import type {
   Listing,
   ParamsPanelControls
 } from 'services/API/types'
-import type { Filters } from 'services/Search'
+import { type Filters } from 'services/Search'
 import { apiFetch } from 'utils/api'
 
 export type SavedResponse = {

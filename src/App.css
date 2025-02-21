@@ -51,21 +51,23 @@ a {
 
 .highlight {
   position: relative;
-  padding: 8px !important;
 
   &::before {
     content: '';
     position: absolute;
     border-radius: 8px;
     inset: 0;
-    border: 1px solid #cdcdcd;
-    background: linear-gradient(
-      to right,
-      rgba(var(--foreground-rgb), 0.1),
-      rgba(var(--foreground-rgb), 0.1)
-    );
+    padding: 0 8px 2px;
+    margin: 0 -8px -2px;
+    border: 1px solid #fff;
+    background: #fec6;
 
     box-shadow: 0 4px 4px #0000001a;
     pointer-events: none;
   }
+}
+
+.focused {
+  background: #fec !important;
+  border-color: #fff !important;
 }

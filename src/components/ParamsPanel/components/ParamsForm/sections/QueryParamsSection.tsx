@@ -134,8 +134,8 @@ const QueryParametersSection = ({
             <ParamsField name="minParkingSpaces" onChange={onChange} />
           </Stack>
           <ParamsField
-            name="fields"
             noClear
+            name="fields"
             onChange={onChange}
             hint="optimization"
             link="https://help.repliers.com/en/article/optimizing-api-requests-with-the-fields-parameter-lq416x/"

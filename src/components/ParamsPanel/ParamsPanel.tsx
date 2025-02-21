@@ -161,7 +161,7 @@ const ParamsPanel = () => {
     if (!params || !Object.keys(params).length) return
     // polygon is an optional parameter for future implementation
     fetchData(position, params, polygon)
-  }, [position, params, canRenderMap])
+  }, [position, params, polygon, canRenderMap])
 
   return (
     <Box

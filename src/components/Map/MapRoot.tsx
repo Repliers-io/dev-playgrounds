@@ -1,42 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import {
-  alpha,
-  Box,
-  CircularProgress,
-  IconButton,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import {
-  highlightJsonItem,
-  removeHighlight,
-  scrollToElementByText
-} from 'utils/dom'
 import { getMapStyleUrl } from 'utils/map'
 import { mapboxDefaults, mapboxToken } from 'constants/map'
 
 import CardsCarousel from './CardsCarousel'
+import CardsCarouselSwitch from './CardsCarouselSwitch'
 import MapContainer from './MapContainer'
+import MapCounter from './MapCounter'
+import MapDrawButton from './MapDrawButton'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
-
-const getHighlightedMarker = (
-  listings: Listing[],
-  highlightedMarker: string | number | null
-) => {
-  if (!highlightedMarker) return null
-  return listings.find((item) => item.mlsNumber === highlightedMarker)
-}
 
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
@@ -45,8 +26,8 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     canRenderMap,
     style,
     mapRef,
-    highlightedMarker,
-    setHighlightedMarker,
+    focusMarker,
+    blurMarker,
     setMapContainerRef,
     setMapRef,
     position,
@@ -54,7 +35,8 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     destroyMap
   } = useMapOptions()
   const { count, listings, loading, clusters } = useSearch()
-  const [drawer, setDrawer] = useState(false)
+  const [openDrawer, setOpenDrawer] = useState(false)
+  const firstTimeLoaded = useRef(false)
 
   setMapContainerRef(mapContainerRef)
 
@@ -89,27 +71,28 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     initializeMap(container)
   }
 
-  const handleDrawerClick = () => {
-    setDrawer(!drawer)
+  const focusListing = (listing: Listing) => {
+    focusMarker(listing.mlsNumber)
   }
 
   useEffect(() => {
     if (!mapRef.current) return
     if (!listings?.length) {
       MapService.resetMarkers()
-      setHighlightedMarker(null)
+      blurMarker()
       return
     }
     // add markers to map
     MapService.showMarkers({
       map: mapRef.current,
       listings,
-      onClick: (e, property) => {
-        scrollToElementByText(`${property.mlsNumber}`)
-        highlightJsonItem(`${property.mlsNumber}`)
-        setHighlightedMarker(property.mlsNumber)
-      }
+      onClick: focusListing
     })
+
+    if (!firstTimeLoaded.current) {
+      firstTimeLoaded.current = true
+      setOpenDrawer(true)
+    }
   }, [listings])
 
   useEffect(() => {
@@ -117,16 +100,12 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [clusters])
 
   useEffect(() => {
-    const highlighted = getHighlightedMarker(listings, highlightedMarker)
-    if (!highlighted) {
-      setHighlightedMarker(null)
-      removeHighlight()
-    }
-  }, [listings, highlightedMarker])
+    blurMarker()
+  }, [listings])
 
   useEffect(() => {
     mapRef.current?.resize()
-  }, [mapVisible, drawer])
+  }, [mapVisible, openDrawer])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
@@ -170,67 +149,34 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
+        <MapCounter count={count} loading={loading} />
+
         <Stack
-          spacing={0.5}
-          direction="row"
-          alignItems="center"
+          spacing={2}
+          direction="column"
+          alignItems="flex-end"
           sx={{
+            pointerEvents: 'none',
+            '& > *': { pointerEvents: 'auto' },
+            pb: 2,
             left: 16,
-            top: 16,
-            position: 'absolute',
-            backdropFilter: 'blur(4px)',
-            bgcolor: alpha('#FFFFFF', 0.7),
-            borderRadius: 6,
-            boxShadow: 1,
-            p: 0.25
+            right: 16,
+            bottom: openDrawer ? 98 : 0,
+            position: 'absolute'
           }}
         >
-          {loading ? (
-            <>
-              <CircularProgress size={14} sx={{ p: 1 }} />
-            </>
-          ) : (
-            <Typography sx={{ px: 1.25, lineHeight: '30px' }}>
-              {count} Listings
-            </Typography>
-          )}
-        </Stack>
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: drawer ? 98 : 0,
-            left: 0,
-            right: 0
-          }}
-        >
+          <MapDrawButton />
           <MapNavigation />
           <MapStyleSwitch />
-
           {Boolean(count) && (
-            <Box sx={{ position: 'absolute', left: 16, bottom: 16 }}>
-              <IconButton
-                size="small"
-                onClick={handleDrawerClick}
-                sx={{
-                  width: 30,
-                  height: 30,
-                  backdropFilter: 'blur(4px)',
-                  bgcolor: alpha('#FFFFFF', 0.7),
-                  '&:hover': { bgcolor: '#fff' },
-                  boxShadow: 1
-                }}
-              >
-                {drawer ? (
-                  <ArrowDownwardIcon sx={{ fontSize: 24 }} />
-                ) : (
-                  <ArrowUpwardIcon sx={{ fontSize: 24 }} />
-                )}
-              </IconButton>
-            </Box>
+            <CardsCarouselSwitch
+              open={openDrawer}
+              onClick={() => setOpenDrawer(!openDrawer)}
+            />
           )}
-        </Box>
+        </Stack>
       </Box>
-      <CardsCarousel drawer={drawer} />
+      <CardsCarousel open={openDrawer} />
     </Stack>
   )
 }

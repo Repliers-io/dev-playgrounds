@@ -8,11 +8,11 @@ export const queryStringOptions: StringifyOptions = {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export const apiFetch = async (
+export const apiFetch = async <T = Response>(
   url: string,
   params: { get?: any; post?: any },
   options?: RequestInit
-) => {
+): Promise<T> => {
   // GET params
   const getParamsString = queryString.stringify(params.get, queryStringOptions)
   // POST params
@@ -38,9 +38,9 @@ export const apiFetch = async (
 
     if (!response.ok) {
       console.error(response.status)
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
-
-    return response
+    return response as unknown as T
   } catch (error: any) {
     // Unauthorized
     if (error.message === '401') {

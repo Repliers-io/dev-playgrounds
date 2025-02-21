@@ -22,41 +22,19 @@ export const findElementByText = (text: string) => {
 
 export const scrollToElementByText = (text: string) => {
   const element = findElementByText(text)
-
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
-  } else {
-    console.error('Element with the specified text not found.')
-  }
+  const parent = element?.closest('ul')?.parentElement
+  parent?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  })
 }
 
-export const highlightElementByText = (text: string) => {
-  const element = findElementByText(text)
-  const oldHighlight = document.querySelector('.highlight')
-  if (element) {
-    oldHighlight?.classList.remove('highlight')
-    element.classList.add('highlight')
-  } else {
-    console.error('Element with the specified text not found.')
-  }
-}
+export const removeHighlight = () =>
+  document.querySelector('.highlight')?.classList.remove('highlight')
 
 export const highlightJsonItem = (text: string) => {
+  removeHighlight()
   const element = findElementByText(text)
   const parent = element?.closest('ul')?.parentElement
-  const oldHighlight = document.querySelector('.highlight')
-  if (element && parent) {
-    oldHighlight?.classList.remove('highlight')
-    parent.classList.add('highlight')
-  } else {
-    console.error('Element with the specified text not found.')
-  }
-}
-
-export const removeHighlight = () => {
-  const oldHighlight = document.querySelector('.highlight')
-  oldHighlight?.classList.remove('highlight')
+  parent?.classList.add('highlight')
 }

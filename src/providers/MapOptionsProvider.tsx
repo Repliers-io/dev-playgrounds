@@ -11,15 +11,21 @@ import { type Map as MapboxMap } from 'mapbox-gl'
 import { type MapPosition } from 'services/Map/types'
 import { type MapStyle } from 'constants/map-styles'
 
+type MapEditMode = 'draw' | 'highlight' | null
+
 type MapOptionsContextProps = {
   canRenderMap: boolean
   position?: MapPosition
   setPosition: (position: MapPosition) => void
   setCanRenderMap: (loaded: boolean) => void
-  highlightedMarker: string | null
-  setHighlightedMarker: (mls: string | null) => void
+  blurMarker: () => void
+  focusMarker: (mls: string | null) => void
+  focusedMarker: string | null
   style: MapStyle
   setStyle: (style: MapStyle) => void
+  editMode: MapEditMode
+  setEditMode: (mode: MapEditMode) => void
+  clearEditMode: () => void
   mapRef: React.MutableRefObject<MapboxMap | null>
   mapContainerRef: React.MutableRefObject<HTMLDivElement | null>
   destroyMap: () => void
@@ -47,13 +53,14 @@ const MapOptionsProvider = ({
   const mapRef = useRef<MapboxMap | null>(null)
   const [mapStyle, setStyle] = useState(style)
 
-  const [highlightedMarker, setHighlightedMarker] = useState<string | null>(
-    null
-  )
+  const [focusedMarker, focusMarker] = useState<string | null>(null)
 
   const [mapPosition, setPosition] = useState<MapPosition | undefined>(
     position || undefined
   )
+
+  const [editMode, setEditMode] = useState<MapEditMode>(null)
+  const clearEditMode = () => setEditMode(null)
 
   const destroyMap = useCallback(() => {
     const map = mapRef.current
@@ -65,14 +72,18 @@ const MapOptionsProvider = ({
 
   const contextValue = useMemo(
     () => ({
-      highlightedMarker,
-      setHighlightedMarker,
       canRenderMap,
       position: mapPosition,
       setPosition,
       setCanRenderMap,
       style: mapStyle,
       setStyle,
+      editMode,
+      setEditMode,
+      clearEditMode,
+      focusedMarker,
+      focusMarker,
+      blurMarker: () => focusMarker(null),
       mapRef,
       mapContainerRef,
       destroyMap,
@@ -80,7 +91,7 @@ const MapOptionsProvider = ({
       setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
         (mapContainerRef.current = ref.current)
     }),
-    [mapPosition, mapStyle, canRenderMap, highlightedMarker]
+    [mapPosition, mapStyle, editMode, canRenderMap, focusedMarker]
   )
 
   return (

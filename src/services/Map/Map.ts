@@ -90,13 +90,11 @@ export class MapService {
   showMarkers({
     map,
     listings,
-    onClick,
-    onTap
+    onClick
   }: {
     map: Map
     listings: Listing[]
-    onClick?: (e: MouseEvent, property: Listing) => void
-    onTap?: (property: Listing) => void
+    onClick?: (property: Listing) => void
   }): void {
     if (!this.singleMarkerView) return
 
@@ -125,26 +123,7 @@ export class MapService {
         onClick: (e: MouseEvent) => {
           // Prevent redirect on click
           e.preventDefault()
-          onClick?.(e, property)
-        },
-        onTap: () => {
-          const markerCenterPixels = map.project([
-            propertyCenter.lng,
-            propertyCenter.lat
-          ])
-
-          // WHUT???
-          // markerCenterPixels.y += Number(propertyCardSizes.drawer.height) / 2 // half of the drawer height
-          const markerCenterCoords = map.unproject(markerCenterPixels)
-
-          map.flyTo({
-            center: markerCenterCoords,
-            curve: 1
-          })
-
-          map.once('moveend', () => {
-            onTap?.(property)
-          })
+          onClick?.(property)
         }
       })
 
