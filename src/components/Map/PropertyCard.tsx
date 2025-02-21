@@ -21,7 +21,7 @@ const PropertyCard = ({
     address,
     class: propertyClass,
     listPrice = defaultPrice,
-    details: { numBathrooms = '?', numBedrooms = '?' }
+    details: { numBathrooms = '?', numBedrooms = '?' } = {}
   } = listing
 
   const commercial = propertyClass === 'CommercialProperty'
@@ -77,7 +77,7 @@ const PropertyCard = ({
           bgcolor: '#384248', // marker color
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundImage: `url(${getCDNPath(listing.images[0], 'small')})`
+          backgroundImage: `url(${getCDNPath(listing.images?.[0], 'small')})`
         }}
       />
       <Stack

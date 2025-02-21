@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { alpha, Box, Button, ButtonGroup } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -21,7 +21,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
-  const cardWidth = 236 + 16
+  const cardWidth = 238 + 16
   const scrollBy = cardWidth * 1 // one card at a time
 
   const handleNextClick = () =>
@@ -72,10 +72,10 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
         }}
       >
         <Button onClick={handlePrevClick}>
-          <KeyboardDoubleArrowLeftIcon sx={{ fontSize: 20 }} />
+          <ArrowBackIcon sx={{ fontSize: 20 }} />
         </Button>
         <Button onClick={handleNextClick}>
-          <KeyboardDoubleArrowRightIcon sx={{ fontSize: 20 }} />
+          <ArrowForwardIcon sx={{ fontSize: 20 }} />
         </Button>
       </ButtonGroup>
 

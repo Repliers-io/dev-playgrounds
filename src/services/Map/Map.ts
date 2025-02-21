@@ -101,10 +101,14 @@ export class MapService {
     listings.forEach((property) => {
       const { mlsNumber, listPrice, status } = property
 
-      const propertyCenter = {
-        lng: Number(property.map.longitude),
-        lat: Number(property.map.latitude)
-      }
+      const propertyCenter = property.map
+        ? {
+            lng: Number(property.map.longitude),
+            lat: Number(property.map.latitude)
+          }
+        : null
+
+      if (!propertyCenter) return
 
       const singleViewOnMap = this.markers[mlsNumber]
 
