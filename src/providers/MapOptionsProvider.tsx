@@ -64,11 +64,10 @@ const MapOptionsProvider = ({
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapboxMap | null>(null)
+
   const [mapStyle, setStyle] = useState(style)
-
-  const [focusedMarker, focusMarker] = useState<string | null>(null)
-
   const [editMode, setEditMode] = useState<MapEditMode>(null)
+  const [focusedMarker, focusMarker] = useState<string | null>(null)
   const clearEditMode = () => setEditMode(null)
 
   const destroyMap = useCallback(() => {

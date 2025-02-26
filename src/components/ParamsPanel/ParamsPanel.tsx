@@ -40,7 +40,6 @@ const ParamsPanel = () => {
 
     try {
       const filteredParams = filterQueryParams(params)
-
       const response = await search({
         ...filteredParams,
         ...fetchBounds
@@ -70,7 +69,7 @@ const ParamsPanel = () => {
     } else {
       // listings=false
       if (
-        params.clusterAutoSwitch &&
+        params.dynamicClustering &&
         count > 0 &&
         count < markersClusteringThreshold
       ) {
@@ -84,15 +83,13 @@ const ParamsPanel = () => {
   }, [count, params])
 
   useDeepCompareEffect(() => {
-    if (!canRenderMap) return
     if (!position) return
+    if (!canRenderMap) return
     if (!params || !Object.keys(params).length) return
     fetchData(position, params, polygon)
   }, [position, params, polygon, canRenderMap])
 
-  // subscription to apiKey changes must refetch listings
-  // for calculate position/bounds/zoom
-  // and clear old response
+  // subscription to apiKey changes must clear old response
   useEffect(() => {
     if (apiKey) clearData()
   }, [apiKey])

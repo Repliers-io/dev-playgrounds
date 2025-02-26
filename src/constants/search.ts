@@ -8,7 +8,6 @@ export const defaultResultsPerPage = 96
 export const defaultClusterPrecision = 12
 export const defaultClusterLimit = 200
 export const defaultBoardId = 2
-export const defaultClusterChangeStep = 1
 
 export const defaultCountry = 'Canada'
 export const defaultState = 'Ontario'

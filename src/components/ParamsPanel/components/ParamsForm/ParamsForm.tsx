@@ -81,32 +81,6 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
-  // const handleResetCluster = (currentValues: Partial<FormData>) => {
-  //   // reset({
-  //   //   ...currentValues
-  //   //   // TODO: they should not be reset one-by-one with false/null values
-  //   //   // cluster: null,
-  //   //   // clusterAutoSwitch: false,
-  //   //   // dynamicClusterPrecision: false,
-  //   //   // clusterLimit: null,
-  //   //   // clusterPrecision: null
-  //   // })
-  //   handleSubmit(onSubmit, onError)()
-  // }
-
-  // const handleRestoreCluster = (currentValues: Partial<FormData>) => {
-  //   // reset({
-  //   //   ...currentValues
-  //   //   // TODO: they should not be set one-by-one with custom values
-  //   //   // cluster: true,
-  //   //   // clusterAutoSwitch: true,
-  //   //   // dynamicClusterPrecision: true,
-  //   //   // clusterLimit: defaultClusterLimit,
-  //   //   // clusterPrecision: defaultClusterPrecision
-  //   // })
-  //   handleSubmit(onSubmit, onError)()
-  // }
-
   useEffect(() => {
     trigger()
   }, [])

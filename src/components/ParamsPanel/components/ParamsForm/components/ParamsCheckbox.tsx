@@ -6,10 +6,10 @@ import { type CheckboxProps } from '@mui/material/Checkbox/Checkbox'
 
 import AndroidSwitch from './AndroidSwitch'
 
-interface InputProps extends CheckboxProps {
+interface InputProps extends Omit<CheckboxProps, 'onChange'> {
   name: string
   label?: string
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (newValue: boolean) => void
 }
 
 const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
@@ -21,8 +21,9 @@ const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
   const checked = Boolean(getValues(name))
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(name, Boolean(event.target.checked))
-    onChange?.(event)
+    const newValue = Boolean(event.target.checked)
+    setValue(name, newValue)
+    onChange?.(newValue)
   }
 
   return (

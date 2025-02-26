@@ -67,7 +67,14 @@ const ParamsRange: React.FC<RangeProps> = ({
           disabled={disabled}
           sx={{
             '& .MuiSlider-thumb': {
-              boxShadow: 'none !important'
+              boxShadow: 'none !important',
+              transition: 'none'
+            },
+            '& .MuiSlider-track': {
+              transition: 'none'
+            },
+            '& .MuiSlider-rail': {
+              transition: 'none'
             }
           }}
           {...rest}

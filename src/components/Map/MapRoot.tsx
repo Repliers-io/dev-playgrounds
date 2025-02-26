@@ -87,7 +87,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
     if (
       clusters?.length &&
-      (!params.clusterAutoSwitch || count > markersClusteringThreshold)
+      (!params.dynamicClustering || count > markersClusteringThreshold)
     ) {
       MapService.showClusters({ map, clusters })
     } else if (listings.length) {

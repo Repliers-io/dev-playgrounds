@@ -29,7 +29,7 @@ export type SavedResponse = {
 }
 
 export type CustomFormParams = {
-  clusterAutoSwitch: boolean
+  dynamicClustering: boolean
   dynamicClusterPrecision: boolean
 }
 

@@ -11,7 +11,7 @@ export const apiFieldsMappings = {
 }
 
 export const customFormParams: (keyof CustomFormParams)[] = [
-  'clusterAutoSwitch',
+  'dynamicClustering',
   'dynamicClusterPrecision'
 ]
 

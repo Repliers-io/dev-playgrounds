@@ -6,7 +6,7 @@ const defaultFormState: Partial<FormData> = {
   /**
    * @internal
    */
-  clusterAutoSwitch: true,
+  dynamicClustering: true,
   dynamicClusterPrecision: true,
 
   /**
