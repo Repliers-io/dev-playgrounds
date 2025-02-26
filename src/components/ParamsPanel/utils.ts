@@ -7,10 +7,14 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...customFormParams,
     ...(!params.cluster ? clusterOnlyParams : [])
   ]
-  return Object.entries(params).reduce((acc, [key, value]) => {
-    if (!fieldsToRemove.includes(key as FormParamKeys)) {
-      acc[key] = value
-    }
-    return acc
-  }, {} as Partial<FormParams>)
+  return Object.entries(params).reduce<Partial<FormParams>>(
+    (acc, [key, value]) => {
+      if (!fieldsToRemove.includes(key as FormParamKeys)) {
+        // Force TypeScript to accept the value by using "as any"
+        acc[key as FormParamKeys] = value as any
+      }
+      return acc
+    },
+    {}
+  )
 }

@@ -5,7 +5,6 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 import { Alert, Snackbar } from '@mui/material'
 
-import { type Listing } from 'services/API/types'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -21,16 +20,6 @@ const warningMessageListingsDisabled =
   "You don't see listings on the map because of the 'listings=false' flag"
 const warningMessageClusteringThreshold =
   "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
-
-export const getLocations = (listings: Listing[]) => {
-  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
-  return listings
-    .map((item: Listing) => ({
-      lat: parseFloat(item.map.latitude),
-      lng: parseFloat(item.map.longitude)
-    }))
-    .filter(({ lat, lng }) => lat > 0 && lng < 0)
-}
 
 const ParamsPanel = () => {
   const { search, count, params, polygon, clearData } = useSearch()
