@@ -2,19 +2,13 @@ import type { Position } from 'geojson'
 import { type LngLatBounds } from 'mapbox-gl'
 
 import { getDefaultBounds, toRectangle } from 'utils/map'
-import { defaultClusterLimit, defaultResultsPerPage } from 'constants/search'
+import { defaultResultsPerPage } from 'constants/search'
 
 import { listingFields } from './defaults'
 
 export const getListingFields = () => ({
   listings: true,
   fields: listingFields.join(',')
-})
-
-export const getClusterParams = (zoom: number) => ({
-  aggregates: 'map',
-  clusterLimit: defaultClusterLimit,
-  clusterPrecision: Math.round(zoom) + 2
 })
 
 export const getMapRectangle = (bounds: LngLatBounds) => ({

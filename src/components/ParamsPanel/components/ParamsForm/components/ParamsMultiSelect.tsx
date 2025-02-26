@@ -1,8 +1,33 @@
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { Box, Checkbox, MenuItem, TextField, Typography } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import {
+  Box,
+  Checkbox,
+  CircularProgress,
+  IconButton,
+  MenuItem,
+  TextField,
+  Typography
+} from '@mui/material'
 
 import ParamLabel from './ParamsLabel'
+
+const checkboxStyles = {
+  '&.MuiCheckbox-root': { py: 0, pl: 0 },
+  '& .MuiSvgIcon-root': { fontSize: 20 }
+}
+
+export const endIconStyles = {
+  px: 1,
+  top: 2,
+  right: 4,
+  height: 26,
+  zIndex: 2,
+  flex: 1,
+  position: 'absolute',
+  bgcolor: 'background.paper'
+}
 
 const ParamsMultiSelect = ({
   name,
@@ -10,7 +35,8 @@ const ParamsMultiSelect = ({
   hint,
   link,
   tooltip,
-  options,
+  loading,
+  options = [],
   onChange
 }: {
   name: string
@@ -18,16 +44,23 @@ const ParamsMultiSelect = ({
   hint?: string
   link?: string
   tooltip?: string
+  loading?: boolean
   options: readonly string[]
   onChange?: () => void
 }) => {
   const {
     control,
+    setValue,
     formState: { errors }
   } = useFormContext()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
+
+  const handleClearClick = () => {
+    setValue(name, [])
+    onChange?.()
+  }
 
   return (
     <Box flex={1} sx={{ position: 'relative' }}>
@@ -41,76 +74,86 @@ const ParamsMultiSelect = ({
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <TextField
-            id={name}
-            select
-            fullWidth
-            size="small"
-            error={!!errors[name]}
-            helperText={errors[name]?.message?.toString()}
-            {...field}
-            slotProps={{
-              select: {
-                displayEmpty: true,
-                multiple: true,
-                renderValue: (selected) => {
-                  if (
-                    !selected ||
-                    (Array.isArray(selected) && selected.length === 0)
-                  ) {
-                    return (
-                      <Typography variant="body2" color="#CCC">
-                        null
-                      </Typography>
-                    )
-                  }
-                  return (
-                    <div>
-                      {Array.isArray(selected)
-                        ? selected.join(', ')
-                        : String(selected)}
-                    </div>
-                  )
-                }
-              }
-            }}
-            onChange={(e) => {
-              const value = e.target.value
-              if (value.includes('')) {
-                field.onChange([])
-              } else {
-                field.onChange(value)
-              }
-              onChange?.()
-            }}
-          >
-            <MenuItem value="">
-              <Checkbox
-                checked={field.value.includes('')}
+        render={({ field }) => {
+          // console.log('value', field.value, typeof field.value)
+          return (
+            <Box sx={{ position: 'relative' }}>
+              <TextField
+                id={name}
+                select
+                fullWidth
                 size="small"
-                sx={{
-                  '&.MuiCheckbox-root': { py: 0, px: 1 },
-                  '& .MuiSvgIcon-root': { fontSize: 20 }
+                error={!!errors[name]}
+                helperText={errors[name]?.message?.toString()}
+                {...field}
+                slotProps={{
+                  select: {
+                    displayEmpty: true,
+                    multiple: true,
+                    renderValue: (selected) => {
+                      if (
+                        !selected ||
+                        (Array.isArray(selected) && selected.length === 0)
+                      ) {
+                        return (
+                          <Typography variant="body2" color="#CCC">
+                            null
+                          </Typography>
+                        )
+                      }
+                      return (
+                        <div>
+                          {Array.isArray(selected)
+                            ? selected.join(', ')
+                            : String(selected)}
+                        </div>
+                      )
+                    }
+                  }
                 }}
-              />
-              <em>null</em>
-            </MenuItem>
-            {options.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox
-                  checked={field.value.includes(option)}
-                  size="small"
-                  sx={{
-                    '&.MuiCheckbox-root': { py: 0, px: 1 },
-                    '& .MuiSvgIcon-root': { fontSize: 20 }
-                  }}
-                />
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value?.includes('')) {
+                    field.onChange([])
+                  } else {
+                    field.onChange(value)
+                  }
+                  onChange?.()
+                }}
+              >
+                <MenuItem value="">
+                  <span style={{ color: '#aaa' }}>null</span>
+                </MenuItem>
+                {options.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <Checkbox
+                      size="small"
+                      sx={checkboxStyles}
+                      checked={field.value.includes(option)}
+                    />
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              {Boolean(field.value?.length) && !loading && (
+                <Box sx={endIconStyles}>
+                  <IconButton
+                    onClick={handleClearClick}
+                    sx={{ p: 0.5, mr: '-8px', mt: '-7px' }}
+                  >
+                    <ClearIcon sx={{ color: 'primary.main', fontSize: 18 }} />
+                  </IconButton>
+                </Box>
+              )}
+              {loading && (
+                <Box sx={endIconStyles}>
+                  <CircularProgress size={14} />
+                </Box>
+              )}
+            </Box>
+          )
+        }}
       />
     </Box>
   )

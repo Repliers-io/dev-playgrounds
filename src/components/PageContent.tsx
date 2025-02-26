@@ -2,6 +2,9 @@ import { useState } from 'react'
 
 import { Container, Stack } from '@mui/material'
 
+import SelectOptionsProvider from 'providers/SelectOptionsProvider'
+import { apiFields, apiFieldsMappings } from 'constants/form'
+
 import MapRoot from './Map/MapRoot'
 import ResponsePanel from './ResponsePanel/ResponsePanel'
 import ParamsPanel from './ParamsPanel'
@@ -21,7 +24,9 @@ const PageContent = () => {
         justifyContent="stretch"
         sx={{ height: 'calc(100vh - 76px)', minHeight: 500 }}
       >
-        <ParamsPanel />
+        <SelectOptionsProvider fields={apiFields} mappings={apiFieldsMappings}>
+          <ParamsPanel />
+        </SelectOptionsProvider>
         <MapRoot expanded={expanded} />
         <ResponsePanel expanded={expanded} onExpand={handleExpandClick} />
       </Stack>

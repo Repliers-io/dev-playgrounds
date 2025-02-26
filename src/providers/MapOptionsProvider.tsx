@@ -2,14 +2,20 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState
 } from 'react'
-import { type Map as MapboxMap } from 'mapbox-gl'
+import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
+import queryString from 'query-string'
 
 import { type MapPosition } from 'services/Map/types'
+import { fetchLocations } from 'utils/api'
+import { getLocations, getMapPosition } from 'utils/map'
 import { type MapStyle } from 'constants/map-styles'
+
+import { useSearch } from './SearchProvider'
 
 type MapEditMode = 'draw' | 'highlight' | null
 
@@ -17,7 +23,6 @@ type MapOptionsContextProps = {
   canRenderMap: boolean
   position?: MapPosition
   setPosition: (position: MapPosition) => void
-  setCanRenderMap: (loaded: boolean) => void
   blurMarker: () => void
   focusMarker: (mls: string | null) => void
   focusedMarker: string | null
@@ -41,23 +46,27 @@ const MapOptionsProvider = ({
   style = 'map',
   // custom position used to initialize the map
   // on search results or saved searches polygon
-  position,
+  // position,
   children
 }: {
   style: MapStyle
-  position?: MapPosition
+  // position?: MapPosition
   children?: React.ReactNode
 }) => {
+  const {
+    params: { apiKey, apiUrl }
+  } = useSearch()
+
   const [canRenderMap, setCanRenderMap] = useState(false)
+  const [mapPosition, setPosition] = useState<MapPosition | undefined>(
+    undefined
+  )
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const [mapStyle, setStyle] = useState(style)
 
   const [focusedMarker, focusMarker] = useState<string | null>(null)
-
-  const [mapPosition, setPosition] = useState<MapPosition | undefined>(
-    position || undefined
-  )
 
   const [editMode, setEditMode] = useState<MapEditMode>(null)
   const clearEditMode = () => setEditMode(null)
@@ -70,12 +79,36 @@ const MapOptionsProvider = ({
     }
   }, [mapRef])
 
+  // subscription to apiKey changes must refetch listings
+  // for calculate position/bounds/zoom
+  useEffect(() => {
+    if (!apiKey || !apiUrl) return
+
+    const params = queryString.parse(window.location.search)
+    const { lng, lat, zoom } = params
+    if (lng && lat && zoom) {
+      setPosition({
+        center: new LngLat(Number(lng), Number(lat)),
+        zoom: Number(zoom),
+        bounds: undefined
+      })
+      setCanRenderMap(true)
+    } else {
+      fetchLocations({ apiKey, apiUrl }).then((listings) => {
+        const locations = getLocations(listings)
+        if (!locations?.length || !mapContainerRef.current) return
+        const mapPosition = getMapPosition(locations, mapContainerRef.current)
+        setPosition(mapPosition)
+        setCanRenderMap(true)
+      })
+    }
+  }, [apiKey, apiUrl])
+
   const contextValue = useMemo(
     () => ({
       canRenderMap,
       position: mapPosition,
       setPosition,
-      setCanRenderMap,
       style: mapStyle,
       setStyle,
       editMode,

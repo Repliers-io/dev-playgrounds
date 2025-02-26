@@ -9,7 +9,11 @@ import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getMapStyleUrl } from 'utils/map'
-import { mapboxDefaults, mapboxToken } from 'constants/map'
+import {
+  mapboxDefaults,
+  mapboxToken,
+  markersClusteringThreshold
+} from 'constants/map'
 
 import CardsCarousel from './CardsCarousel'
 import CardsCarouselSwitch from './CardsCarouselSwitch'
@@ -18,7 +22,6 @@ import MapCounter from './MapCounter'
 import MapDrawButton from './MapDrawButton'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
-
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
@@ -28,38 +31,41 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     mapRef,
     focusMarker,
     blurMarker,
-    setMapContainerRef,
-    setMapRef,
+    setMapContainerRef, // TODO: remove
+    setMapRef, // TODO: remove
     position,
     setPosition,
     destroyMap
   } = useMapOptions()
-  const { count, listings, loading, clusters } = useSearch()
+  const { request, count, listings, loading, clusters, params } = useSearch()
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
 
   setMapContainerRef(mapContainerRef)
 
   const initializeMap = (container: HTMLElement) => {
-    const { center, zoom, bounds } = position ?? {}
-    if (!bounds || !zoom || !center) return
+    const { center, zoom } = position ?? {}
+    if (!zoom || !center) return
 
     const map = new MapboxMap({
       container,
-      accessToken: mapboxToken,
       ...mapboxDefaults,
+      accessToken: mapboxToken,
+      style: getMapStyleUrl(style),
       center,
-      zoom,
-      bounds,
-      style: getMapStyleUrl(style)
+      zoom
     })
 
-    map.on('moveend', () => {
+    const updatePosition = () => {
       const bounds = map.getBounds()!
       const center = map.getCenter()
       const zoom = map.getZoom()
       setPosition({ bounds, center, zoom })
-    })
+    }
+
+    // we need this update to fill in bounds on the first load
+    map.on('load', updatePosition)
+    map.on('moveend', updatePosition)
 
     setMapRef(map)
   }
@@ -71,37 +77,37 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     initializeMap(container)
   }
 
-  const focusListing = (listing: Listing) => {
-    focusMarker(listing.mlsNumber)
-  }
-
   useEffect(() => {
-    if (!mapRef.current) return
-    if (!listings?.length) {
-      MapService.resetMarkers()
-      blurMarker()
-      return
+    const map = mapRef.current
+    if (!map) return
+
+    // Show clusters when either:
+    // 1. Clusters exist AND auto-switch is disabled, OR
+    // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
+    if (
+      clusters?.length &&
+      (!params.clusterAutoSwitch || count > markersClusteringThreshold)
+    ) {
+      MapService.showClusters({ map, clusters })
+    } else if (listings.length) {
+      MapService.showMarkers({
+        map,
+        listings,
+        onClick: (listing: Listing) => {
+          focusMarker(listing.mlsNumber)
+        }
+      })
+    } else {
+      // manually delete them all
+      MapService.resetAllMarkers()
     }
-    // add markers to map
-    MapService.showMarkers({
-      map: mapRef.current,
-      listings,
-      onClick: focusListing
-    })
 
     if (!firstTimeLoaded.current) {
       firstTimeLoaded.current = true
       setOpenDrawer(true)
     }
-  }, [listings])
-
-  useEffect(() => {
-    MapService.showClusterMarkers({ clusters, map: mapRef.current })
-  }, [clusters])
-
-  useEffect(() => {
     blurMarker()
-  }, [listings])
+  }, [clusters, listings, count])
 
   useEffect(() => {
     mapRef.current?.resize()
@@ -118,15 +124,12 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     if (!container) return
 
     if (canRenderMap) {
-      if (map) {
-        reinitializeMap()
-      } else {
-        initializeMap(container)
-      }
+      if (!map) initializeMap(container)
+      else reinitializeMap()
     } else {
       destroyMap()
     }
-  }, [canRenderMap, mapContainerRef])
+  }, [canRenderMap])
 
   return (
     <Stack
@@ -149,7 +152,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
-        <MapCounter count={count} loading={loading} />
+        <MapCounter count={count} loading={loading || !request} />
 
         <Stack
           spacing={2}
@@ -161,19 +164,17 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: openDrawer ? 98 : 0,
+            bottom: openDrawer ? 100 : 0,
             position: 'absolute'
           }}
         >
           <MapDrawButton />
           <MapNavigation />
           <MapStyleSwitch />
-          {Boolean(count) && (
-            <CardsCarouselSwitch
-              open={openDrawer}
-              onClick={() => setOpenDrawer(!openDrawer)}
-            />
-          )}
+          <CardsCarouselSwitch
+            open={openDrawer}
+            onClick={() => setOpenDrawer(!openDrawer)}
+          />
         </Stack>
       </Box>
       <CardsCarousel open={openDrawer} />

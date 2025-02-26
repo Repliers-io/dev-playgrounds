@@ -1,5 +1,7 @@
 import queryString, { type StringifyOptions } from 'query-string'
 
+import { type ApiCredentials } from 'services/API/types'
+
 export const queryStringOptions: StringifyOptions = {
   arrayFormat: 'none',
   skipEmptyString: true,
@@ -46,6 +48,24 @@ export const apiFetch = async <T = Response>(
     if (error.message === '401') {
       console.error('Authorization header is invalid or expired.')
     }
+    throw error
+  }
+}
+
+export const fetchLocations = async ({ apiKey, apiUrl }: ApiCredentials) => {
+  if (!apiKey || !apiUrl) return []
+  try {
+    const getOptions = { get: { fields: 'map,mlsNumber' } }
+    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
+    const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
+    if (!response.ok) {
+      throw new Error('[fetchLocations]: could not fetch locations')
+    }
+
+    const { listings } = await response.json()
+    return listings
+  } catch (error) {
+    console.error(error)
     throw error
   }
 }

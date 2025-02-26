@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, FormHelperText, Slider, Stack, Typography } from '@mui/material'
+import { Box, FormHelperText, Slider, Stack, TextField } from '@mui/material'
 import { type SliderProps } from '@mui/material/Slider/Slider'
 
 import ParamLabel from './ParamsLabel'
@@ -26,7 +26,6 @@ const ParamsRange: React.FC<RangeProps> = ({
   ...rest
 }) => {
   const {
-    trigger,
     setValue,
     getValues,
     formState: { errors }
@@ -38,8 +37,7 @@ const ParamsRange: React.FC<RangeProps> = ({
   const value = getValues(name)
 
   const handleChange = async (_: Event, newValue: number | number[]) => {
-    setValue(name, newValue)
-    await trigger(name)
+    setValue(name, newValue, { shouldValidate: true })
     onChange?.()
   }
 
@@ -53,22 +51,24 @@ const ParamsRange: React.FC<RangeProps> = ({
         tooltip={tooltip}
         pb={0}
       />
-      <Stack px={1} direction="row" gap={1.5} alignItems="center" p={0}>
+      <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
           value={value}
           onChange={handleChange}
           disabled={disabled}
-          valueLabelDisplay="auto"
+          sx={{
+            '& .MuiSlider-thumb': {
+              boxShadow: 'none !important'
+            }
+          }}
           {...rest}
         />
-        <Typography
-          variant="h6"
-          fontSize="12px"
-          textTransform="uppercase"
-          width={30}
-        >
-          {value}
-        </Typography>
+        <TextField
+          value={value}
+          disabled
+          sx={{ width: 48, '& input': { textAlign: 'center' } }}
+          size="small"
+        />
       </Stack>
       {errors[name] && (
         <FormHelperText error>

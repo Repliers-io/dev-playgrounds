@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
+import { useMapOptions } from 'providers/MapOptionsProvider'
 import { defaultClusterChangeStep } from 'constants/search'
 
 import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
@@ -10,26 +11,40 @@ import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 import Section from './SectionTemplate'
 
 const ClustersSection = ({ onChange }: { onChange: () => void }) => {
-  const { watch, setValue, trigger } = useFormContext()
+  const { watch, setValue, getValues } = useFormContext()
+  const [dynamicPrecision, setDynamicPrecision] = useState(
+    getValues('dynamicClusterPrecision')
+  )
   const clusterEnabled = watch('cluster')
+  const { position } = useMapOptions()
 
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setValue('cluster', Boolean(event.target.checked))
-    await trigger('cluster')
+    setValue('cluster', event.target.checked ? true : null)
     onChange?.()
   }
+
+  useEffect(() => {
+    if (position?.zoom && clusterEnabled && dynamicPrecision) {
+      const roundedZoom = Math.round(position.zoom + 2)
+      setValue('clusterPrecision', roundedZoom)
+      onChange?.()
+    }
+  }, [position?.zoom, dynamicPrecision, clusterEnabled])
+
+  // const highlightAutoSwitch =
+  //   clusterAutoSwitch || count > markersClusteringThreshold
 
   return (
     <Section
       title="Clusters"
       hint="docs"
+      disabled={!clusterEnabled}
       tooltip="Enable to cluster listings on the map"
       link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
-      sx={{}}
       rightSlot={
-        <Box sx={{ pb: 1, my: -1, mr: -1.25, transform: 'scale(0.8)' }}>
+        <Box sx={{ pb: 1, my: -1, mr: -0.25, transform: 'scale(0.8)' }}>
           <AndroidSwitch
             checked={clusterEnabled}
             onChange={handleSwitchChange}
@@ -38,36 +53,50 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
       }
     >
       <Stack spacing={1.25}>
-        <Stack sx={{ ml: -0.75 }}>
+        <Stack>
+          {/* <Box
+            sx={
+              highlightAutoSwitch
+                ? {
+                    bgcolor: '#FEC',
+                    border: 1,
+                    borderColor: '#FFF',
+                    borderRadius: 2,
+                    px: '6px',
+                    mx: '-7px',
+                    my: '-1px'
+                  }
+                : {}
+            }
+          > */}
           <ParamsCheckbox
             name="clusterAutoSwitch"
-            label="Auto-Switch off clusters on Map"
+            label="Auto-Disable Clustering"
             size="small"
-            disabled={!clusterEnabled}
             onChange={onChange}
           />
+          {/* </Box> */}
           <ParamsCheckbox
-            name="slidingClusterPrecision"
-            label="Sliding Cluster Precision"
+            name="dynamicClusterPrecision"
+            label="Dynamic Cluster Precision"
             size="small"
-            disabled={!clusterEnabled}
-            onChange={onChange}
+            onChange={(e) => setDynamicPrecision(e.target.checked)}
           />
         </Stack>
         <ParamsRange
-          name="clusterLimit"
+          min={1}
           max={200}
-          min={0}
+          name="clusterLimit"
           step={defaultClusterChangeStep}
           disabled={!clusterEnabled}
           onMouseUp={onChange}
         />
         <ParamsRange
+          min={1}
+          max={20}
           name="clusterPrecision"
-          max={29}
-          min={0}
+          disabled={dynamicPrecision}
           step={defaultClusterChangeStep}
-          disabled={!clusterEnabled}
           onMouseUp={onChange}
         />
       </Stack>

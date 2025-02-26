@@ -11,7 +11,7 @@ export type FormData = {
    * Excluded from request parameters
    * @internal
    */
-  slidingClusterPrecision: boolean
+  dynamicClusterPrecision: boolean
 
   /**
    * API connection parameters

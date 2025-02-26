@@ -1,5 +1,4 @@
 export {
-  getClusterParams,
   getDefaultRectangle,
   getListingFields,
   getMapPolygon,

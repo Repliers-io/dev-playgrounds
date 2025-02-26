@@ -27,11 +27,11 @@ function App() {
         />
       </div>
       <ThemeProvider theme={theme}>
-        <MapOptionsProvider style="map">
-          <SearchProvider>
+        <SearchProvider>
+          <MapOptionsProvider style="map">
             <PageContent />
-          </SearchProvider>
-        </MapOptionsProvider>
+          </MapOptionsProvider>
+        </SearchProvider>
       </ThemeProvider>
     </>
   )

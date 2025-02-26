@@ -203,8 +203,8 @@ const ResponsePanel = ({
             {json && (
               <JsonView
                 data={json}
-                clickToExpandNode={true}
                 style={customStyles}
+                clickToExpandNode={true}
                 shouldExpandNode={(level: number) => level < 3}
               />
             )}

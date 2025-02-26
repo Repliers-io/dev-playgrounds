@@ -5,70 +5,38 @@ import queryString from 'query-string'
 import { Box, Stack } from '@mui/material'
 import { Alert, Snackbar } from '@mui/material'
 
-import {
-  type ApiCredentials,
-  type ApiLocation,
-  blockedFormFields
-} from 'services/API/types'
-import MapService from 'services/Map'
-// enum shouldnt be exported from TYPES, and types shouldnt even be the point of export, but the module itself!
-import { MapDataMode, type MapPosition } from 'services/Map/types'
+import { type Listing } from 'services/API/types'
+import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
-import { AllowedFieldValuesProvider } from 'providers/AllowedFieldValuesProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { type FormParams, useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
-import { apiFetch, queryStringOptions } from 'utils/api'
+import { queryStringOptions } from 'utils/api'
 import { markersClusteringThreshold } from 'constants/map'
 
 import ParamsForm from './components/ParamsForm'
-import { filterBlockedFormParams, getLocations, getMapPosition } from './utils'
+import { filterQueryParams } from './utils'
 
 const warningMessageListingsDisabled =
   "You don't see listings on the map because of the 'listings=false' flag"
 const warningMessageClusteringThreshold =
   "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
 
-const fetchLocations = async ({ apiKey, apiUrl }: ApiCredentials) => {
-  if (!apiKey || !apiUrl) return []
-  try {
-    const getOptions = { get: { fields: 'map,mlsNumber' } }
-    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
-    const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
-    if (!response.ok) {
-      throw new Error('[fetchLocations]: could not fetch locations')
-    }
-
-    const { listings } = await response.json()
-    return getLocations(listings)
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
+export const getLocations = (listings: Listing[]) => {
+  /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
+  return listings
+    .map((item: Listing) => ({
+      lat: parseFloat(item.map.latitude),
+      lng: parseFloat(item.map.longitude)
+    }))
+    .filter(({ lat, lng }) => lat > 0 && lng < 0)
 }
 
 const ParamsPanel = () => {
   const { search, count, params, polygon, clearData } = useSearch()
-  const { apiKey = '', apiUrl = '' } = params
-  const {
-    canRenderMap,
-    position,
-    mapContainerRef,
-    setPosition,
-    setCanRenderMap
-  } = useMapOptions()
+  const { apiKey } = params
+  const { canRenderMap, position } = useMapOptions()
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
-
-  const savePosition = (
-    locations: ApiLocation[],
-    mapContainer: HTMLDivElement
-  ) => {
-    const mapPosition = getMapPosition(locations, mapContainer)
-    setPosition(mapPosition)
-  }
-
-  const filterListingParams = (params: Partial<FormParams>) =>
-    filterBlockedFormParams(blockedFormFields, params)
 
   const fetchData = async (
     position: MapPosition,
@@ -82,35 +50,22 @@ const ParamsPanel = () => {
       : getMapRectangle(bounds!)
 
     try {
-      const { clusterAutoSwitch, ...preFilteredParams } = params
-      const filteredParams = filterListingParams(preFilteredParams)
+      const filteredParams = filterQueryParams(params)
 
       const response = await search({
         ...filteredParams,
         ...fetchBounds
       })
-
       if (!response) return
-
-      const { listings, count, aggregates } = response
-      const { clusters = [] } = aggregates?.map || {}
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, cluster, ...rest } = params
       const { lng, lat } = center || {}
-
       const query = queryString.stringify(
         { lng, lat, zoom, cluster, ...rest },
         queryStringOptions
       )
       window.history.pushState(null, '', `?${query}`)
-
-      const clusterViewMode = cluster
-        ? MapDataMode.CLUSTER // NO ENUMS!
-        : MapDataMode.SINGLE_MARKER // NO ENUMS!
-      MapService.setViewMode(clusterViewMode)
-      MapService.setClusterAutoSwitch(clusterAutoSwitch || false)
-      MapService.update(listings, clusters, count)
     } catch (error) {
       console.error('fetchData error:', error)
     }
@@ -139,29 +94,19 @@ const ParamsPanel = () => {
     }
   }, [count, params])
 
-  // subscription to apiKey changes must refetch listings
-  // for calculate position/bounds/zoom
-  // and clear old response
-  useEffect(() => {
-    if (!apiKey || !apiUrl) return
-
-    setCanRenderMap(false)
-    clearData()
-
-    fetchLocations({ apiKey, apiUrl }).then((locations) => {
-      if (!locations?.length || !mapContainerRef.current) return
-      savePosition(locations, mapContainerRef.current)
-      setCanRenderMap(true)
-    })
-  }, [apiKey])
-
   useDeepCompareEffect(() => {
     if (!canRenderMap) return
     if (!position) return
     if (!params || !Object.keys(params).length) return
-    // polygon is an optional parameter for future implementation
     fetchData(position, params, polygon)
   }, [position, params, polygon, canRenderMap])
+
+  // subscription to apiKey changes must refetch listings
+  // for calculate position/bounds/zoom
+  // and clear old response
+  useEffect(() => {
+    if (apiKey) clearData()
+  }, [apiKey])
 
   return (
     <Box
@@ -178,9 +123,7 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <AllowedFieldValuesProvider apiUrl={apiUrl} apiKey={apiKey}>
-          <ParamsForm />
-        </AllowedFieldValuesProvider>
+        <ParamsForm />
       </Stack>
       <Snackbar
         open={Boolean(snackbarMessage)}

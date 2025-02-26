@@ -14,11 +14,10 @@ import type {
   ApiCluster,
   ApiCredentials,
   ApiQueryResponse,
-  Listing,
-  ParamsPanelControls
+  Listing
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
-import { apiFetch } from 'utils/api'
+import { apiFetch, queryStringOptions } from 'utils/api'
 
 export type SavedResponse = {
   count: number
@@ -29,8 +28,13 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
-export type FormParams = Filters & ApiCredentials & ParamsPanelControls
-type FormParamKeys = keyof FormParams
+export type CustomFormParams = {
+  clusterAutoSwitch: boolean
+  dynamicClusterPrecision: boolean
+}
+
+export type FormParams = Filters & ApiCredentials & CustomFormParams
+export type FormParamKeys = keyof FormParams
 
 type SearchContextType = SavedResponse & {
   loading: boolean
@@ -65,8 +69,8 @@ const emptySavedResponse = {
   statistics: {}
 }
 
-const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
-const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
+const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
+const apiKey = import.meta.env.VITE_REPLIERS_KEY || ''
 
 const SearchProvider = ({
   polygon,
@@ -155,8 +159,12 @@ const SearchProvider = ({
       abortController.current = controller
       const startTime = performance.now()
 
+      const endpoint = `${apiUrl}/listings`
+      const getParamsString = queryString.stringify(rest, queryStringOptions)
+      setRequest(`${endpoint}?${getParamsString}`)
+
       const response = await apiFetch(
-        `${apiUrl}/listings`,
+        endpoint,
         { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
@@ -165,7 +173,6 @@ const SearchProvider = ({
       )
       const endTime = performance.now()
       setTime(Math.floor(endTime - startTime))
-      setRequest(response.url)
       setStatusCode(response.status)
       const json = await response.json()
       setJson(json)

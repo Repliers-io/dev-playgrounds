@@ -1,63 +1,45 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Checkbox, FormControlLabel, FormHelperText } from '@mui/material'
+import { Box, FormHelperText, Stack, Typography } from '@mui/material'
 import { type CheckboxProps } from '@mui/material/Checkbox/Checkbox'
+
+import AndroidSwitch from './AndroidSwitch'
 
 interface InputProps extends CheckboxProps {
   name: string
   label?: string
-  onChange?: () => void
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const ParamsCheckbox: React.FC<InputProps> = ({
-  name,
-  label,
-  onChange,
-  ...rest
-}) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
   const {
-    register,
     setValue,
     getValues,
-    trigger,
     formState: { errors }
   } = useFormContext()
   const checked = Boolean(getValues(name))
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(name, Boolean(event.target.checked))
-    await trigger(name)
-    onChange?.()
-  }
-
-  const handleKeyDown = async (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault() // Prevent form submission
-      setValue(name, !checked)
-      await trigger(name)
-      onChange?.()
-    }
+    onChange?.(event)
   }
 
   return (
-    <Box sx={{ pb: 1 }}>
-      <FormControlLabel
-        sx={{ m: 0 }}
-        control={
-          <Checkbox
-            checked={checked}
-            inputRef={inputRef}
-            sx={{ width: 32, height: 32 }}
-            {...register(name)}
-            {...rest}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        }
-        label={label || name}
-      />
+    <Box>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ my: -0.25 }}
+      >
+        <Typography variant="body2">{label || name}</Typography>
+        <AndroidSwitch
+          checked={checked}
+          onChange={handleChange}
+          sx={{ transform: 'scale(0.8)', mr: -1.5 }}
+        />
+      </Stack>
       {errors[name] && (
         <FormHelperText error sx={{ mt: -0.5 }}>
           {errors[name]?.message?.toString()}

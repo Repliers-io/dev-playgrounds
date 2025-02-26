@@ -6,16 +6,6 @@ import type { Position } from 'geojson'
 
 export type ApiCredentials = { apiUrl: string; apiKey: string }
 
-export type ParamsPanelControls = {
-  clusterAutoSwitch: boolean
-  slidingClusterPrecision: boolean
-}
-
-export const blockedFormFields: (keyof ParamsPanelControls)[] = [
-  'clusterAutoSwitch',
-  'slidingClusterPrecision'
-]
-
 export type ApiClass = 'condo' | 'residential' | 'commercial'
 
 export type ApiClassResponse =

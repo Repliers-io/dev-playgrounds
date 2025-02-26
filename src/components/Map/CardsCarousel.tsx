@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { alpha, Box, Button, ButtonGroup } from '@mui/material'
+import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -54,30 +54,32 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
         right: 16
       }}
     >
-      <ButtonGroup
-        size="small"
-        orientation="horizontal"
-        sx={{
-          position: 'absolute',
-          left: 50,
-          top: -52,
-          backdropFilter: 'blur(4px)',
-          bgcolor: alpha('#FFFFFF', 0.7),
-          '& .MuiButton-root': { height: 36, minWidth: 0, p: 1.125 },
-          '& .MuiButtonGroup-groupedHorizontal.MuiButtonGroup-firstButton': {
-            '&::after': {
-              display: 'none'
+      {Boolean(listings.length) && (
+        <ButtonGroup
+          size="small"
+          orientation="horizontal"
+          sx={{
+            position: 'absolute',
+            left: 50,
+            top: -52,
+            backdropFilter: 'blur(4px)',
+            bgcolor: alpha('#FFFFFF', 0.7),
+            '& .MuiButton-root': { height: 36, minWidth: 0, p: 1.125 },
+            '& .MuiButtonGroup-groupedHorizontal.MuiButtonGroup-firstButton': {
+              '&::after': {
+                display: 'none'
+              }
             }
-          }
-        }}
-      >
-        <Button onClick={handlePrevClick}>
-          <ArrowBackIcon sx={{ fontSize: 20 }} />
-        </Button>
-        <Button onClick={handleNextClick}>
-          <ArrowForwardIcon sx={{ fontSize: 20 }} />
-        </Button>
-      </ButtonGroup>
+          }}
+        >
+          <Button onClick={handlePrevClick}>
+            <ArrowBackIcon sx={{ fontSize: 20 }} />
+          </Button>
+          <Button onClick={handleNextClick}>
+            <ArrowForwardIcon sx={{ fontSize: 20 }} />
+          </Button>
+        </ButtonGroup>
+      )}
 
       <Box
         ref={ref}
@@ -92,6 +94,19 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
           pb: 3.5
         }}
       >
+        {!listings.length && (
+          <>
+            <Skeleton
+              variant="rounded"
+              sx={{ minWidth: 238, height: 84, mr: 2 }}
+            />
+            <Skeleton
+              variant="rounded"
+              sx={{ minWidth: 238, height: 84, mr: 2 }}
+            />
+            <Skeleton variant="rounded" sx={{ minWidth: 238, height: 84 }} />
+          </>
+        )}
         {listings.map((listing, index) => (
           <PropertyCard key={index} listing={listing} onClick={focusMarker} />
         ))}

@@ -11,6 +11,8 @@ import React, {
 import { apiFetch } from 'utils/api'
 import { getPath } from 'utils/path'
 
+import { useSearch } from './SearchProvider'
+
 type SelectOptionsContextType = {
   fields: string[]
   loading: boolean
@@ -34,23 +36,27 @@ const SelectOptionsProvider = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [options, setOptions] = useState<Record<string, string[]>>({})
+  const { params } = useSearch()
+  const { apiKey = '', apiUrl = '' } = params
 
   const fetchOptions = async <K extends string>(
     fieldNames: readonly K[]
   ): Promise<Record<K, string[]>> => {
+    const endpoint = `${apiUrl}/listings`
+    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
     const query = {
+      test: 'test',
       aggregates: fieldNames.join(','),
       listings: 'false',
       status: 'A'
     }
-    const endpoint = `/listings/search?${query}`
 
     let aggregates: Record<string, any> = {}
     const result: Record<K, string[]> = {} as Record<K, string[]>
 
     try {
-      const response = await apiFetch<any>(endpoint, { get: query })
-      aggregates = response.aggregates
+      const response = await apiFetch<any>(endpoint, { get: query }, options)
+      aggregates = (await response.json()).aggregates
     } catch (error) {
       console.error('No field options provided from API', error)
     }
@@ -70,6 +76,7 @@ const SelectOptionsProvider = ({
         new Set(['', ...filteredEntries.map(([name]) => name)])
       )
     })
+
     return result
   }
 
