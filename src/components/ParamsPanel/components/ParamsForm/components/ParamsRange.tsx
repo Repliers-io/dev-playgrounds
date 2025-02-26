@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, FormHelperText, Slider, Stack, TextField } from '@mui/material'
@@ -26,20 +26,28 @@ const ParamsRange: React.FC<RangeProps> = ({
   ...rest
 }) => {
   const {
+    watch,
     setValue,
-    getValues,
     formState: { errors }
   } = useFormContext()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
-  const value = getValues(name)
+  const value = watch(name)
+  const [localValue, setLocalValue] = useState(value)
 
   const handleChange = async (_: Event, newValue: number | number[]) => {
-    setValue(name, newValue, { shouldValidate: true })
+    setLocalValue(newValue as number)
+  }
+
+  const handleEndChange = async () => {
+    setValue(name, localValue, { shouldValidate: true })
     onChange?.()
   }
+
+  // sync with form state
+  useEffect(() => setLocalValue(value), [value])
 
   return (
     <Box flex={1}>
@@ -53,8 +61,9 @@ const ParamsRange: React.FC<RangeProps> = ({
       />
       <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
-          value={value}
+          value={localValue}
           onChange={handleChange}
+          onMouseUp={handleEndChange}
           disabled={disabled}
           sx={{
             '& .MuiSlider-thumb': {
@@ -64,10 +73,10 @@ const ParamsRange: React.FC<RangeProps> = ({
           {...rest}
         />
         <TextField
-          value={value}
           disabled
-          sx={{ width: 48, '& input': { textAlign: 'center' } }}
           size="small"
+          value={localValue}
+          sx={{ width: 48, '& input': { textAlign: 'center' } }}
         />
       </Stack>
       {errors[name] && (

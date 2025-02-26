@@ -89,6 +89,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
           name="clusterLimit"
           step={defaultClusterChangeStep}
           disabled={!clusterEnabled}
+          onChange={onChange}
         />
         <ParamsRange
           min={1}
@@ -96,6 +97,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
           name="clusterPrecision"
           disabled={dynamicPrecision}
           step={defaultClusterChangeStep}
+          onChange={onChange}
         />
       </Stack>
     </Section>
