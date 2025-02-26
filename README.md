@@ -1,6 +1,4 @@
-# React + TypeScript + Parcel
-
-This template provides a minimal setup to get React working in Parcel with HMR and some ESLint rules.
+# React + TypeScript + Vite
 
 Env file should be created in the root of the project with the following content:
 
