@@ -147,21 +147,27 @@ const SearchProvider = ({
     setJson(null)
   }
 
+  const previousRequest = useRef<string>('')
+
   const search = async (params: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { apiKey, apiUrl, ...rest } = params
+    const endpoint = `${apiUrl}/listings`
+    const getParamsString = queryString.stringify(rest, queryStringOptions)
+    const request = `${endpoint}?${getParamsString}`
+
+    if (request === previousRequest.current) return
+    previousRequest.current = request
+
     try {
       setLoading(true)
       abortController.current?.abort()
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, apiUrl, ...rest } = params
 
       const controller = new AbortController()
       abortController.current = controller
       const startTime = performance.now()
 
-      const endpoint = `${apiUrl}/listings`
-      const getParamsString = queryString.stringify(rest, queryStringOptions)
-      setRequest(`${endpoint}?${getParamsString}`)
+      setRequest(request)
 
       const response = await apiFetch(
         endpoint,

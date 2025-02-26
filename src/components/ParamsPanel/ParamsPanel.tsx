@@ -38,14 +38,9 @@ const ParamsPanel = () => {
       ? getMapPolygon(polygon)
       : getMapRectangle(bounds!)
 
-    try {
-      const filteredParams = filterQueryParams(params)
-      const response = await search({
-        ...filteredParams,
-        ...fetchBounds
-      })
-      if (!response) return
+    const filteredParams = filterQueryParams(params)
 
+    try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { apiKey, cluster, ...rest } = params
       const { lng, lat } = center || {}
@@ -54,6 +49,11 @@ const ParamsPanel = () => {
         queryStringOptions
       )
       window.history.pushState(null, '', `?${query}`)
+
+      await search({
+        ...filteredParams,
+        ...fetchBounds
+      })
     } catch (error) {
       console.error('fetchData error:', error)
     }

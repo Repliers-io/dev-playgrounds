@@ -38,7 +38,14 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     setPosition,
     destroyMap
   } = useMapOptions()
-  const { request, count, listings, loading, clusters, params } = useSearch()
+  const {
+    request,
+    count,
+    listings,
+    loading,
+    clusters,
+    params: { dynamicClustering }
+  } = useSearch()
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
 
@@ -87,7 +94,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
     if (
       clusters?.length &&
-      (!params.dynamicClustering || count > markersClusteringThreshold)
+      (!dynamicClustering || count > markersClusteringThreshold)
     ) {
       MapService.showClusters({ map, clusters })
     } else if (listings.length) {
@@ -108,7 +115,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count])
+  }, [clusters, listings, count, dynamicClustering])
 
   useEffect(() => {
     mapRef.current?.resize()
