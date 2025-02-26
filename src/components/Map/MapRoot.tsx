@@ -22,6 +22,7 @@ import MapCounter from './MapCounter'
 import MapDrawButton from './MapDrawButton'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
+
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 

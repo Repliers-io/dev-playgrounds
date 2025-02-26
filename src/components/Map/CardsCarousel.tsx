@@ -35,11 +35,11 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   }, [listings])
 
   useEffect(() => {
+    prevFocusedMarker.current?.classList.remove('focused')
     if (focusedMarker) {
       const card = document.getElementById('card-' + focusedMarker)
       card?.classList.add('focused')
       card?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      prevFocusedMarker.current?.classList.remove('focused')
       prevFocusedMarker.current = card
     }
   }, [focusedMarker])
