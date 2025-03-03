@@ -86,7 +86,7 @@ const MapOptionsProvider = ({
       const mapPosition = getMapPosition(locations, mapContainerRef.current)
       setPosition(mapPosition)
       if (canRenderMap) {
-        mapRef.current?.flyTo({
+        mapRef.current?.jumpTo({
           center: mapPosition.center,
           zoom: mapPosition.zoom
         })
