@@ -52,14 +52,14 @@ export const apiFetch = async <T = Response>(
   }
 }
 
-export const fetchLocations = async ({ apiKey, apiUrl }: ApiCredentials) => {
+export const fetchListings = async ({ apiKey, apiUrl }: ApiCredentials) => {
   if (!apiKey || !apiUrl) return []
   try {
     const getOptions = { get: { fields: 'map,mlsNumber' } }
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
     const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
     if (!response.ok) {
-      throw new Error('[fetchLocations]: could not fetch locations')
+      throw new Error('[fetchListings]: could not fetch listings')
     }
 
     const { listings } = await response.json()

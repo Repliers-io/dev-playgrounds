@@ -11,7 +11,7 @@ import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
 import queryString from 'query-string'
 
 import { type MapPosition } from 'services/Map/types'
-import { fetchLocations } from 'utils/api'
+import { fetchListings } from 'utils/api'
 import { getLocations, getMapPosition } from 'utils/map'
 import { type MapStyle } from 'constants/map-styles'
 
@@ -31,10 +31,11 @@ type MapOptionsContextProps = {
   editMode: MapEditMode
   setEditMode: (mode: MapEditMode) => void
   clearEditMode: () => void
-  mapRef: React.MutableRefObject<MapboxMap | null>
-  mapContainerRef: React.MutableRefObject<HTMLDivElement | null>
   destroyMap: () => void
+  centerMap: (apiKey: string, apiUrl: string) => void
+  mapRef: React.MutableRefObject<MapboxMap | null>
   setMapRef: (ref: MapboxMap | null) => void
+  mapContainerRef: React.MutableRefObject<HTMLDivElement | null>
   setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) => void
 }
 
@@ -78,6 +79,16 @@ const MapOptionsProvider = ({
     }
   }, [mapRef])
 
+  const centerMap = (apiKey: string, apiUrl: string) => {
+    fetchListings({ apiKey, apiUrl }).then((listings) => {
+      const locations = getLocations(listings)
+      if (!locations?.length || !mapContainerRef.current) return
+      const mapPosition = getMapPosition(locations, mapContainerRef.current)
+      setPosition(mapPosition)
+      setCanRenderMap(true)
+    })
+  }
+
   // subscription to apiKey changes must refetch listings
   // for calculate position/bounds/zoom
   useEffect(() => {
@@ -93,13 +104,7 @@ const MapOptionsProvider = ({
       })
       setCanRenderMap(true)
     } else {
-      fetchLocations({ apiKey, apiUrl }).then((listings) => {
-        const locations = getLocations(listings)
-        if (!locations?.length || !mapContainerRef.current) return
-        const mapPosition = getMapPosition(locations, mapContainerRef.current)
-        setPosition(mapPosition)
-        setCanRenderMap(true)
-      })
+      centerMap(apiKey, apiUrl)
     }
   }, [apiKey, apiUrl])
 
@@ -116,10 +121,11 @@ const MapOptionsProvider = ({
       focusedMarker,
       focusMarker,
       blurMarker: () => focusMarker(null),
-      mapRef,
-      mapContainerRef,
       destroyMap,
+      centerMap,
+      mapRef,
       setMapRef: (ref: MapboxMap | null) => (mapRef.current = ref),
+      mapContainerRef,
       setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
         (mapContainerRef.current = ref.current)
     }),

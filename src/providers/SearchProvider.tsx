@@ -70,7 +70,7 @@ const emptySavedResponse = {
 }
 
 const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
-const apiKey = import.meta.env.VITE_REPLIERS_KEY || ''
+const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
 
 const SearchProvider = ({
   polygon,
@@ -79,25 +79,13 @@ const SearchProvider = ({
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
-  const storedParams =
-    (localStorage.getItem('params') &&
-      JSON.parse(localStorage.getItem('params') as string)) ||
-    defaultParams
-
   // extract apiKey from URL
-  const urlApiKey = (() => {
-    const parsed = queryString.parse(window.location.search)
-    if (parsed.key) {
-      localStorage.setItem('params', JSON.stringify({ apiKey: parsed.key }))
-      return String(parsed.key)
-    }
-    return null
-  })()
+  const urlParams = queryString.parse(window.location.search)
 
   const [stateParams, setStateParams] = useState<Partial<FormParams>>({
-    apiUrl, // use default apiUrl from env file, which CAN be overriden by storedParams.apiUrl
-    ...storedParams,
-    apiKey: urlApiKey || storedParams.apiKey || apiKey // use urlApiKey, storedParams.apiKey or default apiKey from env file
+    apiUrl, // use default apiUrl from env file
+    ...defaultParams,
+    apiKey: urlParams.key || urlParams.apiKey || apiKey // use urlApiKey or default apiKey from env file
   })
 
   const [loading, setLoading] = useState(false)
@@ -150,7 +138,7 @@ const SearchProvider = ({
   const previousRequest = useRef<string>('')
 
   const search = async (params: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    console.log('params', params)
     const { apiKey, apiUrl, ...rest } = params
     const endpoint = `${apiUrl}/listings`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

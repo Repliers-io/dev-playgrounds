@@ -60,7 +60,6 @@ const ParamsForm = () => {
 
   const onSubmit = (data: FormData) => {
     setParams(data as Partial<FormParams>)
-    localStorage.setItem('params', JSON.stringify(data))
   }
 
   const onError = (errors: FieldErrors<FormData>) => {

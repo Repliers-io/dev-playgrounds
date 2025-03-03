@@ -107,8 +107,8 @@ const SelectOptionsProvider = ({
       }
     }
 
-    startFetch()
-  }, [fields])
+    if (apiKey && apiUrl) startFetch()
+  }, [fields, apiKey, apiUrl])
 
   const contextValue = useMemo(
     () => ({

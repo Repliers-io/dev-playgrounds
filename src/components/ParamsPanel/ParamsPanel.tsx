@@ -41,8 +41,7 @@ const ParamsPanel = () => {
     const filteredParams = filterQueryParams(params)
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, cluster, ...rest } = params
+      const { cluster, ...rest } = params
       const { lng, lat } = center || {}
       const query = queryString.stringify(
         { lng, lat, zoom, cluster, ...rest },
