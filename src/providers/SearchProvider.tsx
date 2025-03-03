@@ -138,7 +138,6 @@ const SearchProvider = ({
   const previousRequest = useRef<string>('')
 
   const search = async (params: any) => {
-    console.log('params', params)
     const { apiKey, apiUrl, ...rest } = params
     const endpoint = `${apiUrl}/listings`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

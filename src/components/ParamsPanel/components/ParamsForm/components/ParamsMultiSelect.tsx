@@ -75,7 +75,6 @@ const ParamsMultiSelect = ({
         name={name}
         control={control}
         render={({ field }) => {
-          // console.log('value', field.value, typeof field.value)
           return (
             <Box sx={{ position: 'relative' }}>
               <TextField

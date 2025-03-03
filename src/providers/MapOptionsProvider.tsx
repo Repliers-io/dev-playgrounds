@@ -77,7 +77,7 @@ const MapOptionsProvider = ({
       map.remove()
       mapRef.current = null
     }
-  }, [mapRef])
+  }, [mapRef.current])
 
   const centerMap = (apiKey: string, apiUrl: string) => {
     fetchListings({ apiKey, apiUrl }).then((listings) => {
@@ -85,7 +85,14 @@ const MapOptionsProvider = ({
       if (!locations?.length || !mapContainerRef.current) return
       const mapPosition = getMapPosition(locations, mapContainerRef.current)
       setPosition(mapPosition)
-      setCanRenderMap(true)
+      if (canRenderMap) {
+        mapRef.current?.flyTo({
+          center: mapPosition.center,
+          zoom: mapPosition.zoom
+        })
+      } else {
+        setCanRenderMap(true)
+      }
     })
   }
 

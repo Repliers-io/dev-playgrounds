@@ -45,7 +45,6 @@ const SelectOptionsProvider = ({
     const endpoint = `${apiUrl}/listings`
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
     const query = {
-      test: 'test',
       aggregates: fieldNames.join(','),
       listings: 'false',
       status: 'A'
