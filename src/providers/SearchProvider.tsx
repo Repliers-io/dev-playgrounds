@@ -136,6 +136,7 @@ const SearchProvider = ({
   }
 
   const previousRequest = useRef<string>('')
+  const previousKey = useRef<string>('')
 
   const search = async (params: any) => {
     const { apiKey, apiUrl, ...rest } = params
@@ -143,8 +144,10 @@ const SearchProvider = ({
     const getParamsString = queryString.stringify(rest, queryStringOptions)
     const request = `${endpoint}?${getParamsString}`
 
-    if (request === previousRequest.current) return
+    if (request === previousRequest.current && apiKey === previousKey.current)
+      return false
     previousRequest.current = request
+    previousKey.current = apiKey
 
     try {
       setLoading(true)

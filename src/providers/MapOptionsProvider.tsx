@@ -96,8 +96,6 @@ const MapOptionsProvider = ({
     })
   }
 
-  // subscription to apiKey changes must refetch listings
-  // for calculate position/bounds/zoom
   useEffect(() => {
     if (!apiKey || !apiUrl) return
 
@@ -107,7 +105,7 @@ const MapOptionsProvider = ({
       setPosition({
         center: new LngLat(Number(lng), Number(lat)),
         zoom: Number(zoom),
-        bounds: undefined
+        bounds: mapRef.current ? mapRef.current.getBounds()! : undefined
       })
       setCanRenderMap(true)
     } else {

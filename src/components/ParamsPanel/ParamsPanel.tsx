@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
@@ -22,7 +22,7 @@ const warningMessageClusteringThreshold =
   "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
 
 const ParamsPanel = () => {
-  const { search, count, params, polygon, clearData } = useSearch()
+  const { search, count, params, polygon } = useSearch()
   const { apiKey } = params
   const { canRenderMap, position } = useMapOptions()
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
@@ -33,27 +33,25 @@ const ParamsPanel = () => {
     polygon: Position[] | null
   ) => {
     const { bounds, center, zoom } = position
-
-    const fetchBounds = polygon
-      ? getMapPolygon(polygon)
-      : getMapRectangle(bounds!)
-
     const filteredParams = filterQueryParams(params)
 
     try {
-      const { cluster, ...rest } = params
-      const { lng, lat } = center || {}
-      const query = queryString.stringify(
-        { lng, lat, zoom, cluster, ...rest },
-        queryStringOptions
-      )
-      window.history.pushState(null, '', `?${query}`)
+      const fetchBounds = polygon
+        ? getMapPolygon(polygon)
+        : getMapRectangle(bounds!)
 
       await search({
         ...filteredParams,
         ...fetchBounds
       })
-    } catch (error) {
+
+      const { lng, lat } = center || {}
+      const query = queryString.stringify(
+        { lng, lat, zoom, ...params },
+        queryStringOptions
+      )
+      window.history.pushState(null, '', `?${query}`)
+    } catch (error: any) {
       console.error('fetchData error:', error)
     }
   }
@@ -86,12 +84,7 @@ const ParamsPanel = () => {
     if (!canRenderMap) return
     if (!params || !Object.keys(params).length) return
     fetchData(position, params, polygon)
-  }, [position, params, polygon, canRenderMap])
-
-  // subscription to apiKey changes must clear old response
-  useEffect(() => {
-    if (apiKey) clearData()
-  }, [apiKey])
+  }, [position, apiKey, params, polygon, canRenderMap])
 
   return (
     <Box

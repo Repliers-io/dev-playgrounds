@@ -42,7 +42,7 @@ const CredentialsSection = ({ onChange }: { onChange: () => void }) => {
         <ParamsField
           noClear
           name="apiKey"
-          hint="* passed as HTTP Header"
+          hint="* HTTP Header"
           label="REPILERS-API-KEY"
           onChange={onChange}
         />
