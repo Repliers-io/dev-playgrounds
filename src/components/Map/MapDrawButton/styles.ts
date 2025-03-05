@@ -1,8 +1,7 @@
-import { lighten } from '@mui/material'
 const mainColor = '#2196F3'
+const activeColor = '#f38921'
 
 const whiteColor = '#fff'
-const lightColor = lighten(mainColor, 0.5)
 const fillOpacity = 0.25
 
 const lineWidth = 1.5
@@ -31,8 +30,8 @@ const customStyles = [
     type: 'fill',
     filter: ['all', ['==', 'active', 'true'], ['==', '$type', 'Polygon']],
     paint: {
-      'fill-color': lightColor,
-      'fill-outline-color': lightColor,
+      'fill-color': activeColor,
+      'fill-outline-color': activeColor,
       'fill-opacity': fillOpacity
     }
   },
@@ -63,7 +62,7 @@ const customStyles = [
       'line-join': 'round'
     },
     paint: {
-      'line-color': mainColor,
+      'line-color': activeColor,
       'line-width': lineWidth
     }
   },
@@ -76,7 +75,7 @@ const customStyles = [
       'line-join': 'round'
     },
     paint: {
-      'line-color': mainColor,
+      'line-color': activeColor,
       'line-width': lineWidth
     }
   },
@@ -86,7 +85,7 @@ const customStyles = [
     filter: ['all', ['==', '$type', 'Point'], ['==', 'meta', 'midpoint']],
     paint: {
       'circle-radius': 5,
-      'circle-color': mainColor
+      'circle-color': activeColor
     }
   },
   {
@@ -109,7 +108,7 @@ const customStyles = [
     ],
     paint: {
       'circle-radius': pointRadius,
-      'circle-color': mainColor
+      'circle-color': activeColor
     }
   },
   {
@@ -154,7 +153,7 @@ const customStyles = [
     ],
     paint: {
       'circle-radius': midpointRadius - lineWidth,
-      'circle-color': mainColor
+      'circle-color': activeColor
     }
   },
   {
@@ -182,7 +181,7 @@ const customStyles = [
     ],
     paint: {
       'circle-radius': pointRadius - lineWidth,
-      'circle-color': mainColor
+      'circle-color': activeColor
     }
   }
 ]
