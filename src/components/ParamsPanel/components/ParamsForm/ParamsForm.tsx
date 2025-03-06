@@ -28,6 +28,8 @@ const multiSelectFields = [
   'propertyType'
 ] as const
 
+const booleanFields = ['dynamicClustering', 'dynamicClusterPrecision'] as const
+
 const ParamsForm = () => {
   const { setParams, params: localStorageParams } = useSearch()
 
@@ -35,7 +37,7 @@ const ParamsForm = () => {
   // cache them one time on first render
   const params = useMemo(() => {
     const parsed = queryString.parse(window.location.search)
-    const formatted = formatBooleanFields(parsed)
+    const formatted = formatBooleanFields(parsed, booleanFields)
     const formatted2 = formatMultiSelectFields(formatted, multiSelectFields)
     return formatted2
   }, [])
