@@ -38,16 +38,11 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     setPosition,
     destroyMap
   } = useMapOptions()
-  const {
-    request,
-    count,
-    listings,
-    loading,
-    clusters,
-    params: { dynamicClustering }
-  } = useSearch()
+  const { request, count, listings, loading, clusters, params } = useSearch()
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
+  const { dynamicClustering } = params
+  const listingsDisabled = params.listings === 'false'
 
   setMapContainerRef(mapContainerRef)
 
@@ -172,20 +167,22 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: openDrawer ? 100 : 0,
+            bottom: openDrawer && !listingsDisabled ? 100 : 0,
             position: 'absolute'
           }}
         >
           <MapDrawButton />
           <MapNavigation />
           <MapStyleSwitch />
-          <CardsCarouselSwitch
-            open={openDrawer}
-            onClick={() => setOpenDrawer(!openDrawer)}
-          />
+          {!listingsDisabled && (
+            <CardsCarouselSwitch
+              open={openDrawer}
+              onClick={() => setOpenDrawer(!openDrawer)}
+            />
+          )}
         </Stack>
       </Box>
-      <CardsCarousel open={openDrawer} />
+      <CardsCarousel open={openDrawer && !listingsDisabled} />
     </Stack>
   )
 }

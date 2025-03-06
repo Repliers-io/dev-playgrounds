@@ -67,11 +67,11 @@ const ParamsSelect = ({
                 slotProps={{
                   select: {
                     displayEmpty: true,
-                    renderValue: (selected) => {
-                      if (!selected) {
+                    renderValue: (value) => {
+                      if (!value) {
                         return <span style={{ color: '#CCC' }}>null</span>
                       }
-                      return <>{selected.toString()}</>
+                      return <>{value.toString()}</>
                     }
                   }
                 }}

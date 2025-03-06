@@ -81,10 +81,13 @@ const SearchProvider = ({
 }) => {
   // extract apiKey from URL
   const urlParams = queryString.parse(window.location.search)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { lat, lng, zoom, ...filteredUrlParams } = urlParams // remove mapbox coords
 
   const [stateParams, setStateParams] = useState<Partial<FormParams>>({
     apiUrl, // use default apiUrl from env file
     ...defaultParams,
+    ...filteredUrlParams,
     apiKey: urlParams.key || urlParams.apiKey || apiKey // use urlApiKey or default apiKey from env file
   })
 
