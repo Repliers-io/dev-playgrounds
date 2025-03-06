@@ -17,9 +17,9 @@ import ParamsForm from './components/ParamsForm'
 import { filterQueryParams } from './utils'
 
 const warningMessageListingsDisabled =
-  "You don't see listings on the map because of the 'listings=false' flag"
+  "Set listings to 'true' to view listings on the map"
 const warningMessageClusteringThreshold =
-  "You don't see listings on the map because of the 'listings=false' flag AND you reached auto clustering threshold"
+  "Set listings to 'true' to view listings at street level"
 
 const ParamsPanel = () => {
   const { search, count, params, polygon } = useSearch()

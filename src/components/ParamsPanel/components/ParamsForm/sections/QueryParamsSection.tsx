@@ -45,7 +45,7 @@ const QueryParametersSection = ({
         <Stack spacing={1.25}>
           <ParamsField
             name="boardId"
-            tooltip="Can be useful if your API Key has access to multiple boards"
+            tooltip="Optional: Filter by board when API key has multiple board access"
             noClear
             onChange={onChange}
           />
@@ -130,7 +130,7 @@ const QueryParametersSection = ({
             options={trueFalseOptions}
             onChange={onChange}
             hint="optimization"
-            tooltip="Set to false to improve loading speed when using clusters"
+            tooltip="Use false to speed up cluster loading when listings aren't needed"
             link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#6-map-only-experience"
           />
         </Stack>
