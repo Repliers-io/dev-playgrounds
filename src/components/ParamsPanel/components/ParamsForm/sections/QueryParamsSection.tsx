@@ -1,6 +1,7 @@
+import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
-import { useAllowedFieldValues } from 'providers/AllowedFieldValuesProvider'
+import { useSelectOptions } from 'providers/SelectOptionsProvider'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 import {
@@ -20,9 +21,7 @@ const QueryParametersSection = ({
   onChange: () => void
   onClear: () => void
 }) => {
-  const { propertyTypeOptions, styleOptions, lastStatusOptions } =
-    useAllowedFieldValues()
-
+  const { options, loading } = useSelectOptions()
   return (
     <Section
       title="query parameters"
@@ -36,36 +35,19 @@ const QueryParametersSection = ({
             height: 32
           }}
           onClick={() => onClear()}
+          endIcon={<ClearAllIcon />}
         >
           Clear All
         </Button>
       }
     >
-      <Box
-        sx={{
-          pr: 1,
-          width: '100%',
-          overflow: 'auto',
-          scrollbarWidth: 'thin'
-        }}
-      >
+      <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
           <ParamsField
             name="boardId"
             tooltip="Optional: Filter by board when API key has multiple board access"
             noClear
             onChange={onChange}
-          />
-          {
-            // TODO: there're actually three values - null | true | false - it's not strictly boolean
-          }
-          <ParamsSelect // TODO: FIXME: WHY DO WE USE SELECT FOR BOOLEAN VALUES ????
-            name="listings" // IT DOESNT ACCEPT THE BOOLEAN VALUE FROM THE FORM CONTROLLER (BY MUI COMPONENT DESIGN) !!!!
-            options={trueFalseOptions} // THOSE OPTIONS SHOULD NOT EXIST
-            onChange={onChange}
-            tooltip="Use false to speed up cluster loading when listings aren't needed"
-            hint="optimization"
-            link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#6-map-only-experience"
           />
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField
@@ -93,25 +75,28 @@ const QueryParametersSection = ({
             onChange={onChange}
           />
           <ParamsMultiSelect
-            name="style"
-            options={styleOptions}
-            onChange={onChange}
-          />
-          <ParamsMultiSelect
             name="status"
             options={statusOptions}
             onChange={onChange}
           />
           <ParamsMultiSelect
+            name="style"
+            options={options?.style}
+            loading={loading}
+            onChange={onChange}
+          />
+          <ParamsMultiSelect
             name="lastStatus"
-            options={lastStatusOptions}
+            options={options?.lastStatus}
+            loading={loading}
             hint="docs"
             link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
             onChange={onChange}
           />
           <ParamsMultiSelect
             name="propertyType"
-            options={propertyTypeOptions}
+            options={options?.propertyType}
+            loading={loading}
             hint="docs"
             link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
             onChange={onChange}
@@ -134,11 +119,19 @@ const QueryParametersSection = ({
             <ParamsField name="minParkingSpaces" onChange={onChange} />
           </Stack>
           <ParamsField
-            name="fields"
             noClear
+            name="fields"
             onChange={onChange}
             hint="optimization"
             link="https://help.repliers.com/en/article/optimizing-api-requests-with-the-fields-parameter-lq416x/"
+          />
+          <ParamsSelect
+            name="listings"
+            options={trueFalseOptions}
+            onChange={onChange}
+            hint="optimization"
+            tooltip="Use false to speed up cluster loading when listings aren't needed"
+            link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#6-map-only-experience"
           />
         </Stack>
       </Box>

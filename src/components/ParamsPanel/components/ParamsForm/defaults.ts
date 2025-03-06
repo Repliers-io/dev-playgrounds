@@ -6,8 +6,8 @@ const defaultFormState: Partial<FormData> = {
   /**
    * @internal
    */
-  clusterAutoSwitch: true,
-  slidingClusterPrecision: true,
+  dynamicClustering: true,
+  dynamicClusterPrecision: true,
 
   /**
    * request parameters
@@ -28,8 +28,8 @@ const defaultFormState: Partial<FormData> = {
   minGarageSpaces: null,
   minParkingSpaces: null,
   cluster: null,
-  clusterLimit: null,
-  clusterPrecision: null,
+  clusterLimit: 100,
+  clusterPrecision: 10,
   fields: listingFields.join(',')
 }
 

@@ -32,9 +32,6 @@ const MapStyleSwitch = () => {
         zIndex: 'fab',
         boxShadow: 1,
         borderRadius: 2,
-        position: 'absolute',
-        bottom: 16,
-        right: 16,
         mr: 0
       }}
     >

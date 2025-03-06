@@ -4,14 +4,14 @@ export type FormData = {
    * Excluded from request parameters
    * @internal
    */
-  clusterAutoSwitch: boolean
+  dynamicClustering: boolean
 
   /**
    * examplifies sliding cluster precision bazed on zool level
    * Excluded from request parameters
    * @internal
    */
-  slidingClusterPrecision: boolean
+  dynamicClusterPrecision: boolean
 
   /**
    * API connection parameters

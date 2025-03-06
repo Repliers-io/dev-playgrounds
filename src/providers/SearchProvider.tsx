@@ -7,18 +7,17 @@ import React, {
   useRef,
   useState
 } from 'react'
-import type { Position } from 'geojson'
+import { type Position } from 'geojson'
 import queryString from 'query-string'
 
 import type {
   ApiCluster,
   ApiCredentials,
   ApiQueryResponse,
-  Listing,
-  ParamsPanelControls
+  Listing
 } from 'services/API/types'
-import type { Filters } from 'services/Search'
-import { apiFetch } from 'utils/api'
+import { type Filters } from 'services/Search'
+import { apiFetch, queryStringOptions } from 'utils/api'
 
 export type SavedResponse = {
   count: number
@@ -29,8 +28,13 @@ export type SavedResponse = {
   statistics: { [key: string]: any }
 }
 
-export type FormParams = Filters & ApiCredentials & ParamsPanelControls
-type FormParamKeys = keyof FormParams
+export type CustomFormParams = {
+  dynamicClustering: boolean
+  dynamicClusterPrecision: boolean
+}
+
+export type FormParams = Filters & ApiCredentials & CustomFormParams
+export type FormParamKeys = keyof FormParams
 
 type SearchContextType = SavedResponse & {
   loading: boolean
@@ -65,8 +69,8 @@ const emptySavedResponse = {
   statistics: {}
 }
 
-const apiUrl = process.env.REACT_APP_REPLIERS_API_URL || ''
-const apiKey = process.env.REACT_APP_REPLIERS_KEY || ''
+const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
+const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
 
 const SearchProvider = ({
   polygon,
@@ -75,25 +79,13 @@ const SearchProvider = ({
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
-  const storedParams =
-    (localStorage.getItem('params') &&
-      JSON.parse(localStorage.getItem('params') as string)) ||
-    defaultParams
-
   // extract apiKey from URL
-  const urlApiKey = (() => {
-    const parsed = queryString.parse(window.location.search)
-    if (parsed.key) {
-      localStorage.setItem('params', JSON.stringify({ apiKey: parsed.key }))
-      return String(parsed.key)
-    }
-    return null
-  })()
+  const urlParams = queryString.parse(window.location.search)
 
   const [stateParams, setStateParams] = useState<Partial<FormParams>>({
-    apiUrl, // use default apiUrl from env file, which CAN be overriden by storedParams.apiUrl
-    ...storedParams,
-    apiKey: urlApiKey || storedParams.apiKey || apiKey // use urlApiKey, storedParams.apiKey or default apiKey from env file
+    apiUrl, // use default apiUrl from env file
+    ...defaultParams,
+    apiKey: urlParams.key || urlParams.apiKey || apiKey // use urlApiKey or default apiKey from env file
   })
 
   const [loading, setLoading] = useState(false)
@@ -143,20 +135,32 @@ const SearchProvider = ({
     setJson(null)
   }
 
+  const previousRequest = useRef<string>('')
+  const previousKey = useRef<string>('')
+
   const search = async (params: any) => {
+    const { apiKey, apiUrl, ...rest } = params
+    const endpoint = `${apiUrl}/listings`
+    const getParamsString = queryString.stringify(rest, queryStringOptions)
+    const request = `${endpoint}?${getParamsString}`
+
+    if (request === previousRequest.current && apiKey === previousKey.current)
+      return false
+    previousRequest.current = request
+    previousKey.current = apiKey
+
     try {
       setLoading(true)
       abortController.current?.abort()
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { apiKey, apiUrl, ...rest } = params
 
       const controller = new AbortController()
       abortController.current = controller
       const startTime = performance.now()
 
+      setRequest(request)
+
       const response = await apiFetch(
-        `${apiUrl}/listings`,
+        endpoint,
         { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
@@ -165,7 +169,6 @@ const SearchProvider = ({
       )
       const endTime = performance.now()
       setTime(Math.floor(endTime - startTime))
-      setRequest(response.url)
       setStatusCode(response.status)
       const json = await response.json()
       setJson(json)

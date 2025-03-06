@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, FormHelperText, Slider, Stack, Typography } from '@mui/material'
+import { Box, FormHelperText, Slider, Stack, TextField } from '@mui/material'
 import { type SliderProps } from '@mui/material/Slider/Slider'
 
 import ParamLabel from './ParamsLabel'
@@ -26,22 +26,28 @@ const ParamsRange: React.FC<RangeProps> = ({
   ...rest
 }) => {
   const {
-    trigger,
+    watch,
     setValue,
-    getValues,
     formState: { errors }
   } = useFormContext()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
-  const value = getValues(name)
+  const value = watch(name)
+  const [localValue, setLocalValue] = useState(value)
 
   const handleChange = async (_: Event, newValue: number | number[]) => {
-    setValue(name, newValue)
-    await trigger(name)
+    setLocalValue(newValue as number)
+  }
+
+  const handleEndChange = async () => {
+    setValue(name, localValue, { shouldValidate: true })
     onChange?.()
   }
+
+  // sync with form state
+  useEffect(() => setLocalValue(value), [value])
 
   return (
     <Box flex={1}>
@@ -53,22 +59,32 @@ const ParamsRange: React.FC<RangeProps> = ({
         tooltip={tooltip}
         pb={0}
       />
-      <Stack px={1} direction="row" gap={1.5} alignItems="center" p={0}>
+      <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
-          value={value}
+          value={localValue}
           onChange={handleChange}
+          onMouseUp={handleEndChange}
           disabled={disabled}
-          valueLabelDisplay="auto"
+          sx={{
+            '& .MuiSlider-thumb': {
+              boxShadow: 'none !important',
+              transition: 'none'
+            },
+            '& .MuiSlider-track': {
+              transition: 'none'
+            },
+            '& .MuiSlider-rail': {
+              transition: 'none'
+            }
+          }}
           {...rest}
         />
-        <Typography
-          variant="h6"
-          fontSize="12px"
-          textTransform="uppercase"
-          width={30}
-        >
-          {value}
-        </Typography>
+        <TextField
+          disabled
+          size="small"
+          value={localValue}
+          sx={{ width: 48, '& input': { textAlign: 'center' } }}
+        />
       </Stack>
       {errors[name] && (
         <FormHelperText error>

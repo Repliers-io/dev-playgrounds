@@ -9,9 +9,3 @@ export type MapPosition = {
   bounds: LngLatBounds | undefined
   zoom: number
 }
-
-// NO ENUMS!
-export enum MapDataMode {
-  SINGLE_MARKER = 'SINGLE_MARKER',
-  CLUSTER = 'CLUSTER'
-}

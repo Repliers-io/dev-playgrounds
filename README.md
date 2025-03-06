@@ -1,13 +1,14 @@
-# React + TypeScript + Parcel
-
-This template provides a minimal setup to get React working in Parcel with HMR and some ESLint rules.
+# React + TypeScript + Vite
 
 Env file should be created in the root of the project with the following content:
 
 ```
-REACT_APP_REPLIERS_API_URL=https://api.repliers.io
-REACT_APP_REPLIERS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-REACT_APP_MAPBOX_KEY=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+VITE_REPLIERS_API_URL=https://api.repliers.io
+VITE_REPLIERS_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+VITE_MAPBOX_KEY=YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+VITE_GTM_KEY=GTM-XXXXXX
 ```
 
-Repliers key is optional and could be used for development purposes only.
+VITE_REPLIERS_API_KEY is optional and can be used for development purposes only.
+
+VITE_GTM_KEY is optional and can be used if you really want to track visitors of your self-hosted playground.

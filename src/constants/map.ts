@@ -4,7 +4,7 @@ import mapStyles, { type MapStyle } from 'constants/map-styles'
 
 export { type MapStyle, mapStyles }
 
-export const mapboxToken = process.env.REACT_APP_MAPBOX_KEY || ''
+export const mapboxToken = import.meta.env.VITE_MAPBOX_KEY || ''
 
 export const defaultAreaZoom = 13
 export const fallbackAreaZoom = 11

@@ -1,74 +1,76 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
-import { defaultClusterChangeStep } from 'constants/search'
+import { useMapOptions } from 'providers/MapOptionsProvider'
 
 import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 
 import Section from './SectionTemplate'
 
 const ClustersSection = ({ onChange }: { onChange: () => void }) => {
-  const { watch, setValue, trigger } = useFormContext()
-  const clusterEnabled = watch('cluster')
+  const { watch, setValue } = useFormContext()
+  const { position } = useMapOptions()
+
+  watch('dynamicClustering')
+  const clustering = watch('cluster')
+  const dynamicPrecision = watch('dynamicClusterPrecision')
 
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setValue('cluster', Boolean(event.target.checked))
-    await trigger('cluster')
+    setValue('cluster', event.target.checked ? true : null)
     onChange?.()
   }
+
+  useEffect(() => {
+    if (position?.zoom && clustering && dynamicPrecision) {
+      const roundedZoom = Math.round(position.zoom + 2)
+      setValue('clusterPrecision', roundedZoom)
+      onChange?.()
+    }
+  }, [position?.zoom, clustering, dynamicPrecision])
 
   return (
     <Section
       title="Clusters"
       hint="docs"
+      disabled={!clustering}
       tooltip="Clusters listings together on map when enabled"
       link="https://help.repliers.com/en/article/map-clustering-implementation-guide-1c1tgl6/#3-requesting-clusters"
-      sx={{}}
       rightSlot={
-        <Box sx={{ pb: 1, my: -1, mr: -1.25, transform: 'scale(0.8)' }}>
-          <AndroidSwitch
-            checked={clusterEnabled}
-            onChange={handleSwitchChange}
-          />
+        <Box sx={{ pb: 1, my: -1, mr: -0.25, transform: 'scale(0.8)' }}>
+          <AndroidSwitch checked={clustering} onChange={handleSwitchChange} />
         </Box>
       }
     >
       <Stack spacing={1.25}>
-        <Stack sx={{ ml: -0.75 }}>
+        <Stack>
           <ParamsCheckbox
-            name="clusterAutoSwitch"
+            name="dynamicClustering"
             label="Auto disable clusters at street level"
-            size="small"
-            disabled={!clusterEnabled}
             onChange={onChange}
           />
           <ParamsCheckbox
-            name="slidingClusterPrecision"
+            name="dynamicClusterPrecision"
             label="Auto adjust precision based on zoom level"
-            size="small"
-            disabled={!clusterEnabled}
             onChange={onChange}
           />
         </Stack>
         <ParamsRange
-          name="clusterLimit"
-          max={200}
-          min={0}
-          step={defaultClusterChangeStep}
-          disabled={!clusterEnabled}
-          onMouseUp={onChange}
+          min={1}
+          max={20}
+          name="clusterPrecision"
+          disabled={dynamicPrecision}
+          onChange={onChange}
         />
         <ParamsRange
-          name="clusterPrecision"
-          max={29}
-          min={0}
-          step={defaultClusterChangeStep}
-          disabled={!clusterEnabled}
-          onMouseUp={onChange}
+          min={1}
+          max={200}
+          name="clusterLimit"
+          disabled={!clustering}
+          onChange={onChange}
         />
       </Stack>
     </Section>

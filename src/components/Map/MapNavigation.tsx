@@ -18,12 +18,9 @@ const MapNavigation = () => {
   return (
     <Box
       sx={{
-        bottom: 68,
-        right: 16,
         boxShadow: 1,
         borderRadius: 2,
         zIndex: 'fab',
-        position: 'absolute',
         display: { xs: 'none', sm: 'block' }
       }}
     >

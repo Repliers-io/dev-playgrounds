@@ -1,42 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
-import {
-  alpha,
-  Box,
-  CircularProgress,
-  IconButton,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import {
-  highlightJsonItem,
-  removeHighlight,
-  scrollToElementByText
-} from 'utils/dom'
 import { getMapStyleUrl } from 'utils/map'
-import { mapboxDefaults, mapboxToken } from 'constants/map'
+import {
+  mapboxDefaults,
+  mapboxToken,
+  markersClusteringThreshold
+} from 'constants/map'
 
 import CardsCarousel from './CardsCarousel'
+import CardsCarouselSwitch from './CardsCarouselSwitch'
 import MapContainer from './MapContainer'
+import MapCounter from './MapCounter'
+import MapDrawButton from './MapDrawButton'
 import MapNavigation from './MapNavigation'
 import MapStyleSwitch from './MapStyleSwitch'
-
-const getHighlightedMarker = (
-  listings: Listing[],
-  highlightedMarker: string | number | null
-) => {
-  if (!highlightedMarker) return null
-  return listings.find((item) => item.mlsNumber === highlightedMarker)
-}
 
 const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
@@ -45,39 +30,50 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     canRenderMap,
     style,
     mapRef,
-    highlightedMarker,
-    setHighlightedMarker,
-    setMapContainerRef,
-    setMapRef,
+    focusMarker,
+    blurMarker,
+    setMapContainerRef, // TODO: remove
+    setMapRef, // TODO: remove
     position,
     setPosition,
     destroyMap
   } = useMapOptions()
-  const { count, listings, loading, clusters } = useSearch()
-  const [drawer, setDrawer] = useState(false)
+  const {
+    request,
+    count,
+    listings,
+    loading,
+    clusters,
+    params: { dynamicClustering }
+  } = useSearch()
+  const [openDrawer, setOpenDrawer] = useState(false)
+  const firstTimeLoaded = useRef(false)
 
   setMapContainerRef(mapContainerRef)
 
   const initializeMap = (container: HTMLElement) => {
-    const { center, zoom, bounds } = position ?? {}
-    if (!bounds || !zoom || !center) return
+    const { center, zoom } = position ?? {}
+    if (!zoom || !center) return
 
     const map = new MapboxMap({
       container,
-      accessToken: mapboxToken,
       ...mapboxDefaults,
+      accessToken: mapboxToken,
+      style: getMapStyleUrl(style),
       center,
-      zoom,
-      bounds,
-      style: getMapStyleUrl(style)
+      zoom
     })
 
-    map.on('moveend', () => {
+    const updatePosition = () => {
       const bounds = map.getBounds()!
       const center = map.getCenter()
       const zoom = map.getZoom()
       setPosition({ bounds, center, zoom })
-    })
+    }
+
+    // we need this update to fill in bounds on the first load
+    map.on('load', updatePosition)
+    map.on('moveend', updatePosition)
 
     setMapRef(map)
   }
@@ -89,44 +85,41 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     initializeMap(container)
   }
 
-  const handleDrawerClick = () => {
-    setDrawer(!drawer)
-  }
-
   useEffect(() => {
-    if (!mapRef.current) return
-    if (!listings?.length) {
-      MapService.resetMarkers()
-      setHighlightedMarker(null)
-      return
+    const map = mapRef.current
+    if (!map) return
+
+    // Show clusters when either:
+    // 1. Clusters exist AND auto-switch is disabled, OR
+    // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
+    if (
+      clusters?.length &&
+      (!dynamicClustering || count > markersClusteringThreshold)
+    ) {
+      MapService.showClusters({ map, clusters })
+    } else if (listings.length) {
+      MapService.showMarkers({
+        map,
+        listings,
+        onClick: (listing: Listing) => {
+          focusMarker(listing.mlsNumber)
+        }
+      })
+    } else {
+      // manually delete them all
+      MapService.resetAllMarkers()
     }
-    // add markers to map
-    MapService.showMarkers({
-      map: mapRef.current,
-      listings,
-      onClick: (e, property) => {
-        scrollToElementByText(`${property.mlsNumber}`)
-        highlightJsonItem(`${property.mlsNumber}`)
-        setHighlightedMarker(property.mlsNumber)
-      }
-    })
-  }, [listings])
 
-  useEffect(() => {
-    MapService.showClusterMarkers({ clusters, map: mapRef.current })
-  }, [clusters])
-
-  useEffect(() => {
-    const highlighted = getHighlightedMarker(listings, highlightedMarker)
-    if (!highlighted) {
-      setHighlightedMarker(null)
-      removeHighlight()
+    if (!firstTimeLoaded.current) {
+      firstTimeLoaded.current = true
+      setOpenDrawer(true)
     }
-  }, [listings, highlightedMarker])
+    blurMarker()
+  }, [clusters, listings, count, dynamicClustering])
 
   useEffect(() => {
     mapRef.current?.resize()
-  }, [mapVisible, drawer])
+  }, [mapVisible, openDrawer])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
@@ -139,15 +132,12 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
     if (!container) return
 
     if (canRenderMap) {
-      if (map) {
-        reinitializeMap()
-      } else {
-        initializeMap(container)
-      }
+      if (!map) initializeMap(container)
+      else reinitializeMap()
     } else {
       destroyMap()
     }
-  }, [canRenderMap, mapContainerRef])
+  }, [canRenderMap])
 
   return (
     <Stack
@@ -170,67 +160,32 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
         }}
       >
         <MapContainer ref={mapContainerRef} />
+        <MapCounter count={count} loading={loading || !request} />
+
         <Stack
-          spacing={0.5}
-          direction="row"
-          alignItems="center"
+          spacing={2}
+          direction="column"
+          alignItems="flex-end"
           sx={{
+            pointerEvents: 'none',
+            '& > *': { pointerEvents: 'auto' },
+            pb: 2,
             left: 16,
-            top: 16,
-            position: 'absolute',
-            backdropFilter: 'blur(4px)',
-            bgcolor: alpha('#FFFFFF', 0.7),
-            borderRadius: 6,
-            boxShadow: 1,
-            p: 0.25
+            right: 16,
+            bottom: openDrawer ? 100 : 0,
+            position: 'absolute'
           }}
         >
-          {loading ? (
-            <>
-              <CircularProgress size={14} sx={{ p: 1 }} />
-            </>
-          ) : (
-            <Typography sx={{ px: 1.25, lineHeight: '30px' }}>
-              {count} Listings
-            </Typography>
-          )}
-        </Stack>
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: drawer ? 98 : 0,
-            left: 0,
-            right: 0
-          }}
-        >
+          <MapDrawButton />
           <MapNavigation />
           <MapStyleSwitch />
-
-          {Boolean(count) && (
-            <Box sx={{ position: 'absolute', left: 16, bottom: 16 }}>
-              <IconButton
-                size="small"
-                onClick={handleDrawerClick}
-                sx={{
-                  width: 30,
-                  height: 30,
-                  backdropFilter: 'blur(4px)',
-                  bgcolor: alpha('#FFFFFF', 0.7),
-                  '&:hover': { bgcolor: '#fff' },
-                  boxShadow: 1
-                }}
-              >
-                {drawer ? (
-                  <ArrowDownwardIcon sx={{ fontSize: 24 }} />
-                ) : (
-                  <ArrowUpwardIcon sx={{ fontSize: 24 }} />
-                )}
-              </IconButton>
-            </Box>
-          )}
-        </Box>
+          <CardsCarouselSwitch
+            open={openDrawer}
+            onClick={() => setOpenDrawer(!openDrawer)}
+          />
+        </Stack>
       </Box>
-      <CardsCarousel drawer={drawer} />
+      <CardsCarousel open={openDrawer} />
     </Stack>
   )
 }

@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@mui/system'
 
+import GoogleTagManager from 'components/GoogleTagManager'
 import PageContent from 'components/PageContent'
 
 import MapOptionsProvider from 'providers/MapOptionsProvider'
@@ -9,8 +10,11 @@ import theme from 'styles/theme'
 import './App.css'
 
 function App() {
+  const gtmKey = import.meta.env.VITE_GTM_KEY || ''
+
   return (
     <>
+      <GoogleTagManager gtmKey={gtmKey} />
       <div
         style={{
           padding: '11.5px 26px',
@@ -27,11 +31,11 @@ function App() {
         />
       </div>
       <ThemeProvider theme={theme}>
-        <MapOptionsProvider style="map">
-          <SearchProvider>
+        <SearchProvider>
+          <MapOptionsProvider style="map">
             <PageContent />
-          </SearchProvider>
-        </MapOptionsProvider>
+          </MapOptionsProvider>
+        </SearchProvider>
       </ThemeProvider>
     </>
   )

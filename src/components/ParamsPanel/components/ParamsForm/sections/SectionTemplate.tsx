@@ -10,6 +10,7 @@ interface ParamsSectionProps extends BoxProps {
   hint?: string
   link?: string
   tooltip?: string
+  disabled?: boolean
   children: React.ReactNode
   rightSlot?: React.ReactNode
 }
@@ -20,6 +21,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
   hint,
   link,
   tooltip,
+  disabled,
   rightSlot,
   ...rest
 }) => {
@@ -43,7 +45,8 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
           overflow: 'hidden',
           border: 1,
           borderRadius: 2,
-          borderColor: '#eee'
+          borderColor: '#eee',
+          ...(disabled ? { opacity: 0.5, pointerEvents: 'none' } : {})
         }}
       >
         {children}

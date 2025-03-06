@@ -6,9 +6,7 @@ import { type FieldErrors, FormProvider, useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Stack } from '@mui/material'
 
-import { useMapOptions } from 'providers/MapOptionsProvider'
 import { type FormParams, useSearch } from 'providers/SearchProvider'
-import { defaultClusterLimit, defaultClusterPrecision } from 'constants/search'
 
 import defaultFormState from './defaults'
 import schema from './schema'
@@ -21,19 +19,17 @@ import {
 import { type FormData } from './types'
 import { formatBooleanFields, formatMultiSelectFields } from './utils'
 
+const multiSelectFields = [
+  'type',
+  'class',
+  'style',
+  'status',
+  'lastStatus',
+  'propertyType'
+] as const
+
 const ParamsForm = () => {
-  const { setParams, params: localStorageParams, setParam } = useSearch()
-
-  const { position } = useMapOptions()
-
-  const multiSelectFields = [
-    'type',
-    'class',
-    'style',
-    'status',
-    'lastStatus',
-    'propertyType'
-  ] as const
+  const { setParams, params: localStorageParams } = useSearch()
 
   //  TODO: form should not have access to window.location.search and do any params parsing
   // cache them one time on first render
@@ -60,14 +56,10 @@ const ParamsForm = () => {
     resolver: joiResolver(schema, { allowUnknown: true })
   })
 
-  const { handleSubmit, trigger, watch, reset, getValues, setValue } = methods
-
-  const clusterEnabled = watch('cluster')
-  const slidingClusterPrecision = watch('slidingClusterPrecision')
+  const { handleSubmit, trigger, reset, getValues } = methods
 
   const onSubmit = (data: FormData) => {
     setParams(data as Partial<FormParams>)
-    localStorage.setItem('params', JSON.stringify(data))
   }
 
   const onError = (errors: FieldErrors<FormData>) => {
@@ -88,77 +80,14 @@ const ParamsForm = () => {
     handleSubmit(onSubmit, onError)()
   }
 
-  const handleResetCluster = (currentValues: Partial<FormData>) => {
-    reset({
-      ...currentValues,
-      // TODO: they should not be reset one-by-one with false/null values
-      cluster: null,
-      clusterAutoSwitch: false,
-      slidingClusterPrecision: false,
-      clusterLimit: null,
-      clusterPrecision: null
-    })
-    handleSubmit(onSubmit, onError)()
-  }
-
-  const handleRestoreCluster = (currentValues: Partial<FormData>) => {
-    reset({
-      ...currentValues,
-      // TODO: they should not be set one-by-one with custom values
-      cluster: true,
-      clusterAutoSwitch: true,
-      slidingClusterPrecision: true,
-      clusterLimit: defaultClusterLimit,
-      clusterPrecision: defaultClusterPrecision
-    })
-    handleSubmit(onSubmit, onError)()
-  }
-
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      const { cluster } = value
-      // reset/restore cluster fields if cluster changed
-      if (name === 'cluster') {
-        if (cluster === false) {
-          handleResetCluster(value as FormData)
-        } else if (cluster === true) {
-          handleRestoreCluster(value as FormData)
-        }
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
   useEffect(() => {
     trigger()
   }, [])
 
-  useEffect(() => {
-    if (!clusterEnabled) {
-      // TODO: double check if we ever need to set these values?
-      setValue('clusterPrecision', null)
-      return
-    } else {
-      // clusterEnabled
-      if (slidingClusterPrecision) {
-        const roundedZoom = Math.round(position?.zoom || 0) + 2
-        // TODO: check why do we need to set both values?
-        setParam('clusterPrecision', roundedZoom)
-        setValue('clusterPrecision', roundedZoom)
-      }
-    }
-  }, [position?.zoom, slidingClusterPrecision, clusterEnabled])
-
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        <Stack
-          spacing={1}
-          alignItems="flex-start"
-          justifyContent="stretch"
-          height="100%"
-        >
+        <Stack spacing={1}>
           <CredentialsSection onChange={handleChange} />
           <QueryParamsSection onChange={handleChange} onClear={handleClear} />
           <ClustersSection onChange={handleChange} />
