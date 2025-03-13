@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import { useFormContext } from 'react-hook-form'
 
@@ -39,13 +39,6 @@ const ParamsDate: React.FC<InputProps> = ({
   } = useFormContext()
   const value = getValues(name)
   const [open, setOpen] = useState(false)
-  // Local state for temporarily storing selected date
-  const [localValue, setLocalValue] = useState<string | null>(value)
-  // Control the open state of the date picker
-  // Update local value when form value changes externally
-  useEffect(() => {
-    setLocalValue(value)
-  }, [value])
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
@@ -75,8 +68,9 @@ const ParamsDate: React.FC<InputProps> = ({
         format="YYYY-MM-DD"
         disabled={disabled}
         onChange={(newValue) => {
-          // Only update local state, not form value yet
-          setLocalValue(newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
+          setValue(name, newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
+          onChange?.()
+          setOpen(false) // Close picker after selection
         }}
         slotProps={{
           textField: {
@@ -88,12 +82,6 @@ const ParamsDate: React.FC<InputProps> = ({
             onClick: () => !disabled && value && setOpen(true),
             onMouseDown: (e) => {
               if (value) e.preventDefault()
-            },
-            onBlur: () => {
-              if (value !== localValue) {
-                setValue(name, localValue)
-                onChange?.()
-              }
             },
             ...(value
               ? {
@@ -116,6 +104,9 @@ const ParamsDate: React.FC<InputProps> = ({
           }
         }}
         sx={{
+          '& .MuiInputBase-input': {
+            cursor: value ? 'pointer' : 'text'
+          },
           '& .MuiIconButton-root': {
             p: 0.5,
             mr: 0.5,
