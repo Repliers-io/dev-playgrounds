@@ -31,6 +31,8 @@ export type SavedResponse = {
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
+  stats: boolean
+  grp: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -192,9 +194,9 @@ const SearchProvider = ({
         setSaved(remappedResponse)
       }
       return json
-    } catch (error) {
+    } catch (error: any) {
+      setStatusCode(error.status)
       setLoading(false)
-      console.error('SearchProvider error:', error)
       return null
     }
   }

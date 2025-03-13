@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import ClearIcon from '@mui/icons-material/Clear'
@@ -37,6 +38,9 @@ const ParamsMultiSelect = ({
   tooltip,
   loading,
   options = [],
+  noNull = false,
+  noClear = false,
+  stringValue = false,
   onChange
 }: {
   name: string
@@ -46,6 +50,9 @@ const ParamsMultiSelect = ({
   tooltip?: string
   loading?: boolean
   options: readonly string[]
+  noNull?: boolean
+  noClear?: boolean
+  stringValue?: boolean
   onChange?: () => void
 }) => {
   const {
@@ -58,7 +65,7 @@ const ParamsMultiSelect = ({
   if (!label) label = name
 
   const handleClearClick = () => {
-    setValue(name, [])
+    setValue(name, stringValue ? '' : [])
     onChange?.()
   }
 
@@ -75,6 +82,19 @@ const ParamsMultiSelect = ({
         name={name}
         control={control}
         render={({ field }) => {
+          const valueAsArray = stringValue
+            ? field.value
+              ? String(field.value)
+                  .split(',')
+                  .map((v) => v.trim())
+              : []
+            : field.value || []
+
+          const [localValue, setLocalValue] = useState<string[]>(valueAsArray)
+          useEffect(() => {
+            setLocalValue(valueAsArray)
+          }, [field.value])
+
           return (
             <Box sx={{ position: 'relative' }}>
               <TextField
@@ -85,10 +105,21 @@ const ParamsMultiSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
+                value={localValue}
+                onChange={(e) => {
+                  const newValue = e.target.value
+                  setLocalValue([...newValue])
+                }}
                 slotProps={{
                   select: {
-                    displayEmpty: true,
                     multiple: true,
+                    displayEmpty: true,
+                    onClose: () => {
+                      field.onChange(
+                        stringValue ? localValue.join(',') : localValue
+                      )
+                      onChange?.()
+                    },
                     renderValue: (selected) => {
                       if (
                         !selected ||
@@ -101,41 +132,41 @@ const ParamsMultiSelect = ({
                         )
                       }
                       return (
-                        <div>
+                        <Box
+                          sx={{
+                            maxWidth: '100%',
+                            overflow: 'hidden',
+                            py: 0.25,
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
                           {Array.isArray(selected)
-                            ? selected.join(', ')
+                            ? selected.join(',')
                             : String(selected)}
-                        </div>
+                        </Box>
                       )
                     }
                   }
                 }}
-                onChange={(e) => {
-                  const value = e.target.value
-                  if (value?.includes('')) {
-                    field.onChange([])
-                  } else {
-                    field.onChange(value)
-                  }
-                  onChange?.()
-                }}
               >
-                <MenuItem value="">
-                  <span style={{ color: '#aaa' }}>null</span>
-                </MenuItem>
-                {options.map((option) => (
+                {!noNull && (
+                  <MenuItem value="">
+                    <span style={{ color: '#aaa' }}>null</span>
+                  </MenuItem>
+                )}
+                {options.filter(Boolean).map((option) => (
                   <MenuItem key={option} value={option}>
                     <Checkbox
                       size="small"
                       sx={checkboxStyles}
-                      checked={field.value.includes(option)}
+                      checked={localValue.includes(option)}
                     />
                     {option}
                   </MenuItem>
                 ))}
               </TextField>
 
-              {Boolean(field.value?.length) && !loading && (
+              {Boolean(!noClear && localValue.length > 0) && !loading && (
                 <Box sx={endIconStyles}>
                   <IconButton
                     onClick={handleClearClick}

@@ -1,6 +1,4 @@
-import { listingFields } from 'services/Search/defaults'
-
-import { type FormData } from './types'
+import { defaultStatisticsFields, type FormData, listingFields } from './types'
 
 const defaultFormState: Partial<FormData> = {
   /**
@@ -8,6 +6,7 @@ const defaultFormState: Partial<FormData> = {
    */
   dynamicClustering: true,
   dynamicClusterPrecision: true,
+  stats: false,
 
   /**
    * request parameters
@@ -30,7 +29,8 @@ const defaultFormState: Partial<FormData> = {
   cluster: null,
   clusterLimit: 100,
   clusterPrecision: 10,
-  fields: listingFields.join(',')
+  fields: listingFields.join(','),
+  statistics: defaultStatisticsFields.join(',')
 }
 
 export default defaultFormState

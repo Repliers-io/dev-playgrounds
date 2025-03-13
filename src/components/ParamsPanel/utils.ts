@@ -1,12 +1,18 @@
 import type { FormParamKeys, FormParams } from 'providers/SearchProvider'
-import { clusterOnlyParams, customFormParams } from 'constants/form'
+import {
+  clusterOnlyParams,
+  customFormParams,
+  statsOnlyParams
+} from 'constants/form'
 
 // eslint-disable-next-line import/prefer-default-export
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
   const fieldsToRemove = [
     ...customFormParams,
-    ...(!params.cluster ? clusterOnlyParams : [])
+    ...(!params.cluster ? clusterOnlyParams : []),
+    ...(!params.stats ? statsOnlyParams : [])
   ]
+
   return Object.entries(params).reduce<Partial<FormParams>>(
     (acc, [key, value]) => {
       if (!fieldsToRemove.includes(key as FormParamKeys)) {

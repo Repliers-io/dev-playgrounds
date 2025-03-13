@@ -7,6 +7,8 @@ import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 
+import './CardsCarousel.module.css'
+
 import PropertyCard from './PropertyCard'
 
 export const CDN = 'https://cdn.repliers.io'

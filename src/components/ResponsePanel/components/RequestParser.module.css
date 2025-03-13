@@ -1,0 +1,32 @@
+:global(.highlightDiff) {
+  margin: -2px -1px -1px;
+  padding: 2px 0px 1px;
+  border: 1px solid white;
+  border-radius: 4px;
+  background-color: #fec9;
+  color: #000;
+  box-shadow: 0 2px 2px #0000001a;
+  opacity: 0;
+  position: relative;
+  animation: highlightChange 1s ease-in;
+}
+
+:global(.highlightDiff .empty) {
+  display: inline-block;
+  position: absolute;
+  width: 1px;
+  height: 10px;
+  border: 6px solid transparent;
+  left: -7px;
+  top: 0;
+  border-top-color: #f63;
+}
+
+@keyframes highlightChange {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
