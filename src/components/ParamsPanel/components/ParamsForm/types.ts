@@ -184,7 +184,9 @@ export const listingFields: Array<
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',
-  'avg-listPrice'
+  'avg-listPrice',
+  'sd-listPrice'
+  // NOTE: we can't unlock by default the fields causing error without status=U
   // 'med-daysOnMarket',
   // 'avg-daysOnMarket',
   // 'med-soldPrice',
