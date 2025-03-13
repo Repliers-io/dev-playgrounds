@@ -97,14 +97,13 @@ const ParamsPanel = () => {
     <Box
       sx={{
         flex: 1,
-        maxWidth: 280,
-        mr: -1.75,
         pr: 1.75,
+        mr: -1.75,
+        maxWidth: 280,
         height: '100%',
         display: 'flex',
         overflow: 'auto',
-        scrollbarWidth: 'thin',
-        flexDirection: 'column'
+        scrollbarWidth: 'thin'
       }}
     >
       <Stack spacing={1}>
