@@ -32,7 +32,7 @@ const Statistics = () => {
         {Boolean(!statistics || !count) && <EmptyResults />}
 
         {charts.map(([name, data]) => {
-          const keys = Object.keys(data)
+          const keys = Object.keys(data || {})
           const columns = keys.filter((key) => typeof data[key] === 'object')
 
           if (!columns.length) {
@@ -61,7 +61,7 @@ const Statistics = () => {
               ...(typeof value === 'object' ? value : { value }) // fallback
             })
           )
-          const rows = Object.keys(dataArray[0]).filter(
+          const rows = Object.keys(dataArray?.[0] || {}).filter(
             (key) => key !== 'name' && key !== 'count'
           )
 
