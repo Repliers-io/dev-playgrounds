@@ -1,11 +1,11 @@
-import { Area } from 'recharts'
+import { Area, Bar } from 'recharts'
 
 import { Box, Stack } from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
 import colors from './colors'
-import { EmptyResults, StatAreaChart } from './components'
+import { EmptyResults, StatAreaChart, StatBarChart } from './components'
 
 const Statistics = () => {
   const { count, statistics } = useSearch()
@@ -31,15 +31,28 @@ const Statistics = () => {
           const columns = keys.filter((key) => typeof data[key] === 'object')
 
           if (!columns.length) {
-            // const rows = keys.filter((key) => typeof data[key] === 'number')
-            // TODO: use horizontal bar chart for rows
-            return null
+            const rows = keys.filter((key) => typeof data[key] === 'number')
+            const dataArray = [{ ...data, name }]
+            return (
+              <StatBarChart key={name} name={name} data={dataArray}>
+                {rows.map((row, index: number) => (
+                  <Bar
+                    key={index}
+                    dataKey={row}
+                    fillOpacity={0.5}
+                    stroke={colors[index].active}
+                    fill={colors[index].active}
+                    // fill={`url(#color${index})`}
+                  />
+                ))}
+              </StatBarChart>
+            )
           }
 
           const dataArray = Object.entries(data[columns[0]]).map(
             ([name, value]) => ({
               name,
-              ...(typeof value === 'object' ? value : { value })
+              ...(typeof value === 'object' ? value : { value }) // fallback
             })
           )
           const rows = Object.keys(dataArray[0]).filter(
