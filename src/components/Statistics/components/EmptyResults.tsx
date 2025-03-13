@@ -7,7 +7,7 @@ const EmptyResults = () => {
         border: 1,
         borderRadius: 2,
         borderColor: '#eee',
-        p: 2,
+        p: 1,
         fontSize: 12,
         color: 'text.hint'
       }}

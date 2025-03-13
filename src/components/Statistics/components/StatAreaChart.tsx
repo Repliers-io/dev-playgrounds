@@ -44,7 +44,10 @@ const StatAreaChart = ({
       }}
     >
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={data} margin={{ top: 20, bottom: 5, right: 20 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 20, bottom: 5, left: 15, right: 20 }}
+        >
           <defs>
             {colors.map((color, index) => (
               <linearGradient
@@ -70,7 +73,7 @@ const StatAreaChart = ({
           </defs>
           <CartesianGrid strokeDasharray="1 3" />
           <XAxis dataKey="name" tickMargin={10} />
-          <YAxis tickMargin={10} />
+          <YAxis tickMargin={5} />
           <Tooltip />
           <Legend />
           {children}

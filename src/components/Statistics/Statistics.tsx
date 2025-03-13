@@ -6,11 +6,9 @@ import { useSearch } from 'providers/SearchProvider'
 
 import colors from './colors'
 import { EmptyResults, StatAreaChart } from './components'
-import data from './data'
 
 const Statistics = () => {
   const { count, statistics } = useSearch()
-
   const charts = Object.entries(statistics)
 
   return (
@@ -38,50 +36,31 @@ const Statistics = () => {
             return null
           }
 
-          const areaData = data[columns[0]]
-          const areaDataArray = Object.entries(areaData).map(
+          const dataArray = Object.entries(data[columns[0]]).map(
             ([name, value]) => ({
               name,
               ...(typeof value === 'object' ? value : { value })
             })
           )
-          const rows = Object.keys(areaDataArray[0]).filter(
-            (key) => key !== 'name'
+          const rows = Object.keys(dataArray[0]).filter(
+            (key) => key !== 'name' && key !== 'count'
           )
-          console.log('areaDataArray', areaDataArray, 'rows', rows)
 
           return (
-            <StatAreaChart key={name} name={name} data={data}>
-              {/* {areaData.map((_, index: number) => (
+            <StatAreaChart key={name} name={name} data={dataArray}>
+              {rows.map((row, index: number) => (
                 <Area
                   key={index}
+                  dataKey={row}
                   type="monotone"
-                  dataKey={columns[index]}
-                  stroke={colors[index].active}
                   fillOpacity={0.5}
+                  stroke={colors[index].active}
                   fill={`url(#color${index})`}
                 />
-              ))} */}
+              ))}
             </StatAreaChart>
           )
         })}
-
-        <StatAreaChart name="listPrice" data={data}>
-          <Area
-            type="monotone"
-            dataKey="med"
-            stroke={colors[0].active}
-            fillOpacity={0.5}
-            fill="url(#color0)"
-          />
-          <Area
-            type="monotone"
-            dataKey="avg"
-            stroke={colors[1].active}
-            fillOpacity={0.5}
-            fill="url(#color1)"
-          />
-        </StatAreaChart>
       </Stack>
     </Box>
   )
