@@ -23,7 +23,12 @@ const Statistics = () => {
         scrollbarWidth: 'thin'
       }}
     >
-      <Stack width="100%" spacing={2.5} direction="column">
+      <Stack
+        width="100%"
+        spacing={2.5}
+        direction="column"
+        sx={{ overflow: 'hidden' }}
+      >
         {Boolean(!statistics || !count) && <EmptyResults />}
 
         {charts.map(([name, data]) => {
@@ -40,9 +45,9 @@ const Statistics = () => {
                     key={index}
                     dataKey={row}
                     fillOpacity={0.5}
-                    stroke={colors[index].active}
                     fill={colors[index].active}
                     // fill={`url(#color${index})`}
+                    stroke={colors[index].active}
                     isAnimationActive={false}
                   />
                 ))}
@@ -68,8 +73,8 @@ const Statistics = () => {
                   dataKey={row}
                   type="monotone"
                   fillOpacity={0.5}
-                  stroke={colors[index].active}
                   fill={`url(#color${index})`}
+                  stroke={colors[index].active}
                   isAnimationActive={false}
                 />
               ))}
