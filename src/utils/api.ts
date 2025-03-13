@@ -37,11 +37,6 @@ export const apiFetch = async <T = Response>(
           }),
       ...options
     })
-
-    if (!response.ok) {
-      console.error(response.status)
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
     return response as unknown as T
   } catch (error: any) {
     // Unauthorized

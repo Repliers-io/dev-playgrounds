@@ -29,7 +29,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
     <Box width="100%" {...rest}>
       <Stack
         direction="row"
-        sx={{ minHeight: '40px' }}
+        sx={{ pl: 1, minHeight: '40px' }}
         justifyContent="space-between"
         alignItems="center"
       >

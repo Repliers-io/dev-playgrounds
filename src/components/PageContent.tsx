@@ -5,16 +5,12 @@ import { Container, Stack } from '@mui/material'
 import SelectOptionsProvider from 'providers/SelectOptionsProvider'
 import { apiFields, apiFieldsMappings } from 'constants/form'
 
-import MapRoot from './Map/MapRoot'
-import ResponsePanel from './ResponsePanel/ResponsePanel'
+import MapPanel from './MapPanel'
 import ParamsPanel from './ParamsPanel'
+import ResponsePanel from './ResponsePanel'
 
 const PageContent = () => {
-  const [expanded, setExpanded] = useState(false)
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded)
-  }
+  const [expandedResponse, setExpandedResponse] = useState(false)
 
   return (
     <Container maxWidth="xl">
@@ -22,13 +18,16 @@ const PageContent = () => {
         spacing={2.5}
         direction="row"
         justifyContent="stretch"
-        sx={{ height: 'calc(100vh - 76px)', minHeight: 500 }}
+        sx={{ height: 'calc(100vh - 69px)', minHeight: 500 }}
       >
         <SelectOptionsProvider fields={apiFields} mappings={apiFieldsMappings}>
           <ParamsPanel />
+          <MapPanel collapsed={expandedResponse} />
         </SelectOptionsProvider>
-        <MapRoot expanded={expanded} />
-        <ResponsePanel expanded={expanded} onExpand={handleExpandClick} />
+        <ResponsePanel
+          expanded={expandedResponse}
+          onExpand={() => setExpandedResponse(!expandedResponse)}
+        />
       </Stack>
     </Container>
   )

@@ -5,6 +5,8 @@ import { type FieldErrors, FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
 import { Stack } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import { type FormParams, useSearch } from 'providers/SearchProvider'
 
@@ -14,7 +16,8 @@ import {
   BoundsSection,
   ClustersSection,
   CredentialsSection,
-  QueryParamsSection
+  QueryParamsSection,
+  StatisticsSection
 } from './sections'
 import { type FormData } from './types'
 import { formatBooleanFields, formatMultiSelectFields } from './utils'
@@ -28,7 +31,11 @@ const multiSelectFields = [
   'propertyType'
 ] as const
 
-const booleanFields = ['dynamicClustering', 'dynamicClusterPrecision'] as const
+const booleanFields = [
+  'dynamicClustering',
+  'dynamicClusterPrecision',
+  'stats'
+] as const
 
 const ParamsForm = () => {
   const { setParams, params: localStorageParams } = useSearch()
@@ -88,14 +95,17 @@ const ParamsForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
-        <Stack spacing={1}>
-          <CredentialsSection onChange={handleChange} />
-          <QueryParamsSection onChange={handleChange} onClear={handleClear} />
-          <ClustersSection onChange={handleChange} />
-          <BoundsSection />
-        </Stack>
-      </form>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <form noValidate onSubmit={handleSubmit(onSubmit, onError)}>
+          <Stack spacing={1} sx={{ pt: '3px' }}>
+            <CredentialsSection onChange={handleChange} />
+            <QueryParamsSection onChange={handleChange} onClear={handleClear} />
+            <StatisticsSection onChange={handleChange} />
+            <ClustersSection onChange={handleChange} />
+            <BoundsSection />
+          </Stack>
+        </form>
+      </LocalizationProvider>
     </FormProvider>
   )
 }

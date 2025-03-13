@@ -23,6 +23,7 @@ import {
 } from 'utils/dom'
 
 import 'react-json-view-lite/dist/index.css'
+import './ResponsePanel.module.css'
 
 import RequestParser from './components/RequestParser'
 
@@ -118,7 +119,7 @@ const ResponsePanel = ({
             }}
           >
             {request ? (
-              <RequestParser request={'GET: ' + request} />
+              <RequestParser request={request} />
             ) : (
               <Typography color="primary.light" variant="body2">
                 Loading ...

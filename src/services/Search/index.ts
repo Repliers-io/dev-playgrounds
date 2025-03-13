@@ -1,6 +1,5 @@
 export {
   getDefaultRectangle,
-  getListingFields,
   getMapPolygon,
   getMapRectangle,
   getPageParams

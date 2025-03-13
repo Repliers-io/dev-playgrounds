@@ -15,15 +15,17 @@ import {
   markersClusteringThreshold
 } from 'constants/map'
 
-import CardsCarousel from './CardsCarousel'
-import CardsCarouselSwitch from './CardsCarouselSwitch'
-import MapContainer from './MapContainer'
-import MapCounter from './MapCounter'
-import MapDrawButton from './MapDrawButton'
-import MapNavigation from './MapNavigation'
-import MapStyleSwitch from './MapStyleSwitch'
+import {
+  CardsCarousel,
+  CardsCarouselSwitch,
+  MapContainer,
+  MapCounter,
+  MapDrawButton,
+  MapNavigation,
+  MapStyleSwitch
+} from './components'
 
-const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
+const MapRoot = () => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
 
   const {
@@ -135,11 +137,7 @@ const MapRoot = ({ expanded = true }: { expanded: boolean }) => {
   }, [canRenderMap])
 
   return (
-    <Stack
-      flex={1}
-      spacing={1.5}
-      sx={{ position: 'relative', display: expanded ? 'none' : 'flex' }}
-    >
+    <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
       <Box
         sx={{
           flex: 1,

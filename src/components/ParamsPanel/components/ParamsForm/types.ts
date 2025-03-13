@@ -1,3 +1,5 @@
+import type { ApiQueryParamsAllowedFields, Listing } from 'services/API/types'
+
 export type FormData = {
   /**
    * manages cluster/marker view on the UI
@@ -12,6 +14,12 @@ export type FormData = {
    * @internal
    */
   dynamicClusterPrecision: boolean
+
+  /**
+   * flag to pass statistics request
+   * @internal
+   */
+  stats: boolean
 
   /**
    * API connection parameters
@@ -43,6 +51,7 @@ export type FormData = {
   clusterLimit: number | null
   clusterPrecision: number | null
   fields: string | null
+  statistics: string | null
 }
 
 export const lastStatusOptions = [
@@ -103,3 +112,81 @@ export const sortByOptions = [
   'repliersUpdatedOnDesc'
 ] as const
 export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
+
+export const statisticsFields = [
+  'avg-tax',
+  'med-tax',
+
+  'pct-aboveBelowList',
+
+  'avg-priceSqft',
+
+  'cnt-available',
+  'cnt-closed',
+  'cnt-new',
+
+  'avg-daysOnMarket',
+  'med-daysOnMarket',
+  'sum-daysOnMarket',
+  'min-daysOnMarket',
+  'max-daysOnMarket',
+  'sd-daysOnMarket',
+
+  'avg-listPrice',
+  'med-listPrice',
+  'sum-listPrice',
+  'min-listPrice',
+  'max-listPrice',
+  'sd-listPrice',
+
+  'avg-soldPrice',
+  'med-soldPrice',
+  'sum-soldPrice',
+  'min-soldPrice',
+  'max-soldPrice',
+  'sd-soldPrice',
+
+  'avg-maintenanceFee',
+  'med-maintenanceFee',
+
+  'avg-maintenanceFeePerSqft',
+  'med-maintenanceFeePerSqft'
+] as const
+
+export type StatisticsField = (typeof statisticsFields)[number]
+
+export const listingFields: Array<
+  keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
+> = [
+  'boardId',
+  'mlsNumber',
+  'map',
+  'class',
+  'status',
+  'listPrice',
+  'listDate',
+  'soldPrice',
+  'soldDate',
+  'updatedOn',
+  'address',
+  'lastStatus',
+  'details.numBathrooms',
+  'details.numBathroomsPlus',
+  'details.numBedrooms',
+  'details.numBedroomsPlus',
+  'details.propertyType',
+  'details.sqft',
+  'lot',
+  'images[0]'
+  // 'imagesScore',
+  // 'details.style'
+]
+
+export const defaultStatisticsFields: StatisticsField[] = [
+  'med-listPrice',
+  'avg-listPrice'
+  // 'med-daysOnMarket',
+  // 'avg-daysOnMarket',
+  // 'med-soldPrice',
+  // 'avg-soldPrice',
+]

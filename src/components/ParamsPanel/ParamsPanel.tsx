@@ -33,7 +33,21 @@ const ParamsPanel = () => {
     polygon: Position[] | null
   ) => {
     const { bounds, center, zoom } = position
+    const { lng, lat } = center || {}
+    const query = queryString.stringify(
+      { lng, lat, zoom, ...params },
+      queryStringOptions
+    )
+    window.history.pushState(null, '', `?${query}`)
+
+    const { grp, stats, statistics } = params
     const filteredParams = filterQueryParams(params)
+
+    // WARN: additional parameters modifications for statistics
+    // adding grouping parameter at the end of the statistics array
+    if (stats && grp && statistics) {
+      filteredParams.statistics = statistics + ',' + grp
+    }
 
     try {
       const fetchBounds = polygon
@@ -44,13 +58,6 @@ const ParamsPanel = () => {
         ...filteredParams,
         ...fetchBounds
       })
-
-      const { lng, lat } = center || {}
-      const query = queryString.stringify(
-        { lng, lat, zoom, ...params },
-        queryStringOptions
-      )
-      window.history.pushState(null, '', `?${query}`)
     } catch (error: any) {
       console.error('fetchData error:', error)
     }

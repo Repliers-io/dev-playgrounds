@@ -37,6 +37,9 @@ const ParamsMultiSelect = ({
   tooltip,
   loading,
   options = [],
+  noNull = false,
+  noClear = false,
+  stringValue = false,
   onChange
 }: {
   name: string
@@ -46,6 +49,9 @@ const ParamsMultiSelect = ({
   tooltip?: string
   loading?: boolean
   options: readonly string[]
+  noNull?: boolean
+  noClear?: boolean
+  stringValue?: boolean
   onChange?: () => void
 }) => {
   const {
@@ -58,7 +64,7 @@ const ParamsMultiSelect = ({
   if (!label) label = name
 
   const handleClearClick = () => {
-    setValue(name, [])
+    setValue(name, stringValue ? '' : [])
     onChange?.()
   }
 
@@ -75,6 +81,14 @@ const ParamsMultiSelect = ({
         name={name}
         control={control}
         render={({ field }) => {
+          const arrayValue = stringValue
+            ? field.value
+              ? String(field.value)
+                  .split(',')
+                  .map((v) => v.trim())
+              : []
+            : field.value || []
+
           return (
             <Box sx={{ position: 'relative' }}>
               <TextField
@@ -85,10 +99,11 @@ const ParamsMultiSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
+                value={arrayValue}
                 slotProps={{
                   select: {
-                    displayEmpty: true,
                     multiple: true,
+                    displayEmpty: true,
                     renderValue: (selected) => {
                       if (
                         !selected ||
@@ -101,41 +116,61 @@ const ParamsMultiSelect = ({
                         )
                       }
                       return (
-                        <div>
+                        <Box
+                          sx={{
+                            maxWidth: '100%',
+                            overflow: 'hidden',
+                            py: 0.25,
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
                           {Array.isArray(selected)
-                            ? selected.join(', ')
+                            ? selected.join(',')
                             : String(selected)}
-                        </div>
+                        </Box>
                       )
                     }
                   }
                 }}
                 onChange={(e) => {
                   const value = e.target.value
-                  if (value?.includes('')) {
-                    field.onChange([])
+
+                  // Handle null selection
+                  if (!value || (Array.isArray(value) && value.includes(''))) {
+                    field.onChange(stringValue ? '' : [])
                   } else {
-                    field.onChange(value)
+                    // For string value, join the array with commas
+                    if (stringValue) {
+                      const joinedValue = Array.isArray(value)
+                        ? value.join(',')
+                        : String(value)
+                      field.onChange(joinedValue)
+                    } else {
+                      // For array value, use as is
+                      field.onChange(value)
+                    }
                   }
                   onChange?.()
                 }}
               >
-                <MenuItem value="">
-                  <span style={{ color: '#aaa' }}>null</span>
-                </MenuItem>
-                {options.map((option) => (
+                {!noNull && (
+                  <MenuItem value="">
+                    <span style={{ color: '#aaa' }}>null</span>
+                  </MenuItem>
+                )}
+                {options.filter(Boolean).map((option) => (
                   <MenuItem key={option} value={option}>
                     <Checkbox
                       size="small"
                       sx={checkboxStyles}
-                      checked={field.value.includes(option)}
+                      checked={arrayValue.includes(option)}
                     />
                     {option}
                   </MenuItem>
                 ))}
               </TextField>
 
-              {Boolean(field.value?.length) && !loading && (
+              {Boolean(!noClear && arrayValue.length > 0) && !loading && (
                 <Box sx={endIconStyles}>
                   <IconButton
                     onClick={handleClearClick}

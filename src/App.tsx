@@ -19,7 +19,7 @@ function App() {
         style={{
           padding: '11.5px 26px',
           background: '#000',
-          marginBottom: '15px'
+          marginBottom: '8px'
         }}
       >
         <img
