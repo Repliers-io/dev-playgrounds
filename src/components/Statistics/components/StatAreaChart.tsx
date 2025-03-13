@@ -58,16 +58,8 @@ const StatAreaChart = ({
                 x2="0"
                 y2="1"
               >
-                <stop
-                  offset="5%"
-                  stopColor={color.background}
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={color.background}
-                  stopOpacity={0}
-                />
+                <stop offset="5%" stopColor={color} stopOpacity={0.8} />
+                <stop offset="95%" stopColor={color} stopOpacity={0} />
               </linearGradient>
             ))}
           </defs>

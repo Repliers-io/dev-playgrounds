@@ -45,9 +45,9 @@ const Statistics = () => {
                     key={index}
                     dataKey={row}
                     fillOpacity={0.5}
-                    fill={colors[index].active}
+                    fill={colors[index]}
                     // fill={`url(#color${index})`}
-                    stroke={colors[index].active}
+                    stroke={colors[index]}
                     isAnimationActive={false}
                   />
                 ))}
@@ -74,7 +74,7 @@ const Statistics = () => {
                   type="monotone"
                   fillOpacity={0.5}
                   fill={`url(#color${index})`}
-                  stroke={colors[index].active}
+                  stroke={colors[index]}
                   isAnimationActive={false}
                 />
               ))}
