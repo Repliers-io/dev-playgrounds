@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import ClearIcon from '@mui/icons-material/Clear'
@@ -81,13 +82,18 @@ const ParamsMultiSelect = ({
         name={name}
         control={control}
         render={({ field }) => {
-          const arrayValue = stringValue
+          const valueAsArray = stringValue
             ? field.value
               ? String(field.value)
                   .split(',')
                   .map((v) => v.trim())
               : []
             : field.value || []
+
+          const [localValue, setLocalValue] = useState<string[]>(valueAsArray)
+          useEffect(() => {
+            setLocalValue(valueAsArray)
+          }, [field.value])
 
           return (
             <Box sx={{ position: 'relative' }}>
@@ -99,11 +105,21 @@ const ParamsMultiSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
-                value={arrayValue}
+                value={localValue}
+                onChange={(e) => {
+                  const newValue = e.target.value
+                  setLocalValue([...newValue])
+                }}
                 slotProps={{
                   select: {
                     multiple: true,
                     displayEmpty: true,
+                    onClose: () => {
+                      field.onChange(
+                        stringValue ? localValue.join(',') : localValue
+                      )
+                      onChange?.()
+                    },
                     renderValue: (selected) => {
                       if (
                         !selected ||
@@ -132,26 +148,6 @@ const ParamsMultiSelect = ({
                     }
                   }
                 }}
-                onChange={(e) => {
-                  const value = e.target.value
-
-                  // Handle null selection
-                  if (!value || (Array.isArray(value) && value.includes(''))) {
-                    field.onChange(stringValue ? '' : [])
-                  } else {
-                    // For string value, join the array with commas
-                    if (stringValue) {
-                      const joinedValue = Array.isArray(value)
-                        ? value.join(',')
-                        : String(value)
-                      field.onChange(joinedValue)
-                    } else {
-                      // For array value, use as is
-                      field.onChange(value)
-                    }
-                  }
-                  onChange?.()
-                }}
               >
                 {!noNull && (
                   <MenuItem value="">
@@ -163,14 +159,14 @@ const ParamsMultiSelect = ({
                     <Checkbox
                       size="small"
                       sx={checkboxStyles}
-                      checked={arrayValue.includes(option)}
+                      checked={localValue.includes(option)}
                     />
                     {option}
                   </MenuItem>
                 ))}
               </TextField>
 
-              {Boolean(!noClear && arrayValue.length > 0) && !loading && (
+              {Boolean(!noClear && localValue.length > 0) && !loading && (
                 <Box sx={endIconStyles}>
                   <IconButton
                     onClick={handleClearClick}

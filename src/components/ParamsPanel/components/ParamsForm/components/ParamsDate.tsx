@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import { useFormContext } from 'react-hook-form'
 
@@ -38,14 +38,24 @@ const ParamsDate: React.FC<InputProps> = ({
     formState: { errors }
   } = useFormContext()
   const value = getValues(name)
+  const [open, setOpen] = useState(false)
+  // Local state for temporarily storing selected date
+  const [localValue, setLocalValue] = useState<string | null>(value)
+  // Control the open state of the date picker
+  // Update local value when form value changes externally
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
-  const handleClearClick = () => {
+  const handleClearClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
     setValue(name, null)
     onChange?.()
   }
+
   const parsedValue = value ? dayjs(value) : null
 
   return (
@@ -58,12 +68,15 @@ const ParamsDate: React.FC<InputProps> = ({
         tooltip={tooltip}
       />
       <DatePicker
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
         value={parsedValue}
         format="YYYY-MM-DD"
         disabled={disabled}
         onChange={(newValue) => {
-          setValue(name, newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
-          onChange?.()
+          // Only update local state, not form value yet
+          setLocalValue(newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
         }}
         slotProps={{
           textField: {
@@ -71,6 +84,17 @@ const ParamsDate: React.FC<InputProps> = ({
             fullWidth: true,
             error: !!errors[name],
             helperText: errors[name]?.message?.toString(),
+            // Open picker when clicking anywhere in the field
+            onClick: () => !disabled && value && setOpen(true),
+            onMouseDown: (e) => {
+              if (value) e.preventDefault()
+            },
+            onBlur: () => {
+              if (value !== localValue) {
+                setValue(name, localValue)
+                onChange?.()
+              }
+            },
             ...(value
               ? {
                   InputProps: {
