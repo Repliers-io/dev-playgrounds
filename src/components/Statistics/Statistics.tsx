@@ -43,6 +43,7 @@ const Statistics = () => {
                     stroke={colors[index].active}
                     fill={colors[index].active}
                     // fill={`url(#color${index})`}
+                    isAnimationActive={false}
                   />
                 ))}
               </StatBarChart>
@@ -69,6 +70,7 @@ const Statistics = () => {
                   fillOpacity={0.5}
                   stroke={colors[index].active}
                   fill={`url(#color${index})`}
+                  isAnimationActive={false}
                 />
               ))}
             </StatAreaChart>
