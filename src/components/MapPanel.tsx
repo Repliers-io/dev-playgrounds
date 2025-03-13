@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { TabContext, TabList } from '@mui/lab'
 import { Box, Tab } from '@mui/material'
 
-import Autosuggest from './Autosuggest'
 import Map from './Map'
 import Statistics from './Statistics'
 
@@ -50,7 +49,6 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
         >
           <Tab label="Map" value="map" />
           <Tab label="Statistics" value="stats" />
-          <Tab label="Autosuggestion" value="suggest" />
         </TabList>
 
         <Box sx={{ flex: 1, display: value === 'map' ? 'flex' : 'none' }}>
@@ -58,9 +56,6 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
         </Box>
         <Box sx={{ flex: 1, display: value === 'stats' ? 'flex' : 'none' }}>
           <Statistics />
-        </Box>
-        <Box sx={{ flex: 1, display: value === 'suggest' ? 'flex' : 'none' }}>
-          <Autosuggest />
         </Box>
       </TabContext>
     </Box>
