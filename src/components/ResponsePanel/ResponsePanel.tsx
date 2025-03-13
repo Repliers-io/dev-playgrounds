@@ -27,6 +27,23 @@ import './ResponsePanel.module.css'
 
 import RequestParser from './components/RequestParser'
 
+// Format bytes to human-readable size
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 B'
+
+  const sizes = ['B', 'kB', 'mB', 'gB']
+  const i = Math.floor(Math.log(bytes) / Math.log(1000))
+
+  if (i === 0) return `${bytes} ${sizes[i]}`
+  return `${(bytes / Math.pow(1000, i)).toFixed(bytes > 100_000 ? 0 : 1)} ${sizes[i]}`
+}
+
+const formatColor = (bytes: number): string => {
+  if (bytes < 50_000) return 'green'
+  if (bytes < 200_000) return 'orange'
+  return 'red'
+}
+
 const ResponsePanel = ({
   expanded,
   onExpand
@@ -35,7 +52,7 @@ const ResponsePanel = ({
   onExpand?: () => void
 }) => {
   const { focusedMarker } = useMapOptions()
-  const { request, statusCode, json, time, loading } = useSearch()
+  const { request, statusCode, json, size, time, loading } = useSearch()
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
 
@@ -127,13 +144,18 @@ const ResponsePanel = ({
             )}
           </Box>
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
-            <Box sx={{ width: 56, px: 1 }}>
+            <Box sx={{ width: 100 }}>
               {loading ? (
                 <CircularProgress size={14} />
               ) : (
-                <Typography color="text.hint" variant="body2">
-                  {time}ms
-                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <Typography color="text.hint" variant="body2" noWrap>
+                    {time}ms
+                  </Typography>
+                  <Typography color={formatColor(size)} variant="body2" noWrap>
+                    {formatBytes(size)}
+                  </Typography>
+                </Stack>
               )}
             </Box>
             <Typography
@@ -145,7 +167,12 @@ const ResponsePanel = ({
             >
               Response
             </Typography>
-            <Stack spacing={0.5} direction="row">
+            <Stack
+              spacing={0.5}
+              direction="row"
+              justifyContent="flex-end"
+              sx={{ width: 100 }}
+            >
               <Tooltip title="Open in new tab" arrow placement="bottom">
                 <IconButton>
                   <OpenInNewIcon sx={{ fontSize: 18 }} />

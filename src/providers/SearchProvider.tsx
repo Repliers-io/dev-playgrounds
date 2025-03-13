@@ -51,7 +51,8 @@ type SearchContextType = SavedResponse & {
   request: string
   statusCode: number | null
   time: number
-  json: string
+  json: object | null
+  size: number
   polygon: Position[] | null
   setPolygon: (polygon: Position[]) => void
   clearPolygon: () => void
@@ -98,6 +99,7 @@ const SearchProvider = ({
   const [request, setRequest] = useState('')
   const [time, setTime] = useState(0)
   const [json, setJson] = useState<null | any>(null)
+  const [size, setSize] = useState(0)
   const [saved, setSaved] = useState<SavedResponse>(emptySavedResponse)
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
@@ -138,6 +140,7 @@ const SearchProvider = ({
     setStatusCode(null)
     setSaved(emptySavedResponse)
     setJson(null)
+    setSize(0)
   }
 
   const previousRequest = useRef<string>('')
@@ -175,6 +178,22 @@ const SearchProvider = ({
       const endTime = performance.now()
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
+
+      // Get response size from Content-Length header or clone and measure
+      const contentLength = response.headers.get('content-length')
+      let size = 0
+
+      if (contentLength) {
+        // If server provides Content-Length header, use it
+        size = parseInt(contentLength, 10)
+      } else {
+        // Otherwise clone the response and convert to text to measure
+        const clone = response.clone()
+        const text = await clone.text()
+        size = new Blob([text]).size
+      }
+      setSize(size)
+
       const json = await response.json()
       setJson(json)
       setLoading(false)
@@ -216,13 +235,14 @@ const SearchProvider = ({
       statusCode,
       time,
       json,
+      size,
       ...saved, // destructured saved object shorthands
       polygon: searchPolygon,
       setPolygon,
       clearPolygon,
       clearData
     }),
-    [stateParams, searchPolygon, loading, json, request, saved]
+    [stateParams, searchPolygon, loading, json, request, size, saved]
   )
 
   return (
