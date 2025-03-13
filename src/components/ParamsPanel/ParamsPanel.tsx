@@ -103,7 +103,8 @@ const ParamsPanel = () => {
         height: '100%',
         display: 'flex',
         overflow: 'auto',
-        scrollbarWidth: 'thin'
+        scrollbarWidth: 'thin',
+        flexDirection: 'column'
       }}
     >
       <Stack spacing={1}>
