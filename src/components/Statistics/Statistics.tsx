@@ -33,11 +33,17 @@ const Statistics = () => {
 
         {charts.map(([name, data]) => {
           const keys = Object.keys(data || {})
-          const columns = keys.filter((key) => typeof data[key] === 'object')
+          const columns = keys.filter(
+            (key) =>
+              typeof data[key] === 'object' &&
+              key !== 'sqftHigh' && // hardcoded hackery
+              key !== 'sqftLow' // hardcoded hackery
+          )
 
           if (!columns.length) {
             const rows = keys.filter((key) => typeof data[key] === 'number')
             const dataArray = [{ ...data, name }]
+
             return (
               <StatBarChart key={name} name={name} data={dataArray}>
                 {rows.map((row, index: number) => (
@@ -55,13 +61,18 @@ const Statistics = () => {
             )
           }
 
-          const dataArray = Object.entries(data[columns[0]]).map(
+          const column = columns[columns.length - 1] || 0
+          const dataArray = Object.entries(data[column]).map(
             ([name, value]) => ({
               name,
               ...(typeof value === 'object' ? value : { value }) // fallback
             })
           )
-          const rows = Object.keys(dataArray?.[0] || {}).filter(
+          const nonEmptyColumn = dataArray.reduce(
+            (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
+            {}
+          )
+          const rows = Object.keys(nonEmptyColumn).filter(
             (key) => key !== 'name' && key !== 'count'
           )
 
