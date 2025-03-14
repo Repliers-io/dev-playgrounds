@@ -99,9 +99,11 @@ const Statistics = () => {
             (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
             {}
           )
-          let rows = Object.keys(nonEmptyColumn).filter(
-            (key) => key !== 'name' && key !== 'count'
-          )
+          let rows = Object.keys(nonEmptyColumn).filter((key) => key !== 'name')
+          // we should remove 'count' row from all charts except 'new' and 'closed'
+          if (name !== 'new' && name !== 'closed') {
+            rows = rows.filter((key) => key !== 'count')
+          }
 
           // flatten nested objects if they exist
           if (typeof dataArray[0]?.[rows[0]] === 'object') {
