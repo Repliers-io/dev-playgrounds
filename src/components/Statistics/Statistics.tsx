@@ -28,7 +28,8 @@ const flattenArrayObjects = (dataArray: any[]) => {
 }
 
 const Statistics = () => {
-  const { count, statistics } = useSearch()
+  const { count, statistics, params } = useSearch()
+  const grp = (params['grp'] || '').replace('grp-', '')
   const charts = Object.entries(statistics)
 
   return (
@@ -95,6 +96,11 @@ const Statistics = () => {
             )
           }
 
+          // remove other rows from chart if grouping enabled
+          if (columns.length > 1 && grp) {
+            columns = columns.filter((column) => column === grp)
+          }
+
           // take the last column to extract the rows
           const column = columns[columns.length - 1] || 0
           let dataArray: any[] = Object.entries(data[column]).map(
@@ -103,11 +109,14 @@ const Statistics = () => {
               ...(typeof value === 'object' ? value : { value }) // fallback
             })
           )
+
           const nonEmptyColumn = dataArray.reduce(
             (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
             {}
           )
+
           let rows = Object.keys(nonEmptyColumn).filter((key) => key !== 'name')
+
           // we should remove 'count' row from all charts except 'new' and 'closed'
           if (name !== 'new' && name !== 'closed') {
             rows = rows.filter((key) => key !== 'count')
