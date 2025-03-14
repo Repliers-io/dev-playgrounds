@@ -1,4 +1,4 @@
-:global(.highlightDiff) {
+.highlightDiff {
   margin: -2px -1px -1px;
   padding: 2px 0px 1px;
   border: 1px solid white;
@@ -11,7 +11,7 @@
   animation: highlightChange 1s ease-in;
 }
 
-:global(.highlightDiff .empty) {
+.highlightDiff .empty {
   display: inline-block;
   position: absolute;
   width: 1px;

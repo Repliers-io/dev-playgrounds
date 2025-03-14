@@ -1,4 +1,4 @@
-:global(.highlight) {
+.highlight {
   position: relative;
 
   &::before {

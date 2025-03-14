@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useEffect, useRef, useState } from 'react'
 
-import './RequestParser.module.css'
+import './RequestParser.css'
 
 const baseColor = '#cccccc'
 const keyColor = '#cb4b16' //'#002b36'

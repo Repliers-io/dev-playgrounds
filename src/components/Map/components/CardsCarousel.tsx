@@ -7,7 +7,7 @@ import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 
-import './CardsCarousel.module.css'
+import './CardsCarousel.css'
 
 import PropertyCard from './PropertyCard'
 

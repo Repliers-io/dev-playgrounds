@@ -23,7 +23,7 @@ import {
 } from 'utils/dom'
 
 import 'react-json-view-lite/dist/index.css'
-import './ResponsePanel.module.css'
+import './ResponsePanel.css'
 
 import RequestParser from './components/RequestParser'
 
