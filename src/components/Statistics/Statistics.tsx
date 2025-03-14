@@ -7,6 +7,26 @@ import { useSearch } from 'providers/SearchProvider'
 import colors from './colors'
 import { EmptyResults, StatAreaChart, StatBarChart } from './components'
 
+const flattenArrayObjects = (dataArray: any[]) => {
+  const rows = new Set()
+  dataArray.forEach((item, index) => {
+    Object.entries(item).forEach(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([k, v]) => {
+          if (k !== 'count') {
+            const row = `${key}.${k}`
+            rows.add(row)
+            item[row] = v
+          }
+        })
+        delete item[key]
+      }
+    })
+    dataArray[index] = item
+  })
+  return { dataArray, rows: Array.from(rows) as string[] }
+}
+
 const Statistics = () => {
   const { count, statistics } = useSearch()
   const charts = Object.entries(statistics)
@@ -41,8 +61,15 @@ const Statistics = () => {
           )
 
           if (!columns.length) {
-            const rows = keys.filter((key) => typeof data[key] === 'number')
-            const dataArray = [{ ...data, name }]
+            let rows = keys.filter((key) => typeof data[key] === 'number')
+            let dataArray = [{ ...data, name }]
+
+            // flatten nested objects if they exist
+            if (!rows[0]) {
+              const flattened = flattenArrayObjects(dataArray)
+              rows = flattened.rows
+              dataArray = flattened.dataArray
+            }
 
             return (
               <StatBarChart key={name} name={name} data={dataArray}>
@@ -60,9 +87,9 @@ const Statistics = () => {
               </StatBarChart>
             )
           }
-
+          // take the last column to extract the rows
           const column = columns[columns.length - 1] || 0
-          const dataArray = Object.entries(data[column]).map(
+          let dataArray: any[] = Object.entries(data[column]).map(
             ([name, value]) => ({
               name,
               ...(typeof value === 'object' ? value : { value }) // fallback
@@ -72,9 +99,16 @@ const Statistics = () => {
             (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
             {}
           )
-          const rows = Object.keys(nonEmptyColumn).filter(
+          let rows = Object.keys(nonEmptyColumn).filter(
             (key) => key !== 'name' && key !== 'count'
           )
+
+          // flatten nested objects if they exist
+          if (typeof dataArray[0]?.[rows[0]] === 'object') {
+            const flattened = flattenArrayObjects(dataArray)
+            rows = flattened.rows
+            dataArray = flattened.dataArray
+          }
 
           return (
             <StatAreaChart key={name} name={name} data={dataArray}>
