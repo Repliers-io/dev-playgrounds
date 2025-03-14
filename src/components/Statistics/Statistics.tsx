@@ -53,7 +53,7 @@ const Statistics = () => {
 
         {charts.map(([name, data]) => {
           const keys = Object.keys(data || {})
-          const columns = keys.filter(
+          let columns = keys.filter(
             (key) =>
               typeof data[key] === 'object' &&
               key !== 'sqftHigh' && // hardcoded hackery
@@ -87,6 +87,14 @@ const Statistics = () => {
               </StatBarChart>
             )
           }
+
+          // filter out columns with no x-axis data
+          if (columns.length > 1) {
+            columns = columns.filter(
+              (column) => Object.keys(data[column]).length > 0
+            )
+          }
+
           // take the last column to extract the rows
           const column = columns[columns.length - 1] || 0
           let dataArray: any[] = Object.entries(data[column]).map(
