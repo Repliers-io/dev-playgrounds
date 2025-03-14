@@ -20,6 +20,11 @@ export type FormData = {
    * @internal
    */
   stats: boolean
+  /**
+   * statistics grouping parameter
+   * @internal
+   */
+  grp: string | null
 
   /**
    * API connection parameters

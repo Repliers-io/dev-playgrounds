@@ -7,6 +7,7 @@ const defaultFormState: Partial<FormData> = {
   dynamicClustering: true,
   dynamicClusterPrecision: true,
   stats: false,
+  grp: null,
 
   /**
    * request parameters
