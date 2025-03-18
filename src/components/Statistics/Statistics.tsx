@@ -103,7 +103,7 @@ const Statistics = () => {
 
           // take the last column to extract the rows
           const column = columns[columns.length - 1] || 0
-          let dataArray: any[] = Object.entries(data[column]).map(
+          let dataArray: any[] = Object.entries(data[column] ?? {}).map(
             ([name, value]) => ({
               name,
               ...(typeof value === 'object' ? value : { value }) // fallback
