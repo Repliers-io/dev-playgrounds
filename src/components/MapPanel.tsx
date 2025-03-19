@@ -4,15 +4,20 @@ import { useFormContext } from 'react-hook-form'
 import { TabContext, TabList } from '@mui/lab'
 import { Box, Tab } from '@mui/material'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import Map from './Map'
 import Statistics from './Statistics'
 
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
   const { setValue, watch } = useFormContext()
+  const { onChange } = useParamsForm()
   const tab = watch('tab')
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: string) =>
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue('tab', newValue)
+    onChange?.()
+  }
 
   return (
     <Box

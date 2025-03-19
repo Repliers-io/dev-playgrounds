@@ -118,8 +118,8 @@ const MapRoot = () => {
   }, [clusters, listings, count, dynamicClustering])
 
   useEffect(() => {
-    if (mapVisible) mapRef.current?.resize()
-  }, [mapVisible, openDrawer, tab])
+    if (mapVisible && tab === 'map') mapRef.current?.resize()
+  }, [mapVisible, openDrawer])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
