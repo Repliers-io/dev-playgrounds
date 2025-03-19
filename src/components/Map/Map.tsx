@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
+import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
@@ -44,6 +45,8 @@ const MapRoot = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
+  const { watch } = useFormContext()
+  const tab = watch('tab')
   const listingsDisabled = params.listings === 'false'
 
   setMapContainerRef(mapContainerRef)
@@ -115,8 +118,8 @@ const MapRoot = () => {
   }, [clusters, listings, count, dynamicClustering])
 
   useEffect(() => {
-    mapRef.current?.resize()
-  }, [mapVisible, openDrawer])
+    if (mapVisible) mapRef.current?.resize()
+  }, [mapVisible, openDrawer, tab])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
