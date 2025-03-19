@@ -1,10 +1,9 @@
-import { useEffect, useMemo } from 'react'
+import React, { createContext, useContext, useEffect, useMemo } from 'react'
 import merge from 'deepmerge'
 import queryString from 'query-string'
 import { type FieldErrors, FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
-import { Stack } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
@@ -12,13 +11,6 @@ import { type FormParams, useSearch } from 'providers/SearchProvider'
 
 import defaultFormState from './defaults'
 import schema from './schema'
-import {
-  BoundsSection,
-  ClustersSection,
-  CredentialsSection,
-  QueryParamsSection,
-  StatisticsSection
-} from './sections'
 import { type FormData } from './types'
 import { formatBooleanFields, formatMultiSelectFields } from './utils'
 
@@ -37,8 +29,17 @@ const booleanFields = [
   'stats'
 ] as const
 
-const ParamsForm = () => {
-  const { setParams, params: localStorageParams } = useSearch()
+type ParamsFormContextType = {
+  onChange: () => void
+  onClear: () => void
+}
+
+export const ParamsFormContext = createContext<
+  ParamsFormContextType | undefined
+>(undefined)
+
+const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
+  const { params: localStorageParams, setParams } = useSearch()
 
   //  TODO: form should not have access to window.location.search and do any params parsing
   // cache them one time on first render
@@ -64,8 +65,7 @@ const ParamsForm = () => {
     shouldFocusError: false, // Do not auto-focus on errors
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-
-  const { handleSubmit, trigger, reset, getValues } = methods
+  const { trigger, handleSubmit, reset, getValues } = methods
 
   const onSubmit = (data: FormData) => {
     setParams(data as Partial<FormParams>)
@@ -75,11 +75,11 @@ const ParamsForm = () => {
     console.error('validation errors:', errors)
   }
 
-  const handleChange = () => {
+  const onChange = () => {
     handleSubmit(onSubmit, onError)()
   }
 
-  const handleClear = () => {
+  const onClear = () => {
     const { apiUrl, apiKey } = getValues()
     reset({
       ...defaultFormState,
@@ -93,21 +93,33 @@ const ParamsForm = () => {
     trigger()
   }, [])
 
+  const contextValue = useMemo(
+    () => ({
+      onChange,
+      onClear
+    }),
+    []
+  )
+
   return (
     <FormProvider {...methods}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <form noValidate onSubmit={handleSubmit(onSubmit, onError)}>
-          <Stack spacing={1} sx={{ pt: '3px' }}>
-            <CredentialsSection onChange={handleChange} />
-            <QueryParamsSection onChange={handleChange} onClear={handleClear} />
-            <StatisticsSection onChange={handleChange} />
-            <ClustersSection onChange={handleChange} />
-            <BoundsSection />
-          </Stack>
-        </form>
+        <ParamsFormContext.Provider value={contextValue}>
+          <form noValidate onSubmit={handleSubmit(onSubmit, onError)}>
+            {children}
+          </form>
+        </ParamsFormContext.Provider>
       </LocalizationProvider>
     </FormProvider>
   )
 }
 
-export default ParamsForm
+export const useParamsForm = () => {
+  const context = useContext(ParamsFormContext)
+  if (context === undefined) {
+    throw new Error('useParamsForm must be used within an ParamsFormProvider')
+  }
+  return context
+}
+
+export default ParamsFormProvider

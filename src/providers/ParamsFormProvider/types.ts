@@ -26,6 +26,9 @@ export type FormData = {
    */
   grp: string | null
 
+  tab: string
+  sections: string
+
   /**
    * API connection parameters
    */

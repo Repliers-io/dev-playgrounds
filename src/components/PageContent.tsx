@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { Container, Stack } from '@mui/material'
 
+import ParamsFormProvider from 'providers/ParamsFormProvider'
 import SelectOptionsProvider from 'providers/SelectOptionsProvider'
 import { apiFields, apiFieldsMappings } from 'constants/form'
 
@@ -21,7 +22,9 @@ const PageContent = () => {
         sx={{ height: 'calc(100vh - 69px)', minHeight: 500 }}
       >
         <SelectOptionsProvider fields={apiFields} mappings={apiFieldsMappings}>
-          <ParamsPanel />
+          <ParamsFormProvider>
+            <ParamsPanel />
+          </ParamsFormProvider>
           <MapPanel collapsed={expandedResponse} />
         </SelectOptionsProvider>
         <ResponsePanel

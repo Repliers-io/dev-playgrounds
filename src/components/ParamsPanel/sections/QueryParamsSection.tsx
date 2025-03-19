@@ -1,30 +1,27 @@
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
-import { useSelectOptions } from 'providers/SelectOptionsProvider'
-
-import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 import {
   classOptions,
   listingFields,
   sortByOptions,
   statusOptions,
   trueFalseOptions,
-  typeOptions
-} from '../types'
+  typeOptions,
+  useParamsForm
+} from 'providers/ParamsFormProvider'
+import { useSelectOptions } from 'providers/SelectOptionsProvider'
 
-import Section from './SectionTemplate'
+import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 
-const QueryParametersSection = ({
-  onChange,
-  onClear
-}: {
-  onChange: () => void
-  onClear: () => void
-}) => {
+import SectionTemplate from './SectionTemplate'
+
+const QueryParametersSection = () => {
+  const { onChange, onClear } = useParamsForm()
   const { options, loading } = useSelectOptions()
   return (
-    <Section
+    <SectionTemplate
+      index={1}
       title="query parameters"
       rightSlot={
         <Button
@@ -139,7 +136,7 @@ const QueryParametersSection = ({
           />
         </Stack>
       </Box>
-    </Section>
+    </SectionTemplate>
   )
 }
 

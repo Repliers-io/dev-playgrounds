@@ -14,7 +14,9 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'dynamicClustering',
   'dynamicClusterPrecision',
   'stats',
-  'grp'
+  'grp',
+  'tab',
+  'sections'
 ]
 
 export const clusterOnlyParams: (keyof FormParams)[] = [

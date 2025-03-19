@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form'
 import { Box, Stack } from '@mui/material'
 
 import { statsGroupingOptions } from 'services/Search/types'
+import { statisticsFields, useParamsForm } from 'providers/ParamsFormProvider'
 
 import {
   AndroidSwitch,
@@ -11,11 +12,11 @@ import {
   ParamsMultiSelect,
   ParamsSelect
 } from '../components'
-import { statisticsFields } from '../types'
 
-import Section from './SectionTemplate'
+import SectionTemplate from './SectionTemplate'
 
-const StatsSection = ({ onChange }: { onChange: () => void }) => {
+const StatsSection = () => {
+  const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
 
   const statsEnabled = watch('stats')
@@ -28,7 +29,8 @@ const StatsSection = ({ onChange }: { onChange: () => void }) => {
   }
 
   return (
-    <Section
+    <SectionTemplate
+      index={2}
       title="Statistics"
       disabled={!statsEnabled}
       rightSlot={
@@ -64,7 +66,7 @@ const StatsSection = ({ onChange }: { onChange: () => void }) => {
           <ParamsDate name="maxSoldDate" onChange={onChange} />
         </Stack>
       </Stack>
-    </Section>
+    </SectionTemplate>
   )
 }
 

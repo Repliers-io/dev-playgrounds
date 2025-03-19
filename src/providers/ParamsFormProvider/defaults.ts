@@ -7,6 +7,8 @@ const defaultFormState: Partial<FormData> = {
   dynamicClustering: true,
   dynamicClusterPrecision: true,
   stats: false,
+  tab: 'map',
+  sections: '',
   grp: null,
 
   /**

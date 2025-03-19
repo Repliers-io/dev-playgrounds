@@ -4,12 +4,14 @@ import { useFormContext } from 'react-hook-form'
 import { Box, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 
-import Section from './SectionTemplate'
+import SectionTemplate from './SectionTemplate'
 
-const ClustersSection = ({ onChange }: { onChange: () => void }) => {
+const ClustersSection = () => {
+  const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
   const { position } = useMapOptions()
 
@@ -33,7 +35,8 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
   }, [position?.zoom, clustering, dynamicPrecision])
 
   return (
-    <Section
+    <SectionTemplate
+      index={3}
       title="Clusters"
       hint="docs"
       disabled={!clustering}
@@ -73,7 +76,7 @@ const ClustersSection = ({ onChange }: { onChange: () => void }) => {
           onChange={onChange}
         />
       </Stack>
-    </Section>
+    </SectionTemplate>
   )
 }
 

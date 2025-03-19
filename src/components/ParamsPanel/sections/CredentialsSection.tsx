@@ -2,13 +2,15 @@ import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined'
 import { Button, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import { ParamsField } from '../components'
 
-import Section from './SectionTemplate'
+import SectionTemplate from './SectionTemplate'
 
-const CredentialsSection = ({ onChange }: { onChange: () => void }) => {
+const CredentialsSection = () => {
+  const { onChange } = useParamsForm()
   const { centerMap } = useMapOptions()
   const {
     params: { apiKey, apiUrl }
@@ -19,7 +21,8 @@ const CredentialsSection = ({ onChange }: { onChange: () => void }) => {
   }
 
   return (
-    <Section
+    <SectionTemplate
+      index={0}
       title="credentials"
       rightSlot={
         <Button
@@ -48,7 +51,7 @@ const CredentialsSection = ({ onChange }: { onChange: () => void }) => {
         />
         <ParamsField name="apiUrl" noClear onChange={onChange} />
       </Stack>
-    </Section>
+    </SectionTemplate>
   )
 }
 

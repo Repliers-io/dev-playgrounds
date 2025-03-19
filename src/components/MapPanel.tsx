@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { TabContext, TabList } from '@mui/lab'
 import { Box, Tab } from '@mui/material'
+
+import { useSearch } from 'providers/SearchProvider'
 
 import Map from './Map'
 import Statistics from './Statistics'
 
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
-  const [value, setValue] = useState('map')
+  const {
+    params: { tab = 'map' },
+    setParam
+  } = useSearch()
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) =>
-    setValue(newValue)
+    setParam('tab', newValue)
 
   return (
     <Box
@@ -22,7 +27,7 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
         display: collapsed ? 'none' : 'flex'
       }}
     >
-      <TabContext value={value}>
+      <TabContext value={tab}>
         <TabList
           onChange={handleChange}
           sx={{
@@ -51,10 +56,10 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
           <Tab label="Statistics" value="stats" />
         </TabList>
 
-        <Box sx={{ flex: 1, display: value === 'map' ? 'flex' : 'none' }}>
+        <Box sx={{ flex: 1, display: tab === 'map' ? 'flex' : 'none' }}>
           <Map />
         </Box>
-        <Box sx={{ flex: 1, display: value === 'stats' ? 'flex' : 'none' }}>
+        <Box sx={{ flex: 1, display: tab === 'stats' ? 'flex' : 'none' }}>
           <Statistics />
         </Box>
       </TabContext>

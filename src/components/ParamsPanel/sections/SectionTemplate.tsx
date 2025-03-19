@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Box, IconButton, Stack } from '@mui/material'
 import { type BoxProps } from '@mui/material/Box/Box'
 
+import { useSearch } from 'providers/SearchProvider'
+
 import { ParamsLabel } from '../components'
 
 interface ParamsSectionProps extends BoxProps {
+  index: number
   title: string
   hint?: string
   link?: string
@@ -18,6 +21,7 @@ interface ParamsSectionProps extends BoxProps {
 }
 
 const ParamsSection: React.FC<ParamsSectionProps> = ({
+  index,
   title,
   children,
   hint,
@@ -27,7 +31,17 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
   rightSlot,
   ...rest
 }) => {
-  const [expanded, setExpanded] = useState(true)
+  const {
+    params: { sections = '' },
+    setParam
+  } = useSearch()
+  const sectionsArr = String(sections).split(',')
+  const collapsed = Boolean(sectionsArr[index])
+
+  const handleClick = () => {
+    sectionsArr[index] = collapsed ? '' : '1'
+    setParam('sections', sectionsArr.join(','))
+  }
 
   return (
     <Box width="100%" {...rest}>
@@ -40,7 +54,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
         <Stack direction="row" spacing={0.5}>
           <IconButton
             size="small"
-            onClick={() => setExpanded(!expanded)}
+            onClick={handleClick}
             sx={{
               minHeight: 0,
               minWidth: 0,
@@ -48,7 +62,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
               width: 24
             }}
           >
-            {!expanded ? (
+            {collapsed ? (
               <KeyboardArrowDownIcon sx={{ fontSize: 24 }} />
             ) : (
               <KeyboardArrowUpIcon sx={{ fontSize: 24 }} />
@@ -74,12 +88,12 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
           borderRadius: 2,
           borderColor: '#eee',
           ...(disabled ? { opacity: 0.5, pointerEvents: 'none' } : {}),
-          display: expanded ? 'block' : 'none'
+          display: collapsed ? 'none' : 'block'
         }}
       >
         {children}
       </Box>
-      {!expanded && <Box sx={{ borderBottom: 1, borderColor: '#EEE' }} />}
+      {collapsed && <Box sx={{ borderBottom: 1, borderColor: '#EEE' }} />}
     </Box>
   )
 }

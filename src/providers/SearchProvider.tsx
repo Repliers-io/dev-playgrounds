@@ -33,6 +33,8 @@ export type CustomFormParams = {
   dynamicClusterPrecision: boolean
   stats: boolean
   grp: string
+  tab: string
+  sections: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -59,7 +61,9 @@ type SearchContextType = SavedResponse & {
   clearData: () => void
 }
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined)
+export const SearchContext = createContext<SearchContextType | undefined>(
+  undefined
+)
 
 const defaultParams = {}
 
@@ -98,8 +102,8 @@ const SearchProvider = ({
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
   const [time, setTime] = useState(0)
-  const [json, setJson] = useState<null | any>(null)
   const [size, setSize] = useState(0)
+  const [json, setJson] = useState<null | any>(null)
   const [saved, setSaved] = useState<SavedResponse>(emptySavedResponse)
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)

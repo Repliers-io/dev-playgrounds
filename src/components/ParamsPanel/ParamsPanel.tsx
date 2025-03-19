@@ -13,7 +13,13 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 import { markersClusteringThreshold } from 'constants/map'
 
-import ParamsForm from './components/ParamsForm'
+import {
+  BoundsSection,
+  ClustersSection,
+  CredentialsSection,
+  QueryParamsSection,
+  StatisticsSection
+} from './sections'
 import { filterQueryParams } from './utils'
 
 const warningMessageListingsDisabled =
@@ -99,7 +105,7 @@ const ParamsPanel = () => {
         flex: 1,
         pr: 1.75,
         mr: -1.75,
-        maxWidth: 280,
+        width: 280,
         height: '100%',
         display: 'flex',
         overflow: 'auto',
@@ -108,7 +114,13 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <ParamsForm />
+        <Stack spacing={1} sx={{ pt: '3px' }}>
+          <CredentialsSection />
+          <QueryParamsSection />
+          <StatisticsSection />
+          <ClustersSection />
+          <BoundsSection />
+        </Stack>
       </Stack>
       <Snackbar
         open={Boolean(snackbarMessage)}
