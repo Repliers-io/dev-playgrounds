@@ -105,9 +105,7 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
     <FormProvider {...methods}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ParamsFormContext.Provider value={contextValue}>
-          <form noValidate onSubmit={handleSubmit(onSubmit, onError)}>
-            {children}
-          </form>
+          {children}
         </ParamsFormContext.Provider>
       </LocalizationProvider>
     </FormProvider>

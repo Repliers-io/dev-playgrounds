@@ -24,8 +24,8 @@ const PageContent = () => {
         <SelectOptionsProvider fields={apiFields} mappings={apiFieldsMappings}>
           <ParamsFormProvider>
             <ParamsPanel />
+            <MapPanel collapsed={expandedResponse} />
           </ParamsFormProvider>
-          <MapPanel collapsed={expandedResponse} />
         </SelectOptionsProvider>
         <ResponsePanel
           expanded={expandedResponse}

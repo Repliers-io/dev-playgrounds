@@ -1,21 +1,18 @@
 import React from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import { TabContext, TabList } from '@mui/lab'
 import { Box, Tab } from '@mui/material'
-
-import { useSearch } from 'providers/SearchProvider'
 
 import Map from './Map'
 import Statistics from './Statistics'
 
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
-  const {
-    params: { tab = 'map' },
-    setParam
-  } = useSearch()
+  const { setValue, watch } = useFormContext()
+  const tab = watch('tab')
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) =>
-    setParam('tab', newValue)
+    setValue('tab', newValue)
 
   return (
     <Box

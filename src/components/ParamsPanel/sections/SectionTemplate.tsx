@@ -1,11 +1,12 @@
 import React from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Box, IconButton, Stack } from '@mui/material'
 import { type BoxProps } from '@mui/material/Box/Box'
 
-import { useSearch } from 'providers/SearchProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import { ParamsLabel } from '../components'
 
@@ -31,16 +32,17 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
   rightSlot,
   ...rest
 }) => {
-  const {
-    params: { sections = '' },
-    setParam
-  } = useSearch()
+  const { setValue, watch } = useFormContext()
+  const { onChange } = useParamsForm()
+
+  const sections = watch('sections')
   const sectionsArr = String(sections).split(',')
   const collapsed = Boolean(sectionsArr[index])
 
   const handleClick = () => {
     sectionsArr[index] = collapsed ? '' : '1'
-    setParam('sections', sectionsArr.join(','))
+    setValue('sections', sectionsArr.join(','))
+    onChange?.()
   }
 
   return (

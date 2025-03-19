@@ -106,6 +106,7 @@ const ParamsPanel = () => {
         pr: 1.75,
         mr: -1.75,
         width: 280,
+        maxWidth: 280,
         height: '100%',
         display: 'flex',
         overflow: 'auto',
