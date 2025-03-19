@@ -4,7 +4,7 @@
  */
 import type { Position } from 'geojson'
 
-export type ApiCredentials = { apiUrl: string; apiKey: string }
+export type ApiCredentials = { apiUrl: string; apiKey: string; key?: string }
 
 export type ApiClass = 'condo' | 'residential' | 'commercial'
 

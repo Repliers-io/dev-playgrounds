@@ -23,9 +23,7 @@ export const ParamsFormContext = createContext<
 
 const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   const { params, setParams } = useSearch()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { lng, lat, zoom, ...apiParams } = params
-  const defaultValues = merge(defaultFormState, apiParams)
+  const defaultValues = merge(defaultFormState, params)
 
   const methods = useForm<FormData>({
     defaultValues,

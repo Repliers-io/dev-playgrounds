@@ -24,7 +24,6 @@ export type CustomFormParams = {
   grp: string
   tab: string
   sections: string
-  key?: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
