@@ -10,62 +10,18 @@ import React, {
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
-import type {
-  ApiCluster,
-  ApiCredentials,
-  ApiQueryResponse,
-  Listing
-} from 'services/API/types'
-import { type Filters } from 'services/Search'
 import { apiFetch, queryStringOptions } from 'utils/api'
 
-export type SavedResponse = {
-  count: number
-  page: number
-  pages: number
-  listings: Listing[]
-  clusters: ApiCluster[]
-  statistics: { [key: string]: any }
-}
-
-export type CustomFormParams = {
-  dynamicClustering: boolean
-  dynamicClusterPrecision: boolean
-  stats: boolean
-  grp: string
-  tab: string
-  sections: string
-}
-
-export type FormParams = Filters & ApiCredentials & CustomFormParams
-export type FormParamKeys = keyof FormParams
-
-type SearchContextType = SavedResponse & {
-  loading: boolean
-  params: Partial<FormParams>
-  setParam: (key: FormParamKeys, value: any) => void
-  setParams: (params: Partial<FormParams>) => void
-  addParams: (newParams: Partial<FormParams>) => void
-  removeParam: (key: FormParamKeys) => void
-  removeParams: (keys: FormParamKeys[]) => void
-  resetParams: () => void
-  search: (params: any) => Promise<ApiQueryResponse | null>
-  request: string
-  statusCode: number | null
-  time: number
-  json: object | null
-  size: number
-  polygon: Position[] | null
-  setPolygon: (polygon: Position[]) => void
-  clearPolygon: () => void
-  clearData: () => void
-}
+import {
+  type FormParamKeys,
+  type FormParams,
+  type SavedResponse,
+  type SearchContextType
+} from './types'
 
 export const SearchContext = createContext<SearchContextType | undefined>(
   undefined
 )
-
-const defaultParams = {}
 
 const emptySavedResponse = {
   count: 0,
@@ -77,25 +33,21 @@ const emptySavedResponse = {
 }
 
 const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
-const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
+export const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
 
 const SearchProvider = ({
+  params,
   polygon,
   children
 }: {
+  params?: Partial<FormParams>
   polygon?: Position[]
   children?: React.ReactNode
 }) => {
-  // extract apiKey from URL
-  const urlParams = queryString.parse(window.location.search)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { lat, lng, zoom, ...filteredUrlParams } = urlParams // remove mapbox coords
-
   const [stateParams, setStateParams] = useState<Partial<FormParams>>({
     apiUrl, // use default apiUrl from env file
-    ...defaultParams,
-    ...filteredUrlParams,
-    apiKey: urlParams.key || urlParams.apiKey || apiKey // use urlApiKey or default apiKey from env file
+    ...params,
+    apiKey: params?.key || params?.apiKey || apiKey // use urlApiKey or default apiKey from env file
   })
 
   const [loading, setLoading] = useState(false)
@@ -133,8 +85,6 @@ const SearchProvider = ({
       })
       return newFilters
     })
-
-  const resetParams = () => setStateParams(defaultParams)
 
   const clearPolygon = () => setPolygon(null)
 
@@ -233,7 +183,6 @@ const SearchProvider = ({
       addParams,
       removeParam,
       removeParams,
-      resetParams,
       search,
       request,
       statusCode,

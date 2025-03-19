@@ -8,7 +8,6 @@ import React, {
   useState
 } from 'react'
 import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
-import queryString from 'query-string'
 
 import { type MapPosition } from 'services/Map/types'
 import { fetchListings } from 'utils/api'
@@ -43,14 +42,22 @@ const MapOptionsContext = createContext<MapOptionsContextProps | undefined>(
   undefined
 )
 
+export type MapCoords = {
+  lng: string
+  lat: string
+  zoom: string
+}
+
 const MapOptionsProvider = ({
   style = 'map',
+  params,
   // custom position used to initialize the map
   // on search results or saved searches polygon
   // position,
   children
 }: {
   style: MapStyle
+  params?: MapCoords
   // position?: MapPosition
   children?: React.ReactNode
 }) => {
@@ -97,9 +104,7 @@ const MapOptionsProvider = ({
   }
 
   useEffect(() => {
-    if (!apiKey || !apiUrl) return
-
-    const params = queryString.parse(window.location.search)
+    if (!apiKey || !apiUrl || !params) return
     const { lng, lat, zoom } = params
     if (lng && lat && zoom) {
       setPosition({

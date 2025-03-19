@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo } from 'react'
 import merge from 'deepmerge'
-import queryString from 'query-string'
 import { type FieldErrors, FormProvider, useForm } from 'react-hook-form'
 
 import { joiResolver } from '@hookform/resolvers/joi'
@@ -12,22 +11,6 @@ import { type FormParams, useSearch } from 'providers/SearchProvider'
 import defaultFormState from './defaults'
 import schema from './schema'
 import { type FormData } from './types'
-import { formatBooleanFields, formatMultiSelectFields } from './utils'
-
-const multiSelectFields = [
-  'type',
-  'class',
-  'style',
-  'status',
-  'lastStatus',
-  'propertyType'
-] as const
-
-const booleanFields = [
-  'dynamicClustering',
-  'dynamicClusterPrecision',
-  'stats'
-] as const
 
 type ParamsFormContextType = {
   onChange: () => void
@@ -39,24 +22,10 @@ export const ParamsFormContext = createContext<
 >(undefined)
 
 const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
-  const { params: localStorageParams, setParams } = useSearch()
-
-  //  TODO: form should not have access to window.location.search and do any params parsing
-  // cache them one time on first render
-  const params = useMemo(() => {
-    const parsed = queryString.parse(window.location.search)
-    const formatted = formatBooleanFields(parsed, booleanFields)
-    const formatted2 = formatMultiSelectFields(formatted, multiSelectFields)
-    return formatted2
-  }, [])
-
+  const { params, setParams } = useSearch()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { lng, lat, zoom, ...apiParams } = params
-  const mergedApiParams = { ...localStorageParams, ...apiParams }
-  const defaultValues = merge(
-    defaultFormState,
-    mergedApiParams
-  ) as Partial<FormData>
+  const defaultValues = merge(defaultFormState, apiParams)
 
   const methods = useForm<FormData>({
     defaultValues,
