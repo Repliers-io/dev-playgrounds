@@ -12,10 +12,22 @@ export const apiFieldsMappings = {
 
 export const customFormParams: (keyof CustomFormParams)[] = [
   'dynamicClustering',
-  'dynamicClusterPrecision'
+  'dynamicClusterPrecision',
+  'stats',
+  'grp',
+  'tab',
+  'sections'
 ]
 
 export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterLimit',
   'clusterPrecision'
+]
+
+export const statsOnlyParams: (keyof FormParams)[] = [
+  'statistics',
+  'minListDate',
+  'maxListDate',
+  'minSoldDate',
+  'maxSoldDate'
 ]

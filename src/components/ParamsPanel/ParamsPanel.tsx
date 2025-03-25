@@ -13,7 +13,13 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 import { markersClusteringThreshold } from 'constants/map'
 
-import ParamsForm from './components/ParamsForm'
+import {
+  BoundsSection,
+  ClustersSection,
+  CredentialsSection,
+  QueryParamsSection,
+  StatisticsSection
+} from './sections'
 import { filterQueryParams } from './utils'
 
 const warningMessageListingsDisabled =
@@ -33,7 +39,21 @@ const ParamsPanel = () => {
     polygon: Position[] | null
   ) => {
     const { bounds, center, zoom } = position
+    const { lng, lat } = center || {}
+    const query = queryString.stringify(
+      { lng, lat, zoom, ...params },
+      queryStringOptions
+    )
+    window.history.pushState(null, '', `?${query}`)
+
+    const { grp, stats, statistics } = params
     const filteredParams = filterQueryParams(params)
+
+    // WARN: additional parameters modifications for statistics
+    // adding grouping parameter at the end of the statistics array
+    if (stats && grp && statistics) {
+      filteredParams.statistics = statistics + ',' + grp
+    }
 
     try {
       const fetchBounds = polygon
@@ -44,13 +64,6 @@ const ParamsPanel = () => {
         ...filteredParams,
         ...fetchBounds
       })
-
-      const { lng, lat } = center || {}
-      const query = queryString.stringify(
-        { lng, lat, zoom, ...params },
-        queryStringOptions
-      )
-      window.history.pushState(null, '', `?${query}`)
     } catch (error: any) {
       console.error('fetchData error:', error)
     }
@@ -90,9 +103,10 @@ const ParamsPanel = () => {
     <Box
       sx={{
         flex: 1,
-        maxWidth: 280,
-        mr: -1.75,
         pr: 1.75,
+        mr: -1.75,
+        width: 280,
+        maxWidth: 280,
         height: '100%',
         display: 'flex',
         overflow: 'auto',
@@ -101,7 +115,13 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <ParamsForm />
+        <Stack spacing={1} sx={{ pt: '3px' }}>
+          <CredentialsSection />
+          <QueryParamsSection />
+          <StatisticsSection />
+          <ClustersSection />
+          <BoundsSection />
+        </Stack>
       </Stack>
       <Snackbar
         open={Boolean(snackbarMessage)}

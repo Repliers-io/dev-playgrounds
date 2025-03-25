@@ -32,6 +32,8 @@
     "@mui/lab": "^6.0.0-beta.17",
     "@mui/material": "^6.1.9",
     "@mui/x-charts": "^7.23.0",
+    "@mui/x-date-pickers": "^7.27.3",
+    "@repliers.io/api-types": "^0.3.7",
     "@turf/helpers": "^7.1.0",
     "@turf/turf": "^7.1.0",
     "@types/geojson": "^7946.0.14",
@@ -49,7 +51,8 @@
     "react-dom": "^18.3.1",
     "react-error-boundary": "^5.0.0",
     "react-hook-form": "^7.54.0",
-    "react-json-view-lite": "^2.0.1"
+    "react-json-view-lite": "^2.0.1",
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

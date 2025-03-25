@@ -1,5 +1,12 @@
 import { type ApiLastStatus, type ApiSortBy } from 'services/API/types'
 
+export const statsGroupingOptions = [
+  'grp-day',
+  'grp-mth',
+  'grp-yr',
+  'grp-90-days'
+] as const
+
 export const daysOnMarket = [
   'any',
   'lastDay',
@@ -43,5 +50,6 @@ export interface Filters {
   cluster?: boolean
   clusterPrecision?: number
   clusterLimit?: number
-  fields: string
+  fields?: string
+  statistics?: string
 }

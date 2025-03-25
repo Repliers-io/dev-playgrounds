@@ -2,7 +2,7 @@ import { type MouseEvent } from 'react'
 import { createRoot } from 'react-dom/client'
 import { type Map, Marker as MapboxMarker } from 'mapbox-gl'
 
-import Marker, { type MarkerProps } from 'components/Map/Marker'
+import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 
 import { type ApiCluster, type Listing } from 'services/API/types'
 import { type Markers } from 'services/Map'
