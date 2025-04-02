@@ -119,7 +119,7 @@ const MapRoot = () => {
 
   useEffect(() => {
     if (mapVisible && tab === 'map') mapRef.current?.resize()
-  }, [mapVisible, openDrawer])
+  }, [mapVisible, tab])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
