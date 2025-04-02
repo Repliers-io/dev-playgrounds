@@ -30,6 +30,7 @@ const QueryParametersSection = () => {
           variant="text"
           sx={{
             mb: 1,
+            px: 1.5,
             height: 32,
             borderRadius: 1
           }}
