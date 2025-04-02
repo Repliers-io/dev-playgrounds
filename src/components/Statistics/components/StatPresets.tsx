@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form'
 
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
@@ -24,9 +25,9 @@ const StatPresets = () => {
   }
 
   return (
-    <Box sx={{ fontSize: 12 }}>
+    <Stack spacing={1.25}>
       Usage examples:
-      <Stack direction="row" spacing={1.25} sx={{ pt: 1.25 }} flexWrap="wrap">
+      <Stack direction="row" spacing={1.25} flexWrap="wrap">
         {presets.map((preset) => (
           <Button
             size="small"
@@ -39,10 +40,20 @@ const StatPresets = () => {
           </Button>
         ))}
       </Stack>
-      <Box sx={{ fontSize: 14 }}>
-        ⚠️ PRO tip: set `listings=false` to speed up load time
+      <Box
+        sx={{
+          borderRadius: 1,
+          bgcolor: '#dfc',
+          p: 1,
+          px: 1.5
+        }}
+      >
+        <Stack spacing={1} direction="row" alignItems="center">
+          <LightbulbOutlinedIcon sx={{ fontSize: 18 }} />
+          <Box>PRO tip: set `listings=false` to speed up load time.</Box>
+        </Stack>
       </Box>
-    </Box>
+    </Stack>
   )
 }
 
