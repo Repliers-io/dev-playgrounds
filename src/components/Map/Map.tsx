@@ -8,6 +8,7 @@ import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
+import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getMapStyleUrl } from 'utils/map'
 import {
@@ -23,8 +24,14 @@ import {
   MapCounter,
   MapDrawButton,
   MapNavigation,
+  MapSnackbar,
   MapStyleSwitch
 } from './components'
+
+const warningMessageListingsDisabled =
+  "Set `listings` to 'true' to view listings on the map."
+const warningMessageClusteringThreshold =
+  "Set `listings` to 'true' to view listings at street level."
 
 const MapRoot = () => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
@@ -48,6 +55,7 @@ const MapRoot = () => {
   const { watch } = useFormContext()
   const tab = watch('tab')
   const listingsDisabled = params.listings === 'false'
+  const [snackbarMessage, setSnackbarMessage] = useState('')
 
   setMapContainerRef(mapContainerRef)
 
@@ -139,6 +147,29 @@ const MapRoot = () => {
     }
   }, [canRenderMap])
 
+  useDeepCompareEffect(() => {
+    // default state of the (empty/non-existing) `listings` is true
+    const listingsParam = params.listings === 'false' ? false : true
+
+    if (listingsParam) {
+      // listings=true
+      setSnackbarMessage('')
+    } else {
+      // listings=false
+      if (
+        params.dynamicClustering &&
+        count > 0 &&
+        count < markersClusteringThreshold
+      ) {
+        setSnackbarMessage(warningMessageClusteringThreshold)
+      } else if (!params.cluster) {
+        setSnackbarMessage(warningMessageListingsDisabled)
+      } else {
+        setSnackbarMessage('')
+      }
+    }
+  }, [count, params])
+
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
       <Box
@@ -155,6 +186,7 @@ const MapRoot = () => {
           }
         }}
       >
+        <MapSnackbar message={snackbarMessage} />
         <MapContainer ref={mapContainerRef} />
         <MapCounter count={count} loading={loading || !request} />
 
