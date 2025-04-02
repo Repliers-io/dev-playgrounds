@@ -25,7 +25,7 @@ const StatPresets = () => {
 
   return (
     <Box sx={{ fontSize: 12 }}>
-      Usage examples and presets:
+      Usage examples:
       <Stack direction="row" spacing={1.25} sx={{ pt: 1.25 }} flexWrap="wrap">
         {presets.map((preset) => (
           <Button
@@ -39,6 +39,9 @@ const StatPresets = () => {
           </Button>
         ))}
       </Stack>
+      <Box sx={{ fontSize: 14 }}>
+        ⚠️ PRO tip: set `listings=false` to speed up load time
+      </Box>
     </Box>
   )
 }
