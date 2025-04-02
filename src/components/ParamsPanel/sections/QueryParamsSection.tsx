@@ -30,7 +30,8 @@ const QueryParametersSection = () => {
           variant="text"
           sx={{
             mb: 1,
-            height: 32
+            height: 32,
+            borderRadius: 1
           }}
           onClick={() => onClear()}
           endIcon={<ClearAllIcon />}

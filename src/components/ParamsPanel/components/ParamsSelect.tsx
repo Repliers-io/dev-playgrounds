@@ -60,6 +60,7 @@ const ParamsSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
+                value={field.value || ''} // Ensure value is always a string
                 onChange={(e) => {
                   field.onChange(e)
                   onChange?.()

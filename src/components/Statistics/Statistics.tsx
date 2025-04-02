@@ -34,9 +34,9 @@ const flattenArrayObjects = (dataArray: any[]) => {
 }
 
 const Statistics = () => {
-  const { count, statistics, params } = useSearch()
+  const { statistics, params } = useSearch()
   const grp = (params['grp'] || '').replace('grp-', '')
-  const charts = Object.entries(statistics)
+  const charts = Object.entries(statistics) || []
 
   return (
     <Box
@@ -56,7 +56,7 @@ const Statistics = () => {
         direction="column"
         sx={{ overflow: 'hidden' }}
       >
-        {!statistics || !count ? (
+        {!statistics ? (
           <EmptyResults />
         ) : (
           <Stack
@@ -114,7 +114,7 @@ const Statistics = () => {
           // filter out columns with no x-axis data
           if (columns.length > 1) {
             columns = columns.filter(
-              (column) => Object.keys(data[column]).length > 0
+              (column) => (Object.keys(data[column] || {}) || []).length > 0
             )
           }
 

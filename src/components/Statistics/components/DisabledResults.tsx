@@ -44,7 +44,7 @@ const DisabledResults = () => {
         </Box>
         <Button
           size="small"
-          sx={{ py: 0.5 }}
+          sx={{ py: 0.5, borderRadius: 1 }}
           endIcon={<StackedLineChartIcon />}
           onClick={handleClick}
         >
