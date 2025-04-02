@@ -21,7 +21,7 @@ const MapSnackbar = ({ message = '' }: { message?: string }) => {
       sx={{
         p: 0.5,
         pl: 2,
-        top: 8,
+        top: 10,
         left: '50%',
         zIndex: 1000,
         position: 'absolute',
@@ -31,7 +31,7 @@ const MapSnackbar = ({ message = '' }: { message?: string }) => {
         boxShadow: 1
       }}
     >
-      <Stack spacing={2} direction="row" alignItems="center">
+      <Stack spacing={1} direction="row" alignItems="center">
         <Typography noWrap fontSize={12}>
           {message}
         </Typography>
