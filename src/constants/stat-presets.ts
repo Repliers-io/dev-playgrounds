@@ -9,7 +9,7 @@ type PresetType = Array<{
 
 const presets: PresetType = [
   {
-    name: 'Med/Avg List Price grouped by Day (last 3 months)',
+    name: 'Med/Avg List Price by Day (last 3 months)',
     params: {
       grp: 'grp-day',
       status: ['A'],
@@ -22,7 +22,7 @@ const presets: PresetType = [
     }
   },
   {
-    name: 'Med/Avg Sold Price grouped by Month (last 12 months)',
+    name: 'Med/Avg Sold Price by Month (last 12 months)',
     params: {
       grp: 'grp-mth',
       status: ['U'],

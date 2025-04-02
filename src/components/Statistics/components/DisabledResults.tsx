@@ -26,7 +26,8 @@ const DisabledResults = () => {
       sx={{
         borderRadius: 1,
         bgcolor: '#fec',
-        p: 1
+        p: 1,
+        pr: 0.5
       }}
     >
       <Stack

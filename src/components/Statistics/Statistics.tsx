@@ -8,6 +8,7 @@ import colors from './colors'
 import {
   DisabledResults,
   EmptyResults,
+  ProTip,
   StatAreaChart,
   StatBarChart,
   StatPresets
@@ -70,6 +71,7 @@ const Statistics = () => {
             spacing={1.25}
           >
             <DisabledResults />
+            <ProTip />
             <StatPresets />
           </Stack>
         )}
