@@ -47,7 +47,7 @@ const SelectOptionsProvider = ({
     const query = {
       aggregates: fieldNames.join(','),
       listings: 'false',
-      status: 'A'
+      status: ['A', 'U']
     }
 
     let aggregates: Record<string, any> = {}

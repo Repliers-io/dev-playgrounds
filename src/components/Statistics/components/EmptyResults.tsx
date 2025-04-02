@@ -4,10 +4,10 @@ const EmptyResults = () => {
   return (
     <Box
       sx={{
+        p: 1.25,
         border: 1,
         borderRadius: 2,
         borderColor: '#eee',
-        p: 1,
         fontSize: 12,
         color: 'text.hint'
       }}

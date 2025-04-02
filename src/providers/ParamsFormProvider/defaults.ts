@@ -1,6 +1,8 @@
-import { defaultStatisticsFields, type FormData, listingFields } from './types'
+import { type FormParams } from 'providers/SearchProvider'
 
-const defaultFormState: Partial<FormData> = {
+import { defaultStatisticsFields, listingFields } from './types'
+
+const defaultFormState: Partial<FormParams> = {
   /**
    * @internal
    */
@@ -9,27 +11,27 @@ const defaultFormState: Partial<FormData> = {
   stats: false,
   tab: 'map',
   sections: '',
-  grp: null,
+  grp: undefined,
 
   /**
    * request parameters
    */
-  boardId: null,
-  listings: null,
+  boardId: undefined,
+  listings: undefined,
   class: [],
   status: [],
   lastStatus: [],
   type: [],
   style: [],
   propertyType: [],
-  sortBy: '',
-  minPrice: null,
-  maxPrice: null,
-  minBedrooms: null,
-  minBaths: null,
-  minGarageSpaces: null,
-  minParkingSpaces: null,
-  cluster: null,
+  sortBy: undefined,
+  minPrice: undefined,
+  maxPrice: undefined,
+  minBedrooms: undefined,
+  minBaths: undefined,
+  minGarageSpaces: undefined,
+  minParkingSpaces: undefined,
+  cluster: undefined,
   clusterLimit: 100,
   clusterPrecision: 10,
   fields: listingFields.join(','),

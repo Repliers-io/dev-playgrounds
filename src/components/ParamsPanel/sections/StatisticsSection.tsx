@@ -30,6 +30,7 @@ const StatsSection = () => {
 
   return (
     <SectionTemplate
+      id="stats-section"
       index={2}
       title="Statistics"
       disabled={!statsEnabled}

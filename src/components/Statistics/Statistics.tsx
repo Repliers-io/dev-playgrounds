@@ -5,7 +5,13 @@ import { Box, Stack } from '@mui/material'
 import { useSearch } from 'providers/SearchProvider'
 
 import colors from './colors'
-import { EmptyResults, StatAreaChart, StatBarChart } from './components'
+import {
+  DisabledResults,
+  EmptyResults,
+  StatAreaChart,
+  StatBarChart,
+  StatPresets
+} from './components'
 
 const flattenArrayObjects = (dataArray: any[]) => {
   const rows = new Set()
@@ -50,7 +56,23 @@ const Statistics = () => {
         direction="column"
         sx={{ overflow: 'hidden' }}
       >
-        {Boolean(!statistics || !count) && <EmptyResults />}
+        {!statistics || !count ? (
+          <EmptyResults />
+        ) : (
+          <Stack
+            sx={{
+              p: 1.25,
+              border: 1,
+              borderRadius: 2,
+              borderColor: '#eee',
+              fontSize: 12
+            }}
+            spacing={1.25}
+          >
+            <DisabledResults />
+            <StatPresets />
+          </Stack>
+        )}
 
         {charts.map(([name, data]) => {
           const keys = Object.keys(data || {})

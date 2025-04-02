@@ -10,7 +10,6 @@ import { type FormParams, useSearch } from 'providers/SearchProvider'
 
 import defaultFormState from './defaults'
 import schema from './schema'
-import { type FormData } from './types'
 
 type ParamsFormContextType = {
   onChange: () => void
@@ -25,7 +24,7 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   const { params, setParams } = useSearch()
   const defaultValues = merge(defaultFormState, params)
 
-  const methods = useForm<FormData>({
+  const methods = useForm<FormParams>({
     defaultValues,
     mode: 'onBlur', // Validate on blur
     reValidateMode: 'onBlur', // Re-validate on blur
@@ -34,11 +33,11 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   })
   const { trigger, handleSubmit, reset, getValues } = methods
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: FormParams) => {
     setParams(data as Partial<FormParams>)
   }
 
-  const onError = (errors: FieldErrors<FormData>) => {
+  const onError = (errors: FieldErrors<FormParams>) => {
     console.error('validation errors:', errors)
   }
 
