@@ -58,10 +58,24 @@ const ResponsePanel = ({
 
   const requestContainerRef = useRef<HTMLDivElement | null>(null)
 
-  const handleCopyClick = () => {
-    if (requestContainerRef.current) {
-      navigator.clipboard.writeText(requestContainerRef.current.innerText)
-    }
+  const stringify = (data: any) => JSON.stringify(data, null, 2)
+
+  const handleRequestCopyClick = () => {
+    if (!requestContainerRef.current) return
+    navigator.clipboard.writeText(requestContainerRef.current.innerText)
+  }
+
+  const handleResponseCopyClick = () => {
+    if (!json) return
+    navigator.clipboard.writeText(stringify(json))
+  }
+
+  const handleNewWindowClick = () => {
+    if (!json) return
+    const newWindow = window.open('', '_blank')
+    if (!newWindow) return
+    newWindow.document.write('<pre>' + stringify(json) + '</pre>')
+    newWindow.document.close()
   }
 
   useEffect(() => {
@@ -111,7 +125,7 @@ const ResponsePanel = ({
               sx={{ width: 34 }}
             >
               <Tooltip title="Copy" arrow placement="bottom">
-                <IconButton onClick={handleCopyClick}>
+                <IconButton onClick={handleRequestCopyClick}>
                   <ContentCopyIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
@@ -174,12 +188,12 @@ const ResponsePanel = ({
               sx={{ width: 100 }}
             >
               <Tooltip title="Open in new tab" arrow placement="bottom">
-                <IconButton>
+                <IconButton onClick={handleNewWindowClick}>
                   <OpenInNewIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Copy" arrow placement="bottom">
-                <IconButton>
+                <IconButton onClick={handleResponseCopyClick}>
                   <ContentCopyIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
