@@ -28,12 +28,7 @@ const QueryParametersSection = () => {
           type="submit"
           size="small"
           variant="text"
-          sx={{
-            mb: 1,
-            px: 1.5,
-            height: 32,
-            borderRadius: 1
-          }}
+          sx={{ mb: 1, px: 1.5, height: 32 }}
           onClick={() => onClear()}
           endIcon={<ClearAllIcon />}
         >

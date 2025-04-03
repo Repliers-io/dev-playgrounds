@@ -29,9 +29,9 @@ import {
 } from './components'
 
 const warningMessageListingsDisabled =
-  "Set `listings` to 'true' to view listings on the map."
+  "Set `listings=true' to view listings on the map."
 const warningMessageClusteringThreshold =
-  "Set `listings` to 'true' to view listings at street level."
+  "Set `listings=true' to view listings at street level."
 
 const MapRoot = () => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)

@@ -19,7 +19,7 @@ const MapNavigation = () => {
     <Box
       sx={{
         boxShadow: 1,
-        borderRadius: 2,
+        borderRadius: 1,
         zIndex: 'fab',
         display: { xs: 'none', sm: 'block' }
       }}

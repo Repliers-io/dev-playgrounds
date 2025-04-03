@@ -8,7 +8,7 @@
   box-shadow: 0 2px 2px #0000001a;
   opacity: 0;
   position: relative;
-  animation: highlightChange 1s ease-in;
+  animation: highlightChange 2s ease-in;
 }
 
 .highlightDiff .empty {

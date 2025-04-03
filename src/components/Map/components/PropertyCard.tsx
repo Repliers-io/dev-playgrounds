@@ -60,7 +60,7 @@ const PropertyCard = ({
         '&:last-child': { mr: 0 },
         width: 220,
         boxShadow: 1,
-        borderRadius: 2,
+        borderRadius: 1,
         cursor: 'pointer',
         bgcolor: '#FFFE',
         border: '1px solid transparent',
@@ -73,7 +73,7 @@ const PropertyCard = ({
           height: 66,
           width: 100,
           minWidth: 100,
-          borderRadius: 1,
+          borderRadius: 0.75,
           bgcolor: '#384248', // marker color
           backgroundSize: 'cover',
           backgroundPosition: 'center',
