@@ -429,7 +429,7 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           p: 2,
-          borderRadius: 1,
+          borderRadius: '4px 4px 0 0',
           lineHeight: toRem(32)
         })
     }

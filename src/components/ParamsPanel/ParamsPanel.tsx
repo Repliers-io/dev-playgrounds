@@ -42,8 +42,8 @@ const ParamsPanel = () => {
 
     // WARN: additional parameters modifications for statistics
     // adding grouping parameter at the end of the statistics array
-    if (stats && grp && statistics) {
-      filteredParams.statistics = statistics + ',' + grp
+    if (stats && grp?.length && statistics) {
+      filteredParams.statistics = statistics + ',' + grp.join(',')
     }
 
     try {

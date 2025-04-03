@@ -21,7 +21,7 @@ export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
   stats: boolean
-  grp: string
+  grp: string[]
   tab: string
   sections: string
 }

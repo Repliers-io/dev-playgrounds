@@ -34,10 +34,39 @@ const flattenArrayObjects = (dataArray: any[]) => {
   return { dataArray, rows: Array.from(rows) as string[] }
 }
 
+const getColumns = (data: any) => {
+  const keys = Object.keys(data || {})
+  let columns = keys.filter(
+    (key) =>
+      typeof data[key] === 'object' &&
+      key !== 'sqftHigh' && // hardcoded hackery
+      key !== 'sqftLow' // hardcoded hackery
+  )
+  // filter out columns with no x-axis data
+  if (columns.length > 1) {
+    columns = columns.filter(
+      (column) => (Object.keys(data[column] || {}) || []).length > 0
+    )
+  }
+  return columns
+}
+
 const Statistics = () => {
-  const { statistics, params } = useSearch()
-  const grp = (params['grp'] || '').replace('grp-', '')
-  const charts = Object.entries(statistics) || []
+  const { statistics } = useSearch()
+  const statCharts = Object.entries(statistics) || []
+
+  // split charts array into multiple charts for each column of dates
+  const charts: typeof statCharts = []
+  statCharts.forEach(([name, data]) => {
+    const columns = getColumns(data)
+    if (columns.length > 1) {
+      columns.forEach((column) => {
+        charts.push([name, { [column]: data[column] }])
+      })
+    } else {
+      charts.push([name, data])
+    }
+  })
 
   return (
     <Box
@@ -78,12 +107,9 @@ const Statistics = () => {
 
         {charts.map(([name, data]) => {
           const keys = Object.keys(data || {})
-          let columns = keys.filter(
-            (key) =>
-              typeof data[key] === 'object' &&
-              key !== 'sqftHigh' && // hardcoded hackery
-              key !== 'sqftLow' // hardcoded hackery
-          )
+          const columns = getColumns(data)
+
+          // If there are no columns (i.e. all values are numbers), use StatBarChart logic:
 
           if (!columns.length) {
             let rows = keys.filter((key) => typeof data[key] === 'number')
@@ -113,20 +139,8 @@ const Statistics = () => {
             )
           }
 
-          // filter out columns with no x-axis data
-          if (columns.length > 1) {
-            columns = columns.filter(
-              (column) => (Object.keys(data[column] || {}) || []).length > 0
-            )
-          }
-
-          // remove other rows from chart if grouping enabled
-          if (columns.length > 1 && grp) {
-            columns = columns.filter((column) => column === grp)
-          }
-
-          // take the last column to extract the rows
-          const column = columns[columns.length - 1] || 0
+          // take the first column to extract the rows
+          const column = columns[0] || 0
           let dataArray: any[] = Object.entries(data[column] ?? {}).map(
             ([name, value]) => ({
               name,

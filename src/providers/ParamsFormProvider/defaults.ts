@@ -11,7 +11,7 @@ const defaultFormState: Partial<FormParams> = {
   stats: false,
   tab: 'map',
   sections: '',
-  grp: undefined,
+  grp: [],
 
   /**
    * request parameters

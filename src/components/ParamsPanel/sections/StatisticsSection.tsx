@@ -49,7 +49,8 @@ const StatsSection = () => {
           options={statisticsFields}
           onChange={onChange}
         />
-        <ParamsSelect
+        <ParamsMultiSelect
+          noNull
           name="grp"
           label="grp-..."
           hint="docs"

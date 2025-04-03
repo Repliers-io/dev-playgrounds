@@ -33,7 +33,7 @@ const ProTip = () => {
       <Stack spacing={1} direction="row" justifyContent={'space-between'}>
         <Stack spacing={1} direction="row" alignItems="center">
           <LightbulbOutlinedIcon sx={{ fontSize: 18 }} />
-          <Box>PRO tip: set `listings=false` to speed up load time.</Box>
+          <Box>PRO tip: Set `listings=false` to speed up load time.</Box>
         </Stack>
         <Button
           size="small"
