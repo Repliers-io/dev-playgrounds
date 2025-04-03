@@ -6,12 +6,7 @@ import { Box, Stack } from '@mui/material'
 import { statsGroupingOptions } from 'services/Search/types'
 import { statisticsFields, useParamsForm } from 'providers/ParamsFormProvider'
 
-import {
-  AndroidSwitch,
-  ParamsDate,
-  ParamsMultiSelect,
-  ParamsSelect
-} from '../components'
+import { AndroidSwitch, ParamsDate, ParamsMultiSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 

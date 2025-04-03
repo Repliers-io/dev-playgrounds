@@ -105,7 +105,7 @@ const Statistics = () => {
           </Stack>
         )}
 
-        {charts.map(([name, data]) => {
+        {charts.map(([name, data], index) => {
           const keys = Object.keys(data || {})
           const columns = getColumns(data)
 
@@ -168,8 +168,12 @@ const Statistics = () => {
           }
 
           return (
-            <StatAreaChart key={name} name={name} data={dataArray}>
-              {rows.map((row, index: number) => (
+            <StatAreaChart
+              key={`${name}-${index}`}
+              name={name}
+              data={dataArray}
+            >
+              {rows.map((row, index) => (
                 <Area
                   key={index}
                   dataKey={row}

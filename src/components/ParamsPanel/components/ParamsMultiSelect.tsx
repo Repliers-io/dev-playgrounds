@@ -105,7 +105,7 @@ const ParamsMultiSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
-                value={localValue}
+                value={[...localValue].flat()}
                 onChange={(e) => {
                   const newValue = e.target.value
                   setLocalValue([...newValue])
