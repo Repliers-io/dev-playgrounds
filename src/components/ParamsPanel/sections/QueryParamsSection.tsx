@@ -114,7 +114,6 @@ const QueryParametersSection = () => {
             <ParamsField name="minParkingSpaces" onChange={onChange} />
           </Stack>
           <ParamsMultiSelect
-            noNull
             noClear
             stringValue
             name="fields"

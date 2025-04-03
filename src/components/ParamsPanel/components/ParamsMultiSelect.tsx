@@ -38,7 +38,7 @@ const ParamsMultiSelect = ({
   tooltip,
   loading,
   options = [],
-  noNull = false,
+  noNull = true,
   noClear = false,
   stringValue = false,
   onChange

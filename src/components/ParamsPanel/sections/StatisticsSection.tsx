@@ -42,7 +42,6 @@ const StatsSection = () => {
     >
       <Stack spacing={1.5}>
         <ParamsMultiSelect
-          noNull
           noClear
           stringValue
           name="statistics"
@@ -50,7 +49,6 @@ const StatsSection = () => {
           onChange={onChange}
         />
         <ParamsMultiSelect
-          noNull
           name="grp"
           label="grp-..."
           hint="docs"
