@@ -2,6 +2,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -39,58 +40,65 @@ const SelectOptionsProvider = ({
   const { params } = useSearch()
   const { apiKey = '', apiUrl = '' } = params
 
-  const fetchOptions = async <K extends string>(
-    fieldNames: readonly K[]
-  ): Promise<Record<K, string[]>> => {
-    const endpoint = `${apiUrl}/listings`
-    const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
-    const query = {
-      aggregates: fieldNames.join(','),
-      listings: 'false',
-      status: ['A', 'U']
-    }
+  const fetchOptions = useCallback(
+    async <K extends string>(
+      fieldNames: readonly K[]
+    ): Promise<Record<K, string[]>> => {
+      const endpoint = `${apiUrl}/listings`
+      const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
+      const query = {
+        aggregates: fieldNames.join(','),
+        listings: 'false',
+        status: ['A', 'U']
+      }
 
-    let aggregates: Record<string, any> = {}
-    const result: Record<K, string[]> = {} as Record<K, string[]>
+      let aggregates: Record<string, any> = {}
+      const result: Record<K, string[]> = {} as Record<K, string[]>
 
-    try {
-      const response = await apiFetch<any>(endpoint, { get: query }, options)
-      aggregates = (await response.json()).aggregates
-    } catch (error) {
-      console.error('No field options provided from API', error)
-    }
+      try {
+        const response = await apiFetch<any>(endpoint, { get: query }, options)
+        aggregates = (await response.json()).aggregates
+      } catch (error) {
+        console.error('No field options provided from API', error)
+      }
 
-    fieldNames.forEach((path) => {
-      const value = getPath(aggregates, path) || {}
-      const entries = Object.entries(value).sort(
-        (a: [string, any], b: [string, any]) => (a[0] === '' ? -1 : b[1] - a[1])
+      fieldNames.forEach((path) => {
+        const value = getPath(aggregates, path) || {}
+        const entries = Object.entries(value).sort(
+          (a: [string, any], b: [string, any]) =>
+            a[0] === '' ? -1 : b[1] - a[1]
+        )
+        // drop options with count less than minCount
+        const filteredEntries = entries.filter(
+          ([, count]) => (count as number) >= minCount
+        )
+        // add at least one empty option
+        // and make sure there are no duplicates
+        result[path] = Array.from(
+          new Set(['', ...filteredEntries.map(([name]) => name)])
+        )
+      })
+
+      return result
+    },
+    [apiKey, apiUrl, minCount]
+  )
+
+  const applyMappings = useCallback(
+    (options: Record<string, string[]>) => {
+      if (!mappings) return options
+
+      return Object.entries(options).reduce(
+        (acc, [key, value]) => {
+          const mappedKey = mappings[key] || key
+          acc[mappedKey] = value
+          return acc
+        },
+        {} as Record<string, string[]>
       )
-      // drop options with count less than minCount
-      const filteredEntries = entries.filter(
-        ([, count]) => (count as number) >= minCount
-      )
-      // add at least one empty option
-      // and make sure there are no duplicates
-      result[path] = Array.from(
-        new Set(['', ...filteredEntries.map(([name]) => name)])
-      )
-    })
-
-    return result
-  }
-
-  const applyMappings = (options: Record<string, string[]>) => {
-    if (!mappings) return options
-
-    return Object.entries(options).reduce(
-      (acc, [key, value]) => {
-        const mappedKey = mappings[key] || key
-        acc[mappedKey] = value
-        return acc
-      },
-      {} as Record<string, string[]>
-    )
-  }
+    },
+    [mappings]
+  )
 
   useEffect(() => {
     const startFetch = async () => {
@@ -107,7 +115,7 @@ const SelectOptionsProvider = ({
     }
 
     if (apiKey && apiUrl) startFetch()
-  }, [fields, apiKey, apiUrl])
+  }, [fields, apiKey, apiUrl, fetchOptions, applyMappings])
 
   const contextValue = useMemo(
     () => ({
