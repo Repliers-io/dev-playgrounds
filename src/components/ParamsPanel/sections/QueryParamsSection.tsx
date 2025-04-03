@@ -114,6 +114,7 @@ const QueryParametersSection = () => {
             <ParamsField name="minParkingSpaces" onChange={onChange} />
           </Stack>
           <ParamsField
+            noClear
             name="fields"
             onChange={onChange}
             hint="optimization"
