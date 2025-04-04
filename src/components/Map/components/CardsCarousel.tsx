@@ -64,6 +64,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
             position: 'absolute',
             left: 50,
             top: -52,
+            boxShadow: 1,
             backdropFilter: 'blur(4px)',
             bgcolor: alpha('#FFFFFF', 0.7),
             '& .MuiButton-root': { height: 36, minWidth: 0, p: 1.125 },

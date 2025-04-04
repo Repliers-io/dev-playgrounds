@@ -2,6 +2,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useRef,
@@ -64,43 +65,55 @@ const SearchProvider = ({
     polygon || null
   )
 
-  const setParam = (key: FormParamKeys, value: any) =>
-    setStateParams((prev) => ({ ...prev, [key]: value }))
+  const setParam = useCallback(
+    (key: FormParamKeys, value: any) =>
+      setStateParams((prev) => ({ ...prev, [key]: value })),
+    []
+  )
 
-  const addParams = (newParams: Partial<FormParams>) =>
-    setStateParams((prev) => ({ ...prev, ...newParams }))
+  const addParams = useCallback(
+    (newParams: Partial<FormParams>) =>
+      setStateParams((prev) => ({ ...prev, ...newParams })),
+    []
+  )
 
-  const removeParam = (key: FormParamKeys) =>
-    setStateParams((prev) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { [key]: _, ...rest } = prev
-      return rest
-    })
+  const removeParam = useCallback(
+    (key: FormParamKeys) =>
+      setStateParams((prev) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [key]: _, ...rest } = prev
+        return rest
+      }),
+    []
+  )
 
-  const removeParams = (keys: FormParamKeys[]) =>
-    setStateParams((prev) => {
-      const newFilters = { ...prev }
-      keys.forEach((key) => {
-        delete newFilters[key]
-      })
-      return newFilters
-    })
+  const removeParams = useCallback(
+    (keys: FormParamKeys[]) =>
+      setStateParams((prev) => {
+        const newFilters = { ...prev }
+        keys.forEach((key) => {
+          delete newFilters[key]
+        })
+        return newFilters
+      }),
+    []
+  )
 
-  const clearPolygon = () => setPolygon(null)
+  const clearPolygon = useCallback(() => setPolygon(null), [])
 
-  const clearData = () => {
+  const clearData = useCallback(() => {
     setRequest('')
     setTime(0)
     setStatusCode(null)
     setSaved(emptySavedResponse)
     setJson(null)
     setSize(0)
-  }
+  }, [])
 
   const previousRequest = useRef<string>('')
   const previousKey = useRef<string>('')
 
-  const search = async (params: any) => {
+  const search = useCallback(async (params: any) => {
     const { apiKey, apiUrl, ...rest } = params
     const endpoint = `${apiUrl}/listings`
     const getParamsString = queryString.stringify(rest, queryStringOptions)
@@ -133,15 +146,12 @@ const SearchProvider = ({
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
 
-      // Get response size from Content-Length header or clone and measure
       const contentLength = response.headers.get('content-length')
       let size = 0
 
       if (contentLength) {
-        // If server provides Content-Length header, use it
         size = parseInt(contentLength, 10)
       } else {
-        // Otherwise clone the response and convert to text to measure
         const clone = response.clone()
         const text = await clone.text()
         size = new Blob([text]).size
@@ -172,7 +182,7 @@ const SearchProvider = ({
       setLoading(false)
       return null
     }
-  }
+  }, [])
 
   const contextValue = useMemo(
     () => ({
@@ -189,13 +199,28 @@ const SearchProvider = ({
       time,
       json,
       size,
-      ...saved, // destructured saved object shorthands
+      ...saved,
       polygon: searchPolygon,
       setPolygon,
       clearPolygon,
       clearData
     }),
-    [stateParams, searchPolygon, loading, json, request, size, saved]
+    [
+      stateParams,
+      searchPolygon,
+      loading,
+      json,
+      request,
+      size,
+      saved,
+      search,
+      setParam,
+      addParams,
+      removeParam,
+      removeParams,
+      clearPolygon,
+      clearData
+    ]
   )
 
   return (

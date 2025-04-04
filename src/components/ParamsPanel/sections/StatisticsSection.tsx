@@ -6,12 +6,7 @@ import { Box, Stack } from '@mui/material'
 import { statsGroupingOptions } from 'services/Search/types'
 import { statisticsFields, useParamsForm } from 'providers/ParamsFormProvider'
 
-import {
-  AndroidSwitch,
-  ParamsDate,
-  ParamsMultiSelect,
-  ParamsSelect
-} from '../components'
+import { AndroidSwitch, ParamsDate, ParamsMultiSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -30,6 +25,7 @@ const StatsSection = () => {
 
   return (
     <SectionTemplate
+      id="stats-section"
       index={2}
       title="Statistics"
       disabled={!statsEnabled}
@@ -41,14 +37,13 @@ const StatsSection = () => {
     >
       <Stack spacing={1.5}>
         <ParamsMultiSelect
-          noNull
           noClear
           stringValue
           name="statistics"
           options={statisticsFields}
           onChange={onChange}
         />
-        <ParamsSelect
+        <ParamsMultiSelect
           name="grp"
           label="grp-..."
           hint="docs"

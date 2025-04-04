@@ -1,4 +1,4 @@
-import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined'
+import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined'
 import { Button, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -29,13 +29,10 @@ const CredentialsSection = () => {
           type="submit"
           size="small"
           variant="text"
-          sx={{
-            mb: 1,
-            height: 32
-          }}
+          sx={{ mb: 1, px: 1.5, height: 32 }}
           // disabled={!apiKey || !apiUrl}
           onClick={handleMapRecenter}
-          endIcon={<MyLocationOutlinedIcon />}
+          endIcon={<ExploreOutlinedIcon />}
         >
           Re-center Map
         </Button>

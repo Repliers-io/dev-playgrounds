@@ -104,7 +104,7 @@ const MapDrawButton = ({
       sx={{
         boxShadow: 1,
         zIndex: 'fab',
-        borderRadius: 2,
+        borderRadius: 1,
         display: { xs: 'none', sm: 'block' }
       }}
     >

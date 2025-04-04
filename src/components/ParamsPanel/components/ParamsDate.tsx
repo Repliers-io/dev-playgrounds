@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import { useFormContext } from 'react-hook-form'
 
@@ -25,7 +25,7 @@ type InputProps = TextFieldProps & {
 
 const ParamsDate: React.FC<InputProps> = ({
   name,
-  label,
+  label = name, // optimized: assign default value here
   hint,
   link,
   tooltip,
@@ -40,16 +40,18 @@ const ParamsDate: React.FC<InputProps> = ({
   const value = getValues(name)
   const [open, setOpen] = useState(false)
 
-  // eslint-disable-next-line no-param-reassign
-  if (!label) label = name
+  // optimized: memoize parsedValue
+  const parsedValue = useMemo(() => (value ? dayjs(value) : null), [value])
 
-  const handleClearClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setValue(name, null)
-    onChange?.()
-  }
-
-  const parsedValue = value ? dayjs(value) : null
+  // optimized: useCallback for handleClearClick
+  const handleClearClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      setValue(name, null)
+      onChange?.()
+    },
+    [setValue, name, onChange]
+  )
 
   return (
     <Box flex={1}>

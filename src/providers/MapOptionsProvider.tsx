@@ -84,24 +84,38 @@ const MapOptionsProvider = ({
       map.remove()
       mapRef.current = null
     }
-  }, [mapRef.current])
+  }, [])
 
-  const centerMap = (apiKey: string, apiUrl: string) => {
-    fetchListings({ apiKey, apiUrl }).then((listings) => {
-      const locations = getLocations(listings)
-      if (!locations?.length || !mapContainerRef.current) return
-      const mapPosition = getMapPosition(locations, mapContainerRef.current)
-      setPosition(mapPosition)
-      if (canRenderMap) {
-        mapRef.current?.jumpTo({
-          center: mapPosition.center,
-          zoom: mapPosition.zoom
-        })
-      } else {
-        setCanRenderMap(true)
-      }
-    })
-  }
+  const centerMap = useCallback(
+    (apiKey: string, apiUrl: string) => {
+      fetchListings({ apiKey, apiUrl }).then((listings) => {
+        const locations = getLocations(listings)
+        if (!locations?.length || !mapContainerRef.current) return
+        const mapPosition = getMapPosition(locations, mapContainerRef.current)
+        setPosition(mapPosition)
+        if (canRenderMap) {
+          mapRef.current?.jumpTo({
+            center: mapPosition.center,
+            zoom: mapPosition.zoom
+          })
+        } else {
+          setCanRenderMap(true)
+        }
+      })
+    },
+    [canRenderMap]
+  )
+
+  const setMapRef = useCallback((ref: MapboxMap | null) => {
+    mapRef.current = ref
+  }, [])
+
+  const setMapContainerRef = useCallback(
+    (ref: React.RefObject<HTMLDivElement>) => {
+      mapContainerRef.current = ref.current
+    },
+    []
+  )
 
   useEffect(() => {
     if (!apiKey || !apiUrl || !params) return
@@ -134,12 +148,19 @@ const MapOptionsProvider = ({
       destroyMap,
       centerMap,
       mapRef,
-      setMapRef: (ref: MapboxMap | null) => (mapRef.current = ref),
+      setMapRef,
       mapContainerRef,
-      setMapContainerRef: (ref: React.RefObject<HTMLDivElement>) =>
-        (mapContainerRef.current = ref.current)
+      setMapContainerRef
     }),
-    [mapPosition, mapStyle, editMode, canRenderMap, focusedMarker]
+    [
+      mapPosition,
+      mapStyle,
+      editMode,
+      canRenderMap,
+      focusedMarker,
+      destroyMap,
+      centerMap
+    ]
   )
 
   return (

@@ -72,7 +72,7 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
-          borderRadius: 2,
+          borderRadius: 1,
           color: 'common.black',
           bgcolor: 'common.white',
           border: 0,
@@ -129,7 +129,7 @@ const components = {
         theme.unstable_sx({
           p: 2,
           height: 48,
-          borderRadius: 2,
+          borderRadius: 1,
 
           '&.MuiButton-contained': {
             '& svg path': { fill: 'white' }
@@ -161,7 +161,7 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           border: 0,
-          borderRadius: 2,
+          borderRadius: 1,
           maxHeight: 48,
           color: 'text.primary',
           bgcolor: 'background.default',
@@ -199,7 +199,7 @@ const components = {
           p: 2,
           maxHeight: 48,
           border: 0,
-          borderRadius: 2,
+          borderRadius: 1,
           color: 'common.black',
 
           '&.Mui-selected': {
@@ -429,6 +429,7 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           p: 2,
+          borderRadius: '4px 4px 0 0',
           lineHeight: toRem(32)
         })
     }

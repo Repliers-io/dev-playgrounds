@@ -38,7 +38,7 @@ const ParamsMultiSelect = ({
   tooltip,
   loading,
   options = [],
-  noNull = false,
+  noNull = true,
   noClear = false,
   stringValue = false,
   onChange
@@ -105,7 +105,7 @@ const ParamsMultiSelect = ({
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
-                value={localValue}
+                value={[...localValue].flat()}
                 onChange={(e) => {
                   const newValue = e.target.value
                   setLocalValue([...newValue])
