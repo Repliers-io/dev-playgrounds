@@ -4,7 +4,8 @@ export const multiSelectFields = [
   'style',
   'status',
   'lastStatus',
-  'propertyType'
+  'propertyType',
+  'grp'
 ] as const
 
 export const booleanFields = [

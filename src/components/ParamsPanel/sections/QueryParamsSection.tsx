@@ -3,7 +3,6 @@ import { Box, Button, Stack } from '@mui/material'
 
 import {
   classOptions,
-  listingFields,
   sortByOptions,
   statusOptions,
   trueFalseOptions,
