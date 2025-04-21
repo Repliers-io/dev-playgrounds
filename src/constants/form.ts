@@ -22,7 +22,8 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'stats',
   'grp',
   'tab',
-  'sections'
+  'sections',
+  'center'
 ]
 
 export const clusterOnlyParams: (keyof FormParams)[] = [

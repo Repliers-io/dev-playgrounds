@@ -1,5 +1,3 @@
-'use client'
-
 import React, {
   createContext,
   useCallback,
@@ -10,7 +8,6 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
-import { useSearch } from 'providers/SearchProvider'
 import { apiFetch, queryStringOptions } from 'utils/api'
 
 import { type LocationsContextType, type SavedResponse } from './types'
@@ -26,8 +23,6 @@ const emptySavedResponse: SavedResponse = {
 }
 
 const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [stateParams, setStateParams] = useState({})
-
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -50,19 +45,30 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
   const previousRequest = useRef<string>('')
   const previousKey = useRef<string>('')
 
-  const { params: searchParams } = useSearch()
-
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl } = searchParams
-    if (!apiKey || !apiUrl) return
+    const { apiKey, apiUrl, query, queryType, queryFields, endpoint, ...rest } =
+      params
 
-    const endpoint = `${apiUrl}/locations`
-    const getParamsString = queryString.stringify(params, queryStringOptions)
-    const request = `${endpoint}?${getParamsString}`
+    if (!apiKey || !apiUrl || !query) return
+
+    const endpointType =
+      endpoint.indexOf('search') > -1 ? 'search' : 'locations'
+
+    rest.type = queryType || ''
+    if (endpointType === 'search') {
+      rest.q = query
+      rest.type = queryType || ''
+    } else {
+      rest[queryType] = query
+    }
+    rest.fields = queryFields || ''
+
+    const endpointUrl = `${apiUrl}${endpoint}`
+    const getParamsString = queryString.stringify(rest, queryStringOptions)
+    const request = `${endpointUrl}?${getParamsString}`
 
     if (request === previousRequest.current && apiKey === previousKey.current)
       return false
-
     previousRequest.current = request
     previousKey.current = apiKey
 
@@ -77,8 +83,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       setRequest(request)
 
       const response = await apiFetch(
-        endpoint,
-        { get: params },
+        endpointUrl,
+        { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
           signal: controller.signal
@@ -100,12 +106,17 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       }
       setSize(size)
 
-      const json = await response.json()
-      setJson(json)
-      setLoading(false)
+      let jsonResponse: any = {}
+      try {
+        jsonResponse = await response.json()
+        setJson(jsonResponse)
+      } catch (error) {
+        console.error('Error parsing response', error)
+        setJson(null)
+      }
 
       if (response.ok && !disabled.current) {
-        const { count, page, numPages } = json
+        const { count, page, numPages } = jsonResponse
 
         const remappedResponse: SavedResponse = {
           page,
@@ -115,18 +126,20 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
 
         setSaved(remappedResponse)
       }
+
       return json
     } catch (error: any) {
       setStatusCode(error.status)
-      setLoading(false)
       return null
+    } finally {
+      setLoading(false)
+      abortController.current = null
     }
   }, [])
 
   const contextValue = useMemo(
     () => ({
       loading,
-      params: stateParams,
       search,
       request,
       statusCode,
@@ -136,7 +149,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       ...saved,
       clearData
     }),
-    [stateParams, loading, json, request, size, saved, search, clearData]
+    [loading, json, request, size, saved, search, clearData]
   )
 
   return (

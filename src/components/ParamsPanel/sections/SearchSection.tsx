@@ -1,21 +1,16 @@
-import React from 'react'
-
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
-import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
-import { ParamsRange } from '../components'
-import ParamLabel from '../components/ParamsLabel'
+import { ParamsField } from '../components'
 import ParamsToggleGroup from '../components/ParamToggleButton'
 
-import BoundsPoint from './BoundsSection/BoundsPoint'
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = [
-  { label: 'locations', value: '/locations?search=', queryParam: 'search' },
-  { label: 'locations-search', value: '/locations/search?q=', queryParam: 'q' }
+  { label: 'locations-search', value: '/locations/search' },
+  { label: 'locations', value: '/locations' }
 ]
 
 const locationTypes = [
@@ -25,8 +20,7 @@ const locationTypes = [
 ]
 
 const SearchSection = () => {
-  const { onChange } = useParamsForm()
-  const { position: { center } = {} } = useMapOptions()
+  const { onChange, onClear } = useParamsForm()
 
   return (
     <SectionTemplate
@@ -38,7 +32,7 @@ const SearchSection = () => {
           size="small"
           variant="text"
           sx={{ mb: 1, px: 1.5, height: 32 }}
-          // onClick={() => onClear()}
+          onClick={() => onClear()}
           endIcon={<ClearAllIcon />}
         >
           Clear All
@@ -47,29 +41,37 @@ const SearchSection = () => {
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
+          <Stack spacing={1} direction="row" justifyContent="space-between">
+            <ParamsField
+              name="pageNum"
+              hint="docs"
+              link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
+              onChange={onChange}
+            />
+            <ParamsField name="resultsPerPage" onChange={onChange} />
+          </Stack>
+
           <ParamsToggleGroup
             label="endpoint"
             name="endpoint"
             options={endpoints.map((option) => option.value)}
+            onChange={onChange}
+            sx={{ '& > .MuiToggleButton-root': { flex: 1 } }}
           />
 
           <ParamsToggleGroup
             label="type"
             name="queryType"
             options={locationTypes.map((option) => option.value)}
+            onChange={onChange}
           />
 
-          <ParamsRange min={0} max={100} name="radius" onChange={onChange} />
-
-          <Box>
-            <ParamLabel label="center" />
-            <BoundsPoint label="✛" point={center!} />
-          </Box>
-
-          {/* <ParamsField name="temp" noClear /> */}
-          {/* <ParamsField name="temp2" noClear /> */}
-          {/* <ParamsField name="temp3" noClear /> */}
-          {/* <ParamsField name="temp4" noClear /> */}
+          <ParamsField
+            noClear
+            label="fields"
+            name="queryFields"
+            onChange={onChange}
+          />
         </Stack>
       </Box>
     </SectionTemplate>

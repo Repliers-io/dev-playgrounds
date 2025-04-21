@@ -1,13 +1,11 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import {
-  alpha,
-  Autocomplete,
-  Box,
-  CircularProgress,
-  TextField
-} from '@mui/material'
-import { type AutocompleteRenderInputParams } from '@mui/material/Autocomplete'
+import { Autocomplete, Box, TextField } from '@mui/material'
+import { debounce } from '@mui/material/utils'
+
+import { useLocations } from 'providers/LocationsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import {
   OptionAddress,
@@ -18,20 +16,44 @@ import {
 } from './components'
 
 const minCharsToSuggest = 3
+const debounceDelay = 400
 
 const Searchfield = () => {
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  // const [areaLoading, setAreaLoading] = useState(false)
+  const { onChange } = useParamsForm()
+  const { setValue, getValues } = useFormContext()
+  const { loading } = useLocations()
+  const value = getValues('query') || ''
+  const [searchString, setSearchString] = useState(value)
   const options = []
+
+  useEffect(() => {
+    setSearchString(value)
+  }, [value])
+
+  // console.log('input value', searchString)
 
   if (loading) {
     options.push({ type: 'loader' })
+  } else {
+    // TODO: add items
   }
 
-  const [searchString, setSearchString] = useState('')
+  const updateFormValueDebounced = useRef(
+    debounce((value: string) => {
+      setValue('query', value, { shouldDirty: true, shouldValidate: true })
+      onChange?.()
+    }, debounceDelay)
+  ).current
+
+  useEffect(() => {
+    return () => {
+      updateFormValueDebounced.clear()
+    }
+  }, [updateFormValueDebounced])
 
   const getOptionLabel = (option: any) => {
+    if (typeof option === 'string') return option
+
     switch (option.type) {
       case 'city':
       case 'neighborhood':
@@ -47,7 +69,6 @@ const Searchfield = () => {
 
   const renderOptionElement = (
     props: React.HTMLAttributes<HTMLLIElement> & { key?: React.Key },
-    // TODO: add type for option
     option: any
   ) => {
     const { key, ...otherProps } = props
@@ -66,43 +87,43 @@ const Searchfield = () => {
     }
   }
 
-  const renderInputElement = (params: AutocompleteRenderInputParams) => (
-    <TextField
-      {...params}
-      variant="filled"
-      placeholder={'Search for a location...'}
-      autoComplete="off"
-      onChange={(event) => {
-        const { value } = event.target
-        setOpen(value.length >= minCharsToSuggest)
-        setSearchString(value)
-      }}
-      slotProps={{
-        input: {
-          ...params.InputProps
-          // endAdornment: areaLoading ? (
-          //   <CircularProgress
-          //     size={18}
-          //     sx={{
-          //       position: 'absolute',
-          //       right: 18
-          //     }}
-          //   />
-          // ) : (
-          //   params.InputProps.endAdornment
-          // )
-        },
+  const handleChange = (value: any) => {
+    if (value && typeof value !== 'string') {
+      const label = getOptionLabel(value)
+      setSearchString(label)
+      setValue('query', label, { shouldValidate: true })
+    } else if (value === null) {
+      setSearchString('')
+      setValue('query', '', { shouldValidate: true })
+    }
+    onChange?.()
+    updateFormValueDebounced.clear()
+  }
 
-        htmlInput: {
-          ...params.inputProps,
-          autoComplete: 'off'
-        }
-      }}
-    />
+  const handleInputChange = useCallback(
+    (event: React.SyntheticEvent | null, value: string) => {
+      setSearchString(value)
+    },
+    []
   )
 
-  const handleChange = (value: any) => {
-    // setOpen(false)
+  const commitInput = useCallback(
+    (input: string) => {
+      setValue('query', input, { shouldValidate: true })
+      onChange?.()
+    },
+    [setValue, onChange]
+  )
+
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      commitInput(searchString)
+    }
+  }
+
+  const handleInputBlur = () => {
+    commitInput(searchString)
   }
 
   return (
@@ -112,12 +133,12 @@ const Searchfield = () => {
         left: 16,
         width: 'min(calc(100% - 32px), 360px)',
         position: 'absolute',
-        borderRadius: 6,
+        borderRadius: 1,
         boxShadow: 1
       }}
     >
       <Autocomplete
-        open={open}
+        open={!!searchString && searchString.length >= minCharsToSuggest}
         freeSolo
         fullWidth
         blurOnSelect
@@ -127,20 +148,55 @@ const Searchfield = () => {
         disableListWrap
         handleHomeEndKeys
         options={options}
+        inputValue={searchString}
+        onInputChange={handleInputChange}
+        onChange={(event, value) => handleChange(value)}
         filterSelectedOptions
         filterOptions={(x) => x}
         groupBy={(option) => option.type}
-        onBlur={() => setOpen(false)}
-        onFocus={() => setOpen(searchString.length >= minCharsToSuggest)}
-        onChange={(e, v) => handleChange(v)}
         getOptionLabel={getOptionLabel}
-        renderInput={renderInputElement}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="filled"
+            placeholder={'Search for a location...'}
+            autoComplete="off"
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                onKeyDown: handleInputKeyDown,
+                onBlur: handleInputBlur
+              },
+              htmlInput: {
+                ...params.inputProps,
+                autoComplete: 'off'
+              }
+            }}
+          />
+        )}
         renderOption={renderOptionElement}
         renderGroup={({ key, group, children }) => (
           <OptionGroup key={key} group={group}>
             {children}
           </OptionGroup>
         )}
+        ListboxProps={{
+          sx: {
+            maxHeight: 500,
+            overflowY: 'auto'
+          }
+        }}
+        sx={{
+          '& .MuiAutocomplete-clearIndicator': {
+            visibility:
+              searchString && searchString.length > 0 ? 'visible' : 'hidden',
+            opacity: 1,
+            pointerEvents: 'auto'
+          },
+          '&.MuiAutocomplete-hasClearIcon .MuiFilledInput-root': {
+            pr: 0
+          }
+        }}
       />
     </Box>
   )

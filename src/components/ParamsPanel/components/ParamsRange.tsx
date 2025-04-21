@@ -42,7 +42,8 @@ const ParamsRange: React.FC<RangeProps> = ({
   }
 
   const handleEndChange = async () => {
-    setValue(name, localValue, { shouldValidate: true })
+    // setValue(name, localValue, { shouldValidate: true })
+    setValue(name, localValue ? localValue : null, { shouldValidate: true })
     onChange?.()
   }
 
@@ -61,9 +62,9 @@ const ParamsRange: React.FC<RangeProps> = ({
       />
       <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
-          value={localValue}
+          value={localValue || 0}
           onChange={handleChange}
-          onMouseUp={handleEndChange}
+          onChangeCommitted={handleEndChange}
           disabled={disabled}
           sx={{
             '& .MuiSlider-thumb': {
@@ -82,7 +83,8 @@ const ParamsRange: React.FC<RangeProps> = ({
         <TextField
           disabled
           size="small"
-          value={localValue}
+          // value={localValue}
+          value={localValue ? localValue : 'null'}
           sx={{ width: 48, '& input': { textAlign: 'center' } }}
         />
       </Stack>

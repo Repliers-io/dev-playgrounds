@@ -6,7 +6,8 @@ import { joiResolver } from '@hookform/resolvers/joi'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-import { type FormParams, useSearch } from 'providers/SearchProvider'
+import { type FormParams } from 'providers/ParamsFormProvider'
+import { useSearch } from 'providers/SearchProvider'
 
 import defaultFormState from './defaults'
 import schema from './schema'
@@ -46,11 +47,12 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const onClear = () => {
-    const { apiUrl, apiKey } = getValues()
+    const { apiUrl, apiKey, tab } = getValues()
     reset({
       ...defaultFormState,
       apiUrl,
-      apiKey
+      apiKey,
+      tab: tab || 'map'
     })
     handleSubmit(onSubmit, onError)()
   }

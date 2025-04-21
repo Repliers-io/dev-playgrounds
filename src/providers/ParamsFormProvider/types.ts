@@ -8,13 +8,16 @@ import { type Filters } from 'services/Search'
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
-  endpoint: '/locations?search=' | '/locations/search?q='
+  endpoint: 'locations' | 'locations/search'
   stats: boolean
   grp: string[]
   tab: string
   sections: string
-  radius: number
+  center: boolean
+  radius: number | null
+  query: string
   queryType: 'area' | 'neighbourhood' | 'city' | 'all'
+  queryFields: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -120,6 +123,15 @@ export const statisticsFields = [
 ] as const
 
 export type StatisticsField = (typeof statisticsFields)[number]
+
+export const locationsFields = [
+  'address',
+  'locationId',
+  'name',
+  'type',
+  'map',
+  'neighborhoods'
+]
 
 export const listingFields: Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???

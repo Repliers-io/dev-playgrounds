@@ -7,7 +7,6 @@ export type LocationsContextType = {
   pages: number
   count: number
   request: string
-  params: Record<string, any>
   statusCode: number | null
   search: (params: any) => Promise<any>
   clearData: () => void

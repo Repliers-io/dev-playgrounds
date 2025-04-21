@@ -2,7 +2,7 @@ import { Box, Stack, TextField } from '@mui/material'
 
 const BoundsPoint = ({
   label,
-  point
+  point = { lng: 0, lat: 0 }
 }: {
   label: string
   point: { lng: number; lat: number }

@@ -1,7 +1,8 @@
 import {
   defaultStatisticsFields,
   type FormParams,
-  listingFields
+  listingFields,
+  locationsFields
 } from './types'
 
 const defaultFormState: Partial<FormParams> = {
@@ -15,9 +16,12 @@ const defaultFormState: Partial<FormParams> = {
   sections: '',
   grp: [],
 
-  endpoint: '/locations?search=',
-  radius: 0,
+  endpoint: 'locations/search',
+  center: false,
+  radius: null,
+  query: '',
   queryType: 'area',
+  queryFields: locationsFields.join(','),
 
   /**
    * request parameters

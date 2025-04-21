@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -53,15 +53,10 @@ const ResponsePanel = ({
   onExpand?: () => void
 }) => {
   const { focusedMarker } = useMapOptions()
-  const searchResponse = useSearch()
-  const locationsResponse = useLocations()
-  const locationsMap = searchResponse.params.tab === 'locations'
-
-  const response = useMemo(
-    () => (locationsMap ? locationsResponse : searchResponse),
-    [locationsMap]
-  )
-
+  const searchContext = useSearch()
+  const locationsContext = useLocations()
+  const locationsTab = searchContext.params.tab === 'locations'
+  const response = locationsTab ? locationsContext : searchContext
   const { size, json, statusCode, request, time, loading } = response
 
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
@@ -90,7 +85,7 @@ const ResponsePanel = ({
   }
 
   useEffect(() => {
-    if (locationsMap) return // Only run this effect if we show listings / statistics
+    if (locationsTab) return // Only run this effect if we show listings / statistics
 
     if (focusedMarker) {
       highlightJsonItem(focusedMarker)
@@ -98,7 +93,7 @@ const ResponsePanel = ({
     } else {
       removeHighlight()
     }
-  }, [focusedMarker, locationsMap])
+  }, [focusedMarker, locationsTab])
 
   return (
     <Box
@@ -166,7 +161,7 @@ const ResponsePanel = ({
               <RequestParser request={request} />
             ) : (
               <Typography color="primary.light" variant="body2">
-                Loading ...
+                {locationsTab ? 'Empty Location ...' : 'Loading ...'}
               </Typography>
             )}
           </Box>

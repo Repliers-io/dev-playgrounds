@@ -16,16 +16,20 @@ const ParamsToggleGroup = ({
   hint,
   link,
   tooltip,
+  exclusive = true,
   options = [],
-  onChange
+  onChange,
+  sx = {}
 }: {
   name: string
   label?: string
   hint?: string
   link?: string
   tooltip?: string
+  exclusive?: boolean
   options: readonly string[]
   onChange?: () => void
+  sx?: object
 }) => {
   const {
     control,
@@ -41,8 +45,10 @@ const ParamsToggleGroup = ({
     _: React.MouseEvent<HTMLElement>,
     newValue: string
   ) => {
-    setValue(name, newValue)
-    onChange?.()
+    if (newValue !== null) {
+      setValue(name, newValue)
+      onChange?.()
+    }
   }
 
   return (
@@ -62,7 +68,7 @@ const ParamsToggleGroup = ({
             <Box sx={{ position: 'relative' }}>
               <ToggleButtonGroup
                 id={name}
-                exclusive
+                exclusive={exclusive}
                 fullWidth
                 size="small"
                 color="primary"
@@ -84,7 +90,8 @@ const ParamsToggleGroup = ({
                     fontSize: '0.75rem',
                     width: 'auto',
                     flexGrow: 1
-                  }
+                  },
+                  ...sx
                 }}
               >
                 {options.map((item) => (
