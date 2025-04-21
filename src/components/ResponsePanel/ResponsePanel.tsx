@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material'
 
+import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import {
@@ -52,7 +53,17 @@ const ResponsePanel = ({
   onExpand?: () => void
 }) => {
   const { focusedMarker } = useMapOptions()
-  const { request, statusCode, json, size, time, loading } = useSearch()
+  const searchResponse = useSearch()
+  const locationsResponse = useLocations()
+  const locationsMap = searchResponse.params.tab === 'locations'
+
+  const response = useMemo(
+    () => (locationsMap ? locationsResponse : searchResponse),
+    [locationsMap]
+  )
+
+  const { size, json, statusCode, request, time, loading } = response
+
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
 
@@ -79,13 +90,15 @@ const ResponsePanel = ({
   }
 
   useEffect(() => {
+    if (locationsMap) return // Only run this effect if we show listings / statistics
+
     if (focusedMarker) {
       highlightJsonItem(focusedMarker)
       scrollToElementByText(focusedMarker)
     } else {
       removeHighlight()
     }
-  }, [focusedMarker])
+  }, [focusedMarker, locationsMap])
 
   return (
     <Box
@@ -163,12 +176,21 @@ const ResponsePanel = ({
                 <CircularProgress size={14} />
               ) : (
                 <Stack direction="row" spacing={1}>
-                  <Typography color="text.hint" variant="body2" noWrap>
-                    {time}ms
-                  </Typography>
-                  <Typography color={formatColor(size)} variant="body2" noWrap>
-                    {formatBytes(size)}
-                  </Typography>
+                  {Boolean(time) && (
+                    <Typography color="text.hint" variant="body2" noWrap>
+                      {time}ms
+                    </Typography>
+                  )}
+
+                  {Boolean(size) && (
+                    <Typography
+                      color={formatColor(size)}
+                      variant="body2"
+                      noWrap
+                    >
+                      {formatBytes(size)}
+                    </Typography>
+                  )}
                 </Stack>
               )}
             </Box>

@@ -1,6 +1,8 @@
-import { type FormParams } from 'providers/SearchProvider'
-
-import { defaultStatisticsFields, listingFields } from './types'
+import {
+  defaultStatisticsFields,
+  type FormParams,
+  listingFields
+} from './types'
 
 const defaultFormState: Partial<FormParams> = {
   /**
@@ -12,6 +14,10 @@ const defaultFormState: Partial<FormParams> = {
   tab: 'map',
   sections: '',
   grp: [],
+
+  endpoint: '/locations?search=',
+  radius: 0,
+  queryType: 'area',
 
   /**
    * request parameters

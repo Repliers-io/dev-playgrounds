@@ -11,14 +11,13 @@ import React, {
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
-
 import {
   type FormParamKeys,
-  type FormParams,
-  type SavedResponse,
-  type SearchContextType
-} from './types'
+  type FormParams
+} from 'providers/ParamsFormProvider'
+import { apiFetch, queryStringOptions } from 'utils/api'
+
+import { type SavedResponse, type SearchContextType } from './types'
 
 export const SearchContext = createContext<SearchContextType | undefined>(
   undefined

@@ -6,7 +6,8 @@ import { Box, Stack } from '@mui/material'
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
 import { useMapOptions } from 'providers/MapOptionsProvider'
-import { type FormParams, useSearch } from 'providers/SearchProvider'
+import { type FormParams } from 'providers/ParamsFormProvider'
+import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
@@ -15,6 +16,7 @@ import {
   ClustersSection,
   CredentialsSection,
   QueryParamsSection,
+  SearchSection,
   StatisticsSection
 } from './sections'
 import { filterQueryParams } from './utils'
@@ -23,6 +25,7 @@ const ParamsPanel = () => {
   const { search, params, polygon } = useSearch()
   const { apiKey } = params
   const { canRenderMap, position } = useMapOptions()
+  const locationsMap = params.tab === 'locations'
 
   const fetchData = async (
     position: MapPosition,
@@ -61,11 +64,16 @@ const ParamsPanel = () => {
   }
 
   useDeepCompareEffect(() => {
-    if (!position) return
     if (!canRenderMap) return
-    if (!params || !Object.keys(params).length) return
-    fetchData(position, params, polygon)
-  }, [position, apiKey, params, polygon, canRenderMap])
+    if (locationsMap) {
+      // we should NOT react on position or polygon changes when in locationsMap mode
+      // fetchLocations
+    } else {
+      if (!position) return
+      if (!params || !Object.keys(params).length) return
+      fetchData(position, params, polygon)
+    }
+  }, [position, apiKey, params, polygon, canRenderMap, locationsMap])
 
   return (
     <Box
@@ -85,9 +93,15 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack spacing={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
-          <QueryParamsSection />
-          <StatisticsSection />
-          <ClustersSection />
+          {!locationsMap ? (
+            <>
+              <QueryParamsSection />
+              <StatisticsSection />
+              <ClustersSection />
+            </>
+          ) : (
+            <SearchSection />
+          )}
           <BoundsSection />
         </Stack>
       </Stack>

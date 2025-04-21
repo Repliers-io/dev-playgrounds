@@ -1,4 +1,24 @@
-import type { ApiQueryParamsAllowedFields, Listing } from 'services/API/types'
+import {
+  type ApiCredentials,
+  type ApiQueryParamsAllowedFields,
+  type Listing
+} from 'services/API/types'
+import { type Filters } from 'services/Search'
+
+export type CustomFormParams = {
+  dynamicClustering: boolean
+  dynamicClusterPrecision: boolean
+  endpoint: '/locations?search=' | '/locations/search?q='
+  stats: boolean
+  grp: string[]
+  tab: string
+  sections: string
+  radius: number
+  queryType: 'area' | 'neighbourhood' | 'city' | 'all'
+}
+
+export type FormParams = Filters & ApiCredentials & CustomFormParams
+export type FormParamKeys = keyof FormParams
 
 export const lastStatusOptions = [
   'Sus',

@@ -1,7 +1,11 @@
-import type { FormParamKeys, FormParams } from 'providers/SearchProvider'
+import {
+  type FormParamKeys,
+  type FormParams
+} from 'providers/ParamsFormProvider'
 import {
   clusterOnlyParams,
   customFormParams,
+  searchOnlyParams,
   statsOnlyParams
 } from 'constants/form'
 
@@ -9,8 +13,9 @@ import {
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
   const fieldsToRemove = [
     ...customFormParams,
+    ...(!params.stats ? statsOnlyParams : []),
     ...(!params.cluster ? clusterOnlyParams : []),
-    ...(!params.stats ? statsOnlyParams : [])
+    ...(params.tab !== 'locations' ? searchOnlyParams : [])
   ]
 
   return Object.entries(params).reduce<Partial<FormParams>>(

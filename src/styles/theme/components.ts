@@ -418,6 +418,7 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
+          minHeight: 0,
           '& .MuiButtonBase-root:first-child': {
             ml: 0
           }
@@ -428,9 +429,16 @@ const components = {
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
-          p: 2,
-          borderRadius: '4px 4px 0 0',
-          lineHeight: toRem(32)
+          m: 0,
+          py: 0,
+          px: 2,
+          minWidth: 0,
+          minHeight: 0,
+          borderRadius: 1,
+          fontWeight: 500,
+          fontSize: '14px',
+          lineHeight: toRem(32),
+          textTransform: 'uppercase'
         })
     }
   },
