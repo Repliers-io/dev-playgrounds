@@ -89,14 +89,14 @@ const ParamsPanel = () => {
         'endpoint',
         'pageNum',
         'resultsPerPage',
-        'queryFields',
-        'radius'
+        'queryFields'
       ])
 
       try {
         await locationsContext.search({
           ...filteredParams,
           ...(params.center && {
+            radius: params.radius,
             lat: position.center?.lat,
             long: position.center?.lng
           })

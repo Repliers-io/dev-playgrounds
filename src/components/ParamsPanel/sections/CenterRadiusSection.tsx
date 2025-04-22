@@ -38,6 +38,11 @@ const CenterRadiusSection = () => {
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
+          <Box>
+            <ParamLabel label="center" />
+            <BoundsPoint label="✛" point={center!} />
+          </Box>
+
           <ParamsRange
             min={0}
             max={100}
@@ -45,11 +50,6 @@ const CenterRadiusSection = () => {
             hint="km"
             onChange={onChange}
           />
-
-          <Box>
-            <ParamLabel label="center" />
-            <BoundsPoint label="✛" point={center!} />
-          </Box>
         </Stack>
       </Box>
     </SectionTemplate>

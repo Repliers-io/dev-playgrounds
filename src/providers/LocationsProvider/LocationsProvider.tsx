@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { set } from 'lodash'
 import queryString from 'query-string'
 
 import { apiFetch, queryStringOptions } from 'utils/api'
