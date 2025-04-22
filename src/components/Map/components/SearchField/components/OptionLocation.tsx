@@ -43,7 +43,7 @@ const OptionLocation = ({
             variant="body1"
             fontWeight={600}
             noWrap
-            sx={{ maxWidth: 250 }}
+            sx={{ maxWidth: 250, lineHeight: 1.4 }}
           >
             {option.name}
           </Typography>
