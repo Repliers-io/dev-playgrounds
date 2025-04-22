@@ -16,7 +16,8 @@ const ParamsToggleGroup = ({
   hint,
   link,
   tooltip,
-  exclusive = true,
+  exclusive = false,
+  allowEmpty = false,
   options = [],
   onChange,
   sx = {}
@@ -27,6 +28,7 @@ const ParamsToggleGroup = ({
   link?: string
   tooltip?: string
   exclusive?: boolean
+  allowEmpty?: boolean
   options: readonly string[]
   onChange?: () => void
   sx?: object
@@ -45,7 +47,7 @@ const ParamsToggleGroup = ({
     _: React.MouseEvent<HTMLElement>,
     newValue: string
   ) => {
-    if (newValue !== null) {
+    if (allowEmpty || newValue !== null) {
       setValue(name, newValue)
       onChange?.()
     }
@@ -87,9 +89,26 @@ const ParamsToggleGroup = ({
                   'button.MuiButtonBase-root': {
                     py: 0.5,
                     px: 0.5,
-                    fontSize: '0.75rem',
+                    flexGrow: 1,
                     width: 'auto',
-                    flexGrow: 1
+                    m: 0,
+                    fontSize: '0.75rem',
+                    border: '0 !important',
+                    position: 'relative',
+
+                    ...(!exclusive && {
+                      '&.Mui-selected::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 8,
+                        left: -1,
+                        width: '1px',
+                        bottom: 8,
+                        bgcolor: 'background.paper',
+                        overflow: 'hidden',
+                        display: 'block'
+                      }
+                    })
                   },
                   ...sx
                 }}

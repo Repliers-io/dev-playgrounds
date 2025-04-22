@@ -6,7 +6,6 @@ import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 
 import { type ApiCluster, type Listing } from 'services/API/types'
 import { type Markers } from 'services/Map'
-import { formatPrice } from 'utils/formatters'
 import {
   getMapUrl,
   getMarkerName,

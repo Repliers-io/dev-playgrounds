@@ -1,32 +1,17 @@
-import { useFormContext } from 'react-hook-form'
-
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
-import { ParamsField } from '../components'
-import ParamsToggleGroup from '../components/ParamToggleButton'
+import { ParamsField, ParamsToggleGroup } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
-const endpoints = [
-  { label: 'locations-search', value: 'locations/search' },
-  { label: 'locations', value: 'locations' }
-]
-
-const locationTypes = [
-  { value: 'any', label: 'Any' },
-  { value: 'area', label: 'Areas' },
-  { value: 'city', label: 'Cities' },
-  { value: 'neighborhood', label: 'Neighborhoods' }
-]
+const endpoints = ['locations/search', 'locations']
+const locationTypes = ['area', 'city', 'neighborhood']
 
 const SearchSection = () => {
   const { onChange, onClear } = useParamsForm()
-  const { watch } = useFormContext()
-  const endpoint = watch('endpoint')
-  const queryType = watch('queryType')
 
   return (
     <SectionTemplate
@@ -48,34 +33,22 @@ const SearchSection = () => {
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
           <ParamsToggleGroup
-            label="endpoint"
+            exclusive
             name="endpoint"
-            options={endpoints.map((option) => option.value)}
+            label="endpoint"
+            options={endpoints}
             onChange={onChange}
             sx={{
-              '& > .MuiToggleButton-root': { flex: 1 },
-              ...(queryType === 'any' && {
-                '& > .MuiToggleButton-root:last-child': {
-                  pointerEvents: 'none',
-                  opacity: 0.3
-                }
-              })
+              '& > .MuiToggleButton-root': { flex: 1 }
             }}
           />
 
           <ParamsToggleGroup
+            allowEmpty
             label="type"
             name="queryType"
-            options={locationTypes.map((option) => option.value)}
+            options={locationTypes}
             onChange={onChange}
-            sx={{
-              ...(endpoint === 'locations' && {
-                '& > .MuiToggleButton-root:first-child': {
-                  pointerEvents: 'none',
-                  opacity: 0.3
-                }
-              })
-            }}
           />
 
           <ParamsField

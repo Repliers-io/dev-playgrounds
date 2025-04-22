@@ -17,10 +17,10 @@ const defaultFormState: Partial<FormParams> = {
   grp: [],
 
   endpoint: 'locations/search',
-  center: true,
+  center: false,
   radius: null,
   query: '',
-  queryType: 'city',
+  queryType: [],
   queryFields: locationsFields.join(','),
 
   /**

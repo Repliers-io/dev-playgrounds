@@ -22,11 +22,11 @@ const SearchField = () => {
   }, [value])
 
   const handleItemClick = (option: any) => {
-    setSearchString(option.name)
-    setValue('endpoint', 'locations')
-    setValue('queryType', option.type, { shouldValidate: true })
-    setValue('query', option.name, { shouldValidate: true })
-    onChange?.()
+    // setSearchString(option.name)
+    // setValue('endpoint', 'locations')
+    // setValue('queryType', option.type, { shouldValidate: true })
+    // setValue('query', option.name, { shouldValidate: true })
+    // onChange?.()
   }
 
   const renderOptionElement = (
@@ -89,6 +89,15 @@ const SearchField = () => {
     commitInput(searchString)
   }
 
+  // const getOptionLabel = (option: any) => {
+  //   switch (option.type) {
+  //     case 'loader':
+  //       return ''
+  //     default:
+  //       return option.name
+  //   }
+  // }
+
   return (
     <Box
       sx={{
@@ -116,6 +125,7 @@ const SearchField = () => {
         onChange={(event, value) => handleChange(value)}
         filterSelectedOptions
         filterOptions={(x) => x}
+        // getOptionLabel={getOptionLabel}
         renderInput={(params) => (
           <TextField
             {...params}
