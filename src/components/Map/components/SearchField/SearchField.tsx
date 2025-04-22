@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Autocomplete, Box, CircularProgress, TextField } from '@mui/material'
@@ -66,15 +66,17 @@ const SearchField = () => {
     []
   )
 
-  const commitInput = useCallback(
-    (input: string) => {
-      setValue('query', input, { shouldValidate: true })
-      if (input && input.length) clearData()
-      onChange?.()
-      setOpen(true)
-    },
-    [setValue, onChange]
-  )
+  const prevQuery = useRef<string>('')
+
+  const commitInput = (input: string) => {
+    setValue('query', input, { shouldValidate: true })
+    if (input && input.length && prevQuery.current !== input) {
+      clearData()
+    }
+    prevQuery.current = input
+    onChange?.()
+    setOpen(true)
+  }
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {

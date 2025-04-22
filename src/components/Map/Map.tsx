@@ -5,6 +5,7 @@ import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
+import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
@@ -49,15 +50,20 @@ const MapRoot = () => {
     setPosition,
     destroyMap
   } = useMapOptions()
+  const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
+
   const listingsDisabled = params.listings === 'false'
+
   const statisticsTab = params.tab === 'stats'
-  const locationsMap = params.tab === 'locations'
-  const listingsMap = params.tab === 'map'
+  const locationsTab = params.tab === 'locations'
+  const listingsTab = params.tab === 'map'
+
   const centerPoint = params.center
+
   const [snackbarMessage, setSnackbarMessage] = useState('')
 
   setMapContainerRef(mapContainerRef)
@@ -118,15 +124,38 @@ const MapRoot = () => {
     }
   }
 
+  const showLocations = () => {
+    const map = mapRef.current
+    if (!map) return
+    if (locations) {
+      MapService.showMarkers({
+        map,
+        listings: locations.map((location) => ({
+          mlsNumber: location.locationId,
+          label: location.name,
+          map: location.map
+        })) as any,
+        onClick: (location: any) => {
+          console.log('marker clicked', location)
+          // focusMarker(location.mlsNumber)
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
 
-    if (listingsMap) {
+    if (listingsTab) {
       showMarkersAndClusters()
     } else {
       // manually delete them all
-      MapService.resetAllMarkers()
+      if (!locations) {
+        MapService.resetAllMarkers()
+      } else {
+        showLocations()
+      }
     }
 
     if (!firstTimeLoaded.current) {
@@ -134,7 +163,7 @@ const MapRoot = () => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count, dynamicClustering, listingsMap])
+  }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
 
   useEffect(() => {
     if (mapVisible && !statisticsTab) mapRef.current?.resize()
@@ -199,8 +228,8 @@ const MapRoot = () => {
       >
         <MapSnackbar message={snackbarMessage} />
         <MapContainer ref={mapContainerRef} />
-        {locationsMap && <SearchField />}
-        {listingsMap && (
+        {locationsTab && <SearchField />}
+        {listingsTab && (
           <MapCounter count={count} loading={loading || !request} />
         )}
 
@@ -214,14 +243,14 @@ const MapRoot = () => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: listingsMap && !listingsDisabled && openDrawer ? 100 : 0,
+            bottom: listingsTab && !listingsDisabled && openDrawer ? 100 : 0,
             position: 'absolute'
           }}
         >
-          {listingsMap && <MapDrawButton />}
+          {listingsTab && <MapDrawButton />}
           <MapNavigation />
           <MapStyleSwitch />
-          {listingsMap && !listingsDisabled && (
+          {listingsTab && !listingsDisabled && (
             <CardsCarouselSwitch
               open={openDrawer}
               onClick={() => setOpenDrawer(!openDrawer)}
@@ -230,7 +259,7 @@ const MapRoot = () => {
         </Stack>
         {centerPoint && <MapCenterPoint />}
       </Box>
-      {listingsMap && <CardsCarousel open={openDrawer && !listingsDisabled} />}
+      {listingsTab && <CardsCarousel open={openDrawer && !listingsDisabled} />}
     </Stack>
   )
 }

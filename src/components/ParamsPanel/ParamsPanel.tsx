@@ -84,12 +84,12 @@ const ParamsPanel = () => {
       const filteredParams = pick(params, [
         'query',
         'queryType',
+        'queryFields',
         'apiKey',
         'apiUrl',
         'endpoint',
         'pageNum',
-        'resultsPerPage',
-        'queryFields'
+        'resultsPerPage'
       ])
 
       try {
