@@ -1,3 +1,5 @@
+import { useForm, useFormContext } from 'react-hook-form'
+
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
@@ -14,6 +16,7 @@ const endpoints = [
 ]
 
 const locationTypes = [
+  { value: 'any', label: 'Any' },
   { value: 'area', label: 'Areas' },
   { value: 'city', label: 'Cities' },
   { value: 'neighborhood', label: 'Neighborhoods' }
@@ -21,6 +24,9 @@ const locationTypes = [
 
 const SearchSection = () => {
   const { onChange, onClear } = useParamsForm()
+  const { watch } = useFormContext()
+  const endpoint = watch('endpoint')
+  const queryType = watch('queryType')
 
   return (
     <SectionTemplate
@@ -46,7 +52,15 @@ const SearchSection = () => {
             name="endpoint"
             options={endpoints.map((option) => option.value)}
             onChange={onChange}
-            sx={{ '& > .MuiToggleButton-root': { flex: 1 } }}
+            sx={{
+              '& > .MuiToggleButton-root': { flex: 1 },
+              ...(queryType === 'any' && {
+                '& > .MuiToggleButton-root:last-child': {
+                  pointerEvents: 'none',
+                  opacity: 0.3
+                }
+              })
+            }}
           />
 
           <ParamsToggleGroup
@@ -54,6 +68,14 @@ const SearchSection = () => {
             name="queryType"
             options={locationTypes.map((option) => option.value)}
             onChange={onChange}
+            sx={{
+              ...(endpoint === 'locations' && {
+                '& > .MuiToggleButton-root:first-child': {
+                  pointerEvents: 'none',
+                  opacity: 0.3
+                }
+              })
+            }}
           />
 
           <ParamsField

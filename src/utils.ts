@@ -6,6 +6,7 @@ export const multiSelectFields = [
   'lastStatus',
   'propertyType',
   'grp'
+  // 'queryType'
 ] as const
 
 export const booleanFields = [

@@ -48,7 +48,12 @@ const OptionLocation = ({
             {option.name}
           </Typography>
           {formattedAddress && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              noWrap
+              sx={{ maxWidth: 290 }}
+            >
               {formattedAddress}
             </Typography>
           )}

@@ -23,6 +23,7 @@ const SearchField = () => {
   const handleItemClick = (option: any) => {
     setSearchString(option.name)
     setValue('endpoint', 'locations')
+    setValue('queryType', option.type, { shouldValidate: true })
     setValue('query', option.name, { shouldValidate: true })
     onChange?.()
   }

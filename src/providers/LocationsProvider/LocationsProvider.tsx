@@ -54,7 +54,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     rest.type = queryType || ''
     if (endpointType === 'search') {
       rest.q = query
-      rest.type = queryType || ''
+      rest.type = queryType !== 'any' ? queryType : null
     } else {
       rest[queryType] = query
     }
