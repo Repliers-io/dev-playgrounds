@@ -2,21 +2,23 @@ import React from 'react'
 
 import { Box } from '@mui/material'
 
-import { toRem } from 'utils/theme'
-
 const OptionItem = ({ children, ...props }: { children: React.ReactNode }) => (
-  <li {...props}>
+  // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+  <li
+    {...props}
+    onClick={(e) => {
+      e.stopPropagation()
+    }}
+  >
     <Box
       sx={{
         p: 1,
-        py: 1.5,
+        py: 0.5,
         width: '100%',
-        borderRadius: 2,
-        fontSize: toRem(14),
-        bgcolor: 'background.default',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden'
+        borderRadius: 1,
+        border: 1,
+        borderColor: 'divider',
+        bgcolor: 'background.default'
       }}
     >
       {children}

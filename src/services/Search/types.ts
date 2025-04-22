@@ -22,6 +22,7 @@ export const soldWithin = [...daysOnMarket] as const
 
 export type DaysOnMarket = (typeof daysOnMarket)[number]
 export type SoldWithin = (typeof soldWithin)[number]
+
 export interface Filters {
   boardId?: number | null
   sortBy?: ApiSortBy
@@ -56,4 +57,5 @@ export interface Filters {
   clusterLimit?: number
   fields?: string
   statistics?: string
+  resultsPerPage?: number
 }

@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState
 } from 'react'
+import { set } from 'lodash'
 import queryString from 'query-string'
 
 import { apiFetch, queryStringOptions } from 'utils/api'
@@ -19,7 +20,8 @@ export const LocationsContext = createContext<LocationsContextType | undefined>(
 const emptySavedResponse: SavedResponse = {
   count: 0,
   page: 0,
-  pages: 0
+  pages: 0,
+  locations: []
 }
 
 const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
@@ -34,12 +36,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
   const disabled = useRef(false)
 
   const clearData = useCallback(() => {
-    setRequest('')
-    setTime(0)
     setStatusCode(null)
     setSaved(emptySavedResponse)
-    setJson(null)
-    setSize(0)
   }, [])
 
   const previousRequest = useRef<string>('')
@@ -63,7 +61,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     }
     rest.fields = queryFields || ''
 
-    const endpointUrl = `${apiUrl}${endpoint}`
+    const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)
     const request = `${endpointUrl}?${getParamsString}`
 
@@ -116,12 +114,13 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       }
 
       if (response.ok && !disabled.current) {
-        const { count, page, numPages } = jsonResponse
+        const { count, page, numPages, locations } = jsonResponse
 
         const remappedResponse: SavedResponse = {
           page,
           pages: numPages,
-          count
+          count,
+          locations
         }
 
         setSaved(remappedResponse)

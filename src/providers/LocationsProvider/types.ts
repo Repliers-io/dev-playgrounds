@@ -1,4 +1,11 @@
-export type LocationsContextType = {
+export type SavedResponse = {
+  count: number
+  page: number
+  pages: number
+  locations: any[]
+}
+
+export type LocationsContextType = SavedResponse & {
   loading: boolean
   time: number
   json: any
@@ -10,10 +17,4 @@ export type LocationsContextType = {
   statusCode: number | null
   search: (params: any) => Promise<any>
   clearData: () => void
-}
-
-export type SavedResponse = {
-  count: number
-  page: number
-  pages: number
 }

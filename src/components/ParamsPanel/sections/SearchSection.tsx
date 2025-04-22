@@ -9,8 +9,8 @@ import ParamsToggleGroup from '../components/ParamToggleButton'
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = [
-  { label: 'locations-search', value: '/locations/search' },
-  { label: 'locations', value: '/locations' }
+  { label: 'locations-search', value: 'locations/search' },
+  { label: 'locations', value: 'locations' }
 ]
 
 const locationTypes = [
@@ -41,16 +41,6 @@ const SearchSection = () => {
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
-          <Stack spacing={1} direction="row" justifyContent="space-between">
-            <ParamsField
-              name="pageNum"
-              hint="docs"
-              link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
-              onChange={onChange}
-            />
-            <ParamsField name="resultsPerPage" onChange={onChange} />
-          </Stack>
-
           <ParamsToggleGroup
             label="endpoint"
             name="endpoint"

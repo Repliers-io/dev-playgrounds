@@ -17,10 +17,10 @@ const defaultFormState: Partial<FormParams> = {
   grp: [],
 
   endpoint: 'locations/search',
-  center: false,
+  center: true,
   radius: null,
   query: '',
-  queryType: 'area',
+  queryType: 'city',
   queryFields: locationsFields.join(','),
 
   /**
@@ -41,6 +41,7 @@ const defaultFormState: Partial<FormParams> = {
   minBaths: undefined,
   minGarageSpaces: undefined,
   minParkingSpaces: undefined,
+  resultsPerPage: undefined,
   cluster: undefined,
   clusterLimit: 100,
   clusterPrecision: 10,
