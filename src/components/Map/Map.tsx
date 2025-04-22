@@ -19,6 +19,7 @@ import {
 import {
   CardsCarousel,
   CardsCarouselSwitch,
+  MapCenterPoint,
   MapContainer,
   MapCounter,
   MapDrawButton,
@@ -56,6 +57,7 @@ const MapRoot = () => {
   const statisticsTab = params.tab === 'stats'
   const locationsMap = params.tab === 'locations'
   const listingsMap = params.tab === 'map'
+  const centerPoint = params.center
   const [snackbarMessage, setSnackbarMessage] = useState('')
 
   setMapContainerRef(mapContainerRef)
@@ -226,6 +228,7 @@ const MapRoot = () => {
             />
           )}
         </Stack>
+        {centerPoint && <MapCenterPoint />}
       </Box>
       {listingsMap && <CardsCarousel open={openDrawer && !listingsDisabled} />}
     </Stack>

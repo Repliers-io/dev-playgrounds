@@ -18,6 +18,7 @@ const SearchField = () => {
 
   useEffect(() => {
     setSearchString(value)
+    if (!value) setOpen(false)
   }, [value])
 
   const handleItemClick = (option: any) => {
@@ -68,6 +69,7 @@ const SearchField = () => {
   const commitInput = useCallback(
     (input: string) => {
       setValue('query', input, { shouldValidate: true })
+      if (input && input.length) clearData()
       onChange?.()
       setOpen(true)
     },
@@ -90,7 +92,7 @@ const SearchField = () => {
       sx={{
         top: 16,
         left: 16,
-        width: 'min(calc(100% - 32px), 360px)',
+        width: 'min(calc(100% - 32px), 320px)',
         position: 'absolute',
         borderRadius: 1,
         boxShadow: 1

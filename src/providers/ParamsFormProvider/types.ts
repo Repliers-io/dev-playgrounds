@@ -124,14 +124,7 @@ export const statisticsFields = [
 
 export type StatisticsField = (typeof statisticsFields)[number]
 
-export const locationsFields = [
-  'address',
-  'locationId',
-  'name',
-  'type',
-  'map',
-  'neighborhoods'
-]
+export const locationsFields = ['locationId', 'address', 'name', 'type', 'map']
 
 export const listingFields: Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???

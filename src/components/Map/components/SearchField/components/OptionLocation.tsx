@@ -43,7 +43,7 @@ const OptionLocation = ({
             variant="body1"
             fontWeight={600}
             noWrap
-            sx={{ maxWidth: 290 }}
+            sx={{ maxWidth: 250 }}
           >
             {option.name}
           </Typography>
@@ -52,7 +52,7 @@ const OptionLocation = ({
               variant="body2"
               color="text.secondary"
               noWrap
-              sx={{ maxWidth: 290 }}
+              sx={{ maxWidth: 250 }}
             >
               {formattedAddress}
             </Typography>

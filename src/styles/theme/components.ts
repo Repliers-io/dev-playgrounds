@@ -334,6 +334,7 @@ const components = {
         }),
       popper: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
+          top: '16px !important',
           '& .MuiAutocomplete-listbox': {
             pb: 0,
             '& .MuiAutocomplete-option': {
