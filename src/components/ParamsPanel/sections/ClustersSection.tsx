@@ -15,6 +15,7 @@ const ClustersSection = () => {
   const { watch, setValue } = useFormContext()
   const { position } = useMapOptions()
 
+  // NOTE: rerender section on change
   watch('dynamicClustering')
   const clustering = watch('cluster')
   const dynamicPrecision = watch('dynamicClusterPrecision')

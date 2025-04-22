@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
-import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
+import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
@@ -20,12 +20,14 @@ import {
 import {
   CardsCarousel,
   CardsCarouselSwitch,
+  MapCenterPoint,
   MapContainer,
   MapCounter,
   MapDrawButton,
   MapNavigation,
   MapSnackbar,
-  MapStyleSwitch
+  MapStyleSwitch,
+  SearchField
 } from './components'
 
 const warningMessageListingsDisabled =
@@ -48,13 +50,20 @@ const MapRoot = () => {
     setPosition,
     destroyMap
   } = useMapOptions()
+  const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
-  const { watch } = useFormContext()
-  const tab = watch('tab')
+
   const listingsDisabled = params.listings === 'false'
+
+  const statisticsTab = params.tab === 'stats'
+  const locationsTab = params.tab === 'locations'
+  const listingsTab = params.tab === 'map'
+
+  const centerPoint = params.center
+
   const [snackbarMessage, setSnackbarMessage] = useState('')
 
   setMapContainerRef(mapContainerRef)
@@ -93,10 +102,9 @@ const MapRoot = () => {
     initializeMap(container)
   }
 
-  useEffect(() => {
+  const showMarkersAndClusters = () => {
     const map = mapRef.current
     if (!map) return
-
     // Show clusters when either:
     // 1. Clusters exist AND auto-switch is disabled, OR
     // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
@@ -113,9 +121,41 @@ const MapRoot = () => {
           focusMarker(listing.mlsNumber)
         }
       })
+    }
+  }
+
+  const showLocations = () => {
+    const map = mapRef.current
+    if (!map) return
+    if (locations) {
+      MapService.showMarkers({
+        map,
+        listings: locations.map((location) => ({
+          mlsNumber: location.locationId,
+          label: location.name,
+          map: location.map
+        })) as any,
+        onClick: (location: any) => {
+          console.log('marker clicked', location)
+          // focusMarker(location.mlsNumber)
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    if (listingsTab) {
+      showMarkersAndClusters()
     } else {
       // manually delete them all
-      MapService.resetAllMarkers()
+      if (!locations) {
+        MapService.resetAllMarkers()
+      } else {
+        showLocations()
+      }
     }
 
     if (!firstTimeLoaded.current) {
@@ -123,11 +163,11 @@ const MapRoot = () => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count, dynamicClustering])
+  }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
 
   useEffect(() => {
-    if (mapVisible && tab === 'map') mapRef.current?.resize()
-  }, [mapVisible, tab])
+    if (mapVisible && !statisticsTab) mapRef.current?.resize()
+  }, [mapVisible, statisticsTab])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
@@ -188,7 +228,10 @@ const MapRoot = () => {
       >
         <MapSnackbar message={snackbarMessage} />
         <MapContainer ref={mapContainerRef} />
-        <MapCounter count={count} loading={loading || !request} />
+        {locationsTab && <SearchField />}
+        {listingsTab && (
+          <MapCounter count={count} loading={loading || !request} />
+        )}
 
         <Stack
           spacing={2}
@@ -200,22 +243,23 @@ const MapRoot = () => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: openDrawer && !listingsDisabled ? 100 : 0,
+            bottom: listingsTab && !listingsDisabled && openDrawer ? 100 : 0,
             position: 'absolute'
           }}
         >
-          <MapDrawButton />
+          {listingsTab && <MapDrawButton />}
           <MapNavigation />
           <MapStyleSwitch />
-          {!listingsDisabled && (
+          {listingsTab && !listingsDisabled && (
             <CardsCarouselSwitch
               open={openDrawer}
               onClick={() => setOpenDrawer(!openDrawer)}
             />
           )}
         </Stack>
+        {centerPoint && <MapCenterPoint />}
       </Box>
-      <CardsCarousel open={openDrawer && !listingsDisabled} />
+      {listingsTab && <CardsCarousel open={openDrawer && !listingsDisabled} />}
     </Stack>
   )
 }

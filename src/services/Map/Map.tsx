@@ -39,13 +39,13 @@ export class MapService {
   }): void {
     this.resetClusters()
 
-    listings.forEach((property) => {
-      const { mlsNumber, listPrice, status } = property
+    listings.forEach((item) => {
+      const { mlsNumber, status } = item
 
-      const propertyCenter = property.map
+      const propertyCenter = item.map
         ? {
-            lng: Number(property.map.longitude),
-            lat: Number(property.map.latitude)
+            lng: Number(item.map.longitude),
+            lat: Number(item.map.latitude)
           }
         : null
       if (!propertyCenter) return
@@ -53,19 +53,14 @@ export class MapService {
       const singleViewOnMap = this.markers[mlsNumber]
       if (singleViewOnMap) return
 
-      const label = formatPrice(listPrice)
-      const link = ''
-
       const markerElement = this.createMarkerElement({
         id: getMarkerName(mlsNumber),
-        link,
-        label,
         status,
         size: 'point',
         onClick: (e: MouseEvent) => {
           // Prevent redirect on click
           e.preventDefault()
-          onClick?.(property)
+          onClick?.(item)
         }
       })
 
@@ -73,7 +68,7 @@ export class MapService {
         .setLngLat(propertyCenter)
         .addTo(map)
 
-      this.addMarker(property.mlsNumber, marker)
+      this.addMarker(item.mlsNumber, marker)
     })
 
     // Clearing Marker Residues

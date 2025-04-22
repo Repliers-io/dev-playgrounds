@@ -1,12 +1,14 @@
 import type { Position } from 'geojson'
 
-import type {
-  ApiCluster,
-  ApiCredentials,
-  ApiQueryResponse,
-  Listing
+import {
+  type ApiCluster,
+  type ApiQueryResponse,
+  type Listing
 } from 'services/API/types'
-import { type Filters } from 'services/Search'
+import {
+  type FormParamKeys,
+  type FormParams
+} from 'providers/ParamsFormProvider'
 
 export type SavedResponse = {
   count: number
@@ -16,18 +18,6 @@ export type SavedResponse = {
   clusters: ApiCluster[]
   statistics: { [key: string]: any }
 }
-
-export type CustomFormParams = {
-  dynamicClustering: boolean
-  dynamicClusterPrecision: boolean
-  stats: boolean
-  grp: string[]
-  tab: string
-  sections: string
-}
-
-export type FormParams = Filters & ApiCredentials & CustomFormParams
-export type FormParamKeys = keyof FormParams
 
 export type SearchContextType = SavedResponse & {
   loading: boolean

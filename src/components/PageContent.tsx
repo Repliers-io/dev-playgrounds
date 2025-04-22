@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import React from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import { Container, Stack } from '@mui/material'
+import { Box, Stack, Tab, Tabs } from '@mui/material'
 
-import ParamsFormProvider from 'providers/ParamsFormProvider'
-import SelectOptionsProvider from 'providers/SelectOptionsProvider'
-import { apiFields, apiFieldsMappings } from 'constants/form'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import MapPanel from './MapPanel'
 import ParamsPanel from './ParamsPanel'
@@ -12,27 +12,79 @@ import ResponsePanel from './ResponsePanel'
 
 const PageContent = () => {
   const [expandedResponse, setExpandedResponse] = useState(false)
+  const { setValue, watch } = useFormContext()
+  const tab = watch('tab')
+
+  const { onChange } = useParamsForm()
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+    setValue('tab', newValue)
+    onChange?.()
+  }
 
   return (
-    <Container maxWidth="xl">
+    <Box>
       <Stack
-        spacing={2.5}
+        spacing={3}
         direction="row"
-        justifyContent="stretch"
-        sx={{ height: 'calc(100vh - 69px)', minHeight: 500 }}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        sx={{
+          p: '11.5px 26px',
+          bgcolor: '#000',
+          mb: 1.5
+        }}
       >
-        <SelectOptionsProvider fields={apiFields} mappings={apiFieldsMappings}>
-          <ParamsFormProvider>
-            <ParamsPanel />
-            <MapPanel collapsed={expandedResponse} />
-          </ParamsFormProvider>
-        </SelectOptionsProvider>
-        <ResponsePanel
-          expanded={expandedResponse}
-          onExpand={() => setExpandedResponse(!expandedResponse)}
+        <img
+          width="135"
+          height="24"
+          alt="Repliers"
+          src="https://files.readme.io/1b52edf-small-RepliersLogo_1.png"
+          style={{ display: 'block' }}
         />
+
+        <Tabs
+          value={tab}
+          onChange={handleChange}
+          TabIndicatorProps={{ sx: { display: 'none' } }}
+          sx={{
+            '& .MuiTab-root': {
+              mx: 0.5,
+              height: 42,
+              borderRadius: 8,
+              color: 'common.white',
+              '&.Mui-selected': {
+                border: 0,
+                color: 'common.white',
+                bgcolor: '#FFF3'
+              }
+            }
+          }}
+        >
+          <Tab label="Locations" value="locations" />
+          <Tab label="Listings" value="map" />
+          <Tab label="Statistics" value="stats" />
+        </Tabs>
+
+        <Box sx={{ width: '135px' }} />
       </Stack>
-    </Container>
+      <Box sx={{ px: 2.5 }}>
+        <Stack
+          spacing={2.5}
+          direction="row"
+          justifyContent="stretch"
+          sx={{ height: 'calc(100vh - 89px)', minHeight: 500 }}
+        >
+          <ParamsPanel />
+          <MapPanel collapsed={expandedResponse} />
+
+          <ResponsePanel
+            expanded={expandedResponse}
+            onExpand={() => setExpandedResponse(!expandedResponse)}
+          />
+        </Stack>
+      </Box>
+    </Box>
   )
 }
 
