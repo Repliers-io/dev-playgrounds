@@ -93,8 +93,14 @@ const ParamsPanel = () => {
       ])
 
       try {
+        const locationParams =
+          filteredParams.endpoint === 'locations'
+            ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
+            : {}
+
         await locationsContext.search({
           ...filteredParams,
+          ...locationParams,
           ...(params.center && {
             radius: params.radius,
             lat: position.center?.lat,

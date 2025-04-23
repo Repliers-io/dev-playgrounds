@@ -40,6 +40,7 @@ const SearchField = () => {
       if (value.length >= minCharsToSuggest) {
         setValue('query', value, { shouldValidate: true })
         prevQuery.current = value
+        setOpen(true)
         onChange()
       }
     }, debounceDelay)
@@ -81,6 +82,16 @@ const SearchField = () => {
     update(option.name)
   }
 
+  const handleBoundsClick = (option: any) => {
+    setValue('locationId', option.locationId)
+    setValue('area', null)
+    setValue('city', null)
+    setValue('neighborhood', null)
+    // setValue('queryType', [option.type])
+    setValue('endpoint', 'locations')
+    onChange()
+  }
+
   const renderInputElement = (params: any) => {
     return (
       <TextField
@@ -120,10 +131,10 @@ const SearchField = () => {
       <OptionLocation
         option={option}
         showBoundsButton={!locationsEndpoint}
-        onClick={(e) => {
-          e.stopPropagation()
-          update(option.name)
+        onClick={() => {
+          if (!locationsEndpoint) update(option.name)
         }}
+        onBoundsClick={() => handleBoundsClick(option)}
         {...props}
         key={option.locationId}
       />

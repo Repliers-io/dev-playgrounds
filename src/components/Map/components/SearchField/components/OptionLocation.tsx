@@ -13,12 +13,14 @@ import OptionItem from './OptionItem'
 const OptionLocation = ({
   option,
   showBoundsButton = false,
-  onClick = () => {},
+  onClick,
+  onBoundsClick,
   ...props
 }: {
   option: any
   showBoundsButton?: boolean
-  onClick?: React.MouseEventHandler<HTMLLIElement>
+  onClick?: (e: React.MouseEvent<HTMLLIElement>) => void
+  onBoundsClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }) => {
   const { address = {} } = option
   const addrScale =
@@ -38,12 +40,14 @@ const OptionLocation = ({
         ? LocationCityIcon
         : CropFreeIcon
 
-  const handleClick = (e: any) => {
-    e.stopPropagation()
-  }
-
   return (
-    <OptionItem {...props} onClick={onClick}>
+    <OptionItem
+      {...props}
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick?.(e)
+      }}
+    >
       <Stack spacing={1} direction="row" width="100%" alignItems="center">
         <Icon />
         <Stack>
@@ -70,7 +74,10 @@ const OptionLocation = ({
           <IconButton
             size="small"
             sx={{ ml: 'auto', mr: -0.5 }}
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation()
+              onBoundsClick?.(e)
+            }}
           >
             <HighlightAltIcon sx={{ fontSize: 18 }} />
           </IconButton>
