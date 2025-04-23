@@ -43,13 +43,7 @@ const CenterRadiusSection = () => {
             <BoundsPoint label="✛" point={center!} />
           </Box>
 
-          <ParamsRange
-            min={0}
-            max={100}
-            name="radius"
-            hint="km"
-            onChange={onChange}
-          />
+          <ParamsRange min={0} max={100} name="radius" hint="km" />
         </Stack>
       </Box>
     </SectionTemplate>

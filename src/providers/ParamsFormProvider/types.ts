@@ -18,6 +18,10 @@ export type CustomFormParams = {
   query: string
   queryType: ('area' | 'neighbourhood' | 'city')[]
   queryFields: string
+  locationId: string
+  area: string
+  city: string
+  neighborhood: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams

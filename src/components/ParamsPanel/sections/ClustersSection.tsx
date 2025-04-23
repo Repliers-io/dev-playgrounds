@@ -11,9 +11,9 @@ import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const ClustersSection = () => {
-  const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
   const { position } = useMapOptions()
+  const { onChange } = useParamsForm()
 
   // NOTE: rerender section on change
   watch('dynamicClustering')
@@ -65,14 +65,12 @@ const ClustersSection = () => {
           max={20}
           name="clusterPrecision"
           disabled={dynamicPrecision}
-          onChange={onChange}
         />
         <ParamsRange
           min={1}
           max={200}
           name="clusterLimit"
           disabled={!clustering}
-          onChange={onChange}
         />
       </Stack>
     </SectionTemplate>

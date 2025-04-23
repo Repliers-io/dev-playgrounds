@@ -40,7 +40,13 @@ export const statsOnlyParams: (keyof FormParams)[] = [
 ]
 
 export const searchOnlyParams: (keyof FormParams)[] = [
-  'radius',
   'endpoint',
-  'queryType'
+  'query',
+  'queryType',
+  'queryFields',
+  'locationId',
+  'radius',
+  'area',
+  'city',
+  'neighborhood'
 ]
