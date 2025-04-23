@@ -58,8 +58,8 @@ const MapRoot = () => {
 
   const listingsDisabled = params.listings === 'false'
 
-  const statisticsTab = params.tab === 'stats'
   const locationsTab = params.tab === 'locations'
+  const statisticsTab = params.tab === 'stats'
   const listingsTab = params.tab === 'map'
 
   const centerPoint = params.center

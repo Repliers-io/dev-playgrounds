@@ -19,7 +19,7 @@ const PageContent = () => {
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue('tab', newValue)
-    onChange?.()
+    onChange()
   }
 
   return (

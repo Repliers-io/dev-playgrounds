@@ -12,7 +12,7 @@ const DisabledResults = () => {
 
   const handleClick = () => {
     setValue('stats', true)
-    onChange?.()
+    onChange()
 
     document.getElementById('stats-section')?.scrollIntoView({
       behavior: 'smooth',

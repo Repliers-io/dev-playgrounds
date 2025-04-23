@@ -1,7 +1,10 @@
+import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, MenuItem, TextField } from '@mui/material'
+
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import ParamLabel from './ParamsLabel'
 import { endIconStyles } from './ParamsMultiSelect'
@@ -12,8 +15,7 @@ const ParamsSelect = ({
   hint,
   link,
   tooltip,
-  options = [],
-  onChange
+  options = []
 }: {
   name: string
   label?: string
@@ -21,20 +23,20 @@ const ParamsSelect = ({
   link?: string
   tooltip?: string
   options: readonly string[]
-  onChange?: () => void
 }) => {
   const {
     control,
     setValue,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
   const handleClearClick = () => {
     setValue(name, '')
-    onChange?.()
+    onChange()
   }
 
   return (
@@ -63,7 +65,7 @@ const ParamsSelect = ({
                 value={field.value || ''} // Ensure value is always a string
                 onChange={(e) => {
                   field.onChange(e)
-                  onChange?.()
+                  onChange()
                 }}
                 slotProps={{
                   select: {

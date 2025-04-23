@@ -8,6 +8,8 @@ import {
   ToggleButtonGroup
 } from '@mui/material'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import ParamLabel from './ParamsLabel'
 
 const ParamsToggleGroup = ({
@@ -19,7 +21,6 @@ const ParamsToggleGroup = ({
   exclusive = false,
   allowEmpty = false,
   options = [],
-  onChange,
   sx = {}
 }: {
   name: string
@@ -30,7 +31,6 @@ const ParamsToggleGroup = ({
   exclusive?: boolean
   allowEmpty?: boolean
   options: readonly string[]
-  onChange?: () => void
   sx?: object
 }) => {
   const {
@@ -38,6 +38,7 @@ const ParamsToggleGroup = ({
     setValue,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
@@ -49,7 +50,7 @@ const ParamsToggleGroup = ({
   ) => {
     if (allowEmpty || newValue !== null) {
       setValue(name, newValue)
-      onChange?.()
+      onChange()
     }
   }
 

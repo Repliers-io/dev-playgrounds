@@ -2,7 +2,6 @@ import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined'
 import { Button, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
-import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import { ParamsField } from '../components'
@@ -10,7 +9,6 @@ import { ParamsField } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const CredentialsSection = () => {
-  const { onChange } = useParamsForm()
   const { centerMap } = useMapOptions()
   const {
     params: { apiKey, apiUrl }
@@ -44,9 +42,8 @@ const CredentialsSection = () => {
           name="apiKey"
           hint="* HTTP Header"
           label="REPILERS-API-KEY"
-          onChange={onChange}
         />
-        <ParamsField name="apiUrl" noClear onChange={onChange} />
+        <ParamsField name="apiUrl" noClear />
       </Stack>
     </SectionTemplate>
   )

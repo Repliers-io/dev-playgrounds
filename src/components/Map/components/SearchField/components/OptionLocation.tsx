@@ -1,20 +1,24 @@
 import React from 'react'
 
 import CropFreeIcon from '@mui/icons-material/CropFree'
+import HighlightAltIcon from '@mui/icons-material/HighlightAlt'
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
-import { Stack, Typography } from '@mui/material'
+import { IconButton, Stack, Typography } from '@mui/material'
 
 import { joinNonEmpty } from 'utils/strings'
 
 import OptionItem from './OptionItem'
 
 const OptionLocation = ({
-  props,
-  option
+  option,
+  showBoundsButton = false,
+  onClick = () => {},
+  ...props
 }: {
-  props: React.HTMLAttributes<HTMLLIElement>
   option: any
+  showBoundsButton?: boolean
+  onClick?: React.MouseEventHandler<HTMLLIElement>
 }) => {
   const { address = {} } = option
   const addrScale =
@@ -34,8 +38,12 @@ const OptionLocation = ({
         ? LocationCityIcon
         : CropFreeIcon
 
+  const handleClick = (e: any) => {
+    e.stopPropagation()
+  }
+
   return (
-    <OptionItem {...props}>
+    <OptionItem {...props} onClick={onClick}>
       <Stack spacing={1} direction="row" width="100%" alignItems="center">
         <Icon />
         <Stack>
@@ -43,7 +51,7 @@ const OptionLocation = ({
             variant="body1"
             fontWeight={600}
             noWrap
-            sx={{ maxWidth: 250, lineHeight: 1.4 }}
+            sx={{ maxWidth: 200, lineHeight: 1.4 }}
           >
             {option.name}
           </Typography>
@@ -52,12 +60,21 @@ const OptionLocation = ({
               variant="body2"
               color="text.secondary"
               noWrap
-              sx={{ maxWidth: 250 }}
+              sx={{ maxWidth: 200 }}
             >
               {formattedAddress}
             </Typography>
           )}
         </Stack>
+        {showBoundsButton && (
+          <IconButton
+            size="small"
+            sx={{ ml: 'auto', mr: -0.5 }}
+            onClick={handleClick}
+          >
+            <HighlightAltIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        )}
       </Stack>
     </OptionItem>
   )

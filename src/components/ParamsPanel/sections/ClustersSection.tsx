@@ -24,14 +24,14 @@ const ClustersSection = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue('cluster', event.target.checked ? true : null)
-    onChange?.()
+    onChange()
   }
 
   useEffect(() => {
     if (position?.zoom && clustering && dynamicPrecision) {
       const roundedZoom = Math.round(position.zoom + 2)
       setValue('clusterPrecision', roundedZoom)
-      onChange?.()
+      onChange()
     }
   }, [position?.zoom, clustering, dynamicPrecision])
 
@@ -54,12 +54,10 @@ const ClustersSection = () => {
           <ParamsCheckbox
             name="dynamicClustering"
             label="Auto disable clusters at street level"
-            onChange={onChange}
           />
           <ParamsCheckbox
             name="dynamicClusterPrecision"
             label="Auto adjust precision based on zoom level"
-            onChange={onChange}
           />
         </Stack>
         <ParamsRange

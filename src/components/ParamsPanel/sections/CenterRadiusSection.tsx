@@ -22,7 +22,7 @@ const CenterRadiusSection = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue('center', event.target.checked)
-    onChange?.()
+    onChange()
   }
 
   return (

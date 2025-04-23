@@ -10,6 +10,8 @@ import {
   type TextFieldProps
 } from '@mui/material'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import ParamLabel from './ParamsLabel'
 
 type InputProps = TextFieldProps & {
@@ -20,7 +22,6 @@ type InputProps = TextFieldProps & {
   tooltip?: string
   noClear?: boolean
   disabled?: boolean
-  onChange?: () => void
 }
 
 const ParamsField: React.FC<InputProps> = ({
@@ -31,7 +32,6 @@ const ParamsField: React.FC<InputProps> = ({
   tooltip,
   type = 'text',
   noClear = false,
-  onChange,
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -42,11 +42,13 @@ const ParamsField: React.FC<InputProps> = ({
     getValues,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
+
   const value = getValues(name)
 
   const handleFocus = () => {
     trigger(name)
-    onChange?.()
+    onChange()
   }
 
   // eslint-disable-next-line no-param-reassign
@@ -55,14 +57,14 @@ const ParamsField: React.FC<InputProps> = ({
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault() // Prevent form submission
-      onChange?.()
+      onChange()
     }
   }
 
   const handleClearClick = () => {
     setValue(name, '')
     inputRef.current?.focus()
-    onChange?.()
+    onChange()
   }
 
   return (

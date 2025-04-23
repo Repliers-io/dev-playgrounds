@@ -15,7 +15,7 @@ const StatPresets = () => {
     })
     // Enable the statistics section
     setValue('stats', true)
-    onChange?.()
+    onChange()
 
     document.getElementById('stats-section')?.scrollIntoView({
       behavior: 'smooth',

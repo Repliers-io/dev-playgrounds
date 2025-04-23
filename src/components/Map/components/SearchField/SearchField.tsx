@@ -1,22 +1,30 @@
 import React, { useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Autocomplete, Box, CircularProgress, TextField } from '@mui/material'
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  debounce,
+  TextField
+} from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
+import { useSearch } from 'providers/SearchProvider'
 
 import { OptionGroup, OptionLoader, OptionLocation } from './components'
 
 const minCharsToSuggest = 3
+const debounceDelay = 300
 
 const SearchField = () => {
   const { onChange } = useParamsForm()
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
-
-  const initialValue =
-    typeof getValues('query') === 'string' ? getValues('query') : ''
+  const { params } = useSearch()
+  const initialValue = params.query || ''
+  const locationsEndpoint = params.endpoint === 'locations'
 
   const [searchString, setSearchString] = useState(initialValue)
   const [open, setOpen] = useState(!!initialValue)
@@ -24,24 +32,34 @@ const SearchField = () => {
 
   const handleInputChange = (_: React.SyntheticEvent | null, value: string) => {
     setSearchString(value)
-    const open = value.length >= minCharsToSuggest
-    setOpen(open)
-    if (!open) clearData()
+    if (value.length < minCharsToSuggest) clearData()
   }
+
+  const debouncedCommitInput = useRef(
+    debounce((value: string) => {
+      if (value.length >= minCharsToSuggest) {
+        setValue('query', value, { shouldValidate: true })
+        prevQuery.current = value
+        onChange()
+      }
+    }, debounceDelay)
+  ).current
 
   const commitInput = (input: string) => {
+    debouncedCommitInput.clear()
+
     setValue('query', input, { shouldValidate: true })
-    if (input && input.length && prevQuery.current !== input) {
-      clearData()
-    }
     prevQuery.current = input
-    onChange?.()
+    onChange()
   }
 
-  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget
     if (event.key === 'Enter') {
       event.preventDefault()
-      commitInput(searchString)
+      commitInput(value)
+    } else if (value.length >= minCharsToSuggest) {
+      debouncedCommitInput(value)
     }
   }
 
@@ -56,43 +74,40 @@ const SearchField = () => {
     setValue('query', value || searchString, {
       shouldValidate: true
     })
-    onChange?.()
+    onChange()
   }
 
   const handleChange = (_: React.SyntheticEvent, option: any | null) => {
     update(option.name)
   }
 
-  const renderInputElement = (params: any) => (
-    <TextField
-      {...params}
-      variant="filled"
-      placeholder={'Search for a location...'}
-      autoComplete="off"
-      slotProps={{
-        input: {
-          ...params.InputProps,
-          onKeyDown: handleInputKeyDown,
-          onBlur: handleInputBlur,
-          endAdornment: loading ? (
-            <CircularProgress
-              size={18}
-              sx={{
-                position: 'absolute',
-                right: 16
-              }}
-            />
-          ) : (
-            params.InputProps.endAdornment
-          )
-        },
-        htmlInput: {
-          ...params.inputProps,
-          autoComplete: 'off'
-        }
-      }}
-    />
-  )
+  const renderInputElement = (params: any) => {
+    return (
+      <TextField
+        {...params}
+        variant="filled"
+        placeholder={'Search for a location...'}
+        slotProps={{
+          input: {
+            ...params.InputProps,
+            onKeyUp: handleInputKeyUp,
+            onBlur: handleInputBlur,
+            endAdornment: loading ? (
+              <CircularProgress
+                size={18}
+                sx={{
+                  position: 'absolute',
+                  right: 16
+                }}
+              />
+            ) : (
+              params.InputProps.endAdornment
+            )
+          }
+        }}
+      />
+    )
+  }
 
   const renderOptionElement = (
     props: React.HTMLAttributes<HTMLLIElement> & { key?: React.Key },
@@ -103,15 +118,14 @@ const SearchField = () => {
     }
     return (
       <OptionLocation
-        key={option.locationId}
         option={option}
-        props={{
-          ...props,
-          onClick: (e) => {
-            e.stopPropagation()
-            update(option.name)
-          }
+        showBoundsButton={!locationsEndpoint}
+        onClick={(e) => {
+          e.stopPropagation()
+          update(option.name)
         }}
+        {...props}
+        key={option.locationId}
       />
     )
   }
@@ -119,12 +133,12 @@ const SearchField = () => {
   return (
     <Box
       sx={{
-        top: 16,
         left: 16,
+        top: locationsEndpoint ? -46 : 16,
+        boxShadow: locationsEndpoint ? 0 : 1,
         width: 'min(calc(100% - 32px), 320px)',
         position: 'absolute',
-        borderRadius: 1,
-        boxShadow: 1
+        borderRadius: 1
       }}
     >
       <Autocomplete
@@ -156,7 +170,9 @@ const SearchField = () => {
         )}
         ListboxProps={{
           sx: {
+            opacity: loading ? 0.3 : 1,
             maxHeight: 524,
+            boxSizing: 'border-box',
             overflowY: 'auto'
           }
         }}

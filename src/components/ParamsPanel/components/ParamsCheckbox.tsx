@@ -2,28 +2,25 @@ import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, FormHelperText, Stack, Typography } from '@mui/material'
-import { type CheckboxProps } from '@mui/material/Checkbox/Checkbox'
+
+import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import AndroidSwitch from './AndroidSwitch'
 
-interface InputProps extends Omit<CheckboxProps, 'onChange'> {
-  name: string
-  label?: string
-  onChange?: (newValue: boolean) => void
-}
-
-const ParamsCheckbox: React.FC<InputProps> = ({ name, label, onChange }) => {
+const ParamsCheckbox = ({ name, label }: { name: string; label?: string }) => {
   const {
     setValue,
     getValues,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
+
   const checked = Boolean(getValues(name))
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Boolean(event.target.checked)
     setValue(name, newValue)
-    onChange?.(newValue)
+    onChange()
   }
 
   return (

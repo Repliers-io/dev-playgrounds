@@ -11,6 +11,8 @@ import {
 } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import ParamLabel from './ParamsLabel'
 
 type InputProps = TextFieldProps & {
@@ -20,7 +22,6 @@ type InputProps = TextFieldProps & {
   link?: string
   tooltip?: string
   disabled?: boolean
-  onChange?: () => void
 }
 
 const ParamsDate: React.FC<InputProps> = ({
@@ -29,16 +30,16 @@ const ParamsDate: React.FC<InputProps> = ({
   hint,
   link,
   tooltip,
-  disabled,
-  onChange
+  disabled
 }) => {
   const {
     setValue,
     getValues,
     formState: { errors }
   } = useFormContext()
-  const value = getValues(name)
+  const { onChange } = useParamsForm()
   const [open, setOpen] = useState(false)
+  const value = getValues(name)
 
   // optimized: memoize parsedValue
   const parsedValue = useMemo(() => (value ? dayjs(value) : null), [value])
@@ -48,7 +49,7 @@ const ParamsDate: React.FC<InputProps> = ({
     (e: React.MouseEvent) => {
       e.stopPropagation()
       setValue(name, null)
-      onChange?.()
+      onChange()
     },
     [setValue, name, onChange]
   )
@@ -71,7 +72,7 @@ const ParamsDate: React.FC<InputProps> = ({
         disabled={disabled}
         onChange={(newValue) => {
           setValue(name, newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
-          onChange?.()
+          onChange()
           setOpen(false) // Close picker after selection
         }}
         slotProps={{

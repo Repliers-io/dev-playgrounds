@@ -42,7 +42,7 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
   const handleClick = () => {
     sectionsArr[index] = collapsed ? '' : '1'
     setValue('sections', sectionsArr.join(','))
-    onChange?.()
+    onChange()
   }
 
   return (

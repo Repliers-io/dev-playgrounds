@@ -2,6 +2,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
+import { useSearch } from 'providers/SearchProvider'
 
 import { ParamsField, ParamsToggleGroup } from '../components'
 
@@ -11,7 +12,9 @@ const endpoints = ['locations/search', 'locations']
 const locationTypes = ['area', 'city', 'neighborhood']
 
 const SearchSection = () => {
-  const { onChange, onClear } = useParamsForm()
+  const { params } = useSearch()
+  const { onClear } = useParamsForm()
+  const locationsEndpoint = params.endpoint === 'locations'
 
   return (
     <SectionTemplate
@@ -37,7 +40,6 @@ const SearchSection = () => {
             name="endpoint"
             label="endpoint"
             options={endpoints}
-            onChange={onChange}
             sx={{
               '& > .MuiToggleButton-root': { flex: 1 }
             }}
@@ -48,15 +50,18 @@ const SearchSection = () => {
             label="type"
             name="queryType"
             options={locationTypes}
-            onChange={onChange}
           />
 
-          <ParamsField
-            noClear
-            label="fields"
-            name="queryFields"
-            onChange={onChange}
-          />
+          {locationsEndpoint && (
+            <>
+              <ParamsField name="locationId" />
+              <ParamsField name="area" />
+              <ParamsField name="city" />
+              <ParamsField name="neighborhood" />
+            </>
+          )}
+
+          <ParamsField noClear label="fields" name="queryFields" />
         </Stack>
       </Box>
     </SectionTemplate>
