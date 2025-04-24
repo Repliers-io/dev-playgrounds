@@ -96,6 +96,9 @@ const SearchProvider = ({
     []
   )
 
+  const previousRequest = useRef<string>('')
+  const previousKey = useRef<string>('')
+
   const clearPolygon = useCallback(() => setPolygon(null), [])
 
   const clearData = useCallback(() => {
@@ -105,10 +108,8 @@ const SearchProvider = ({
     setSaved(emptySavedResponse)
     setJson(null)
     setSize(0)
+    previousRequest.current = ''
   }, [])
-
-  const previousRequest = useRef<string>('')
-  const previousKey = useRef<string>('')
 
   const search = useCallback(async (params: any) => {
     const { apiKey, apiUrl, ...rest } = params

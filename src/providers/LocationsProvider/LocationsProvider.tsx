@@ -34,13 +34,14 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
+  const previousRequest = useRef<string>('')
+  const previousKey = useRef<string>('')
+
   const clearData = useCallback(() => {
     setStatusCode(null)
     setSaved(emptySavedResponse)
+    previousRequest.current = ''
   }, [])
-
-  const previousRequest = useRef<string>('')
-  const previousKey = useRef<string>('')
 
   const search = useCallback(async (params: any) => {
     const {
