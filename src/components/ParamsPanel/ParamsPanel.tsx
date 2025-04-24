@@ -22,7 +22,12 @@ import {
   SearchSection,
   StatisticsSection
 } from './sections'
-import { filterQueryParams, pick } from './utils'
+import {
+  filterLocationsParams,
+  filterQueryParams,
+  filterSearchParams,
+  getCenterPoint
+} from './utils'
 
 const ParamsPanel = () => {
   const searchContext = useSearch()
@@ -81,39 +86,20 @@ const ParamsPanel = () => {
 
   const fetchLocations = useCallback(
     async (position: MapPosition, params: Partial<FormParams>) => {
-      const searchParams = pick(params, [
-        'q',
-        'locationsType',
-        'locationsFields',
-        'apiKey',
-        'apiUrl',
-        'endpoint',
-        'pageNum',
-        'resultsPerPage'
-      ])
+      const searchParams = filterSearchParams(params)
+      const locationsParams = filterLocationsParams(params)
 
-      const locationsEndpoint = searchParams.endpoint === 'locations'
-      const locationsParams = locationsEndpoint
-        ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
-        : {}
-
+      const locationsEndpoint = params.endpoint === 'locations'
       const nonEmptyParams = Object.values(locationsParams).filter(Boolean)
 
       if (!locationsEndpoint && !searchParams.q) return // disable empty `search` requests
-
       if (locationsEndpoint && !nonEmptyParams.length) return // disable empty `locations` requests
-
-      if (locationsEndpoint) searchParams.q = null // remove `q` parameter from `locations` endpoint
 
       try {
         await locationsContext.search({
           ...searchParams,
           ...locationsParams,
-          ...(params.center && {
-            radius: params.radius,
-            lat: position.center?.lat,
-            long: position.center?.lng
-          })
+          ...getCenterPoint(params, position)
         })
       } catch (error: any) {
         console.error('fetchLocations error:', error)

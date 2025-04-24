@@ -37,15 +37,6 @@ const SearchSection = () => {
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
-          <Stack spacing={1} direction="row" justifyContent="space-between">
-            <ParamsField
-              name="pageNum"
-              hint="docs"
-              link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
-            />
-            <ParamsField name="resultsPerPage" />
-          </Stack>
-
           <ParamsToggleGroup
             exclusive
             name="endpoint"
@@ -70,6 +61,15 @@ const SearchSection = () => {
               <ParamsField name="area" />
               <ParamsField name="city" />
               <ParamsField name="neighborhood" />
+
+              <Stack spacing={1} direction="row" justifyContent="space-between">
+                <ParamsField
+                  name="pageNum"
+                  hint="docs"
+                  link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
+                />
+                <ParamsField name="resultsPerPage" />
+              </Stack>
             </>
           )}
 

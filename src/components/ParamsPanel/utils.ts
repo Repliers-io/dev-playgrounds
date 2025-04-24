@@ -1,3 +1,4 @@
+import { type MapPosition } from 'services/Map/types'
 import {
   type FormParamKeys,
   type FormParams
@@ -40,4 +41,54 @@ export const pick = (obj: Record<string, any>, keys: string[]) => {
     },
     {} as Record<string, any>
   )
+}
+
+export const filterSearchParams = (params: Partial<FormParams>) => {
+  const searchParams = pick(params, [
+    'q',
+    'locationsType',
+    'locationsFields',
+    'apiKey',
+    'apiUrl',
+    'endpoint',
+    'pageNum',
+    'resultsPerPage'
+  ])
+
+  const locationsEndpoint = params.endpoint === 'locations'
+  if (locationsEndpoint) searchParams.q = null // remove `q` parameter from `locations` endpoint
+
+  return searchParams
+}
+
+export const filterLocationsParams = (params: Partial<FormParams>) => {
+  const locationsEndpoint = params.endpoint === 'locations'
+  const locationsParams = locationsEndpoint
+    ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
+    : {}
+
+  Object.entries(locationsParams).forEach(([key, value]) => {
+    const valueArr = value.split(',')
+    if (valueArr.length > 1) {
+      locationsParams[key] = valueArr
+        .map((item: string) => item.trim())
+        .filter(Boolean)
+    }
+  })
+
+  return locationsParams
+}
+
+export const getCenterPoint = (
+  params: Partial<FormParams>,
+  position: MapPosition
+) => {
+  if (params.center) {
+    return {
+      radius: params.radius,
+      lat: position.center?.lat,
+      long: position.center?.lng
+    }
+  }
+  return {}
 }
