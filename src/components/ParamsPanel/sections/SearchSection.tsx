@@ -55,10 +55,11 @@ const SearchSection = () => {
             options={locationTypes}
           />
 
+          <ParamsField name="area" />
+          <ParamsField name="city" />
+
           {locationsEndpoint && (
             <>
-              <ParamsField name="area" />
-              <ParamsField name="city" />
               <ParamsField name="neighborhood" />
               <ParamsField name="locationId" />
 

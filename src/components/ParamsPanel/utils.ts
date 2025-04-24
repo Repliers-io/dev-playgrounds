@@ -59,17 +59,19 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
 }
 
 export const filterLocationsParams = (params: Partial<FormParams>) => {
-  const locationsParams =
+  const locationsParams = pick(
+    params,
     params.endpoint === 'locations'
-      ? pick(params, [
+      ? [
           'area',
           'city',
           'neighborhood',
           'locationId',
           'locationsPageNum',
           'locationsResultsPerPage'
-        ])
-      : {}
+        ]
+      : ['area', 'city']
+  )
 
   Object.entries(locationsParams).forEach(([key, value]) => {
     const valueArr = String(value || '').split(',')
