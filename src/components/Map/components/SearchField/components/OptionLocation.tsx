@@ -68,19 +68,21 @@ const OptionLocation = ({
         <Icon />
         <Stack sx={{ flex: 1 }}>
           <Typography
+            noWrap
             variant="body1"
             fontWeight={600}
-            noWrap
             sx={{ maxWidth: 186, lineHeight: 1.4 }}
+            title={option.name}
           >
             {option.name}
           </Typography>
           {formattedAddress && (
             <Typography
+              noWrap
               variant="body2"
               color="text.secondary"
-              noWrap
               sx={{ maxWidth: 186 }}
+              title={formattedAddress}
             >
               {formattedAddress}
             </Typography>
