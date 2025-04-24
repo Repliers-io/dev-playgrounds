@@ -24,7 +24,7 @@ const SearchField = () => {
   const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
   const { mapRef } = useMapOptions()
-  const { params } = useSearch()
+  const { params, setPolygon, clearData: clearSearchData } = useSearch()
   const initialValue = params.query || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
@@ -105,6 +105,10 @@ const SearchField = () => {
   const handleBoundsClick = (option: any) => {
     if (locationsEndpoint) {
       // console.log('bounds clicked for location', option)
+      setPolygon(option.map.boundary[0])
+      setValue('tab', 'map')
+      clearSearchData()
+      onChange()
     } else {
       setValue('locationId', option.locationId)
       setValue('area', null)
