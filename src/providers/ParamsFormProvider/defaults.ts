@@ -16,16 +16,18 @@ const defaultFormState: Partial<FormParams> = {
   sections: '',
   grp: [],
 
-  endpoint: 'locations/search',
+  endpoint: 'locations',
   center: false,
   radius: null,
   q: '',
+  locationsPageNum: null,
+  locationsResultsPerPage: null,
   locationsType: [],
   locationsFields: locationsFields.join(','),
-  locationId: undefined,
-  area: undefined,
-  city: undefined,
-  neighborhood: undefined,
+  locationId: '',
+  area: '',
+  city: '',
+  neighborhood: '',
 
   /**
    * request parameters

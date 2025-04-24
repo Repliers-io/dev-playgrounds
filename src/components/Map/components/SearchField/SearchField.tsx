@@ -172,7 +172,7 @@ const SearchField = () => {
         left: 16,
         top: locationsEndpoint ? -46 : 16,
         boxShadow: locationsEndpoint ? 0 : 1,
-        width: 'min(calc(100% - 32px), 320px)',
+        width: 'min(calc(100% - 32px), 300px)',
         position: 'absolute',
         borderRadius: 1
       }}
@@ -204,7 +204,7 @@ const SearchField = () => {
         ListboxProps={{
           sx: {
             opacity: loading ? 0.3 : 1,
-            maxHeight: 524,
+            maxHeight: 'calc(100vh - 121px)',
             boxSizing: 'border-box',
             overflowY: 'auto',
             scrollbarWidth: 'thin'

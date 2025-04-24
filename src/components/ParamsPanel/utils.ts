@@ -46,29 +46,33 @@ export const pick = (obj: Record<string, any>, keys: string[]) => {
 export const filterSearchParams = (params: Partial<FormParams>) => {
   const searchParams = pick(params, [
     'q',
-    'locationsType',
-    'locationsFields',
     'apiKey',
     'apiUrl',
     'endpoint',
-    'pageNum',
-    'resultsPerPage'
+    'locationsType',
+    'locationsFields'
   ])
 
-  const locationsEndpoint = params.endpoint === 'locations'
-  if (locationsEndpoint) searchParams.q = null // remove `q` parameter from `locations` endpoint
+  if (params.endpoint === 'locations') searchParams.q = null // remove `q` parameter from `locations` endpoint
 
   return searchParams
 }
 
 export const filterLocationsParams = (params: Partial<FormParams>) => {
-  const locationsEndpoint = params.endpoint === 'locations'
-  const locationsParams = locationsEndpoint
-    ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
-    : {}
+  const locationsParams =
+    params.endpoint === 'locations'
+      ? pick(params, [
+          'area',
+          'city',
+          'neighborhood',
+          'locationId',
+          'locationsPageNum',
+          'locationsResultsPerPage'
+        ])
+      : {}
 
   Object.entries(locationsParams).forEach(([key, value]) => {
-    const valueArr = value.split(',')
+    const valueArr = String(value || '').split(',')
     if (valueArr.length > 1) {
       locationsParams[key] = valueArr
         .map((item: string) => item.trim())

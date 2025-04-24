@@ -16,7 +16,7 @@ import {
   toMapboxPoint
 } from 'utils/map'
 
-const polygonColor = '#6633FF'
+export const polygonColor = '#6633FF'
 
 export class MapService {
   markers: Markers = {}
@@ -65,7 +65,7 @@ export class MapService {
         const markerElement = this.createMarkerElement({
           id: getMarkerName(markerId),
           status,
-          size: 'point',
+          size: item.size || 'point',
           onClick: (e: MouseEvent) => {
             // Prevent redirect on click
             e.preventDefault()

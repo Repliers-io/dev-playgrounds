@@ -9,7 +9,7 @@ import { ParamsField, ParamsToggleGroup } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
-const endpoints = ['locations/search', 'locations']
+const endpoints = ['locations', 'locations/search']
 const locationTypes = ['area', 'city', 'neighborhood']
 
 const SearchSection = () => {
@@ -57,18 +57,22 @@ const SearchSection = () => {
 
           {locationsEndpoint && (
             <>
-              <ParamsField name="locationId" />
               <ParamsField name="area" />
               <ParamsField name="city" />
               <ParamsField name="neighborhood" />
+              <ParamsField name="locationId" />
 
               <Stack spacing={1} direction="row" justifyContent="space-between">
                 <ParamsField
-                  name="pageNum"
+                  label="pageNum"
+                  name="locationsPageNum"
                   hint="docs"
                   link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#3-pagination"
                 />
-                <ParamsField name="resultsPerPage" />
+                <ParamsField
+                  label="resultsPerPage"
+                  name="locationsResultsPerPage"
+                />
               </Stack>
             </>
           )}

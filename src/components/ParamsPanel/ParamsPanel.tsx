@@ -90,10 +90,7 @@ const ParamsPanel = () => {
       const locationsParams = filterLocationsParams(params)
 
       const locationsEndpoint = params.endpoint === 'locations'
-      const nonEmptyParams = Object.values(locationsParams).filter(Boolean)
-
       if (!locationsEndpoint && !searchParams.q) return // disable empty `search` requests
-      if (locationsEndpoint && !nonEmptyParams.length) return // disable empty `locations` requests
 
       try {
         await locationsContext.search({

@@ -1,10 +1,8 @@
-import React from 'react'
-
-import AdjustOutlinedIcon from '@mui/icons-material/AdjustOutlined'
-import FilterCenterFocusOutlinedIcon from '@mui/icons-material/FilterCenterFocusOutlined'
+import CropFreeIcon from '@mui/icons-material/CropFree'
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
+import MyLocationIcon from '@mui/icons-material/MyLocation'
 import { IconButton, Stack, Typography } from '@mui/material'
 
 import { joinNonEmpty } from 'utils/strings'
@@ -71,7 +69,7 @@ const OptionLocation = ({
             noWrap
             variant="body1"
             fontWeight={600}
-            sx={{ maxWidth: 186, lineHeight: 1.4 }}
+            sx={{ maxWidth: 166, lineHeight: 1.4 }}
             title={option.name}
           >
             {option.name}
@@ -81,7 +79,7 @@ const OptionLocation = ({
               noWrap
               variant="body2"
               color="text.secondary"
-              sx={{ maxWidth: 186 }}
+              sx={{ maxWidth: 166 }}
               title={formattedAddress}
             >
               {formattedAddress}
@@ -97,7 +95,7 @@ const OptionLocation = ({
               onBoundsClick?.()
             }}
           >
-            <FilterCenterFocusOutlinedIcon sx={{ fontSize: 18 }} />
+            <CropFreeIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
         <IconButton
@@ -108,7 +106,7 @@ const OptionLocation = ({
             onCenterClick?.()
           }}
         >
-          <AdjustOutlinedIcon sx={{ fontSize: 18 }} />
+          <MyLocationIcon sx={{ fontSize: 18 }} />
         </IconButton>
       </Stack>
     </li>

@@ -49,6 +49,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       apiUrl,
       locationsType,
       locationsFields,
+      locationsPageNum,
+      locationsResultsPerPage,
       endpoint,
       ...rest
     } = params
@@ -57,6 +59,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
 
     rest.type = locationsType
     rest.fields = locationsFields || ''
+    rest.pageNum = locationsPageNum
+    rest.resultsPerPage = locationsResultsPerPage
 
     const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

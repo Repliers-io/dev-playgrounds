@@ -13,12 +13,17 @@ export type CustomFormParams = {
   grp: string[]
   tab: string
   sections: string
+
   center: boolean
   radius: number | null
   q: string
+
   locationsType: ('area' | 'neighbourhood' | 'city')[]
   locationsFields: string
   locationId: string
+  locationsPageNum: number | null
+  locationsResultsPerPage: number | null
+
   area: string
   city: string
   neighborhood: string

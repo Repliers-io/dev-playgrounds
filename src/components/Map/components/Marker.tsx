@@ -3,6 +3,7 @@ import { type MouseEventHandler, type TouchEventHandler } from 'react'
 
 import { alpha, Box, darken, lighten, Link } from '@mui/material'
 
+import { polygonColor } from 'services/Map/Map'
 import { toRem } from 'utils/theme'
 import { marker } from 'constants/colors'
 
@@ -11,7 +12,7 @@ export type MarkerProps = {
   label?: string
   link?: string
   status?: string
-  size?: 'point' | 'tag' | 'cluster'
+  size?: 'point' | 'tag' | 'cluster' | 'location'
   onClick?: MouseEventHandler
   // TODO: there should be no difference between onClick and onTap
   onTap?: TouchEventHandler
@@ -33,7 +34,12 @@ const Marker = ({
   // TODO:  replace hardcoded `status` value with constant / enum from API
   // not sure if we even need to pass status as a components' prop
   const labelString = size === 'point' ? '' : label
-  const bgcolor = status === 'U' ? darken(marker, 0.2) : marker
+  const bgcolor =
+    size === 'location'
+      ? `${polygonColor}33`
+      : status === 'U'
+        ? darken(marker, 0.2)
+        : marker
 
   const calculatedClusterWeight = 20 + label.length * 4
 
@@ -42,6 +48,13 @@ const Marker = ({
       width: 16,
       height: 16,
       borderRadius: '50%'
+    },
+    location: {
+      width: 10,
+      height: 10,
+      borderRadius: '50%',
+      borderWidth: 1.5,
+      borderColor: `${polygonColor}CC`
     },
     tag: {
       px: 0.5,
@@ -60,9 +73,12 @@ const Marker = ({
 
   const sizeSx = sizes[size]
 
-  const highlightSx = {
-    border: `8px solid ${alpha(lighten(marker, 0.2), 0.3)}`
-  }
+  const highlightSx =
+    size === 'location'
+      ? {}
+      : {
+          border: `8px solid ${alpha(lighten(bgcolor, 0.2), 0.3)}`
+        }
 
   const handleTouchEnd = (e: TouchEvent) => {
     // if tap handler is provided
