@@ -43,21 +43,19 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
   const previousKey = useRef<string>('')
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, query, queryType, queryFields, endpoint, ...rest } =
-      params
+    const {
+      apiKey,
+      apiUrl,
+      locationsType,
+      locationsFields,
+      endpoint,
+      ...rest
+    } = params
 
-    if (!apiKey || !apiUrl || !query) return
+    if (!apiKey || !apiUrl) return
 
-    const endpointType =
-      endpoint.indexOf('search') > -1 ? 'search' : 'locations'
-
-    rest.type = queryType
-    if (endpointType === 'search') {
-      rest.q = query
-    } else {
-      // rest[queryType] = query
-    }
-    rest.fields = queryFields || ''
+    rest.type = locationsType
+    rest.fields = locationsFields || ''
 
     const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

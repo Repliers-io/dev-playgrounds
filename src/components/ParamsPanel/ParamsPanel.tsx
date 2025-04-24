@@ -81,10 +81,10 @@ const ParamsPanel = () => {
 
   const fetchLocations = useCallback(
     async (position: MapPosition, params: Partial<FormParams>) => {
-      const filteredParams = pick(params, [
-        'query',
-        'queryType',
-        'queryFields',
+      const searchParams = pick(params, [
+        'q',
+        'locationsType',
+        'locationsFields',
         'apiKey',
         'apiUrl',
         'endpoint',
@@ -92,21 +92,23 @@ const ParamsPanel = () => {
         'resultsPerPage'
       ])
 
-      const locationsEndpoint = filteredParams.endpoint === 'locations'
-      const locationParams = locationsEndpoint
+      const locationsEndpoint = searchParams.endpoint === 'locations'
+      const locationsParams = locationsEndpoint
         ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
         : {}
 
-      if (
-        locationsEndpoint &&
-        !Object.values(locationParams).filter(Boolean).length
-      )
-        return // disable empty `locations` requests
+      const nonEmptyParams = Object.values(locationsParams).filter(Boolean)
+
+      if (!locationsEndpoint && !searchParams.q) return // disable empty `search` requests
+
+      if (locationsEndpoint && !nonEmptyParams.length) return // disable empty `locations` requests
+
+      if (locationsEndpoint) searchParams.q = null // remove `q` parameter from `locations` endpoint
 
       try {
         await locationsContext.search({
-          ...filteredParams,
-          ...locationParams,
+          ...searchParams,
+          ...locationsParams,
           ...(params.center && {
             radius: params.radius,
             lat: position.center?.lat,

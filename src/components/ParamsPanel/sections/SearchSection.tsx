@@ -60,7 +60,7 @@ const SearchSection = () => {
           <ParamsToggleGroup
             allowEmpty
             label="type"
-            name="queryType"
+            name="locationsType"
             options={locationTypes}
           />
 
@@ -73,7 +73,7 @@ const SearchSection = () => {
             </>
           )}
 
-          <ParamsField noClear label="fields" name="queryFields" />
+          <ParamsField noClear label="fields" name="locationsFields" />
         </Stack>
       </Box>
     </SectionTemplate>

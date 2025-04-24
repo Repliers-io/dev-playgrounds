@@ -19,9 +19,13 @@ const defaultFormState: Partial<FormParams> = {
   endpoint: 'locations/search',
   center: false,
   radius: null,
-  query: '',
-  queryType: [],
-  queryFields: locationsFields.join(','),
+  q: '',
+  locationsType: [],
+  locationsFields: locationsFields.join(','),
+  locationId: undefined,
+  area: undefined,
+  city: undefined,
+  neighborhood: undefined,
 
   /**
    * request parameters

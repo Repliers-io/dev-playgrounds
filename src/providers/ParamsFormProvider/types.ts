@@ -15,9 +15,9 @@ export type CustomFormParams = {
   sections: string
   center: boolean
   radius: number | null
-  query: string
-  queryType: ('area' | 'neighbourhood' | 'city')[]
-  queryFields: string
+  q: string
+  locationsType: ('area' | 'neighbourhood' | 'city')[]
+  locationsFields: string
   locationId: string
   area: string
   city: string

@@ -25,7 +25,7 @@ const SearchField = () => {
   const { loading, locations, clearData } = useLocations()
   const { mapRef } = useMapOptions()
   const { params, setPolygon, clearData: clearSearchData } = useSearch()
-  const initialValue = params.query || ''
+  const initialValue = params.q || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
   const [searchString, setSearchString] = useState(initialValue)
@@ -47,11 +47,12 @@ const SearchField = () => {
     reason: string
   ) => {
     setSearchString(value)
+    console.log('handleInputChange', value, reason)
     if (value.length < minCharsToSuggest) {
       clearData()
     }
     if (reason === 'clear') {
-      setValue('query', '')
+      setValue('q', '')
       onChange()
     }
   }
@@ -59,7 +60,7 @@ const SearchField = () => {
   const debouncedCommitInput = useRef(
     debounce((value: string) => {
       if (value.length >= minCharsToSuggest) {
-        setValue('query', value, { shouldValidate: true })
+        setValue('q', value)
         prevQuery.current = value
         onChange()
       }
@@ -69,7 +70,7 @@ const SearchField = () => {
   const commitInput = (input: string) => {
     debouncedCommitInput.clear()
 
-    setValue('query', input, { shouldValidate: true })
+    setValue('q', input)
     prevQuery.current = input
     onChange()
   }
@@ -92,9 +93,7 @@ const SearchField = () => {
 
   const update = (value: string) => {
     setSearchString(value || searchString)
-    setValue('query', value || searchString, {
-      shouldValidate: true
-    })
+    setValue('q', value || searchString)
     onChange()
   }
 
@@ -172,9 +171,9 @@ const SearchField = () => {
   return (
     <Box
       sx={{
-        top: 16,
         left: 16,
-        boxShadow: 1,
+        top: locationsEndpoint ? -46 : 16,
+        boxShadow: locationsEndpoint ? 0 : 1,
         width: 'min(calc(100% - 32px), 320px)',
         position: 'absolute',
         borderRadius: 1
@@ -193,7 +192,6 @@ const SearchField = () => {
         onInputChange={handleInputChange}
         getOptionLabel={(option) => {
           if (typeof option === 'string') return option
-          if (option.type === 'loader') return ''
           return option.name
         }}
         filterSelectedOptions
@@ -210,7 +208,8 @@ const SearchField = () => {
             opacity: loading ? 0.3 : 1,
             maxHeight: 524,
             boxSizing: 'border-box',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            scrollbarWidth: 'thin'
           }
         }}
         sx={{
