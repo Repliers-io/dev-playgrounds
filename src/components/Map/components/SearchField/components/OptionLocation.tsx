@@ -1,26 +1,27 @@
 import React from 'react'
 
-import CropFreeIcon from '@mui/icons-material/CropFree'
-import HighlightAltIcon from '@mui/icons-material/HighlightAlt'
+import AdjustOutlinedIcon from '@mui/icons-material/AdjustOutlined'
+import FilterCenterFocusOutlinedIcon from '@mui/icons-material/FilterCenterFocusOutlined'
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage'
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
 import { IconButton, Stack, Typography } from '@mui/material'
 
 import { joinNonEmpty } from 'utils/strings'
 
-import OptionItem from './OptionItem'
-
 const OptionLocation = ({
   option,
-  showBoundsButton = false,
-  onClick,
+  showBounds,
+  onItemClick,
   onBoundsClick,
+  onCenterClick,
   ...props
 }: {
   option: any
-  showBoundsButton?: boolean
-  onClick?: (e: React.MouseEvent<HTMLLIElement>) => void
-  onBoundsClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  showBounds?: boolean
+  onItemClick?: () => void
+  onBoundsClick?: () => void
+  onCenterClick?: () => void
 }) => {
   const { address = {} } = option
   const addrScale =
@@ -38,24 +39,39 @@ const OptionLocation = ({
       ? HolidayVillageIcon
       : option.type === 'city'
         ? LocationCityIcon
-        : CropFreeIcon
+        : LanguageOutlinedIcon
 
   return (
-    <OptionItem
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <li
       {...props}
       onClick={(e) => {
         e.stopPropagation()
-        onClick?.(e)
       }}
     >
-      <Stack spacing={1} direction="row" width="100%" alignItems="center">
+      <Stack
+        spacing={1}
+        direction="row"
+        width="100%"
+        alignItems="center"
+        sx={{
+          p: 1,
+          py: 0.25,
+          width: '100%',
+          borderRadius: 1,
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.default'
+        }}
+        onClick={onItemClick}
+      >
         <Icon />
-        <Stack>
+        <Stack sx={{ flex: 1 }}>
           <Typography
             variant="body1"
             fontWeight={600}
             noWrap
-            sx={{ maxWidth: 200, lineHeight: 1.4 }}
+            sx={{ maxWidth: 186, lineHeight: 1.4 }}
           >
             {option.name}
           </Typography>
@@ -64,26 +80,36 @@ const OptionLocation = ({
               variant="body2"
               color="text.secondary"
               noWrap
-              sx={{ maxWidth: 200 }}
+              sx={{ maxWidth: 186 }}
             >
               {formattedAddress}
             </Typography>
           )}
         </Stack>
-        {showBoundsButton && (
+        {showBounds && (
           <IconButton
             size="small"
-            sx={{ ml: 'auto', mr: -0.5 }}
+            sx={{ ml: 'auto', mr: -0.75 }}
             onClick={(e) => {
               e.stopPropagation()
-              onBoundsClick?.(e)
+              onBoundsClick?.()
             }}
           >
-            <HighlightAltIcon sx={{ fontSize: 18 }} />
+            <FilterCenterFocusOutlinedIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
+        <IconButton
+          size="small"
+          sx={{ ml: 'auto', mr: -0.5 }}
+          onClick={(e) => {
+            e.stopPropagation()
+            onCenterClick?.()
+          }}
+        >
+          <AdjustOutlinedIcon sx={{ fontSize: 18 }} />
+        </IconButton>
       </Stack>
-    </OptionItem>
+    </li>
   )
 }
 

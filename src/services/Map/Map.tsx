@@ -1,6 +1,9 @@
 import { type MouseEvent } from 'react'
 import { createRoot } from 'react-dom/client'
-import { type Map, Marker as MapboxMarker } from 'mapbox-gl'
+import { type Feature, type Position } from 'geojson'
+import { type LngLatLike, type Map, Marker as MapboxMarker } from 'mapbox-gl'
+
+import { lighten } from '@mui/material'
 
 import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 
@@ -12,6 +15,8 @@ import {
   toMapboxBounds,
   toMapboxPoint
 } from 'utils/map'
+
+const polygonColor = '#6633FF'
 
 export class MapService {
   markers: Markers = {}
@@ -34,40 +39,46 @@ export class MapService {
   }: {
     map: Map
     listings: Listing[]
-    onClick?: (property: Listing) => void
+    onClick?: (listing: Listing) => void
   }): void {
     this.resetClusters()
 
     listings.forEach((item) => {
-      const { mlsNumber, status } = item
+      const { mlsNumber: markerId, status } = item
 
-      const propertyCenter = item.map
-        ? {
+      const center = item.map
+        ? ({
             lng: Number(item.map.longitude),
             lat: Number(item.map.latitude)
-          }
+          } as LngLatLike)
         : null
-      if (!propertyCenter) return
+      if (!center) return
 
-      const singleViewOnMap = this.markers[mlsNumber]
+      const singleViewOnMap = this.markers[markerId]
       if (singleViewOnMap) return
 
-      const markerElement = this.createMarkerElement({
-        id: getMarkerName(mlsNumber),
-        status,
-        size: 'point',
-        onClick: (e: MouseEvent) => {
-          // Prevent redirect on click
-          e.preventDefault()
-          onClick?.(item)
-        }
-      })
+      const { boundary } = item.map as any
+      if (boundary?.length) {
+        //   const bounds = toMapboxBounds(boundary)
+        this.createPolygon(map, markerId, boundary)
+      } else {
+        const markerElement = this.createMarkerElement({
+          id: getMarkerName(markerId),
+          status,
+          size: 'point',
+          onClick: (e: MouseEvent) => {
+            // Prevent redirect on click
+            e.preventDefault()
+            onClick?.(item)
+          }
+        })
 
-      const marker = new MapboxMarker(markerElement)
-        .setLngLat(propertyCenter)
-        .addTo(map)
+        const marker = new MapboxMarker(markerElement)
+          .setLngLat(center)
+          .addTo(map)
 
-      this.addMarker(item.mlsNumber, marker)
+        this.addMarker(markerId, marker)
+      }
     })
 
     // Clearing Marker Residues
@@ -128,6 +139,59 @@ export class MapService {
       const key = this.getClusterKey(cluster)
       if (!this.clusters[key]) this.clusters[key] = marker
     })
+  }
+
+  removePolygon(map: Map, markerId: string): void {
+    try {
+      map.removeLayer(`${markerId}-fill`)
+      map.removeLayer(`${markerId}-outline`)
+      map.removeSource(markerId)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      // TODO: not sure we need to handle this error. Mapbox cant control its own sources
+    }
+  }
+
+  createPolygon(map: Map, markerId: string, polygon: Position[][]): void {
+    const polygonGeoJSON: Feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: polygon
+      },
+      properties: {}
+    }
+
+    map.addSource(markerId, {
+      type: 'geojson',
+      data: polygonGeoJSON
+    })
+
+    map.addLayer({
+      id: `${markerId}-fill`,
+      type: 'fill',
+      source: markerId,
+      paint: {
+        'fill-color': polygonColor,
+        'fill-opacity': 0.25
+      }
+    })
+
+    map.addLayer({
+      id: `${markerId}-outline`,
+      type: 'line',
+      source: markerId,
+      paint: {
+        'line-color': lighten(polygonColor, 0.2),
+        'line-width': 1.5
+      }
+    })
+
+    this.markers[markerId] = {
+      remove: () => {
+        this.removePolygon(map, markerId)
+      }
+    }
   }
 
   resetMarkers() {

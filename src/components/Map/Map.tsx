@@ -102,6 +102,8 @@ const MapRoot = () => {
     initializeMap(container)
   }
 
+  // console.log('polygon', polygon)
+
   const showMarkersAndClusters = () => {
     const map = mapRef.current
     if (!map) return
@@ -130,15 +132,15 @@ const MapRoot = () => {
     if (locations) {
       MapService.showMarkers({
         map,
-        listings: locations.map((location) => ({
-          mlsNumber: location.locationId,
-          label: location.name,
-          map: location.map
-        })) as any,
-        onClick: (location: any) => {
-          console.log('marker clicked', location)
-          // focusMarker(location.mlsNumber)
-        }
+        listings: locations.map((location) => {
+          const markerId =
+            location.locationId + '-' + (location.map.boundary?.length || 0)
+          return {
+            mlsNumber: markerId,
+            label: location.name,
+            map: location.map
+          } as any
+        })
       })
     }
   }

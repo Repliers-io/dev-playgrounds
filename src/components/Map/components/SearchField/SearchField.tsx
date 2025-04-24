@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
+import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
@@ -22,17 +23,37 @@ const SearchField = () => {
   const { onChange } = useParamsForm()
   const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
+  const { mapRef } = useMapOptions()
   const { params } = useSearch()
   const initialValue = params.query || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
   const [searchString, setSearchString] = useState(initialValue)
-  const [open, setOpen] = useState(!!initialValue)
   const prevQuery = useRef<string>(initialValue)
 
-  const handleInputChange = (_: React.SyntheticEvent | null, value: string) => {
+  const centerMap = (option: any) => {
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [option.map.longitude, option.map.latitude],
+        zoom: 10,
+        curve: 1
+      })
+    }
+  }
+
+  const handleInputChange = (
+    _: React.SyntheticEvent | null,
+    value: string,
+    reason: string
+  ) => {
     setSearchString(value)
-    if (value.length < minCharsToSuggest) clearData()
+    if (value.length < minCharsToSuggest) {
+      clearData()
+    }
+    if (reason === 'clear') {
+      setValue('query', '')
+      onChange()
+    }
   }
 
   const debouncedCommitInput = useRef(
@@ -40,7 +61,6 @@ const SearchField = () => {
       if (value.length >= minCharsToSuggest) {
         setValue('query', value, { shouldValidate: true })
         prevQuery.current = value
-        setOpen(true)
         onChange()
       }
     }, debounceDelay)
@@ -83,13 +103,16 @@ const SearchField = () => {
   }
 
   const handleBoundsClick = (option: any) => {
-    setValue('locationId', option.locationId)
-    setValue('area', null)
-    setValue('city', null)
-    setValue('neighborhood', null)
-    // setValue('queryType', [option.type])
-    setValue('endpoint', 'locations')
-    onChange()
+    if (locationsEndpoint) {
+      // console.log('bounds clicked for location', option)
+    } else {
+      setValue('locationId', option.locationId)
+      setValue('area', null)
+      setValue('city', null)
+      setValue('neighborhood', null)
+      setValue('endpoint', 'locations')
+      onChange()
+    }
   }
 
   const renderInputElement = (params: any) => {
@@ -130,11 +153,12 @@ const SearchField = () => {
     return (
       <OptionLocation
         option={option}
-        showBoundsButton={!locationsEndpoint}
-        onClick={() => {
+        onItemClick={() => {
           if (!locationsEndpoint) update(option.name)
         }}
+        showBounds={!locationsEndpoint || Boolean(option.map.boundary)}
         onBoundsClick={() => handleBoundsClick(option)}
+        onCenterClick={() => centerMap(option)}
         {...props}
         key={option.locationId}
       />
@@ -144,16 +168,16 @@ const SearchField = () => {
   return (
     <Box
       sx={{
+        top: 16,
         left: 16,
-        top: locationsEndpoint ? -46 : 16,
-        boxShadow: locationsEndpoint ? 0 : 1,
+        boxShadow: 1,
         width: 'min(calc(100% - 32px), 320px)',
         position: 'absolute',
         borderRadius: 1
       }}
     >
       <Autocomplete
-        open={open}
+        open={true}
         freeSolo
         fullWidth
         selectOnFocus
@@ -163,8 +187,6 @@ const SearchField = () => {
         inputValue={searchString}
         onChange={handleChange}
         onInputChange={handleInputChange}
-        // onBlur={() => setOpen(false)}
-        onFocus={() => setOpen(searchString.length >= minCharsToSuggest)}
         getOptionLabel={(option) => {
           if (typeof option === 'string') return option
           if (option.type === 'loader') return ''

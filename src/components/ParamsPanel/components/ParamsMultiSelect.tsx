@@ -155,7 +155,7 @@ const ParamsMultiSelect = ({
                     <span style={{ color: '#aaa' }}>null</span>
                   </MenuItem>
                 )}
-                {options.filter(Boolean).map((option) => (
+                {(options || []).filter(Boolean).map((option) => (
                   <MenuItem key={option} value={option}>
                     <Checkbox
                       size="small"

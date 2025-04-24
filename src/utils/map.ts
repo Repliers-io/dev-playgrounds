@@ -299,7 +299,7 @@ export const updateMapboxPosition = (
 
 export const getLocations = (listings: Listing[]) => {
   /** filter out garbage coordinates and make sure we stay in western & northern hemishperes */
-  return listings
+  return (listings || [])
     .map((item: Listing) => ({
       lat: parseFloat(item.map.latitude),
       lng: parseFloat(item.map.longitude)

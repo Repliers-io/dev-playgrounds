@@ -92,12 +92,18 @@ const ParamsPanel = () => {
         'resultsPerPage'
       ])
 
-      try {
-        const locationParams =
-          filteredParams.endpoint === 'locations'
-            ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
-            : {}
+      const locationsEndpoint = filteredParams.endpoint === 'locations'
+      const locationParams = locationsEndpoint
+        ? pick(params, ['locationId', 'area', 'city', 'neighborhood'])
+        : {}
 
+      if (
+        locationsEndpoint &&
+        !Object.values(locationParams).filter(Boolean).length
+      )
+        return // disable empty `locations` requests
+
+      try {
         await locationsContext.search({
           ...filteredParams,
           ...locationParams,
