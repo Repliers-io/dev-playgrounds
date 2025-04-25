@@ -1,6 +1,7 @@
 export { default as CardsCarousel } from './CardsCarousel'
 export { default as CardsCarouselSwitch } from './CardsCarouselSwitch'
 export { default as MapCenterPoint } from './MapCenterPoint'
+export { default as MapClusterWarnings } from './MapClusterWarnings'
 export { default as MapContainer } from './MapContainer'
 export { default as MapCounter } from './MapCounter'
 export { default as MapDrawButton } from './MapDrawButton'

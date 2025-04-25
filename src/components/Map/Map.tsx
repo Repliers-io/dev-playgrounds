@@ -8,7 +8,6 @@ import MapService from 'services/Map'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
-import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getMapStyleUrl } from 'utils/map'
 import {
@@ -21,19 +20,14 @@ import {
   CardsCarousel,
   CardsCarouselSwitch,
   MapCenterPoint,
+  MapClusterWarnings,
   MapContainer,
   MapCounter,
   MapDrawButton,
   MapNavigation,
-  MapSnackbar,
   MapStyleSwitch,
   SearchField
 } from './components'
-
-const warningMessageListingsDisabled =
-  "Set `listings=true' to view listings on the map."
-const warningMessageClusteringThreshold =
-  "Set `listings=true' to view listings at street level."
 
 const MapRoot = () => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
@@ -63,8 +57,6 @@ const MapRoot = () => {
   const listingsTab = params.tab === 'map'
 
   const centerPoint = params.center
-
-  const [snackbarMessage, setSnackbarMessage] = useState('')
 
   setMapContainerRef(mapContainerRef)
 
@@ -188,29 +180,6 @@ const MapRoot = () => {
     }
   }, [canRenderMap])
 
-  useDeepCompareEffect(() => {
-    // default state of the (empty/non-existing) `listings` is true
-    const listingsParam = params.listings === 'false' ? false : true
-
-    if (listingsParam) {
-      // listings=true
-      setSnackbarMessage('')
-    } else {
-      // listings=false
-      if (
-        params.dynamicClustering &&
-        count > 0 &&
-        count < markersClusteringThreshold
-      ) {
-        setSnackbarMessage(warningMessageClusteringThreshold)
-      } else if (!params.cluster) {
-        setSnackbarMessage(warningMessageListingsDisabled)
-      } else {
-        setSnackbarMessage('')
-      }
-    }
-  }, [count, params])
-
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
       <Box
@@ -227,7 +196,7 @@ const MapRoot = () => {
           }
         }}
       >
-        <MapSnackbar message={snackbarMessage} />
+        <MapClusterWarnings />
         <MapContainer ref={mapContainerRef} />
         {locationsTab && <SearchField />}
         {listingsTab && (
