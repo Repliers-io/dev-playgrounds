@@ -7,7 +7,7 @@ import { lighten } from '@mui/material'
 
 import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 
-import { type ApiCluster, type Listing } from 'services/API/types'
+import { type ApiCluster } from 'services/API/types'
 import { type Markers } from 'services/Map'
 import {
   getMapUrl,
@@ -22,6 +22,8 @@ export class MapService {
   markers: Markers = {}
   clusters: Markers = {}
 
+  hoverStack: Set<string> = new Set()
+
   createMarkerElement = ({ ...props }: MarkerProps) => {
     const element = <Marker {...props} />
 
@@ -34,16 +36,16 @@ export class MapService {
 
   showMarkers({
     map,
-    listings,
+    items,
     onClick
   }: {
     map: Map
-    listings: Listing[]
-    onClick?: (listing: Listing) => void
+    items: any[]
+    onClick?: (item: any) => void
   }): void {
     this.resetClusters()
 
-    listings.forEach((item) => {
+    items.forEach((item) => {
       const { mlsNumber: markerId, status } = item
 
       const center = item.map
@@ -59,8 +61,12 @@ export class MapService {
 
       const { boundary } = item.map as any
       if (boundary?.length) {
-        //   const bounds = toMapboxBounds(boundary)
-        this.createPolygon(map, markerId, boundary)
+        this.createPolygon({
+          map,
+          markerId,
+          polygon: boundary,
+          onClick: () => onClick?.(item)
+        })
       } else {
         const markerElement = this.createMarkerElement({
           id: getMarkerName(markerId),
@@ -83,7 +89,7 @@ export class MapService {
 
     // Clearing Marker Residues
     const markersToRemove = Object.keys(this.markers).filter(
-      (markerKey) => !listings.some((prop) => prop.mlsNumber === markerKey)
+      (markerKey) => !items.some((prop) => prop.mlsNumber === markerKey)
     )
     this.removeMarkers(markersToRemove)
   }
@@ -152,7 +158,17 @@ export class MapService {
     }
   }
 
-  createPolygon(map: Map, markerId: string, polygon: Position[][]): void {
+  createPolygon({
+    map,
+    markerId,
+    polygon,
+    onClick
+  }: {
+    map: Map
+    markerId: string
+    polygon: Position[][]
+    onClick?: () => void
+  }): void {
     const polygonGeoJSON: Feature = {
       type: 'Feature',
       geometry: {
@@ -185,6 +201,22 @@ export class MapService {
         'line-color': lighten(polygonColor, 0.2),
         'line-width': 1.5
       }
+    })
+
+    const markerFillId = `${markerId}-fill`
+
+    map.on('click', markerFillId, () => {
+      onClick?.()
+    })
+
+    map.on('mouseleave', markerFillId, () => {
+      this.hoverStack.delete(markerFillId)
+      if (this.hoverStack.size === 0) map.getCanvas().style.cursor = ''
+    })
+
+    map.on('mouseenter', markerFillId, () => {
+      map.getCanvas().style.cursor = 'pointer'
+      this.hoverStack.add(markerFillId)
     })
 
     this.markers[markerId] = {

@@ -56,14 +56,15 @@ const PropertyCard = ({
       sx={{
         flex: '0 0 auto',
         p: 1,
-        mr: 2,
+        mr: 1,
         '&:last-child': { mr: 0 },
         width: 220,
         boxShadow: 1,
         borderRadius: 1,
         cursor: 'pointer',
-        bgcolor: '#FFFE',
-        border: '1px solid transparent',
+        bgcolor: 'background.default',
+        border: 1,
+        borderColor: 'divider',
         backdropFilter: 'blur(4px)'
       }}
       onClick={handleClick}
@@ -73,7 +74,7 @@ const PropertyCard = ({
           height: 66,
           width: 100,
           minWidth: 100,
-          borderRadius: 0.75,
+          borderRadius: 0.5,
           bgcolor: '#384248', // marker color
           backgroundSize: 'cover',
           backgroundPosition: 'center',

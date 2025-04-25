@@ -116,7 +116,7 @@ const MapRoot = () => {
     } else if (listings.length) {
       MapService.showMarkers({
         map,
-        listings,
+        items: listings,
         onClick: (listing: Listing) => {
           focusMarker(listing.mlsNumber)
         }
@@ -130,7 +130,7 @@ const MapRoot = () => {
     if (locations) {
       MapService.showMarkers({
         map,
-        listings: locations.map((location) => {
+        items: locations.map((location) => {
           const markerId =
             location.locationId + '-' + (location.map.boundary?.length || 0)
           return {
@@ -244,7 +244,7 @@ const MapRoot = () => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: listingsTab && !listingsDisabled && openDrawer ? 100 : 0,
+            bottom: listingsTab && !listingsDisabled && openDrawer ? 116 : 0,
             position: 'absolute'
           }}
         >
