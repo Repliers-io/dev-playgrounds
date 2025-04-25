@@ -7,7 +7,10 @@ import { IconButton, Stack, Typography } from '@mui/material'
 
 import { joinNonEmpty } from 'utils/strings'
 
+import './OptionLocation.css'
+
 const OptionLocation = ({
+  id,
   option,
   showBounds,
   onItemClick,
@@ -15,6 +18,7 @@ const OptionLocation = ({
   onCenterClick,
   ...props
 }: {
+  id: string
   option: any
   showBounds?: boolean
   onItemClick?: () => void
@@ -43,6 +47,8 @@ const OptionLocation = ({
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <li
       {...props}
+      id={id}
+      style={{ padding: '0 8px', margin: '-8px 0' }}
       onClick={(e) => {
         e.stopPropagation()
       }}
@@ -59,7 +65,8 @@ const OptionLocation = ({
           borderRadius: 1,
           border: 1,
           borderColor: 'divider',
-          bgcolor: 'background.default'
+          bgcolor: 'background.default',
+          my: 1
         }}
         onClick={onItemClick}
       >

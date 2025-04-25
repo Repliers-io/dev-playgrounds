@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import {
@@ -23,13 +23,25 @@ const SearchField = () => {
   const { onChange } = useParamsForm()
   const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
-  const { mapRef } = useMapOptions()
+  const { mapRef, focusedMarker, focusMarker } = useMapOptions()
   const { params /*, setPolygon, clearData: clearSearchData*/ } = useSearch()
   const initialValue = params.q || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
   const [searchString, setSearchString] = useState(initialValue)
   const prevQuery = useRef<string>(initialValue)
+
+  const prevFocusedMarker = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    prevFocusedMarker.current?.classList.remove('focused')
+    if (focusedMarker) {
+      const item = document.getElementById('item-' + focusedMarker)
+      item?.classList.add('focused')
+      item?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      prevFocusedMarker.current = item
+    }
+  }, [focusedMarker])
 
   const centerMap = (option: any) => {
     if (mapRef.current) {
@@ -155,13 +167,18 @@ const SearchField = () => {
       <OptionLocation
         option={option}
         onItemClick={() => {
-          if (!locationsEndpoint) update(option.name)
+          // if (!locationsEndpoint) {
+          //   update(option.name)
+          // } else {
+          focusMarker(option.locationId)
+          // }
         }}
         showBounds={!locationsEndpoint || Boolean(option.map.boundary)}
         onBoundsClick={() => handleBoundsClick(option)}
         onCenterClick={() => centerMap(option)}
         {...props}
         key={option.locationId}
+        id={`item-${option.locationId}`}
       />
     )
   }

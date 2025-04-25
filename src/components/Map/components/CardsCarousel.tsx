@@ -23,7 +23,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
-  const cardWidth = 222 + 24
+  const cardWidth = 258
   const scrollBy = cardWidth * 1 // one card at a time
 
   const handleNextClick = () =>
@@ -93,7 +93,8 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
           pb: 0,
           borderRadius: 1,
           bgcolor: 'background.paper',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          boxShadow: 1
         }}
       >
         <Box

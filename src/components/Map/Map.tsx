@@ -131,7 +131,12 @@ const MapRoot = () => {
             label: location.name,
             map: location.map
           } as any
-        })
+        }),
+        onClick: (location) => {
+          // NOTE: fake `mlsNumber' of location contains locationId + boundary length,
+          // we need to extract locationId only
+          focusMarker(location.mlsNumber.split('-')[0])
+        }
       })
     }
   }

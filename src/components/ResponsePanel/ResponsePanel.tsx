@@ -85,8 +85,6 @@ const ResponsePanel = ({
   }
 
   useEffect(() => {
-    if (locationsTab) return // Only run this effect if we show listings / statistics
-
     if (focusedMarker) {
       highlightJsonItem(focusedMarker)
       scrollToElementByText(focusedMarker)

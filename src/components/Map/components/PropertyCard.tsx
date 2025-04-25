@@ -58,14 +58,12 @@ const PropertyCard = ({
         p: 1,
         mr: 1,
         '&:last-child': { mr: 0 },
-        width: 220,
-        boxShadow: 1,
-        borderRadius: 1,
+        width: 232,
         cursor: 'pointer',
         bgcolor: 'background.default',
         border: 1,
-        borderColor: 'divider',
-        backdropFilter: 'blur(4px)'
+        borderRadius: 1,
+        borderColor: 'divider'
       }}
       onClick={handleClick}
     >
@@ -83,7 +81,9 @@ const PropertyCard = ({
       />
       <Stack
         sx={{
-          fontSize: '10pt',
+          my: -0.25,
+          mr: -0.5,
+          fontSize: 12,
           lineHeight: 1.25,
           overflow: 'hidden'
         }}
@@ -92,30 +92,32 @@ const PropertyCard = ({
         <Box
           sx={{
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            height: commercial ? 48 : 32
           }}
         >
           {addressString}
         </Box>
-        <Box sx={{ fontWeight: 700 }}>
+        <Box sx={{ fontWeight: 700, lineHeight: 1.5 }}>
           {listPrice !== defaultPrice
             ? formatEnglishPrice(listPrice)
             : defaultPrice}
         </Box>
 
-        <Box sx={{ color: 'text.secondary' }}>
-          {commercial ? (
-            <>&nbsp;</>
-          ) : (
-            <Stack spacing={0.75} direction="row" alignItems="center">
-              <BedOutlinedIcon sx={{ fontSize: 16 }} />
+        {!commercial && (
+          <Box sx={{ color: 'text.secondary' }}>
+            <Stack
+              spacing={0.75}
+              direction="row"
+              alignItems="center"
+              sx={{ lineHeight: 1 }}
+            >
+              <BedOutlinedIcon sx={{ fontSize: 14, mt: '2px' }} />
               {numBedrooms}
-              <BathtubOutlinedIcon sx={{ fontSize: 14 }} />
+              <BathtubOutlinedIcon sx={{ fontSize: 12 }} />
               {numBathrooms}
             </Stack>
-          )}
-        </Box>
+          </Box>
+        )}
       </Stack>
     </Stack>
   )
