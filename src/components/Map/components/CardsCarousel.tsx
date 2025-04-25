@@ -112,11 +112,11 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
         >
           {!listings.length && (
             <>
-              {Array.from({ length: 5 }).map((_, index) => (
+              {Array.from({ length: 4 }).map((_, index) => (
                 <Skeleton
                   key={index}
                   variant="rounded"
-                  sx={{ minWidth: 238, height: 84, mr: 2 }}
+                  sx={{ minWidth: 232, height: 84, mr: 1 }}
                 />
               ))}
             </>
