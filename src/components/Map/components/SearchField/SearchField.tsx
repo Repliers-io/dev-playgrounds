@@ -224,7 +224,8 @@ const SearchField = () => {
             maxHeight: 'calc(100vh - 121px)',
             boxSizing: 'border-box',
             overflowY: 'auto',
-            scrollbarWidth: 'thin'
+            scrollbarWidth: 'thin',
+            pb: '8px !important'
           }
         }}
         sx={{
