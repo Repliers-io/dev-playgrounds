@@ -8,7 +8,7 @@ import { type Filters } from 'services/Search'
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
-  endpoint: 'locations' | 'locations/search'
+  endpoint: 'locations' | 'locations/autocomplete'
   stats: boolean
   grp: string[]
   tab: string
@@ -16,13 +16,14 @@ export type CustomFormParams = {
 
   center: boolean
   radius: number | null
-  q: string
+  search: string
 
   locationsType: ('area' | 'neighbourhood' | 'city')[]
   locationsFields: string
   locationId: string
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
+  locationsBoundary: string | null
 
   area: string
   city: string

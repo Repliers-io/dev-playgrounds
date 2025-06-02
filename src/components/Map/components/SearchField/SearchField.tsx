@@ -25,7 +25,7 @@ const SearchField = () => {
   const { loading, locations, clearData } = useLocations()
   const { mapRef, focusedMarker, focusMarker } = useMapOptions()
   const { params /*, setPolygon, clearData: clearSearchData*/ } = useSearch()
-  const initialValue = params.q || ''
+  const initialValue = params.search || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
   const [searchString, setSearchString] = useState(initialValue)
@@ -63,7 +63,7 @@ const SearchField = () => {
       clearData()
     }
     if (reason === 'clear') {
-      setValue('q', '')
+      setValue('search', '')
       onChange()
     }
   }
@@ -71,7 +71,7 @@ const SearchField = () => {
   const debouncedCommitInput = useRef(
     debounce((value: string) => {
       if (value.length >= minCharsToSuggest) {
-        setValue('q', value)
+        setValue('search', value)
         prevQuery.current = value
         onChange()
       }
@@ -81,7 +81,7 @@ const SearchField = () => {
   const commitInput = (input: string) => {
     debouncedCommitInput.clear()
 
-    setValue('q', input)
+    setValue('search', input)
     prevQuery.current = input
     onChange()
   }
@@ -104,7 +104,7 @@ const SearchField = () => {
 
   const update = (value: string) => {
     setSearchString(value || searchString)
-    setValue('q', value || searchString)
+    setValue('search', value || searchString)
     onChange()
   }
 

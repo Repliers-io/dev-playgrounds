@@ -45,15 +45,16 @@ export const pick = (obj: Record<string, any>, keys: string[]) => {
 
 export const filterSearchParams = (params: Partial<FormParams>) => {
   const searchParams = pick(params, [
-    'q',
+    'search',
     'apiKey',
     'apiUrl',
     'endpoint',
     'locationsType',
-    'locationsFields'
+    'locationsFields',
+    'locationsBoundary'
   ])
 
-  if (params.endpoint === 'locations') searchParams.q = null // remove `q` parameter from `locations` endpoint
+  if (params.endpoint === 'locations') searchParams.search = null // remove `q` parameter from `locations` endpoint
 
   return searchParams
 }

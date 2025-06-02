@@ -2,14 +2,14 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import { useParamsForm } from 'providers/ParamsFormProvider'
+import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
-import { ParamsField, ParamsToggleGroup } from '../components'
+import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
-const endpoints = ['locations', 'locations/search']
+const endpoints = ['locations', 'locations/autocomplete']
 const locationTypes = ['area', 'city', 'neighborhood']
 
 const SearchSection = () => {
@@ -17,6 +17,8 @@ const SearchSection = () => {
   const { onClear } = useParamsForm()
   const { clearData } = useLocations()
   const locationsEndpoint = params.endpoint === 'locations'
+  const locationsAutocompleteEndpoint =
+    params.endpoint === 'locations/autocomplete'
 
   return (
     <SectionTemplate
@@ -75,6 +77,17 @@ const SearchSection = () => {
                   name="locationsResultsPerPage"
                 />
               </Stack>
+            </>
+          )}
+
+          {locationsAutocompleteEndpoint && (
+            <>
+              <ParamsSelect
+                label="boundary"
+                name="locationsBoundary"
+                tooltip="Fetch locations with boundary polygons for a small performance penalty"
+                options={trueFalseOptions}
+              />
             </>
           )}
 
