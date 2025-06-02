@@ -57,13 +57,25 @@ const SearchSection = () => {
             options={locationTypes}
           />
 
-          <ParamsField name="area" />
-          <ParamsField name="city" />
+          <ParamsField
+            name="area"
+            tooltip="Array of areas. For now to be provided as a comma-separated list"
+          />
+          <ParamsField
+            name="city"
+            tooltip="Array of cities. For now to be provided as a comma-separated list"
+          />
 
           {locationsEndpoint && (
             <>
-              <ParamsField name="neighborhood" />
-              <ParamsField name="locationId" />
+              <ParamsField
+                name="neighborhood"
+                tooltip="Array of neighborhoods. For now to be provided as a comma-separated list"
+              />
+              <ParamsField
+                name="locationId"
+                tooltip="Array of locations to fetch by locationId. For now to be provided as a comma-separated list"
+              />
 
               <Stack spacing={1} direction="row" justifyContent="space-between">
                 <ParamsField
