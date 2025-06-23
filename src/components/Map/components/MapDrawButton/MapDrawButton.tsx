@@ -18,7 +18,7 @@ const MapDrawButton = ({
   onChange?: (polygon: Position[]) => void
 }) => {
   const mapDrawRef = useRef<MapboxDraw | null>(null)
-  const { clearPolygon, setPolygon } = useSearch()
+  const { clearPolygon, setPolygon, polygon } = useSearch()
   const { editMode, setEditMode, clearEditMode } = useMapOptions()
   const { mapRef } = useMapOptions()
   const map = mapRef.current
@@ -42,6 +42,14 @@ const MapDrawButton = ({
     }
   }
 
+  const onDrawSelectionChange = (data: { features: unknown[] }) => {
+    if (data.features.length) {
+      disableMarkerEvents()
+    } else {
+      enableMarkerEvents()
+    }
+  }
+
   const enterDrawMode = () => {
     if (!map) return
     if (!mapDrawRef.current) {
@@ -61,17 +69,24 @@ const MapDrawButton = ({
 
       map.on('draw.create', updatePolygon)
       map.on('draw.update', updatePolygon)
-
-      map.on('draw.selectionchange', (data: any) => {
-        if (data.features.length) {
-          disableMarkerEvents()
-        } else {
-          enableMarkerEvents()
-        }
-      })
+      map.on('draw.selectionchange', onDrawSelectionChange)
 
       map.addControl(mapDraw)
       mapDrawRef.current = mapDraw
+
+      if (polygon?.length) {
+        const featureId = 'user-polygon'
+        mapDraw.add({
+          id: featureId,
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Polygon',
+            coordinates: [polygon]
+          }
+        })
+        mapDraw.changeMode('simple_select', { featureIds: [featureId] })
+      }
     }
   }
 
@@ -79,11 +94,16 @@ const MapDrawButton = ({
     enableMarkerEvents()
 
     if (!map || !mapDrawRef.current) return
-    map.removeControl(mapDrawRef.current)
+    try {
+      map.removeControl(mapDrawRef.current)
+    } catch (e) {
+      console.error('Failed to remove mapbox-gl-draw control', e)
+    }
     mapDrawRef.current = null
 
     map.off('draw.create', updatePolygon)
     map.off('draw.update', updatePolygon)
+    map.off('draw.selectionchange', onDrawSelectionChange)
   }
 
   const handleDrawClick = () => {
@@ -95,9 +115,16 @@ const MapDrawButton = ({
 
   useEffect(() => {
     // NOTE: draw mode could be initiated outside of this component
-    if (editMode) enterDrawMode()
-    else exitDrawMode()
-  }, [editMode])
+    if (editMode === 'draw') {
+      enterDrawMode()
+    } else {
+      exitDrawMode()
+    }
+
+    return () => {
+      exitDrawMode()
+    }
+  }, [editMode, map])
 
   return (
     <Box
