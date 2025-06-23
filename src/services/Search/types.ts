@@ -4,6 +4,7 @@ export const statsGroupingOptions = [
   'grp-day',
   'grp-mth',
   'grp-yr',
+  'grp-7-days',
   'grp-90-days'
 ] as const
 
