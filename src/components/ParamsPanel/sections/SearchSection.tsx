@@ -44,9 +44,6 @@ const SearchSection = () => {
             name="endpoint"
             label="endpoint"
             options={endpoints}
-            sx={{
-              '& > .MuiToggleButton-root': { flex: 1 }
-            }}
             onChange={clearData}
           />
 
