@@ -127,11 +127,10 @@ const MapRoot = () => {
       MapService.showMarkers({
         map,
         items: locations.map((location) => {
-          const markerId =
-            location.locationId + '-' + (location.map.boundary?.length || 0)
           return {
             size: 'location',
-            mlsNumber: markerId,
+            // WARN: TODO: replace mlsNumber prop to a universal id
+            mlsNumber: location.locationId,
             label: location.name,
             map: location.map
           } as any
@@ -139,7 +138,7 @@ const MapRoot = () => {
         onClick: (location) => {
           // NOTE: fake `mlsNumber' of location contains locationId + boundary length,
           // we need to extract locationId only
-          focusMarker(location.mlsNumber.split('-')[0])
+          focusMarker(location.mlsNumber)
         }
       })
     }

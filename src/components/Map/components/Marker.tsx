@@ -3,7 +3,7 @@ import { type MouseEventHandler, type TouchEventHandler } from 'react'
 
 import { alpha, Box, darken, lighten, Link } from '@mui/material'
 
-import { polygonColor } from 'services/Map/Map'
+import { polygonColor } from 'services/Map'
 import { toRem } from 'utils/theme'
 import { marker } from 'constants/colors'
 
@@ -12,6 +12,7 @@ export type MarkerProps = {
   label?: string
   link?: string
   status?: string
+  className?: string
   size?: 'point' | 'tag' | 'cluster' | 'location'
   onClick?: MouseEventHandler
   // TODO: there should be no difference between onClick and onTap
@@ -26,6 +27,7 @@ const Marker = ({
   label = '',
   size = 'tag',
   status = 'A',
+  className = '',
   onTap,
   onClick,
   onMouseEnter,
@@ -129,7 +131,8 @@ const Marker = ({
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      {...(id ? { id } : {})}
+      {...(id && { id })}
+      {...(className && { className })}
     >
       <Link
         href={link}

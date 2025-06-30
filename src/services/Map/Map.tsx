@@ -72,6 +72,7 @@ export class MapService {
           id: getMarkerName(markerId),
           status,
           size: item.size || 'point',
+          ...(item.size === 'location' && { className: 'location' }),
           onClick: (e: MouseEvent) => {
             // Prevent redirect on click
             e.preventDefault()
@@ -222,8 +223,9 @@ export class MapService {
     this.markers[markerId] = {
       remove: () => {
         this.removePolygon(map, markerId)
+        return this.markers[markerId]
       }
-    }
+    } as MapboxMarker
   }
 
   resetMarkers() {

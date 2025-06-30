@@ -10,3 +10,13 @@
 .mapboxgl-map .focused::after {
   border-width: 16px !important;
 }
+
+.mapboxgl-map .location.focused .MuiBox-root {
+  background: #fa36 !important;
+  border-color: #fa3 !important;
+}
+
+.mapboxgl-map .location.focused::before,
+.mapboxgl-map .location.focused::after {
+  border: none !important;
+}
