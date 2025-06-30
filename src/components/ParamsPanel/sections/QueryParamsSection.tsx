@@ -15,7 +15,7 @@ import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
-const QueryParametersSection = () => {
+const QueryParamsSection = () => {
   const { onClear } = useParamsForm()
   const { options, loading } = useSelectOptions()
   return (
@@ -112,4 +112,4 @@ const QueryParametersSection = () => {
   )
 }
 
-export default QueryParametersSection
+export default QueryParamsSection

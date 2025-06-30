@@ -45,8 +45,5 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsType',
   'locationsFields',
   'locationId',
-  'radius',
-  'area',
-  'city',
-  'neighborhood'
+  'radius'
 ]
