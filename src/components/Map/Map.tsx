@@ -50,6 +50,7 @@ const MapRoot = () => {
   const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
+  const prevFocused = useRef<string | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
@@ -167,13 +168,22 @@ const MapRoot = () => {
   }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
 
   useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
     if (focusedMarker) {
       prevFocusedMarker.current?.classList.remove('focused')
+      if (prevFocused.current) MapService.blurPolygon(map, prevFocused.current)
+
       const element = document.getElementById(`marker-${focusedMarker}`)
       if (element) {
         element.classList.add('focused')
         prevFocusedMarker.current = element
+      } else {
+        // no HTML element found, should be MapBox polygon instead
+        MapService.focusPolygon(map, focusedMarker)
       }
+      prevFocused.current = focusedMarker
     }
 
     return () => prevFocusedMarker.current?.classList.remove('focused')

@@ -170,62 +170,94 @@ export class MapService {
     polygon: Position[][]
     onClick?: () => void
   }): void {
-    const polygonGeoJSON: Feature = {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: polygon
-      },
-      properties: {}
+    try {
+      const polygonGeoJSON: Feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: polygon
+        },
+        properties: {}
+      }
+
+      map.addSource(markerId, {
+        type: 'geojson',
+        data: polygonGeoJSON
+      })
+
+      const markerFillId = `${markerId}-fill`
+      const markerOutlineId = `${markerId}-outline`
+
+      map.addLayer({
+        id: markerFillId,
+        type: 'fill',
+        source: markerId,
+        paint: {
+          'fill-color': polygonColor,
+          'fill-opacity': 0.25,
+          'fill-color-transition': { duration: 0 },
+          'fill-opacity-transition': { duration: 0 }
+        }
+      })
+
+      map.addLayer({
+        id: markerOutlineId,
+        type: 'line',
+        source: markerId,
+        paint: {
+          'line-color': lighten(polygonColor, 0.2),
+          'line-width': 1.5,
+          'line-color-transition': { duration: 0 },
+          'line-width-transition': { duration: 0 }
+        }
+      })
+
+      map.on('click', markerFillId, () => {
+        onClick?.()
+      })
+
+      map.on('mouseleave', markerFillId, () => {
+        this.hoverStack.delete(markerFillId)
+        if (this.hoverStack.size === 0) map.getCanvas().style.cursor = ''
+      })
+
+      map.on('mouseenter', markerFillId, () => {
+        map.getCanvas().style.cursor = 'pointer'
+        this.hoverStack.add(markerFillId)
+      })
+
+      this.markers[markerId] = {
+        remove: () => {
+          this.removePolygon(map, markerId)
+          return this.markers[markerId]
+        }
+      } as MapboxMarker
+    } catch (error) {
+      console.error('Error creating polygon:', error)
     }
+  }
 
-    map.addSource(markerId, {
-      type: 'geojson',
-      data: polygonGeoJSON
-    })
+  focusPolygon(map: Map, markerId: string) {
+    const fill = `${markerId}-fill`
+    const outline = `${markerId}-outline`
+    try {
+      map.setPaintProperty(fill, 'fill-color', '#ff9800')
+      map.setPaintProperty(outline, 'line-color', '#ff9800')
+    } catch (error) {
+      console.error('Error focusing polygon:', error)
+    }
+  }
 
-    map.addLayer({
-      id: `${markerId}-fill`,
-      type: 'fill',
-      source: markerId,
-      paint: {
-        'fill-color': polygonColor,
-        'fill-opacity': 0.25
-      }
-    })
-
-    map.addLayer({
-      id: `${markerId}-outline`,
-      type: 'line',
-      source: markerId,
-      paint: {
-        'line-color': lighten(polygonColor, 0.2),
-        'line-width': 1.5
-      }
-    })
-
-    const markerFillId = `${markerId}-fill`
-
-    map.on('click', markerFillId, () => {
-      onClick?.()
-    })
-
-    map.on('mouseleave', markerFillId, () => {
-      this.hoverStack.delete(markerFillId)
-      if (this.hoverStack.size === 0) map.getCanvas().style.cursor = ''
-    })
-
-    map.on('mouseenter', markerFillId, () => {
-      map.getCanvas().style.cursor = 'pointer'
-      this.hoverStack.add(markerFillId)
-    })
-
-    this.markers[markerId] = {
-      remove: () => {
-        this.removePolygon(map, markerId)
-        return this.markers[markerId]
-      }
-    } as MapboxMarker
+  blurPolygon(map: Map, markerId: string) {
+    const fill = `${markerId}-fill`
+    const outline = `${markerId}-outline`
+    try {
+      map.setPaintProperty(fill, 'fill-color', polygonColor)
+      map.setPaintProperty(outline, 'line-color', lighten(polygonColor, 0.2))
+      map.setPaintProperty(outline, 'line-width', 1.5)
+    } catch (error) {
+      console.error('Error blurring polygon:', error)
+    }
   }
 
   resetMarkers() {
