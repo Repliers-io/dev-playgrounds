@@ -16,6 +16,8 @@ import {
   markersClusteringThreshold
 } from 'constants/map'
 
+import './Map.css'
+
 import {
   CardsCarousel,
   CardsCarouselSwitch,
@@ -36,6 +38,7 @@ const MapRoot = () => {
     canRenderMap,
     style,
     mapRef,
+    focusedMarker,
     focusMarker,
     blurMarker,
     setMapContainerRef, // TODO: remove
@@ -46,6 +49,7 @@ const MapRoot = () => {
   } = useMapOptions()
   const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
+  const prevFocusedMarker = useRef<HTMLElement | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
@@ -54,7 +58,7 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const listingsTab = params.tab === 'map'
+  const listingsTab = params.tab === 'map' || (!locationsTab && !statisticsTab)
 
   const centerPoint = params.center
 
@@ -162,6 +166,19 @@ const MapRoot = () => {
     }
     blurMarker()
   }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
+
+  useEffect(() => {
+    if (focusedMarker) {
+      prevFocusedMarker.current?.classList.remove('focused')
+      const element = document.getElementById(`marker-${focusedMarker}`)
+      if (element) {
+        element.classList.add('focused')
+        prevFocusedMarker.current = element
+      }
+    }
+
+    return () => prevFocusedMarker.current?.classList.remove('focused')
+  }, [focusedMarker])
 
   useEffect(() => {
     if (mapVisible && !statisticsTab) mapRef.current?.resize()

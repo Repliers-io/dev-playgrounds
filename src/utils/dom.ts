@@ -13,7 +13,6 @@ export const findElementByTextXPath = (text: string) => {
 }
 
 export const findElementByText = (text: string) => {
-  console.log('findElementByText', text)
   const el = findElementByTextXPath(text)
   if (!el) {
     console.error('Element with the specified text not found.')
