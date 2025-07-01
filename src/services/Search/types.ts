@@ -40,6 +40,7 @@ export interface Filters {
   area?: string | string[]
   city?: string | string[]
   neighborhood?: string | string[]
+  areaOrCity?: string | string[]
   status?: string[]
   lastStatus?: ApiLastStatus | ApiLastStatus[]
   amenities?: string[]

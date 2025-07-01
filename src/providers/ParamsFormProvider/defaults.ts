@@ -28,6 +28,7 @@ const defaultFormState: Partial<FormParams> = {
   area: '',
   city: '',
   neighborhood: '',
+  areaOrCity: '',
 
   /**
    * request parameters

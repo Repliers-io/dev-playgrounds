@@ -21,6 +21,10 @@ const LocationParamsSection = () => {
             name="neighborhood"
             tooltip="Array of neighborhoods. For now to be provided as a comma-separated list"
           />
+          <ParamsField
+            name="areaOrCity"
+            tooltip="Array of areas or cities mixed together. For now to be provided as a comma-separated list"
+          />
         </Stack>
       </Box>
     </SectionTemplate>
