@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material'
 
+import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import {
@@ -52,7 +53,12 @@ const ResponsePanel = ({
   onExpand?: () => void
 }) => {
   const { focusedMarker } = useMapOptions()
-  const { request, statusCode, json, size, time, loading } = useSearch()
+  const searchContext = useSearch()
+  const locationsContext = useLocations()
+  const locationsTab = searchContext.params.tab === 'locations'
+  const response = locationsTab ? locationsContext : searchContext
+  const { size, json, statusCode, request, time, loading } = response
+
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
 
@@ -85,7 +91,7 @@ const ResponsePanel = ({
     } else {
       removeHighlight()
     }
-  }, [focusedMarker])
+  }, [focusedMarker, locationsTab])
 
   return (
     <Box
@@ -153,7 +159,7 @@ const ResponsePanel = ({
               <RequestParser request={request} />
             ) : (
               <Typography color="primary.light" variant="body2">
-                Loading ...
+                {locationsTab ? 'Empty Location ...' : 'Loading ...'}
               </Typography>
             )}
           </Box>
@@ -163,12 +169,21 @@ const ResponsePanel = ({
                 <CircularProgress size={14} />
               ) : (
                 <Stack direction="row" spacing={1}>
-                  <Typography color="text.hint" variant="body2" noWrap>
-                    {time}ms
-                  </Typography>
-                  <Typography color={formatColor(size)} variant="body2" noWrap>
-                    {formatBytes(size)}
-                  </Typography>
+                  {Boolean(time) && (
+                    <Typography color="text.hint" variant="body2" noWrap>
+                      {time}ms
+                    </Typography>
+                  )}
+
+                  {Boolean(size) && (
+                    <Typography
+                      color={formatColor(size)}
+                      variant="body2"
+                      noWrap
+                    >
+                      {formatBytes(size)}
+                    </Typography>
+                  )}
                 </Stack>
               )}
             </Box>

@@ -4,6 +4,7 @@ export const statsGroupingOptions = [
   'grp-day',
   'grp-mth',
   'grp-yr',
+  'grp-7-days',
   'grp-90-days'
 ] as const
 
@@ -22,6 +23,7 @@ export const soldWithin = [...daysOnMarket] as const
 
 export type DaysOnMarket = (typeof daysOnMarket)[number]
 export type SoldWithin = (typeof soldWithin)[number]
+
 export interface Filters {
   boardId?: number | null
   sortBy?: ApiSortBy
@@ -35,6 +37,10 @@ export interface Filters {
   type?: string | string[]
   class?: string | string[]
   style?: string | string[]
+  area?: string | string[]
+  city?: string | string[]
+  neighborhood?: string | string[]
+  areaOrCity?: string | string[]
   status?: string[]
   lastStatus?: ApiLastStatus | ApiLastStatus[]
   amenities?: string[]
@@ -56,4 +62,5 @@ export interface Filters {
   clusterLimit?: number
   fields?: string
   statistics?: string
+  resultsPerPage?: number
 }

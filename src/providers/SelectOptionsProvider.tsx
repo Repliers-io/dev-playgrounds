@@ -11,11 +11,15 @@ import React, {
 
 import { apiFetch } from 'utils/api'
 import { getPath } from 'utils/path'
+import {
+  apiFields as fields,
+  apiFieldsMappings as mappings
+} from 'constants/form'
 
 import { useSearch } from './SearchProvider'
 
 type SelectOptionsContextType = {
-  fields: string[]
+  fields: typeof fields
   loading: boolean
   options: Record<string, string[]>
 }
@@ -26,13 +30,9 @@ const SelectOptionsContext = createContext<SelectOptionsContextType | null>(
 
 const SelectOptionsProvider = ({
   minCount = 10,
-  fields,
-  mappings,
   children
 }: {
   minCount?: number
-  fields: string[]
-  mappings?: Record<string, string>
   children: React.ReactNode
 }) => {
   const [loading, setLoading] = useState(false)
@@ -90,7 +90,7 @@ const SelectOptionsProvider = ({
 
       return Object.entries(options).reduce(
         (acc, [key, value]) => {
-          const mappedKey = mappings[key] || key
+          const mappedKey = mappings[key as keyof typeof mappings] || key
           acc[mappedKey] = value
           return acc
         },

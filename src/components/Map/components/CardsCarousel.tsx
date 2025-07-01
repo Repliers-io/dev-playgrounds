@@ -23,7 +23,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
-  const cardWidth = 238 + 16
+  const cardWidth = 258
   const scrollBy = cardWidth * 1 // one card at a time
 
   const handleNextClick = () =>
@@ -51,7 +51,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
       sx={{
         display: open ? 'block' : 'none',
         position: 'absolute',
-        bottom: -12,
+        bottom: 16,
         left: 16,
         right: 16
       }}
@@ -85,32 +85,46 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
       )}
 
       <Box
-        ref={ref}
         sx={{
+          position: 'relative',
           width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
           boxSizing: 'border-box',
-          scrollbarWidth: 'thin',
-          overflowY: 'hidden',
-          overflowX: 'auto',
-          pb: 3.5
+          p: 1,
+          pb: 0,
+          borderRadius: 1,
+          bgcolor: 'background.paper',
+          overflow: 'hidden',
+          boxShadow: 1
         }}
       >
-        {!listings.length && (
-          <>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rounded"
-                sx={{ minWidth: 238, height: 84, mr: 2 }}
-              />
-            ))}
-          </>
-        )}
-        {listings.map((listing, index) => (
-          <PropertyCard key={index} listing={listing} onClick={focusMarker} />
-        ))}
+        <Box
+          ref={ref}
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            boxSizing: 'border-box',
+            scrollbarWidth: 'thin',
+            overflowY: 'hidden',
+            overflowX: 'auto',
+            pb: 1
+          }}
+        >
+          {!listings.length && (
+            <>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  sx={{ minWidth: 232, height: 84, mr: 1 }}
+                />
+              ))}
+            </>
+          )}
+          {listings.map((listing, index) => (
+            <PropertyCard key={index} listing={listing} onClick={focusMarker} />
+          ))}
+        </Box>
       </Box>
     </Box>
   )

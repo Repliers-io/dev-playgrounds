@@ -11,10 +11,11 @@ import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const ClustersSection = () => {
-  const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
   const { position } = useMapOptions()
+  const { onChange } = useParamsForm()
 
+  // NOTE: rerender section on change
   watch('dynamicClustering')
   const clustering = watch('cluster')
   const dynamicPrecision = watch('dynamicClusterPrecision')
@@ -23,14 +24,14 @@ const ClustersSection = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue('cluster', event.target.checked ? true : null)
-    onChange?.()
+    onChange()
   }
 
   useEffect(() => {
     if (position?.zoom && clustering && dynamicPrecision) {
       const roundedZoom = Math.round(position.zoom + 2)
       setValue('clusterPrecision', roundedZoom)
-      onChange?.()
+      onChange()
     }
   }, [position?.zoom, clustering, dynamicPrecision])
 
@@ -53,12 +54,10 @@ const ClustersSection = () => {
           <ParamsCheckbox
             name="dynamicClustering"
             label="Auto disable clusters at street level"
-            onChange={onChange}
           />
           <ParamsCheckbox
             name="dynamicClusterPrecision"
             label="Auto adjust precision based on zoom level"
-            onChange={onChange}
           />
         </Stack>
         <ParamsRange
@@ -66,14 +65,12 @@ const ClustersSection = () => {
           max={20}
           name="clusterPrecision"
           disabled={dynamicPrecision}
-          onChange={onChange}
         />
         <ParamsRange
           min={1}
           max={200}
           name="clusterLimit"
           disabled={!clustering}
-          onChange={onChange}
         />
       </Stack>
     </SectionTemplate>

@@ -1,0 +1,8 @@
+.focused.MuiAutocomplete-option {
+  background-color: white !important;
+}
+
+.focused .MuiStack-root {
+  background: #fff8e8 !important;
+  border-color: #fd9 !important;
+}

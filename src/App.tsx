@@ -6,10 +6,13 @@ import { ThemeProvider } from '@mui/system'
 import GoogleTagManager from 'components/GoogleTagManager'
 import PageContent from 'components/PageContent'
 
+import LocationsProvider from 'providers/LocationsProvider'
 import MapOptionsProvider, {
   type MapCoords
 } from 'providers/MapOptionsProvider'
+import ParamsFormProvider from 'providers/ParamsFormProvider'
 import SearchProvider from 'providers/SearchProvider'
+import SelectOptionsProvider from 'providers/SelectOptionsProvider'
 
 import theme from 'styles/theme'
 import './App.css'
@@ -33,26 +36,17 @@ function App() {
   return (
     <>
       <GoogleTagManager gtmKey={gtmKey} />
-      <div
-        style={{
-          padding: '11.5px 26px',
-          background: '#000',
-          marginBottom: '8px'
-        }}
-      >
-        <img
-          width="135"
-          height="24"
-          alt="Repliers"
-          src="https://files.readme.io/1b52edf-small-RepliersLogo_1.png"
-          style={{ display: 'block' }}
-        />
-      </div>
       <ThemeProvider theme={theme}>
         <SearchProvider params={searchParams}>
-          <MapOptionsProvider style="map" params={mapParams}>
-            <PageContent />
-          </MapOptionsProvider>
+          <LocationsProvider>
+            <MapOptionsProvider style="map" params={mapParams}>
+              <SelectOptionsProvider>
+                <ParamsFormProvider>
+                  <PageContent />
+                </ParamsFormProvider>
+              </SelectOptionsProvider>
+            </MapOptionsProvider>
+          </LocationsProvider>
         </SearchProvider>
       </ThemeProvider>
     </>

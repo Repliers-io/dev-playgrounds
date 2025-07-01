@@ -1,6 +1,9 @@
-import { type FormParams } from 'providers/SearchProvider'
-
-import { defaultStatisticsFields, listingFields } from './types'
+import {
+  defaultStatisticsFields,
+  type FormParams,
+  listingFields,
+  locationsFields
+} from './types'
 
 const defaultFormState: Partial<FormParams> = {
   /**
@@ -12,6 +15,20 @@ const defaultFormState: Partial<FormParams> = {
   tab: 'map',
   sections: '',
   grp: [],
+
+  endpoint: 'locations',
+  center: false,
+  radius: null,
+  q: '',
+  locationsPageNum: null,
+  locationsResultsPerPage: null,
+  locationsType: [],
+  locationsFields: locationsFields.join(','),
+  locationId: '',
+  area: '',
+  city: '',
+  neighborhood: '',
+  areaOrCity: '',
 
   /**
    * request parameters
@@ -31,6 +48,7 @@ const defaultFormState: Partial<FormParams> = {
   minBaths: undefined,
   minGarageSpaces: undefined,
   minParkingSpaces: undefined,
+  resultsPerPage: undefined,
   cluster: undefined,
   clusterLimit: 100,
   clusterPrecision: 10,

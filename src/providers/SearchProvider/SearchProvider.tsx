@@ -1,5 +1,3 @@
-'use client'
-
 import React, {
   createContext,
   useCallback,
@@ -11,14 +9,13 @@ import React, {
 import { type Position } from 'geojson'
 import queryString from 'query-string'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
-
 import {
   type FormParamKeys,
-  type FormParams,
-  type SavedResponse,
-  type SearchContextType
-} from './types'
+  type FormParams
+} from 'providers/ParamsFormProvider'
+import { apiFetch, queryStringOptions } from 'utils/api'
+
+import { type SavedResponse, type SearchContextType } from './types'
 
 export const SearchContext = createContext<SearchContextType | undefined>(
   undefined
@@ -99,6 +96,9 @@ const SearchProvider = ({
     []
   )
 
+  const previousRequest = useRef<string>('')
+  const previousKey = useRef<string>('')
+
   const clearPolygon = useCallback(() => setPolygon(null), [])
 
   const clearData = useCallback(() => {
@@ -108,17 +108,16 @@ const SearchProvider = ({
     setSaved(emptySavedResponse)
     setJson(null)
     setSize(0)
+    previousRequest.current = ''
   }, [])
-
-  const previousRequest = useRef<string>('')
-  const previousKey = useRef<string>('')
 
   const search = useCallback(async (params: any) => {
     const { apiKey, apiUrl, ...rest } = params
-    const endpoint = `${apiUrl}/listings`
-    const getParamsString = queryString.stringify(rest, queryStringOptions)
-    const request = `${endpoint}?${getParamsString}`
+    const endpointUrl = `${apiUrl}/listings`
 
+    // cache request and filter out duplicates
+    const getParamsString = queryString.stringify(rest, queryStringOptions)
+    const request = `${endpointUrl}?${getParamsString}`
     if (request === previousRequest.current && apiKey === previousKey.current)
       return false
     previousRequest.current = request
@@ -135,7 +134,7 @@ const SearchProvider = ({
       setRequest(request)
 
       const response = await apiFetch(
-        endpoint,
+        endpointUrl,
         { get: rest },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
@@ -160,7 +159,6 @@ const SearchProvider = ({
 
       const json = await response.json()
       setJson(json)
-      setLoading(false)
 
       if (response.ok && !disabled.current) {
         const { listings, count, page, numPages, aggregates, statistics } = json
@@ -179,8 +177,10 @@ const SearchProvider = ({
       return json
     } catch (error: any) {
       setStatusCode(error.status)
-      setLoading(false)
       return null
+    } finally {
+      setLoading(false)
+      abortController.current = null
     }
   }, [])
 

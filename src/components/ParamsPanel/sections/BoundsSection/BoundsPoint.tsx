@@ -2,7 +2,7 @@ import { Box, Stack, TextField } from '@mui/material'
 
 const BoundsPoint = ({
   label,
-  point
+  point = { lng: 0, lat: 0 }
 }: {
   label: string
   point: { lng: number; lat: number }
@@ -11,7 +11,7 @@ const BoundsPoint = ({
     <Stack spacing={0.25} direction="row">
       <Box sx={{ whiteSpace: 'nowrap' }}>{label} [</Box>
       <TextField
-        value={point.lng}
+        value={point.lng.toFixed(10)}
         disabled
         fullWidth
         size="small"
@@ -19,7 +19,7 @@ const BoundsPoint = ({
       />
       ,
       <TextField
-        value={point.lat}
+        value={point.lat.toFixed(10)}
         disabled
         fullWidth
         size="small"

@@ -20,7 +20,7 @@ const StatsSection = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue('stats', event.target.checked ? true : null)
-    onChange?.()
+    onChange()
   }
 
   return (
@@ -41,24 +41,22 @@ const StatsSection = () => {
           stringValue
           name="statistics"
           options={statisticsFields}
-          onChange={onChange}
         />
         <ParamsMultiSelect
           name="grp"
           label="grp-..."
           hint="docs"
-          link="https://help.repliers.com/en/article/real-time-market-statistics-implementation-guide-l3b1uy/#1-grouping-statistics"
           options={statsGroupingOptions}
-          onChange={onChange}
+          link="https://help.repliers.com/en/article/real-time-market-statistics-implementation-guide-l3b1uy/#1-grouping-statistics"
         />
         <Stack spacing={1} direction="row">
-          <ParamsDate name="minListDate" onChange={onChange} />
-          <ParamsDate name="maxListDate" onChange={onChange} />
+          <ParamsDate name="minListDate" />
+          <ParamsDate name="maxListDate" />
         </Stack>
 
         <Stack spacing={1} direction="row">
-          <ParamsDate name="minSoldDate" onChange={onChange} />
-          <ParamsDate name="maxSoldDate" onChange={onChange} />
+          <ParamsDate name="minSoldDate" />
+          <ParamsDate name="maxSoldDate" />
         </Stack>
       </Stack>
     </SectionTemplate>

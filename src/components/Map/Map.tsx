@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
-import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import MapService from 'services/Map'
+import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
-import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { getMapStyleUrl } from 'utils/map'
 import {
@@ -17,21 +16,20 @@ import {
   markersClusteringThreshold
 } from 'constants/map'
 
+import './Map.css'
+
 import {
   CardsCarousel,
   CardsCarouselSwitch,
+  MapCenterPoint,
+  MapClusterWarnings,
   MapContainer,
   MapCounter,
   MapDrawButton,
   MapNavigation,
-  MapSnackbar,
-  MapStyleSwitch
+  MapStyleSwitch,
+  SearchField
 } from './components'
-
-const warningMessageListingsDisabled =
-  "Set `listings=true' to view listings on the map."
-const warningMessageClusteringThreshold =
-  "Set `listings=true' to view listings at street level."
 
 const MapRoot = () => {
   const [mapVisible, mapContainerRef] = useIntersectionObserver(0)
@@ -40,6 +38,7 @@ const MapRoot = () => {
     canRenderMap,
     style,
     mapRef,
+    focusedMarker,
     focusMarker,
     blurMarker,
     setMapContainerRef, // TODO: remove
@@ -48,14 +47,21 @@ const MapRoot = () => {
     setPosition,
     destroyMap
   } = useMapOptions()
+  const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
+  const prevFocusedMarker = useRef<HTMLElement | null>(null)
+  const prevFocused = useRef<string | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
-  const { watch } = useFormContext()
-  const tab = watch('tab')
+
   const listingsDisabled = params.listings === 'false'
-  const [snackbarMessage, setSnackbarMessage] = useState('')
+
+  const locationsTab = params.tab === 'locations'
+  const statisticsTab = params.tab === 'stats'
+  const listingsTab = params.tab === 'map' || (!locationsTab && !statisticsTab)
+
+  const centerPoint = params.center
 
   setMapContainerRef(mapContainerRef)
 
@@ -93,10 +99,9 @@ const MapRoot = () => {
     initializeMap(container)
   }
 
-  useEffect(() => {
+  const showMarkersAndClusters = () => {
     const map = mapRef.current
     if (!map) return
-
     // Show clusters when either:
     // 1. Clusters exist AND auto-switch is disabled, OR
     // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
@@ -108,14 +113,51 @@ const MapRoot = () => {
     } else if (listings.length) {
       MapService.showMarkers({
         map,
-        listings,
+        items: listings,
         onClick: (listing: Listing) => {
           focusMarker(listing.mlsNumber)
         }
       })
+    }
+  }
+
+  const showLocations = () => {
+    const map = mapRef.current
+    if (!map) return
+    if (locations) {
+      MapService.showMarkers({
+        map,
+        items: locations.map((location) => {
+          return {
+            size: 'location',
+            // WARN: TODO: replace mlsNumber prop to a universal id
+            mlsNumber: location.locationId,
+            label: location.name,
+            map: location.map
+          } as any
+        }),
+        onClick: (location) => {
+          // NOTE: fake `mlsNumber' of location contains locationId + boundary length,
+          // we need to extract locationId only
+          focusMarker(location.mlsNumber)
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    if (listingsTab) {
+      showMarkersAndClusters()
     } else {
       // manually delete them all
-      MapService.resetAllMarkers()
+      if (!locations) {
+        MapService.resetAllMarkers()
+      } else {
+        showLocations()
+      }
     }
 
     if (!firstTimeLoaded.current) {
@@ -123,11 +165,33 @@ const MapRoot = () => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count, dynamicClustering])
+  }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
 
   useEffect(() => {
-    if (mapVisible && tab === 'map') mapRef.current?.resize()
-  }, [mapVisible, tab])
+    const map = mapRef.current
+    if (!map) return
+
+    if (focusedMarker) {
+      prevFocusedMarker.current?.classList.remove('focused')
+      if (prevFocused.current) MapService.blurPolygon(map, prevFocused.current)
+
+      const element = document.getElementById(`marker-${focusedMarker}`)
+      if (element) {
+        element.classList.add('focused')
+        prevFocusedMarker.current = element
+      } else {
+        // no HTML element found, should be MapBox polygon instead
+        MapService.focusPolygon(map, focusedMarker)
+      }
+      prevFocused.current = focusedMarker
+    }
+
+    return () => prevFocusedMarker.current?.classList.remove('focused')
+  }, [focusedMarker])
+
+  useEffect(() => {
+    if (mapVisible && !statisticsTab) mapRef.current?.resize()
+  }, [mapVisible, statisticsTab])
 
   useEffect(() => {
     mapRef.current?.setStyle(getMapStyleUrl(style))
@@ -147,29 +211,6 @@ const MapRoot = () => {
     }
   }, [canRenderMap])
 
-  useDeepCompareEffect(() => {
-    // default state of the (empty/non-existing) `listings` is true
-    const listingsParam = params.listings === 'false' ? false : true
-
-    if (listingsParam) {
-      // listings=true
-      setSnackbarMessage('')
-    } else {
-      // listings=false
-      if (
-        params.dynamicClustering &&
-        count > 0 &&
-        count < markersClusteringThreshold
-      ) {
-        setSnackbarMessage(warningMessageClusteringThreshold)
-      } else if (!params.cluster) {
-        setSnackbarMessage(warningMessageListingsDisabled)
-      } else {
-        setSnackbarMessage('')
-      }
-    }
-  }, [count, params])
-
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
       <Box
@@ -186,9 +227,12 @@ const MapRoot = () => {
           }
         }}
       >
-        <MapSnackbar message={snackbarMessage} />
+        <MapClusterWarnings />
         <MapContainer ref={mapContainerRef} />
-        <MapCounter count={count} loading={loading || !request} />
+        {locationsTab && <SearchField />}
+        {listingsTab && (
+          <MapCounter count={count} loading={loading || !request} />
+        )}
 
         <Stack
           spacing={2}
@@ -200,22 +244,23 @@ const MapRoot = () => {
             pb: 2,
             left: 16,
             right: 16,
-            bottom: openDrawer && !listingsDisabled ? 100 : 0,
+            bottom: listingsTab && !listingsDisabled && openDrawer ? 116 : 0,
             position: 'absolute'
           }}
         >
-          <MapDrawButton />
+          {listingsTab && <MapDrawButton />}
           <MapNavigation />
           <MapStyleSwitch />
-          {!listingsDisabled && (
+          {listingsTab && !listingsDisabled && (
             <CardsCarouselSwitch
               open={openDrawer}
               onClick={() => setOpenDrawer(!openDrawer)}
             />
           )}
         </Stack>
+        {centerPoint && <MapCenterPoint />}
       </Box>
-      <CardsCarousel open={openDrawer && !listingsDisabled} />
+      {listingsTab && <CardsCarousel open={openDrawer && !listingsDisabled} />}
     </Stack>
   )
 }

@@ -4,6 +4,8 @@ import { useFormContext } from 'react-hook-form'
 import { Box, FormHelperText, Slider, Stack, TextField } from '@mui/material'
 import { type SliderProps } from '@mui/material/Slider/Slider'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import ParamLabel from './ParamsLabel'
 
 interface RangeProps extends SliderProps {
@@ -12,7 +14,6 @@ interface RangeProps extends SliderProps {
   hint?: string
   link?: string
   tooltip?: string
-  onChange?: () => void
 }
 
 const ParamsRange: React.FC<RangeProps> = ({
@@ -22,7 +23,6 @@ const ParamsRange: React.FC<RangeProps> = ({
   link,
   tooltip,
   disabled = false,
-  onChange,
   ...rest
 }) => {
   const {
@@ -30,6 +30,7 @@ const ParamsRange: React.FC<RangeProps> = ({
     setValue,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
@@ -42,8 +43,9 @@ const ParamsRange: React.FC<RangeProps> = ({
   }
 
   const handleEndChange = async () => {
-    setValue(name, localValue, { shouldValidate: true })
-    onChange?.()
+    // setValue(name, localValue, { shouldValidate: true })
+    setValue(name, localValue ? localValue : null, { shouldValidate: true })
+    onChange()
   }
 
   // sync with form state
@@ -61,9 +63,9 @@ const ParamsRange: React.FC<RangeProps> = ({
       />
       <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
-          value={localValue}
+          value={localValue || 0}
           onChange={handleChange}
-          onMouseUp={handleEndChange}
+          onChangeCommitted={handleEndChange}
           disabled={disabled}
           sx={{
             '& .MuiSlider-thumb': {
@@ -82,7 +84,8 @@ const ParamsRange: React.FC<RangeProps> = ({
         <TextField
           disabled
           size="small"
-          value={localValue}
+          // value={localValue}
+          value={localValue ? localValue : 'null'}
           sx={{ width: 48, '& input': { textAlign: 'center' } }}
         />
       </Stack>

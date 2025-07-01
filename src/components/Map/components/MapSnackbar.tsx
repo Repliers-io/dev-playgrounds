@@ -11,7 +11,7 @@ const MapSnackbar = ({ message = '' }: { message?: string }) => {
 
   const handleClick = () => {
     setValue('listings', true)
-    onChange?.()
+    onChange()
   }
 
   if (!message) return null

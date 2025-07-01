@@ -1,4 +1,33 @@
-import type { ApiQueryParamsAllowedFields, Listing } from 'services/API/types'
+import {
+  type ApiCredentials,
+  type ApiQueryParamsAllowedFields,
+  type Listing
+} from 'services/API/types'
+import { type Filters } from 'services/Search'
+
+export type CustomFormParams = {
+  dynamicClustering: boolean
+  dynamicClusterPrecision: boolean
+  endpoint: 'locations' | 'locations/autocomplete'
+  stats: boolean
+  grp: string[]
+  tab: string
+  sections: string
+
+  center: boolean
+  radius: number | null
+  search: string
+
+  locationsType: ('area' | 'neighbourhood' | 'city')[]
+  locationsFields: string
+  locationId: string
+  locationsPageNum: number | null
+  locationsResultsPerPage: number | null
+  locationsBoundary: string | null
+}
+
+export type FormParams = Filters & ApiCredentials & CustomFormParams
+export type FormParamKeys = keyof FormParams
 
 export const lastStatusOptions = [
   'Sus',
@@ -100,6 +129,8 @@ export const statisticsFields = [
 ] as const
 
 export type StatisticsField = (typeof statisticsFields)[number]
+
+export const locationsFields = ['locationId', 'name', 'type', 'map', 'address']
 
 export const listingFields: Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???

@@ -762,6 +762,7 @@ export interface ApiSavedSearch {
   areas: string[]
   cities: string[]
   neighborhoods: string[]
+  areaOrCity: string[]
   notificationFrequency: SavedSearchNotificationFrequency
   maxPrice?: number
   minPrice?: number

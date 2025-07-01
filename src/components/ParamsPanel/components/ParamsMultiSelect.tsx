@@ -12,6 +12,8 @@ import {
   Typography
 } from '@mui/material'
 
+import { useParamsForm } from 'providers/ParamsFormProvider'
+
 import ParamLabel from './ParamsLabel'
 
 const checkboxStyles = {
@@ -40,8 +42,7 @@ const ParamsMultiSelect = ({
   options = [],
   noNull = true,
   noClear = false,
-  stringValue = false,
-  onChange
+  stringValue = false
 }: {
   name: string
   label?: string
@@ -53,20 +54,20 @@ const ParamsMultiSelect = ({
   noNull?: boolean
   noClear?: boolean
   stringValue?: boolean
-  onChange?: () => void
 }) => {
   const {
     control,
     setValue,
     formState: { errors }
   } = useFormContext()
+  const { onChange } = useParamsForm()
 
   // eslint-disable-next-line no-param-reassign
   if (!label) label = name
 
   const handleClearClick = () => {
     setValue(name, stringValue ? '' : [])
-    onChange?.()
+    onChange()
   }
 
   return (
@@ -118,7 +119,7 @@ const ParamsMultiSelect = ({
                       field.onChange(
                         stringValue ? localValue.join(',') : localValue
                       )
-                      onChange?.()
+                      onChange()
                     },
                     renderValue: (selected) => {
                       if (
@@ -154,7 +155,7 @@ const ParamsMultiSelect = ({
                     <span style={{ color: '#aaa' }}>null</span>
                   </MenuItem>
                 )}
-                {options.filter(Boolean).map((option) => (
+                {(options || []).filter(Boolean).map((option) => (
                   <MenuItem key={option} value={option}>
                     <Checkbox
                       size="small"

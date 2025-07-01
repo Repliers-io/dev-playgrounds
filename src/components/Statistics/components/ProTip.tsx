@@ -15,7 +15,7 @@ const ProTip = () => {
 
   const handleClick = () => {
     setValue('listings', 'false')
-    onChange?.()
+    onChange()
   }
 
   if (!statsEnabled) return null
