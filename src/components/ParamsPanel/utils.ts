@@ -66,7 +66,12 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'locationsResultsPerPage'
   ])
 
-  if (params.endpoint === 'locations') searchParams.search = null // remove `q` parameter from `locations` endpoint
+  if (params.endpoint === 'locations') {
+    searchParams.search = null // remove `q` parameter from `locations` endpoint
+  } else {
+    searchParams.locationsPageNum = null // remove `locationsPageNum` parameter from `locations/autocomplete` endpoint
+    searchParams.locationsResultsPerPage = null // remove `locationsResultsPerPage` parameter from `locations/autocomplete` endpoint
+  }
 
   return searchParams
 }
