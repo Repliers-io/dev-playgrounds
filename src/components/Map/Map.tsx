@@ -9,7 +9,7 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
-import { getMapStyleUrl } from 'utils/map'
+import { getLocationName, getMapStyleUrl, getMarkerName } from 'utils/map'
 import {
   mapboxDefaults,
   mapboxToken,
@@ -113,9 +113,12 @@ const MapRoot = () => {
     } else if (listings.length) {
       MapService.showMarkers({
         map,
-        items: listings,
+        items: listings.map((listing) => ({
+          ...listing,
+          id: getMarkerName(listing)
+        })),
         onClick: (listing: Listing) => {
-          focusMarker(listing.mlsNumber)
+          focusMarker(getMarkerName(listing))
         }
       })
     }
@@ -128,18 +131,17 @@ const MapRoot = () => {
       MapService.showMarkers({
         map,
         items: locations.map((location) => {
+          const { locationId, map, name: label } = location
           return {
+            id: getLocationName(location),
             size: 'location',
-            // WARN: TODO: replace mlsNumber prop to a universal id
-            mlsNumber: location.locationId,
-            label: location.name,
-            map: location.map
+            locationId,
+            label,
+            map
           } as any
         }),
         onClick: (location) => {
-          // NOTE: fake `mlsNumber' of location contains locationId + boundary length,
-          // we need to extract locationId only
-          focusMarker(location.mlsNumber)
+          focusMarker(getLocationName(location))
         }
       })
     }
@@ -175,7 +177,7 @@ const MapRoot = () => {
       prevFocusedMarker.current?.classList.remove('focused')
       if (prevFocused.current) MapService.blurPolygon(map, prevFocused.current)
 
-      const element = document.getElementById(`marker-${focusedMarker}`)
+      const element = document.getElementById(focusedMarker)
       if (element) {
         element.classList.add('focused')
         prevFocusedMarker.current = element

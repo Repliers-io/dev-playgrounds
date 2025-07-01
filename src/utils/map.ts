@@ -95,7 +95,11 @@ export const setMapUrl = (center: LngLat, zoom: number) => {
   window.history.pushState(null, '', url)
 }
 
-export const getMarkerName = (mlsNumber: string) => `marker-${mlsNumber}`
+export const getMarkerName = (listing: Listing) =>
+  `marker-${listing.mlsNumber}-${listing.boardId}`
+
+export const getLocationName = (location: any) =>
+  `location-${location.locationId}-${location.map.boundary?.[0].length || 0}`
 
 export const toMapboxPoint = (location: ApiCoords) => {
   const { latitude, longitude } = location

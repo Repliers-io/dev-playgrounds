@@ -86,8 +86,9 @@ const ResponsePanel = ({
 
   useEffect(() => {
     if (focusedMarker) {
-      highlightJsonItem(focusedMarker)
-      scrollToElementByText(focusedMarker)
+      const id = focusedMarker.split('-')[1]
+      highlightJsonItem(id)
+      scrollToElementByText(id)
     } else {
       removeHighlight()
     }
