@@ -18,12 +18,12 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...(params.tab !== 'locations' ? searchOnlyParams : [])
   ]
 
-  const potentialArrays = ['area', 'city', 'neighborhood']
+  const maybeArrays = ['area', 'city', 'neighborhood']
 
   const acc = Object.entries(params).reduce((acc, [key, value]) => {
     if (!fieldsToRemove.includes(key as FormParamKeys)) {
       // Force TypeScript to accept the value by using "as any"
-      if (potentialArrays.includes(key)) {
+      if (maybeArrays.includes(key)) {
         const valueArr = String(value || '').split(',')
         if (valueArr.length > 1) {
           acc[key as FormParamKeys] = valueArr
