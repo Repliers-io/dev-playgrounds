@@ -10,7 +10,6 @@ import {
   statsOnlyParams
 } from 'constants/form'
 
-// eslint-disable-next-line import/prefer-default-export
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
   const fieldsToRemove = [
     ...customFormParams,
@@ -19,16 +18,27 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...(params.tab !== 'locations' ? searchOnlyParams : [])
   ]
 
-  return Object.entries(params).reduce<Partial<FormParams>>(
-    (acc, [key, value]) => {
-      if (!fieldsToRemove.includes(key as FormParamKeys)) {
-        // Force TypeScript to accept the value by using "as any"
+  const potentialArrays = ['area', 'city', 'neighborhood']
+
+  const acc = Object.entries(params).reduce((acc, [key, value]) => {
+    if (!fieldsToRemove.includes(key as FormParamKeys)) {
+      // Force TypeScript to accept the value by using "as any"
+      if (potentialArrays.includes(key)) {
+        const valueArr = String(value || '').split(',')
+        if (valueArr.length > 1) {
+          acc[key as FormParamKeys] = valueArr
+            .map((item: string) => item.trim())
+            .filter(Boolean) as any
+        } else {
+          acc[key as FormParamKeys] = value as any
+        }
+      } else {
         acc[key as FormParamKeys] = value as any
       }
-      return acc
-    },
-    {}
-  )
+    }
+    return acc
+  }, {} as Partial<FormParams>)
+  return acc
 }
 
 export const pick = (obj: Record<string, any>, keys: string[]) => {
@@ -51,7 +61,9 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'endpoint',
     'locationsType',
     'locationsFields',
-    'locationsBoundary'
+    'locationsBoundary',
+    'locationsPageNum',
+    'locationsResultsPerPage'
   ])
 
   if (params.endpoint === 'locations') searchParams.search = null // remove `q` parameter from `locations` endpoint
@@ -63,14 +75,7 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   const locationsParams = pick(
     params,
     params.endpoint === 'locations'
-      ? [
-          'area',
-          'city',
-          'neighborhood',
-          'locationId',
-          'locationsPageNum',
-          'locationsResultsPerPage'
-        ]
+      ? ['area', 'city', 'neighborhood', 'locationId']
       : ['area', 'city']
   )
 

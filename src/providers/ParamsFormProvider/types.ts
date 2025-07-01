@@ -24,10 +24,6 @@ export type CustomFormParams = {
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
-
-  area: string
-  city: string
-  neighborhood: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
