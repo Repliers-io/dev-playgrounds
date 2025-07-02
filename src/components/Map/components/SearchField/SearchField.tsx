@@ -13,6 +13,7 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
+import { getLocationName } from 'utils/map'
 
 import { OptionGroup, OptionLoader, OptionLocation } from './components'
 
@@ -36,7 +37,7 @@ const SearchField = () => {
   useEffect(() => {
     prevFocusedMarker.current?.classList.remove('focused')
     if (focusedMarker) {
-      const item = document.getElementById('item-' + focusedMarker)
+      const item = document.getElementById(`option-${focusedMarker}`)
       item?.classList.add('focused')
       item?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       prevFocusedMarker.current = item
@@ -178,7 +179,7 @@ const SearchField = () => {
         onCenterClick={() => centerMap(option)}
         {...props}
         key={option.locationId}
-        id={`item-${option.locationId}`}
+        id={`option-${getLocationName(option)}`}
       />
     )
   }

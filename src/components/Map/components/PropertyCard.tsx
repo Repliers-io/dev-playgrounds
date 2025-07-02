@@ -5,6 +5,7 @@ import { Box, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import { formatEnglishPrice } from 'utils/formatters'
+import { getMarkerName } from 'utils/map'
 
 import { getCDNPath } from './CardsCarousel'
 
@@ -50,7 +51,7 @@ const PropertyCard = ({
 
   return (
     <Stack
-      id={`card-${listing.mlsNumber}`}
+      id={`card-${getMarkerName(listing)}`}
       direction="row"
       spacing={1}
       sx={{

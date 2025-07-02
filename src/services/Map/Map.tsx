@@ -10,6 +10,7 @@ import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 import { type ApiCluster } from 'services/API/types'
 import { type Markers } from 'services/Map'
 import {
+  getLocationName,
   getMapUrl,
   getMarkerName,
   toMapboxBounds,
@@ -46,7 +47,7 @@ export class MapService {
     this.resetClusters()
 
     items.forEach((item) => {
-      const { mlsNumber: markerId, status } = item
+      const { id, status } = item
 
       const center = item.map
         ? ({
@@ -56,23 +57,25 @@ export class MapService {
         : null
       if (!center) return
 
-      const singleViewOnMap = this.markers[markerId]
+      const singleViewOnMap = this.markers[id]
       if (singleViewOnMap) return
 
       const { boundary } = item.map as any
       if (boundary?.length) {
         this.createPolygon({
+          id,
           map,
-          markerId,
           polygon: boundary,
           onClick: () => onClick?.(item)
         })
       } else {
+        const isLocation = item.size === 'location'
+        const id = isLocation ? getLocationName(item) : getMarkerName(item)
         const markerElement = this.createMarkerElement({
-          id: getMarkerName(markerId),
+          id,
           status,
           size: item.size || 'point',
-          ...(item.size === 'location' && { className: 'location' }),
+          ...(isLocation && { className: 'location' }),
           onClick: (e: MouseEvent) => {
             // Prevent redirect on click
             e.preventDefault()
@@ -84,13 +87,13 @@ export class MapService {
           .setLngLat(center)
           .addTo(map)
 
-        this.addMarker(markerId, marker)
+        this.addMarker(id, marker)
       }
     })
 
     // Clearing Marker Residues
     const markersToRemove = Object.keys(this.markers).filter(
-      (markerKey) => !items.some((prop) => prop.mlsNumber === markerKey)
+      (key) => !items.some((prop) => prop.id === key)
     )
     this.removeMarkers(markersToRemove)
   }
@@ -161,12 +164,12 @@ export class MapService {
 
   createPolygon({
     map,
-    markerId,
+    id,
     polygon,
     onClick
   }: {
     map: Map
-    markerId: string
+    id: string
     polygon: Position[][]
     onClick?: () => void
   }): void {
@@ -180,18 +183,18 @@ export class MapService {
         properties: {}
       }
 
-      map.addSource(markerId, {
+      map.addSource(id, {
         type: 'geojson',
         data: polygonGeoJSON
       })
 
-      const markerFillId = `${markerId}-fill`
-      const markerOutlineId = `${markerId}-outline`
+      const markerFillId = `${id}-fill`
+      const markerOutlineId = `${id}-outline`
 
       map.addLayer({
         id: markerFillId,
         type: 'fill',
-        source: markerId,
+        source: id,
         paint: {
           'fill-color': polygonColor,
           'fill-opacity': 0.25,
@@ -203,7 +206,7 @@ export class MapService {
       map.addLayer({
         id: markerOutlineId,
         type: 'line',
-        source: markerId,
+        source: id,
         paint: {
           'line-color': lighten(polygonColor, 0.2),
           'line-width': 1.5,
@@ -226,10 +229,10 @@ export class MapService {
         this.hoverStack.add(markerFillId)
       })
 
-      this.markers[markerId] = {
+      this.markers[id] = {
         remove: () => {
-          this.removePolygon(map, markerId)
-          return this.markers[markerId]
+          this.removePolygon(map, id)
+          return this.markers[id]
         }
       } as MapboxMarker
     } catch (error) {
@@ -237,9 +240,9 @@ export class MapService {
     }
   }
 
-  focusPolygon(map: Map, markerId: string) {
-    const fill = `${markerId}-fill`
-    const outline = `${markerId}-outline`
+  focusPolygon(map: Map, id: string) {
+    const fill = `${id}-fill`
+    const outline = `${id}-outline`
     try {
       map.setPaintProperty(fill, 'fill-color', '#ff9800')
       map.setPaintProperty(outline, 'line-color', '#ff9800')
@@ -248,9 +251,9 @@ export class MapService {
     }
   }
 
-  blurPolygon(map: Map, markerId: string) {
-    const fill = `${markerId}-fill`
-    const outline = `${markerId}-outline`
+  blurPolygon(map: Map, id: string) {
+    const fill = `${id}-fill`
+    const outline = `${id}-outline`
     try {
       map.setPaintProperty(fill, 'fill-color', polygonColor)
       map.setPaintProperty(outline, 'line-color', lighten(polygonColor, 0.2))
