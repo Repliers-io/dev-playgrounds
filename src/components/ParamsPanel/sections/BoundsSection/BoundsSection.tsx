@@ -11,6 +11,18 @@ import BoundsPoint from './BoundsPoint'
 const BoundsForm = () => {
   const { position: { bounds } = {} } = useMapOptions()
 
+  if (!bounds) return null
+
+  let nw = bounds.getNorthWest().wrap()
+  let sw = bounds.getSouthWest().wrap()
+  let ne = bounds.getNorthEast().wrap()
+  let se = bounds.getSouthEast().wrap()
+
+  if (nw.lng > ne.lng) {
+    ;[nw, ne] = [ne, nw]
+    ;[sw, se] = [se, sw]
+  }
+
   return (
     <SectionTemplate
       index={4}
@@ -20,10 +32,10 @@ const BoundsForm = () => {
     >
       {bounds ? (
         <Stack spacing={1.25}>
-          <BoundsPoint label="↗" point={bounds.getNorthEast()} />
-          <BoundsPoint label="↖" point={bounds.getNorthWest()} />
-          <BoundsPoint label="↙" point={bounds.getSouthWest()} />
-          <BoundsPoint label="↘" point={bounds.getSouthEast()} />
+          <BoundsPoint label="↗" point={ne} />
+          <BoundsPoint label="↖" point={nw} />
+          <BoundsPoint label="↙" point={sw} />
+          <BoundsPoint label="↘" point={se} />
         </Stack>
       ) : (
         <Typography color="primary.light" variant="body2">
