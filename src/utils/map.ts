@@ -136,10 +136,10 @@ export const toRectangle = (bounds: LngLatBounds, buffer = 0) => {
   /*
     map = [ ↗ NorthEast, ↖ NorthWest, ↙ SouthWest, ↘ SouthEast]
   */
-  const ne = bounds.getNorthEast()
-  const nw = bounds.getNorthWest()
-  const sw = bounds.getSouthWest()
-  const se = bounds.getSouthEast()
+  const ne = bounds.getNorthEast().wrap()
+  const nw = bounds.getNorthWest().wrap()
+  const sw = bounds.getSouthWest().wrap()
+  const se = bounds.getSouthEast().wrap()
 
   // TODO: looks like buffer paddings are not set correctly
   const rectangle = [

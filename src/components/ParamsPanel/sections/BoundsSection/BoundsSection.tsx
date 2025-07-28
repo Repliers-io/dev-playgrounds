@@ -20,10 +20,10 @@ const BoundsForm = () => {
     >
       {bounds ? (
         <Stack spacing={1.25}>
-          <BoundsPoint label="↗" point={bounds.getNorthEast()} />
-          <BoundsPoint label="↖" point={bounds.getNorthWest()} />
-          <BoundsPoint label="↙" point={bounds.getSouthWest()} />
-          <BoundsPoint label="↘" point={bounds.getSouthEast()} />
+          <BoundsPoint label="↗" point={bounds.getNorthEast().wrap()} />
+          <BoundsPoint label="↖" point={bounds.getNorthWest().wrap()} />
+          <BoundsPoint label="↙" point={bounds.getSouthWest().wrap()} />
+          <BoundsPoint label="↘" point={bounds.getSouthEast().wrap()} />
         </Stack>
       ) : (
         <Typography color="primary.light" variant="body2">
