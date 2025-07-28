@@ -13,15 +13,10 @@ const BoundsForm = () => {
 
   if (!bounds) return null
 
-  let nw = bounds.getNorthWest().wrap()
-  let sw = bounds.getSouthWest().wrap()
-  let ne = bounds.getNorthEast().wrap()
-  let se = bounds.getSouthEast().wrap()
-
-  if (nw.lng > ne.lng) {
-    ;[nw, ne] = [ne, nw]
-    ;[sw, se] = [se, sw]
-  }
+  const nw = bounds.getNorthWest().wrap()
+  const sw = bounds.getSouthWest().wrap()
+  const ne = bounds.getNorthEast().wrap()
+  const se = bounds.getSouthEast().wrap()
 
   return (
     <SectionTemplate

@@ -136,23 +136,11 @@ export const toRectangle = (bounds: LngLatBounds, buffer = 0) => {
   /*
     map = [ ↗ NorthEast, ↖ NorthWest, ↙ SouthWest, ↘ SouthEast]
   */
-  let nw = bounds.getNorthWest().wrap()
-  let sw = bounds.getSouthWest().wrap()
+  const nw = bounds.getNorthWest().wrap()
+  const sw = bounds.getSouthWest().wrap()
 
-  let ne = bounds.getNorthEast().wrap()
-  let se = bounds.getSouthEast().wrap()
-
-  // Fix coordinate order after wrapping due to Mapbox antimeridian crossing issue.
-  // When bounds cross the 180° meridian (International Date Line), Mapbox's wrap()
-  // method normalizes coordinates to [-180, 180] range, which can result in
-  // western longitude becoming greater than eastern longitude (e.g. west=179°, east=-179°).
-  // This breaks rectangle geometry expectations, so we swap points to maintain
-  // proper west < east relationship for valid polygon coordinates.
-
-  if (nw.lng > ne.lng) {
-    ;[nw, ne] = [ne, nw]
-    ;[sw, se] = [se, sw]
-  }
+  const ne = bounds.getNorthEast().wrap()
+  const se = bounds.getSouthEast().wrap()
 
   // TODO: looks like buffer paddings are not set correctly
   const rectangle = [
