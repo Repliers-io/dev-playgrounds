@@ -89,25 +89,27 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
           position: 'relative',
           width: '100%',
           boxSizing: 'border-box',
-          p: 1,
-          pb: 0,
-          borderRadius: 1,
           bgcolor: 'background.paper',
-          overflow: 'hidden',
-          boxShadow: 1
+          borderRadius: 1,
+          boxShadow: 1,
+          height: '100px',
+          overflow: 'visible',
+          px: 1
         }}
       >
         <Box
           ref={ref}
           sx={{
-            width: '100%',
             display: 'flex',
             flexDirection: 'row',
             boxSizing: 'border-box',
-            scrollbarWidth: 'thin',
             overflowY: 'hidden',
             overflowX: 'auto',
-            pb: 1
+            pt: 1,
+            pb: 3.25,
+            pl: 0,
+            pr: 0,
+            scrollbarWidth: 'thin'
           }}
         >
           {!listings.length && (

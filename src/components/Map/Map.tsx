@@ -40,6 +40,7 @@ const MapRoot = () => {
     mapRef,
     focusedMarker,
     focusMarker,
+    focusLocation,
     blurMarker,
     setMapContainerRef, // TODO: remove
     setMapRef, // TODO: remove
@@ -118,7 +119,7 @@ const MapRoot = () => {
           id: getMarkerName(listing)
         })),
         onClick: (listing: Listing) => {
-          focusMarker(getMarkerName(listing))
+          focusMarker(listing.mlsNumber, listing.boardId)
         }
       })
     }
@@ -141,7 +142,7 @@ const MapRoot = () => {
           } as any
         }),
         onClick: (location) => {
-          focusMarker(getLocationName(location))
+          focusLocation(getLocationName(location))
         }
       })
     }
