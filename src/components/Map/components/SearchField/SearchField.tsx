@@ -171,7 +171,7 @@ const SearchField = () => {
           // if (!locationsEndpoint) {
           //   update(option.name)
           // } else {
-          focusLocation(option.locationId)
+          focusLocation(getLocationName(option))
           // }
         }}
         showBounds={!locationsEndpoint || Boolean(option.map.boundary)}
