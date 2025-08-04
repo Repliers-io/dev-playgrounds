@@ -6,6 +6,7 @@ import {
 import {
   clusterOnlyParams,
   customFormParams,
+  propertyOnlyParams,
   searchOnlyParams,
   statsOnlyParams
 } from 'constants/form'
@@ -13,6 +14,7 @@ import {
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
   const fieldsToRemove = [
     ...customFormParams,
+    ...propertyOnlyParams, // Always exclude property-only params from listings
     ...(!params.stats ? statsOnlyParams : []),
     ...(!params.cluster ? clusterOnlyParams : []),
     ...(params.tab !== 'locations' ? searchOnlyParams : [])

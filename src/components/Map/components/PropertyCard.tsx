@@ -1,7 +1,10 @@
+import React from 'react'
+
 import BathtubOutlinedIcon from '@mui/icons-material/BathtubOutlined'
 import BedOutlinedIcon from '@mui/icons-material/BedOutlined'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 // import ShowerOutlinedIcon from '@mui/icons-material/ShowerOutlined'
-import { Box, Stack } from '@mui/material'
+import { Box, IconButton, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
 import { formatEnglishPrice } from 'utils/formatters'
@@ -13,10 +16,12 @@ const defaultPrice = '$,$$$,$$$'
 
 const PropertyCard = ({
   listing,
-  onClick
+  onClick,
+  onDetailsClick
 }: {
   listing: Listing
   onClick?: (mlsNumber: string, boardId: number) => void
+  onDetailsClick?: (mlsNumber: string, boardId: number) => void
 }) => {
   const {
     address,
@@ -49,6 +54,11 @@ const PropertyCard = ({
     onClick?.(listing.mlsNumber, listing.boardId)
   }
 
+  const handleDetailsClick = (event: React.MouseEvent) => {
+    event.stopPropagation() // Prevent card click
+    onDetailsClick?.(listing.mlsNumber, listing.boardId)
+  }
+
   return (
     <Stack
       id={`card-${getMarkerName(listing)}`}
@@ -64,7 +74,8 @@ const PropertyCard = ({
         bgcolor: 'background.default',
         border: 1,
         borderRadius: 1,
-        borderColor: 'divider'
+        borderColor: 'divider',
+        position: 'relative'
       }}
       onClick={handleClick}
     >
@@ -120,6 +131,23 @@ const PropertyCard = ({
           </Box>
         )}
       </Stack>
+      <IconButton
+        size="small"
+        onClick={handleDetailsClick}
+        sx={{
+          position: 'absolute',
+          bottom: 2,
+          right: 2,
+          p: 0.75,
+          color: 'text.secondary',
+          '&:hover': {
+            color: 'primary.main',
+            bgcolor: 'action.hover'
+          }
+        }}
+      >
+        <OpenInNewIcon sx={{ fontSize: 18 }} />
+      </IconButton>
     </Stack>
   )
 }

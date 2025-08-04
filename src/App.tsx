@@ -11,6 +11,7 @@ import MapOptionsProvider, {
   type MapCoords
 } from 'providers/MapOptionsProvider'
 import ParamsFormProvider from 'providers/ParamsFormProvider'
+import PropertyProvider from 'providers/PropertyProvider'
 import SearchProvider from 'providers/SearchProvider'
 import SelectOptionsProvider from 'providers/SelectOptionsProvider'
 
@@ -39,13 +40,15 @@ function App() {
       <ThemeProvider theme={theme}>
         <SearchProvider params={searchParams}>
           <LocationsProvider>
-            <MapOptionsProvider style="map" params={mapParams}>
-              <SelectOptionsProvider>
-                <ParamsFormProvider>
-                  <PageContent />
-                </ParamsFormProvider>
-              </SelectOptionsProvider>
-            </MapOptionsProvider>
+            <PropertyProvider>
+              <MapOptionsProvider style="map" params={mapParams}>
+                <SelectOptionsProvider>
+                  <ParamsFormProvider>
+                    <PageContent />
+                  </ParamsFormProvider>
+                </SelectOptionsProvider>
+              </MapOptionsProvider>
+            </PropertyProvider>
           </LocationsProvider>
         </SearchProvider>
       </ThemeProvider>

@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import './CardsCarousel.css'
@@ -14,12 +16,14 @@ import PropertyCard from './PropertyCard'
 export const CDN = 'https://cdn.repliers.io'
 
 export const getCDNPath = (fileName: string, size = 'large') => {
-  return `${CDN}/${fileName}?&webp&class=${size}`
+  return `${CDN}/${fileName}?webp&class=${size}`
 }
 
 const CardsCarousel = ({ open }: { open: boolean }) => {
   const { listings } = useSearch()
   const { focusedMarker, focusMarker } = useMapOptions()
+  const { setValue } = useFormContext()
+  const { onChange } = useParamsForm()
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
@@ -31,6 +35,16 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
 
   const handlePrevClick = () =>
     ref.current?.scrollBy({ left: -scrollBy, behavior: 'smooth' })
+
+  const handleDetailsClick = (mlsNumber: string, boardId: number) => {
+    // Switch to property tab
+    setValue('tab', 'property')
+    // Fill property fields
+    setValue('mlsNumber', mlsNumber)
+    setValue('propertyBoardId', boardId)
+    // Trigger form change
+    onChange()
+  }
 
   useEffect(() => {
     ref.current?.scrollTo({ left: 0, behavior: 'instant' })
@@ -124,7 +138,12 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
             </>
           )}
           {listings.map((listing, index) => (
-            <PropertyCard key={index} listing={listing} onClick={focusMarker} />
+            <PropertyCard
+              key={index}
+              listing={listing}
+              onClick={focusMarker}
+              onDetailsClick={handleDetailsClick}
+            />
           ))}
         </Box>
       </Box>

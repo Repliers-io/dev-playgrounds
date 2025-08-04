@@ -55,6 +55,7 @@ const SearchProvider = ({
   const [size, setSize] = useState(0)
   const [json, setJson] = useState<null | any>(null)
   const [saved, setSaved] = useState<SavedResponse>(emptySavedResponse)
+
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
