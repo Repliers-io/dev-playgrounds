@@ -8,11 +8,18 @@ export interface HideEmptyValuesOptions {
   hideEmptyObjects?: boolean
 }
 
+export interface SectionHeaderConfig {
+  tooltip?: string
+  hint?: string
+  link?: string
+}
+
 export interface PropertyDisplayOptions {
   sectionOrder?: string[]
   hiddenSections?: string[]
   hideEmptyValues?: HideEmptyValuesOptions
   expandedSections?: string[]
+  sectionHeaders?: Record<string, SectionHeaderConfig>
 }
 
 export interface PropertyTypeConfig {

@@ -7,11 +7,12 @@ import {
   expandedSections,
   hiddenSections,
   hideEmptyValues,
+  sectionHeaders,
   sectionOrder
 } from './config'
 import { separateProperties } from './utils'
 
-const Property = () => {
+const Listing = () => {
   const { loading, property } = useListing()
 
   if (loading) {
@@ -43,7 +44,8 @@ const Property = () => {
           sectionOrder,
           hiddenSections,
           hideEmptyValues,
-          expandedSections
+          expandedSections,
+          sectionHeaders
         })
 
         return (
@@ -54,6 +56,7 @@ const Property = () => {
                 title={key}
                 data={value}
                 initiallyExpanded={expandedSections.includes(key)}
+                headerConfig={sectionHeaders[key]}
               />
             ))}
           </>
@@ -63,4 +66,4 @@ const Property = () => {
   )
 }
 
-export default Property
+export default Listing

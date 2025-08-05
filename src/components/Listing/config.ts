@@ -1,4 +1,4 @@
-import type { HideEmptyValuesOptions } from './types'
+import type { HideEmptyValuesOptions, SectionHeaderConfig } from './types'
 
 // Configuration for property display order
 
@@ -21,3 +21,16 @@ export const hideEmptyValues: HideEmptyValuesOptions = {
 
 // Sections that should be expanded by default
 export const expandedSections = ['images', 'root', 'address']
+
+// Configuration for section headers with additional styling
+export const sectionHeaders: Record<string, SectionHeaderConfig> = {
+  images: {
+    tooltip: 'Listing images',
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/listing-images-implementation-guide-198p8u8/'
+  },
+  root: {
+    tooltip:
+      'This is automatically generated section which contains root level fields from the listing object'
+  }
+}

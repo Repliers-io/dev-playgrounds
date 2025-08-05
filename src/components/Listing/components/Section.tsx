@@ -3,8 +3,10 @@ import { useState } from 'react'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material'
 
+import type { SectionHeaderConfig } from '../types'
 import { formatSimpleValue, getSectionTitle, shouldHideValue } from '../utils'
 
+import SectionHeader from './SectionHeader'
 import { ImagesSection } from './sections'
 
 // Function to get custom section renderer
@@ -24,11 +26,13 @@ const getCustomSectionRenderer = (title: string, data: unknown) => {
 const Section = ({
   title,
   data,
-  initiallyExpanded = false
+  initiallyExpanded = false,
+  headerConfig
 }: {
   title: string
   data: unknown
   initiallyExpanded?: boolean
+  headerConfig?: SectionHeaderConfig
 }) => {
   const [expanded, setExpanded] = useState(initiallyExpanded)
 
@@ -36,6 +40,7 @@ const Section = ({
     setExpanded(!expanded)
   }
 
+  const { tooltip, hint, link } = headerConfig || {}
   const sectionTitle = getSectionTitle(title)
 
   // Handle complex sections (including root)
@@ -43,22 +48,26 @@ const Section = ({
     <Box
       sx={{
         p: 2,
+        mb: 2,
         borderRadius: 1.5,
-        backgroundColor: 'grey.50',
-        mb: 2
+        backgroundColor: 'grey.50'
       }}
     >
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer'
+          justifyContent: 'space-between'
         }}
-        onClick={handleToggle}
       >
-        <Typography variant="h6">{sectionTitle}</Typography>
-        <IconButton size="small" sx={{ ml: 1 }}>
+        <SectionHeader
+          title={sectionTitle}
+          tooltip={tooltip}
+          hint={hint}
+          link={link}
+          onClick={handleToggle}
+        />
+        <IconButton size="small" sx={{ ml: 1 }} onClick={handleToggle}>
           {expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
       </Box>
