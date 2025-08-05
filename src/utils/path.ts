@@ -1,3 +1,5 @@
+import { useSearch } from 'providers/SearchProvider'
+
 /**
  * Gets the value at path of object
  * @param obj The object to query
@@ -84,4 +86,10 @@ export const getPaths = (obj: any, prefix = ''): string[] => {
  */
 export const removePaths = (obj: any, paths: string[]): any => {
   return paths.reduce((result, path) => removePath(result, path), { ...obj })
+}
+
+export const CDN = 'https://cdn.repliers.io'
+
+export const getCDNPath = (fileName: string, size = 'large') => {
+  return `${CDN}/${fileName}?webp&class=${size}`
 }

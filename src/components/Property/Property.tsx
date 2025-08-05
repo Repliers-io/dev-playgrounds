@@ -1,77 +1,25 @@
-import { useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
-
-import { Box, CircularProgress, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 
 import { useProperty } from 'providers/PropertyProvider'
 
+import { EmptyState, LoadingState, Section } from './components'
+import {
+  expandedSections,
+  hiddenSections,
+  hideEmptyValues,
+  sectionOrder
+} from './config'
+import { separateProperties } from './utils'
+
 const Property = () => {
-  const { loading, property, search } = useProperty()
-  const { watch } = useFormContext()
-  const formValues = watch()
-
-  // Auto-search when property parameters change
-  useEffect(() => {
-    const { mlsNumber, propertyBoardId, apiKey, apiUrl, propertyFields } =
-      formValues
-
-    if (mlsNumber && propertyBoardId && apiKey && apiUrl) {
-      search({
-        apiKey,
-        apiUrl,
-        mlsNumber,
-        boardId: propertyBoardId,
-        fields: propertyFields
-      })
-    }
-  }, [
-    formValues.mlsNumber,
-    formValues.propertyBoardId,
-    formValues.apiKey,
-    formValues.apiUrl,
-    formValues.propertyFields,
-    search
-  ])
+  const { loading, property } = useProperty()
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '100%',
-          gap: 2
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    )
+    return <LoadingState />
   }
 
   if (!property) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          textAlign: 'center'
-        }}
-      >
-        <Typography variant="h6" color="text.secondary" gutterBottom>
-          No Property Data
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Enter an mlsNumber AND a boardId in the Property Parameters to view
-          property details.
-        </Typography>
-      </Box>
-    )
+    return <EmptyState />
   }
 
   return (
@@ -90,27 +38,27 @@ const Property = () => {
         p: 1.25
       }}
     >
-      <Box
-        sx={{
-          p: 2,
-          borderRadius: 1.5,
-          backgroundColor: 'grey.100'
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          Property Details
-        </Typography>
+      {(() => {
+        const sections = separateProperties(property, {
+          sectionOrder,
+          hiddenSections,
+          hideEmptyValues,
+          expandedSections
+        })
 
-        <pre
-          style={{
-            whiteSpace: 'pre-wrap',
-            fontSize: '12px',
-            overflow: 'auto'
-          }}
-        >
-          {JSON.stringify(property, null, 2)}
-        </pre>
-      </Box>
+        return (
+          <>
+            {sections.map(([key, value]) => (
+              <Section
+                key={key}
+                title={key}
+                data={value}
+                initiallyExpanded={expandedSections.includes(key)}
+              />
+            ))}
+          </>
+        )
+      })()}
     </Box>
   )
 }

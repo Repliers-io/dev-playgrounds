@@ -41,17 +41,18 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [])
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, mlsNumber, boardId, fields } = params
+    const { apiKey, apiUrl, mlsNumber, propertyBoardId, propertyFields } =
+      params
 
-    if (!apiKey || !apiUrl || !mlsNumber || !fields) return
+    if (!apiKey || !apiUrl || !mlsNumber) return
 
     // Use the specific listings endpoint format: /listings/mlsNumber
     const endpointUrl = `${apiUrl}/listings/${mlsNumber}`
 
-    // Map parameters for property endpoint - filter out undefined/empty values
-    const getParams: any = {
-      boardId,
-      fields
+    // Map parameters for property endpoint
+    const getParams = {
+      boardId: propertyBoardId,
+      fields: propertyFields
     }
 
     // Build the full request URL for display

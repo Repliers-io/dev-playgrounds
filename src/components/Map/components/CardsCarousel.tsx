@@ -13,12 +13,6 @@ import './CardsCarousel.css'
 
 import PropertyCard from './PropertyCard'
 
-export const CDN = 'https://cdn.repliers.io'
-
-export const getCDNPath = (fileName: string, size = 'large') => {
-  return `${CDN}/${fileName}?webp&class=${size}`
-}
-
 const CardsCarousel = ({ open }: { open: boolean }) => {
   const { listings } = useSearch()
   const { focusedMarker, focusMarker } = useMapOptions()

@@ -163,18 +163,7 @@ export const listingFields: FieldsType = [
   // 'details.style'
 ]
 
-export const propertyFields: FieldsType = [
-  'boardId',
-  'mlsNumber',
-  'address',
-  'details',
-  'images',
-  'status',
-  'map',
-  'class',
-  'listPrice',
-  'listDate'
-]
+export const propertyFields: FieldsType = ['raw']
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',

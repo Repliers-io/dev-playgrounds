@@ -9,8 +9,7 @@ import { Box, IconButton, Stack } from '@mui/material'
 import { type Listing } from 'services/API/types'
 import { formatEnglishPrice } from 'utils/formatters'
 import { getMarkerName } from 'utils/map'
-
-import { getCDNPath } from './CardsCarousel'
+import { getCDNPath } from 'utils/path'
 
 const defaultPrice = '$,$$$,$$$'
 

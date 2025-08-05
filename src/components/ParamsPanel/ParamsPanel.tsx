@@ -135,11 +135,15 @@ const ParamsPanel = () => {
     if (!canRenderMap) return
     if (!params || !Object.keys(params).length) return
 
+    // ALWAYS update URL with position and params
+    if (position) {
+      updateUrlState(position, params)
+    }
+
+    // THEN execute tab-specific logic
     if (propertyTab) {
-      // Property tab - call fetchProperty
       fetchProperty(params)
     } else if (position) {
-      updateUrlState(position, params)
       if (locationsMap) {
         // we should NOT react on polygon changes when in locationsMap mode
         fetchLocations(position, params)
