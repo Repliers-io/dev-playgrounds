@@ -3,7 +3,7 @@ import {
   type FormParams,
   listingFields,
   locationsFields,
-  propertyFields
+  listingFields
 } from './types'
 
 const defaultFormState: Partial<FormParams> = {
@@ -30,8 +30,8 @@ const defaultFormState: Partial<FormParams> = {
   city: '',
   neighborhood: '',
   areaOrCity: '',
-  propertyFields: propertyFields.join(','),
-  propertyBoardId: undefined,
+  listingFields: listingFields.join(','),
+  listingBoardId: undefined,
 
   /**
    * request parameters

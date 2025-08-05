@@ -14,9 +14,9 @@ import {
   Typography
 } from '@mui/material'
 
+import { useListing } from 'providers/ListingProvider'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
-import { useProperty } from 'providers/PropertyProvider'
 import { useSearch } from 'providers/SearchProvider'
 import {
   highlightJsonItem,
@@ -56,13 +56,13 @@ const ResponsePanel = ({
   const { focusedMarker } = useMapOptions()
   const searchContext = useSearch()
   const locationsContext = useLocations()
-  const propertyContext = useProperty()
+  const propertyContext = useListing()
   const locationsTab = searchContext.params.tab === 'locations'
-  const propertyTab = searchContext.params.tab === 'property'
+  const listingTab = searchContext.params.tab === 'listing'
 
   // Select the appropriate context based on active tab
   let response
-  if (propertyTab) {
+  if (listingTab) {
     response = propertyContext
   } else if (locationsTab) {
     response = locationsContext

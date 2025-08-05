@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 
-import { useProperty } from 'providers/PropertyProvider'
+import { useListing } from 'providers/ListingProvider'
 
 import { EmptyState, LoadingState, Section } from './components'
 import {
@@ -12,7 +12,7 @@ import {
 import { separateProperties } from './utils'
 
 const Property = () => {
-  const { loading, property } = useProperty()
+  const { loading, property } = useListing()
 
   if (loading) {
     return <LoadingState />

@@ -9,7 +9,7 @@ import Statistics from './Statistics'
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
   const { params } = useSearch()
   const statisticsTab = params.tab === 'stats'
-  const propertyTab = params.tab === 'property'
+  const listingTab = params.tab === 'listing'
 
   return (
     <Box
@@ -24,7 +24,7 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
       <Box
         sx={{
           flex: 1,
-          display: !statisticsTab && !propertyTab ? 'flex' : 'none'
+          display: !statisticsTab && !listingTab ? 'flex' : 'none'
         }}
       >
         <Map />
@@ -35,7 +35,7 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
       <Box
         sx={{
           flex: 1,
-          display: propertyTab ? 'flex' : 'none'
+          display: listingTab ? 'flex' : 'none'
         }}
       >
         <Property />

@@ -28,8 +28,8 @@ export const customFormParams: (keyof CustomFormParams)[] = [
 
 export const propertyOnlyParams: (keyof FormParams)[] = [
   'mlsNumber',
-  'propertyFields',
-  'propertyBoardId'
+  'listingFields',
+  'listingBoardId'
 ]
 
 export const clusterOnlyParams: (keyof FormParams)[] = [

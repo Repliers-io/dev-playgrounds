@@ -64,7 +64,7 @@ const PageContent = () => {
           <Tab label="Locations" value="locations" />
           <Tab label="Listings" value="map" />
           <Tab label="Statistics" value="stats" />
-          <Tab label="PDP" value="property" />
+          <Tab label="PDP" value="listing" />
         </Tabs>
 
         <Box sx={{ width: '135px' }} />

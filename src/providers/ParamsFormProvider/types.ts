@@ -24,8 +24,8 @@ export type CustomFormParams = {
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
-  propertyFields: string | null
-  propertyBoardId: number | null
+  listingFields: string | null
+  listingBoardId: number | null
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -163,7 +163,7 @@ export const listingFields: FieldsType = [
   // 'details.style'
 ]
 
-export const propertyFields: FieldsType = ['raw']
+export const listingFields: FieldsType = ['raw']
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',

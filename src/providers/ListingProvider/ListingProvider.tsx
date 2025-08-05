@@ -20,7 +20,7 @@ const emptySavedResponse: SavedResponse = {
   property: null
 }
 
-const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
+const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -41,8 +41,7 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [])
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, mlsNumber, propertyBoardId, propertyFields } =
-      params
+    const { apiKey, apiUrl, mlsNumber, listingBoardId, listingFields } = params
 
     if (!apiKey || !apiUrl || !mlsNumber) return
 
@@ -51,8 +50,8 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
 
     // Map parameters for property endpoint
     const getParams = {
-      boardId: propertyBoardId,
-      fields: propertyFields
+      boardId: listingBoardId,
+      fields: listingFields
     }
 
     // Build the full request URL for display
@@ -153,12 +152,12 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
   )
 }
 
-export default PropertyProvider
+export default ListingProvider
 
-export const useProperty = () => {
+export const useListing = () => {
   const context = useContext(PropertyContext)
   if (context === undefined) {
-    throw new Error('useProperty must be used within a PropertyProvider')
+    throw new Error('useListing must be used within a ListingProvider')
   }
   return context
 }
