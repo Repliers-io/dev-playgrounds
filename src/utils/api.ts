@@ -9,7 +9,6 @@ export const queryStringOptions: StringifyOptions = {
   sort: false
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const apiFetch = async <T = Response>(
   url: string,
   params: { get?: any; post?: any },

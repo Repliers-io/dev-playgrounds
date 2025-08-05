@@ -62,9 +62,9 @@ const PageContent = () => {
           }}
         >
           <Tab label="Locations" value="locations" />
-          <Tab label="Listings" value="map" />
+          <Tab label="Map Search" value="map" />
           <Tab label="Statistics" value="stats" />
-          <Tab label="Property" value="property" />
+          <Tab label="Listing" value="listing" />
         </Tabs>
 
         <Box sx={{ width: '135px' }} />

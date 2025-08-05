@@ -30,7 +30,7 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  overflow: visible;
+  overflow: hidden;
   min-height: 100vh;
   min-height: -webkit-fill-available;
 }

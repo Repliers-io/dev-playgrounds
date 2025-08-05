@@ -24,6 +24,8 @@ export type CustomFormParams = {
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
+  propertyFields: string | null
+  listingBoardId: number | null
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -132,9 +134,11 @@ export type StatisticsField = (typeof statisticsFields)[number]
 
 export const locationsFields = ['locationId', 'name', 'type', 'map', 'address']
 
-export const listingFields: Array<
+type FieldsType = Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
-> = [
+>
+
+export const listingFields: FieldsType = [
   'boardId',
   'mlsNumber',
   'map',
@@ -158,6 +162,8 @@ export const listingFields: Array<
   // 'imagesScore',
   // 'details.style'
 ]
+
+export const propertyFields: FieldsType = ['raw']
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',
