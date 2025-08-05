@@ -60,8 +60,8 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const propertyTab = params.tab === 'property'
-  const listingsTab = !locationsTab && !statisticsTab && !propertyTab
+  const listingTab = params.tab === 'listing'
+  const listingsTab = !locationsTab && !statisticsTab && !listingTab
 
   const centerPoint = params.center
 
