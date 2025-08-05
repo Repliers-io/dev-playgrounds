@@ -31,7 +31,7 @@ const defaultFormState: Partial<FormParams> = {
   neighborhood: '',
   areaOrCity: '',
   propertyFields: propertyFields.join(','),
-  propertyBoardId: undefined,
+  listingBoardId: undefined,
 
   /**
    * request parameters

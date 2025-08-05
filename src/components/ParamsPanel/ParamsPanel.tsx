@@ -6,10 +6,10 @@ import { Box, Stack } from '@mui/material'
 
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
+import { useListing } from 'providers/ListingProvider'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { type FormParams } from 'providers/ParamsFormProvider'
-import { useProperty } from 'providers/PropertyProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
@@ -35,12 +35,12 @@ import {
 const ParamsPanel = () => {
   const searchContext = useSearch()
   const locationsContext = useLocations()
-  const propertyContext = useProperty()
+  const { search } = useListing()
   const { params, polygon } = searchContext
   const { apiKey, tab } = params
   const { canRenderMap, position } = useMapOptions()
   const locationsMap = tab === 'locations'
-  const propertyTab = tab === 'property'
+  const listingTab = tab === 'listing'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -111,16 +111,15 @@ const ParamsPanel = () => {
   )
 
   const fetchProperty = useCallback(async (params: Partial<FormParams>) => {
-    const { mlsNumber, propertyBoardId, propertyFields, apiKey, apiUrl } =
-      params
+    const { mlsNumber, listingBoardId, propertyFields, apiKey, apiUrl } = params
 
-    // Only search if we have at least mlsNumber or propertyBoardId
-    if (!mlsNumber && !propertyBoardId) return
+    // Only search if we have at least mlsNumber or listingBoardId
+    if (!mlsNumber && !listingBoardId) return
 
     try {
-      await propertyContext.search({
+      await search({
         mlsNumber,
-        propertyBoardId,
+        listingBoardId,
         propertyFields,
         apiKey,
         apiUrl,
@@ -141,7 +140,7 @@ const ParamsPanel = () => {
     }
 
     // THEN execute tab-specific logic
-    if (propertyTab) {
+    if (listingTab) {
       fetchProperty(params)
     } else if (position) {
       if (locationsMap) {
@@ -158,7 +157,7 @@ const ParamsPanel = () => {
     polygon,
     canRenderMap,
     locationsMap,
-    propertyTab
+    listingTab
   ])
 
   return (
@@ -179,7 +178,7 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack spacing={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
-          {propertyTab ? (
+          {listingTab ? (
             <PropertyParamsSection />
           ) : !locationsMap ? (
             <>
@@ -194,7 +193,7 @@ const ParamsPanel = () => {
               <CenterRadiusSection />
             </>
           )}
-          {!propertyTab && <BoundsSection />}
+          {!listingTab && <BoundsSection />}
         </Stack>
       </Stack>
     </Box>

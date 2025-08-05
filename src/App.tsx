@@ -6,12 +6,12 @@ import { ThemeProvider } from '@mui/system'
 import GoogleTagManager from 'components/GoogleTagManager'
 import PageContent from 'components/PageContent'
 
+import ListingProvider from 'providers/ListingProvider'
 import LocationsProvider from 'providers/LocationsProvider'
 import MapOptionsProvider, {
   type MapCoords
 } from 'providers/MapOptionsProvider'
 import ParamsFormProvider from 'providers/ParamsFormProvider'
-import PropertyProvider from 'providers/PropertyProvider'
 import SearchProvider from 'providers/SearchProvider'
 import SelectOptionsProvider from 'providers/SelectOptionsProvider'
 
@@ -40,7 +40,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <SearchProvider params={searchParams}>
           <LocationsProvider>
-            <PropertyProvider>
+            <ListingProvider>
               <MapOptionsProvider style="map" params={mapParams}>
                 <SelectOptionsProvider>
                   <ParamsFormProvider>
@@ -48,7 +48,7 @@ function App() {
                   </ParamsFormProvider>
                 </SelectOptionsProvider>
               </MapOptionsProvider>
-            </PropertyProvider>
+            </ListingProvider>
           </LocationsProvider>
         </SearchProvider>
       </ThemeProvider>

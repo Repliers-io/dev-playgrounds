@@ -10,9 +10,9 @@ import queryString from 'query-string'
 
 import { apiFetch, queryStringOptions } from 'utils/api'
 
-import { type PropertyContextType, type SavedResponse } from './types'
+import { type ListingContextType, type SavedResponse } from './types'
 
-export const PropertyContext = createContext<PropertyContextType | undefined>(
+export const ListingContext = createContext<ListingContextType | undefined>(
   undefined
 )
 
@@ -20,7 +20,7 @@ const emptySavedResponse: SavedResponse = {
   property: null
 }
 
-const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
+const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -41,8 +41,7 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [])
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, mlsNumber, propertyBoardId, propertyFields } =
-      params
+    const { apiKey, apiUrl, mlsNumber, listingBoardId, propertyFields } = params
 
     if (!apiKey || !apiUrl || !mlsNumber) return
 
@@ -51,7 +50,7 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
 
     // Map parameters for property endpoint
     const getParams = {
-      boardId: propertyBoardId,
+      boardId: listingBoardId,
       fields: propertyFields
     }
 
@@ -147,18 +146,18 @@ const PropertyProvider = ({ children }: { children?: React.ReactNode }) => {
   )
 
   return (
-    <PropertyContext.Provider value={contextValue}>
+    <ListingContext.Provider value={contextValue}>
       {children}
-    </PropertyContext.Provider>
+    </ListingContext.Provider>
   )
 }
 
-export default PropertyProvider
+export default ListingProvider
 
-export const useProperty = () => {
-  const context = useContext(PropertyContext)
+export const useListing = () => {
+  const context = useContext(ListingContext)
   if (context === undefined) {
-    throw new Error('useProperty must be used within a PropertyProvider')
+    throw new Error('useListing must be used within a ListingProvider')
   }
   return context
 }

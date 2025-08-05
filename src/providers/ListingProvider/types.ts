@@ -2,7 +2,7 @@ export type SavedResponse = {
   property: any | null
 }
 
-export type PropertyContextType = SavedResponse & {
+export type ListingContextType = SavedResponse & {
   loading: boolean
   time: number
   json: any

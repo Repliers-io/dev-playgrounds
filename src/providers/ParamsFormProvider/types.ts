@@ -25,7 +25,7 @@ export type CustomFormParams = {
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   propertyFields: string | null
-  propertyBoardId: number | null
+  listingBoardId: number | null
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams

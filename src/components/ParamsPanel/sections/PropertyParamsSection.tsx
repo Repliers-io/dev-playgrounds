@@ -19,7 +19,7 @@ const PropertyParamsSection = () => {
           />
 
           <ParamsField
-            name="propertyBoardId"
+            name="listingBoardId"
             label="boardId"
             tooltip="Board ID where the property is listed"
           />
