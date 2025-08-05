@@ -40,7 +40,7 @@ const ParamsPanel = () => {
   const { apiKey, tab } = params
   const { canRenderMap, position } = useMapOptions()
   const locationsMap = tab === 'locations'
-  const propertyTab = tab === 'property'
+  const propertyTab = tab === 'listing'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -124,7 +124,7 @@ const ParamsPanel = () => {
         propertyFields,
         apiKey,
         apiUrl,
-        endpoint: 'property'
+        endpoint: 'listing'
       })
     } catch (error: any) {
       console.error('fetchProperty error:', error)

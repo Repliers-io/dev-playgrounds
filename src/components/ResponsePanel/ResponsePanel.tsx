@@ -58,7 +58,7 @@ const ResponsePanel = ({
   const locationsContext = useLocations()
   const propertyContext = useProperty()
   const locationsTab = searchContext.params.tab === 'locations'
-  const propertyTab = searchContext.params.tab === 'property'
+  const propertyTab = searchContext.params.tab === 'listing'
 
   // Select the appropriate context based on active tab
   let response

@@ -9,7 +9,7 @@ import Statistics from './Statistics'
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
   const { params } = useSearch()
   const statisticsTab = params.tab === 'stats'
-  const propertyTab = params.tab === 'property'
+  const propertyTab = params.tab === 'listing'
 
   return (
     <Box

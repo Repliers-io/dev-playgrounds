@@ -32,7 +32,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
 
   const handleDetailsClick = (mlsNumber: string, boardId: number) => {
     // Switch to property tab
-    setValue('tab', 'property')
+    setValue('tab', 'listing')
     // Fill property fields
     setValue('mlsNumber', mlsNumber)
     setValue('propertyBoardId', boardId)
