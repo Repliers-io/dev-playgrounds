@@ -13,21 +13,22 @@ const ListingParamsSection = () => {
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
-          <ParamsField
-            name="mlsNumber"
-            tooltip="MLS Number of the specific property"
-          />
+          <ParamsField name="mlsNumber" tooltip="MLS® Number of the listing" />
 
           <ParamsField
             name="listingBoardId"
             label="boardId"
-            tooltip="Board ID where the property is listed"
+            tooltip="BoardID of the listing. Relevant for API keys with access to multiple boards."
+            hint="docs"
+            link="https://help.repliers.com/en/article/understanding-and-using-boardids-in-the-repliers-api-lfywn2/"
           />
 
           <ParamsSelect
             name="listingFields"
             label="fields"
-            tooltip="Comma-separated list of fields to return for the property"
+            tooltip="Set to 'raw' to get access to MLS®-specific fields not mapped to Repliers standardized data dictionary"
+            hint="docs"
+            link="https://help.repliers.com/en/article/raw-mls-data-access-with-repliers-nhlg5o/#1-accessing-raw-fields-via-the-get-a-single-listing-endpoint"
             options={['raw']}
           />
         </Stack>

@@ -25,12 +25,23 @@ export const expandedSections = ['images', 'root', 'address']
 // Configuration for section headers with additional styling
 export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   images: {
-    tooltip: 'Listing images',
+    tooltip: 'Listing images pulled from Repliers CDN',
     hint: 'docs',
     link: 'https://help.repliers.com/en/article/listing-images-implementation-guide-198p8u8/'
   },
   root: {
     tooltip:
-      'Automatically generated section containing root level fields from the listing JSON object'
+      'Automatically generated section containing root-level fields from the listing JSON object'
+  },
+  raw: {
+    tooltip:
+      'MLS®-specific fields not mapped to Repliers standardized data dictionary',
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/raw-mls-data-access-with-repliers-nhlg5o/'
+  },
+  openHouse: {
+    tooltip: 'Open House details for the listing',
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/how-to-search-for-listings-with-open-houses-1dzsry0/'
   }
 }
