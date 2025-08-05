@@ -35,13 +35,19 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   const previousKey = useRef<string>('')
 
   const clearData = useCallback(() => {
+    setLoading(true) // Set loading state when clearing data
     setStatusCode(null)
+    setRequest('')
+    setTime(0)
+    setSize(0)
+    setJson(null)
     setSaved(emptySavedResponse)
     previousRequest.current = ''
+    previousKey.current = ''
   }, [])
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, mlsNumber, listingBoardId, propertyFields } = params
+    const { apiKey, apiUrl, mlsNumber, listingBoardId, listingFields } = params
 
     if (!apiKey || !apiUrl || !mlsNumber) return
 
@@ -51,7 +57,7 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     // Map parameters for property endpoint
     const getParams = {
       boardId: listingBoardId,
-      fields: propertyFields
+      fields: listingFields
     }
 
     // Build the full request URL for display

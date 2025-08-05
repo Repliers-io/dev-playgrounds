@@ -26,9 +26,9 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'center'
 ]
 
-export const propertyOnlyParams: (keyof FormParams)[] = [
+export const listingOnlyParams: (keyof FormParams)[] = [
   'mlsNumber',
-  'propertyFields',
+  'listingFields',
   'listingBoardId'
 ]
 

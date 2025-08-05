@@ -24,7 +24,7 @@ export type CustomFormParams = {
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
-  propertyFields: string | null
+  listingFields: string | null
   listingBoardId: number | null
 }
 
@@ -162,8 +162,6 @@ export const listingFields: FieldsType = [
   // 'imagesScore',
   // 'details.style'
 ]
-
-export const propertyFields: FieldsType = ['raw']
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',

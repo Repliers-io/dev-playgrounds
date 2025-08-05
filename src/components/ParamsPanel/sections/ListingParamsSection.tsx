@@ -1,14 +1,14 @@
 import { Box, Stack } from '@mui/material'
 
-import { ParamsField } from '../components'
+import { ParamsField, ParamsSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
-const PropertyParamsSection = () => {
+const ListingParamsSection = () => {
   return (
     <SectionTemplate
       index={10}
-      title="Property Parameters"
+      title="Listing Parameters"
       link="https://help.repliers.com/en/article/property-parameters-documentation"
     >
       <Box sx={{ width: '100%' }}>
@@ -24,10 +24,11 @@ const PropertyParamsSection = () => {
             tooltip="Board ID where the property is listed"
           />
 
-          <ParamsField
-            name="propertyFields"
+          <ParamsSelect
+            name="listingFields"
             label="fields"
             tooltip="Comma-separated list of fields to return for the property"
+            options={['raw']}
           />
         </Stack>
       </Box>
@@ -35,4 +36,4 @@ const PropertyParamsSection = () => {
   )
 }
 
-export default PropertyParamsSection
+export default ListingParamsSection

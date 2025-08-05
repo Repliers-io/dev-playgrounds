@@ -29,7 +29,7 @@ const schema = Joi.object({
   mlsNumber: Joi.string().allow(null, false, '').optional().messages({
     'string.base': 'MLS Number must be a string'
   }),
-  propertyFields: Joi.string().allow(null, false, '').optional(),
+  listingFields: Joi.string().allow(null, false, '').optional(),
   class: Joi.array()
     .items(Joi.string().valid(...classOptions))
     .allow(null, ''),

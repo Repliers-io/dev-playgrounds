@@ -19,8 +19,8 @@ import {
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
+  ListingParamsSection,
   LocationParamsSection,
-  PropertyParamsSection,
   QueryParamsSection,
   SearchSection,
   StatisticsSection
@@ -34,8 +34,8 @@ import {
 
 const ParamsPanel = () => {
   const searchContext = useSearch()
+  const listingContext = useListing()
   const locationsContext = useLocations()
-  const { search } = useListing()
   const { params, polygon } = searchContext
   const { apiKey, tab } = params
   const { canRenderMap, position } = useMapOptions()
@@ -111,16 +111,16 @@ const ParamsPanel = () => {
   )
 
   const fetchProperty = useCallback(async (params: Partial<FormParams>) => {
-    const { mlsNumber, listingBoardId, propertyFields, apiKey, apiUrl } = params
+    const { mlsNumber, listingBoardId, listingFields, apiKey, apiUrl } = params
 
     // Only search if we have at least mlsNumber or listingBoardId
     if (!mlsNumber && !listingBoardId) return
 
     try {
-      await search({
+      await listingContext.search({
         mlsNumber,
         listingBoardId,
-        propertyFields,
+        listingFields,
         apiKey,
         apiUrl,
         endpoint: 'property'
@@ -179,7 +179,7 @@ const ParamsPanel = () => {
         <Stack spacing={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
           {listingTab ? (
-            <PropertyParamsSection />
+            <ListingParamsSection />
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />

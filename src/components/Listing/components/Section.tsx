@@ -48,6 +48,7 @@ const Section = ({
     <Box
       sx={{
         p: 2,
+        py: 1,
         mb: 2,
         borderRadius: 1.5,
         backgroundColor: 'grey.50'
@@ -67,12 +68,16 @@ const Section = ({
           link={link}
           onClick={handleToggle}
         />
-        <IconButton size="small" sx={{ ml: 1 }} onClick={handleToggle}>
+        <IconButton
+          size="small"
+          sx={{ m: -1, width: 32, height: 32 }}
+          onClick={handleToggle}
+        >
           {expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box sx={{ mt: 1 }}>
+        <Box sx={{ my: 1 }}>
           {(() => {
             // Check for custom section renderer first
             const customRenderer = getCustomSectionRenderer(title, data)
@@ -136,7 +141,7 @@ const Section = ({
                                   mb: 1
                                 }}
                               >
-                                {key}:
+                                {key}
                               </Typography>
                               <pre
                                 style={{
@@ -172,7 +177,7 @@ const Section = ({
                                   color: 'text.secondary'
                                 }}
                               >
-                                {key}:
+                                {key}
                               </Typography>
                               <Typography variant="body2">
                                 {formatSimpleValue(value)}

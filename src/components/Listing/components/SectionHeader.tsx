@@ -25,9 +25,8 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
         sx={{
           fontSize: '14px',
           fontWeight: 600,
-          textTransform: 'capitalize',
           color: 'text.primary',
-          cursor: onClick ? 'pointer' : 'default'
+          cursor: 'pointer'
         }}
         onClick={onClick}
       >

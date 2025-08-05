@@ -31,6 +31,6 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   },
   root: {
     tooltip:
-      'This is automatically generated section which contains root level fields from the listing object'
+      'Automatically generated section containing root level fields from the listing JSON object'
   }
 }

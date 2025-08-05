@@ -10,7 +10,7 @@ const ImagesSection = ({ images }: ImagesSectionProps) => {
   if (!images || images.length === 0) return null
 
   return (
-    <Box sx={{ position: 'relative', height: 270 }}>
+    <Box sx={{ position: 'relative', height: 200 }}>
       <Box
         sx={{
           position: 'absolute',
@@ -18,6 +18,7 @@ const ImagesSection = ({ images }: ImagesSectionProps) => {
           left: 0,
           right: 0,
           display: 'flex',
+
           gap: 1,
           overflowX: 'auto'
         }}
@@ -26,9 +27,11 @@ const ImagesSection = ({ images }: ImagesSectionProps) => {
           <Box
             key={index}
             sx={{
+              borderRadius: 1,
+              overflow: 'hidden',
               flexShrink: 0,
-              width: 16 * 30,
-              height: 9 * 30
+              width: 3 * 100,
+              height: 2 * 100
             }}
           >
             <img

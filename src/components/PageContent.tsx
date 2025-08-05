@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack, Tab, Tabs } from '@mui/material'
 
+import { useListing } from 'providers/ListingProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import MapPanel from './MapPanel'
@@ -14,10 +15,13 @@ const PageContent = () => {
   const [expandedResponse, setExpandedResponse] = useState(false)
   const { setValue, watch } = useFormContext()
   const tab = watch('tab')
+  const { clearData } = useListing()
 
   const { onChange } = useParamsForm()
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+    // Clear listing data when switching to listing tab
+    clearData()
     setValue('tab', newValue)
     onChange()
   }
