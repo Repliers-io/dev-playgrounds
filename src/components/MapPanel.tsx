@@ -2,8 +2,8 @@ import { Box } from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
+import Listing from './Listing'
 import Map from './Map'
-import Property from './Property'
 import Statistics from './Statistics'
 
 const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
@@ -38,7 +38,7 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
           display: listingTab ? 'flex' : 'none'
         }}
       >
-        <Property />
+        <Listing />
       </Box>
     </Box>
   )
