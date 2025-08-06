@@ -9,7 +9,7 @@ const ListingParamsSection = () => {
     <SectionTemplate
       index={10}
       title="Listing Parameters"
-      link="https://help.repliers.com/en/article/property-parameters-documentation"
+      link="https://docs.repliers.io/reference/get-a-listing"
     >
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
