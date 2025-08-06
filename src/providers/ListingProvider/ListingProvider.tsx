@@ -35,7 +35,6 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   const previousKey = useRef<string>('')
 
   const clearData = useCallback(() => {
-    setLoading(true) // Set loading state when clearing data
     setStatusCode(null)
     setRequest('')
     setTime(0)
@@ -139,6 +138,7 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   const contextValue = useMemo(
     () => ({
       loading,
+      setLoading,
       search,
       request,
       statusCode,

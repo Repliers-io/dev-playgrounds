@@ -4,6 +4,7 @@ export type SavedResponse = {
 
 export type ListingContextType = SavedResponse & {
   loading: boolean
+  setLoading: (loading: boolean) => void
   time: number
   json: any
   size: number

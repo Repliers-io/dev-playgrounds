@@ -16,7 +16,7 @@ export const markersClusteringThreshold = 100
 
 export const mapboxDefaults: Partial<MapOptions> = {
   zoom: 8,
-  minZoom: 3,
+  minZoom: 4,
   maxZoom: 18,
   dragRotate: false,
   doubleClickZoom: true,

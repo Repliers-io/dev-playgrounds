@@ -5,6 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 
+import { useListing } from 'providers/ListingProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -18,6 +19,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const { focusedMarker, focusMarker } = useMapOptions()
   const { setValue } = useFormContext()
   const { onChange } = useParamsForm()
+  const { setLoading } = useListing()
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
@@ -32,6 +34,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
 
   const handleDetailsClick = (mlsNumber: string, boardId: number) => {
     // Switch to property tab
+    setLoading(true)
     setValue('tab', 'listing')
     // Fill property fields
     setValue('mlsNumber', mlsNumber)
