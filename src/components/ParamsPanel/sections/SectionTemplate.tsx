@@ -10,7 +10,7 @@ import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import { ParamsLabel } from '../components'
 
-interface ParamsSectionProps extends BoxProps {
+interface SectionTemplateProps extends BoxProps {
   index: number
   title: string
   hint?: string
@@ -21,7 +21,7 @@ interface ParamsSectionProps extends BoxProps {
   rightSlot?: React.ReactNode
 }
 
-const ParamsSection: React.FC<ParamsSectionProps> = ({
+const SectionTemplate: React.FC<SectionTemplateProps> = ({
   index,
   title,
   children,
@@ -100,4 +100,4 @@ const ParamsSection: React.FC<ParamsSectionProps> = ({
   )
 }
 
-export default ParamsSection
+export default SectionTemplate
