@@ -25,7 +25,7 @@ export const expandedSections = ['images', 'root', 'address']
 // Configuration for section headers with additional styling
 export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   images: {
-    tooltip: 'Listing images pulled from Repliers CDN',
+    tooltip: 'Medium-sized listing images pulled from Repliers CDN',
     hint: 'docs',
     link: 'https://help.repliers.com/en/article/listing-images-implementation-guide-198p8u8/'
   },
@@ -43,5 +43,25 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
     tooltip: 'Open House details for the listing',
     hint: 'docs',
     link: 'https://help.repliers.com/en/article/how-to-search-for-listings-with-open-houses-1dzsry0/'
+  },
+  duplicatesDetails: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/access-to-multiple-mls-systems-using-a-single-api-key-deduplication-qe05dp/'
+  },
+  duplicates: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/access-to-multiple-mls-systems-using-a-single-api-key-deduplication-qe05dp/'
+  },
+  permissions: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/understanding-listing-permissions-in-the-api-yj6n9y/'
+  },
+  comparables: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/sold-comparables-similar-active-listings-selection-logic-1h396j8/'
+  },
+  history: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/accessing-historical-listings-for-an-address-1kfsor7/'
   }
 }

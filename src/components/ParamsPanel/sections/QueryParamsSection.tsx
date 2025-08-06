@@ -57,7 +57,12 @@ const QueryParamsSection = () => {
           />
           <ParamsMultiSelect name="type" options={typeOptions} />
           <ParamsMultiSelect name="class" options={classOptions} />
-          <ParamsMultiSelect name="status" options={statusOptions} />
+          <ParamsMultiSelect
+            name="status"
+            options={statusOptions}
+            hint="docs"
+            link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/"
+          />
           <ParamsMultiSelect
             name="style"
             options={options?.style}
