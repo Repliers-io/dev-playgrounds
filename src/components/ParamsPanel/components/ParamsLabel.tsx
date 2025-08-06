@@ -24,10 +24,18 @@ const ParamsLabel: React.FC<ParamLabelProps> = ({
   ...rest
 }) => {
   return (
-    <Stack spacing={1} direction="row" alignItems="center" pb={1} {...rest}>
+    <Stack spacing={0.75} direction="row" alignItems="center" pb={1} {...rest}>
       {Boolean(label) && <InputLabel htmlFor={nameFor}>{label}</InputLabel>}
       {Boolean(title) && (
-        <Typography variant="h6" fontSize="12px" textTransform="uppercase">
+        <Typography
+          variant="h6"
+          fontSize="12px"
+          textTransform="uppercase"
+          sx={{
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis'
+          }}
+        >
           {title}
         </Typography>
       )}

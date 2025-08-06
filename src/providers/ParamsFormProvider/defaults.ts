@@ -19,7 +19,7 @@ const defaultFormState: Partial<FormParams> = {
   endpoint: 'locations',
   center: false,
   radius: null,
-  q: '',
+  search: '',
   locationsPageNum: null,
   locationsResultsPerPage: null,
   locationsType: [],
@@ -29,11 +29,14 @@ const defaultFormState: Partial<FormParams> = {
   city: '',
   neighborhood: '',
   areaOrCity: '',
+  listingFields: null,
+  listingBoardId: undefined,
 
   /**
    * request parameters
    */
   boardId: undefined,
+  mlsNumber: undefined,
   listings: undefined,
   class: [],
   status: [],

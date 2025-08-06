@@ -23,7 +23,8 @@ type MapOptionsContextProps = {
   position?: MapPosition
   setPosition: (position: MapPosition) => void
   blurMarker: () => void
-  focusMarker: (mls: string | null) => void
+  focusMarker: (mlsNumber: string, boardId: number) => void
+  focusLocation: (locationId: string) => void
   focusedMarker: string | null
   style: MapStyle
   setStyle: (style: MapStyle) => void
@@ -75,7 +76,16 @@ const MapOptionsProvider = ({
 
   const [mapStyle, setStyle] = useState(style)
   const [editMode, setEditMode] = useState<MapEditMode>(null)
-  const [focusedMarker, focusMarker] = useState<string | null>(null)
+  const [focusedMarker, setFocusedMarker] = useState<string | null>(null)
+
+  const focusMarker = (mlsNumber: string, boardId: number) => {
+    const markerName = `marker-${mlsNumber}-${boardId}`
+    setFocusedMarker(markerName)
+  }
+
+  const focusLocation = (locationId: string) => {
+    setFocusedMarker(locationId)
+  }
   const clearEditMode = () => setEditMode(null)
 
   const destroyMap = useCallback(() => {
@@ -144,7 +154,8 @@ const MapOptionsProvider = ({
       clearEditMode,
       focusedMarker,
       focusMarker,
-      blurMarker: () => focusMarker(null),
+      focusLocation,
+      blurMarker: () => setFocusedMarker(null),
       destroyMap,
       centerMap,
       mapRef,

@@ -26,6 +26,7 @@ export type SoldWithin = (typeof soldWithin)[number]
 
 export interface Filters {
   boardId?: number | null
+  mlsNumber?: string | null
   sortBy?: ApiSortBy
   minPrice?: number
   maxPrice?: number

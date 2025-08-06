@@ -40,6 +40,8 @@ const StatsSection = () => {
           noClear
           stringValue
           name="statistics"
+          hint="docs"
+          link="https://help.repliers.com/en/article/real-time-market-statistics-implementation-guide-l3b1uy/#3-step-1-provide-the-scope-of-data"
           options={statisticsFields}
         />
         <ParamsMultiSelect

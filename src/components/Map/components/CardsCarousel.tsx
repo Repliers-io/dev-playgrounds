@@ -1,25 +1,25 @@
 import { useEffect, useRef } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { alpha, Box, Button, ButtonGroup, Skeleton } from '@mui/material'
 
+import { useListing } from 'providers/ListingProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import './CardsCarousel.css'
 
 import PropertyCard from './PropertyCard'
 
-export const CDN = 'https://cdn.repliers.io'
-
-export const getCDNPath = (fileName: string, size = 'large') => {
-  return `${CDN}/${fileName}?&webp&class=${size}`
-}
-
 const CardsCarousel = ({ open }: { open: boolean }) => {
   const { listings } = useSearch()
   const { focusedMarker, focusMarker } = useMapOptions()
+  const { setValue } = useFormContext()
+  const { onChange } = useParamsForm()
+  const { setLoading } = useListing()
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
@@ -31,6 +31,17 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
 
   const handlePrevClick = () =>
     ref.current?.scrollBy({ left: -scrollBy, behavior: 'smooth' })
+
+  const handleDetailsClick = (mlsNumber: string, boardId: number) => {
+    // Switch to property tab
+    setLoading(true)
+    setValue('tab', 'listing')
+    // Fill property fields
+    setValue('mlsNumber', mlsNumber)
+    setValue('listingBoardId', boardId)
+    // Trigger form change
+    onChange()
+  }
 
   useEffect(() => {
     ref.current?.scrollTo({ left: 0, behavior: 'instant' })
@@ -89,25 +100,27 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
           position: 'relative',
           width: '100%',
           boxSizing: 'border-box',
-          p: 1,
-          pb: 0,
-          borderRadius: 1,
           bgcolor: 'background.paper',
-          overflow: 'hidden',
-          boxShadow: 1
+          borderRadius: 1,
+          boxShadow: 1,
+          height: '100px',
+          overflow: 'visible',
+          px: 1
         }}
       >
         <Box
           ref={ref}
           sx={{
-            width: '100%',
             display: 'flex',
             flexDirection: 'row',
             boxSizing: 'border-box',
-            scrollbarWidth: 'thin',
             overflowY: 'hidden',
             overflowX: 'auto',
-            pb: 1
+            pt: 1,
+            pb: 3.25,
+            pl: 0,
+            pr: 0,
+            scrollbarWidth: 'thin'
           }}
         >
           {!listings.length && (
@@ -122,7 +135,12 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
             </>
           )}
           {listings.map((listing, index) => (
-            <PropertyCard key={index} listing={listing} onClick={focusMarker} />
+            <PropertyCard
+              key={index}
+              listing={listing}
+              onClick={focusMarker}
+              onDetailsClick={handleDetailsClick}
+            />
           ))}
         </Box>
       </Box>

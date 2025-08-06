@@ -40,6 +40,7 @@ const MapRoot = () => {
     mapRef,
     focusedMarker,
     focusMarker,
+    focusLocation,
     blurMarker,
     setMapContainerRef, // TODO: remove
     setMapRef, // TODO: remove
@@ -50,7 +51,7 @@ const MapRoot = () => {
   const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
-  const prevFocused = useRef<string | null>(null)
+  const prevFocusedPolygon = useRef<string | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
@@ -59,7 +60,8 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const listingsTab = params.tab === 'map' || (!locationsTab && !statisticsTab)
+  const listingTab = params.tab === 'listing'
+  const listingsTab = !locationsTab && !statisticsTab && !listingTab
 
   const centerPoint = params.center
 
@@ -118,7 +120,7 @@ const MapRoot = () => {
           id: getMarkerName(listing)
         })),
         onClick: (listing: Listing) => {
-          focusMarker(getMarkerName(listing))
+          focusMarker(listing.mlsNumber, listing.boardId)
         }
       })
     }
@@ -141,7 +143,7 @@ const MapRoot = () => {
           } as any
         }),
         onClick: (location) => {
-          focusMarker(getLocationName(location))
+          focusLocation(getLocationName(location))
         }
       })
     }
@@ -175,7 +177,11 @@ const MapRoot = () => {
 
     if (focusedMarker) {
       prevFocusedMarker.current?.classList.remove('focused')
-      if (prevFocused.current) MapService.blurPolygon(map, prevFocused.current)
+
+      if (prevFocusedPolygon.current) {
+        MapService.blurPolygon(map, prevFocusedPolygon.current)
+        prevFocusedPolygon.current = null
+      }
 
       const element = document.getElementById(focusedMarker)
       if (element) {
@@ -184,8 +190,8 @@ const MapRoot = () => {
       } else {
         // no HTML element found, should be MapBox polygon instead
         MapService.focusPolygon(map, focusedMarker)
+        prevFocusedPolygon.current = focusedMarker
       }
-      prevFocused.current = focusedMarker
     }
 
     return () => prevFocusedMarker.current?.classList.remove('focused')

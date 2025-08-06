@@ -6,6 +6,7 @@ import { Box, Stack } from '@mui/material'
 
 import { type MapPosition } from 'services/Map/types'
 import { getMapPolygon, getMapRectangle } from 'services/Search'
+import { useListing } from 'providers/ListingProvider'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { type FormParams } from 'providers/ParamsFormProvider'
@@ -18,6 +19,7 @@ import {
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
+  ListingParamsSection,
   LocationParamsSection,
   QueryParamsSection,
   SearchSection,
@@ -32,11 +34,13 @@ import {
 
 const ParamsPanel = () => {
   const searchContext = useSearch()
+  const listingContext = useListing()
   const locationsContext = useLocations()
   const { params, polygon } = searchContext
   const { apiKey, tab } = params
   const { canRenderMap, position } = useMapOptions()
   const locationsMap = tab === 'locations'
+  const listingTab = tab === 'listing'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -106,12 +110,39 @@ const ParamsPanel = () => {
     []
   )
 
+  const fetchProperty = useCallback(async (params: Partial<FormParams>) => {
+    const { mlsNumber, listingBoardId, listingFields, apiKey, apiUrl } = params
+
+    // Only search if we have at least mlsNumber or listingBoardId
+    if (!mlsNumber && !listingBoardId) return
+
+    try {
+      await listingContext.search({
+        mlsNumber,
+        listingBoardId,
+        listingFields,
+        apiKey,
+        apiUrl,
+        endpoint: 'property'
+      })
+    } catch (error: any) {
+      console.error('fetchProperty error:', error)
+    }
+  }, [])
+
   useDeepCompareEffect(() => {
     if (!canRenderMap) return
     if (!params || !Object.keys(params).length) return
 
+    // ALWAYS update URL with position and params
     if (position) {
       updateUrlState(position, params)
+    }
+
+    // THEN execute tab-specific logic
+    if (listingTab) {
+      fetchProperty(params)
+    } else if (position) {
       if (locationsMap) {
         // we should NOT react on polygon changes when in locationsMap mode
         fetchLocations(position, params)
@@ -119,7 +150,15 @@ const ParamsPanel = () => {
         fetchData(position, params, polygon)
       }
     }
-  }, [position, apiKey, params, polygon, canRenderMap, locationsMap])
+  }, [
+    position,
+    apiKey,
+    params,
+    polygon,
+    canRenderMap,
+    locationsMap,
+    listingTab
+  ])
 
   return (
     <Box
@@ -139,7 +178,9 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack spacing={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
-          {!locationsMap ? (
+          {listingTab ? (
+            <ListingParamsSection />
+          ) : !locationsMap ? (
             <>
               <QueryParamsSection />
               <LocationParamsSection />
@@ -152,7 +193,7 @@ const ParamsPanel = () => {
               <CenterRadiusSection />
             </>
           )}
-          <BoundsSection />
+          {!listingTab && <BoundsSection />}
         </Stack>
       </Stack>
     </Box>

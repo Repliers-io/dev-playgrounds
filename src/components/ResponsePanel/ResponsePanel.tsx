@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material'
 
+import { useListing } from 'providers/ListingProvider'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -55,8 +56,20 @@ const ResponsePanel = ({
   const { focusedMarker } = useMapOptions()
   const searchContext = useSearch()
   const locationsContext = useLocations()
+  const listing = useListing()
   const locationsTab = searchContext.params.tab === 'locations'
-  const response = locationsTab ? locationsContext : searchContext
+  const listingTab = searchContext.params.tab === 'listing'
+
+  // Select the appropriate context based on active tab
+  let response
+  if (listingTab) {
+    response = listing
+  } else if (locationsTab) {
+    response = locationsContext
+  } else {
+    response = searchContext
+  }
+
   const { size, json, statusCode, request, time, loading } = response
 
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }

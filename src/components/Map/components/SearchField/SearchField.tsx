@@ -24,7 +24,7 @@ const SearchField = () => {
   const { onChange } = useParamsForm()
   const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
-  const { mapRef, focusedMarker, focusMarker } = useMapOptions()
+  const { mapRef, focusedMarker, focusLocation } = useMapOptions()
   const { params /*, setPolygon, clearData: clearSearchData*/ } = useSearch()
   const initialValue = params.search || ''
   const locationsEndpoint = params.endpoint === 'locations'
@@ -171,7 +171,7 @@ const SearchField = () => {
           // if (!locationsEndpoint) {
           //   update(option.name)
           // } else {
-          focusMarker(option.locationId)
+          focusLocation(getLocationName(option))
           // }
         }}
         showBounds={!locationsEndpoint || Boolean(option.map.boundary)}

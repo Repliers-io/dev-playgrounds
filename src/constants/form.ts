@@ -26,6 +26,12 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'center'
 ]
 
+export const listingOnlyParams: (keyof FormParams)[] = [
+  'mlsNumber',
+  'listingFields',
+  'listingBoardId'
+]
+
 export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterLimit',
   'clusterPrecision'

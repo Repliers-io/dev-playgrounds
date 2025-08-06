@@ -59,7 +59,6 @@ const config = {
     'import/no-cycle': 'off',
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
-    'import/prefer-default-export': ['warn', { target: 'single' }],
     'import/no-extraneous-dependencies': 'off',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',

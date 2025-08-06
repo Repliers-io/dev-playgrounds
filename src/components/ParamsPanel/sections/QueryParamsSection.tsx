@@ -22,12 +22,13 @@ const QueryParamsSection = () => {
     <SectionTemplate
       index={1}
       title="query parameters"
+      link="https://docs.repliers.io/reference/getting-started-with-your-api#/"
       rightSlot={
         <Button
           type="submit"
           size="small"
           variant="text"
-          sx={{ mb: 1, px: 1.5, height: 32 }}
+          sx={{ mb: 1, px: 1, height: 32, whiteSpace: 'nowrap' }}
           onClick={() => onClear()}
           endIcon={<ClearAllIcon />}
         >
@@ -57,7 +58,12 @@ const QueryParamsSection = () => {
           />
           <ParamsMultiSelect name="type" options={typeOptions} />
           <ParamsMultiSelect name="class" options={classOptions} />
-          <ParamsMultiSelect name="status" options={statusOptions} />
+          <ParamsMultiSelect
+            name="status"
+            options={statusOptions}
+            hint="docs"
+            link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/"
+          />
           <ParamsMultiSelect
             name="style"
             options={options?.style}

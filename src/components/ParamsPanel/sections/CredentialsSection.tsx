@@ -27,7 +27,7 @@ const CredentialsSection = () => {
           type="submit"
           size="small"
           variant="text"
-          sx={{ mb: 1, px: 1.5, height: 32 }}
+          sx={{ mb: 1, px: 1, height: 32 }}
           // disabled={!apiKey || !apiUrl}
           onClick={handleMapRecenter}
           endIcon={<ExploreOutlinedIcon />}
