@@ -63,5 +63,17 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   history: {
     hint: 'docs',
     link: 'https://help.repliers.com/en/article/accessing-historical-listings-for-an-address-1kfsor7/'
+  },
+  estimate: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/ai-powered-property-estimates-implementation-guide-6gdbvp/#3-on-market-property-estimates'
+  },
+  imageInsights: {
+    hint: 'docs',
+    link: 'https://help.repliers.com/en/article/ai-powered-property-photo-classification-implementation-guide-l8jltq/'
+  },
+  timestamps: {
+    hint: 'DOM docs',
+    link: 'https://help.repliers.com/en/article/considerations-when-displaying-the-days-on-market-field-y2hu24/'
   }
 }
