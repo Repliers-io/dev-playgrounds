@@ -46,6 +46,7 @@ const MapStyleSwitch = () => {
           bgcolor: alpha('#FFFFFF', 0.7),
           '& .MuiToggleButton-root': {
             minWidth: { xs: 'auto', sm: 114 },
+            fontWeight: 500,
 
             '&.Mui-selected': {
               bgcolor: alpha(primary, 0.8)

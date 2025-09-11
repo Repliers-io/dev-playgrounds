@@ -95,6 +95,7 @@ const PropertyCard = ({
           my: -0.25,
           mr: -0.5,
           fontSize: 12,
+          fontFamily: '"Urbanist Variable", sans-serif',
           lineHeight: 1.25,
           overflow: 'hidden'
         }}

@@ -1,5 +1,7 @@
+import { useFormContext } from 'react-hook-form'
+
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined'
-import { Button, Stack } from '@mui/material'
+import { Button, Link, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -13,10 +15,15 @@ const CredentialsSection = () => {
   const {
     params: { apiKey, apiUrl }
   } = useSearch()
+  const {
+    formState: { errors }
+  } = useFormContext()
 
   const handleMapRecenter = () => {
     if (apiKey && apiUrl) centerMap(apiKey, apiUrl)
   }
+
+  const hasApiKeyError = !!errors.apiKey
 
   return (
     <SectionTemplate
@@ -43,6 +50,27 @@ const CredentialsSection = () => {
           hint="* HTTP Header"
           label="REPILERS-API-KEY"
         />
+        {hasApiKeyError && (
+          <Link
+            sx={{
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 600,
+              fontFamily: 'Urbanist Variable',
+              display: 'inline-block',
+              width: 'auto !important',
+              py: 0.5,
+              px: 2,
+              textAlign: 'center',
+              bgcolor: '#384248',
+              borderRadius: 1
+            }}
+            href="https://auth.repliers.com/en/signup"
+          >
+            Get Valid API Key
+          </Link>
+        )}
         <ParamsField name="apiUrl" noClear />
       </Stack>
     </SectionTemplate>

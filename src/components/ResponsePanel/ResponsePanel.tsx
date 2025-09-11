@@ -36,8 +36,8 @@ const formatBytes = (bytes: number): string => {
   const sizes = ['B', 'kB', 'mB', 'gB']
   const i = Math.floor(Math.log(bytes) / Math.log(1000))
 
-  if (i === 0) return `${bytes} ${sizes[i]}`
-  return `${(bytes / Math.pow(1000, i)).toFixed(bytes > 100_000 ? 0 : 1)} ${sizes[i]}`
+  if (i === 0) return `${bytes}${sizes[i]}`
+  return `${(bytes / Math.pow(1000, i)).toFixed(bytes > 100_000 ? 0 : 1)}${sizes[i]}`
 }
 
 const formatColor = (bytes: number): string => {
@@ -184,7 +184,12 @@ const ResponsePanel = ({
               ) : (
                 <Stack direction="row" spacing={1}>
                   {Boolean(time) && (
-                    <Typography color="text.hint" variant="body2" noWrap>
+                    <Typography
+                      color="text.hint"
+                      variant="body2"
+                      noWrap
+                      sx={{ fontFamily: 'monospace' }}
+                    >
                       {time}ms
                     </Typography>
                   )}
@@ -194,6 +199,7 @@ const ResponsePanel = ({
                       color={formatColor(size)}
                       variant="body2"
                       noWrap
+                      sx={{ fontFamily: 'monospace' }}
                     >
                       {formatBytes(size)}
                     </Typography>

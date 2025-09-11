@@ -97,6 +97,7 @@ const ParamsToggleGroup = ({
                     width: 'auto',
                     m: 0,
                     fontSize: '0.75rem',
+                    fontWeight: 500,
                     border: '0 !important',
                     position: 'relative',
 
