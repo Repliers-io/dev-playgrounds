@@ -2,7 +2,7 @@ import { useState } from 'react'
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Stack, Tab, Tabs } from '@mui/material'
+import { Box, Link, Stack, Tab, Tabs } from '@mui/material'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
@@ -31,7 +31,7 @@ const PageContent = () => {
         justifyContent={'space-between'}
         sx={{
           p: '11.5px 26px',
-          bgcolor: '#000',
+          bgcolor: '#030014',
           mb: 1.5
         }}
       >
@@ -53,6 +53,7 @@ const PageContent = () => {
               height: 42,
               borderRadius: 8,
               color: 'common.white',
+              fontWeight: 600,
               '&.Mui-selected': {
                 border: 0,
                 color: 'common.white',
@@ -67,7 +68,28 @@ const PageContent = () => {
           <Tab label="Listing" value="listing" />
         </Tabs>
 
-        <Box sx={{ width: '135px' }} />
+        <Box>
+          <Link
+            sx={{
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 600,
+              fontFamily: 'Urbanist Variable',
+              display: 'inline-block',
+              py: 1,
+              px: 2,
+              background:
+                'linear-gradient(220deg, #3c28ad 14.39%, #7974ec 62.56%, #98a4f2 120.9%)',
+              border: '1px solid #7974ec',
+              borderRadius: 2.5
+            }}
+            href="https://auth.repliers.com/en/signup"
+            target="_blank"
+          >
+            Get An API Key
+          </Link>
+        </Box>
       </Stack>
       <Box sx={{ px: 2.5 }}>
         <Stack

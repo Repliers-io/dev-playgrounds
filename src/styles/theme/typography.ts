@@ -1,53 +1,42 @@
 import { toRem } from 'utils/theme'
 
+import '@fontsource-variable/urbanist'
 import { type TypographyOptions } from '@mui/material/styles/createTypography'
 
 const typography: TypographyOptions = {
   htmlFontSize: 16, // HTML base font size in pixels
   fontSize: 16, // 16px
-  fontFamily: [
-    'Twemoji Country Flags',
-    'system-ui',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'Segoe UI',
-    'Roboto',
-    'Oxygen',
-    'Ubuntu',
-    'Cantarell',
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    'sans-serif'
-  ].join(','),
+  fontFamily: ['Urbanist Variable', 'Twemoji Country Flags', 'sans-serif'].join(
+    ','
+  ),
 
   h1: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(56),
     lineHeight: toRem(72)
   },
   h2: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(28),
     lineHeight: toRem(36)
   },
   h3: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(24),
     lineHeight: toRem(32)
   },
   h4: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(20),
     lineHeight: toRem(28)
   },
   h5: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(18),
     lineHeight: toRem(24)
   },
   h6: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: toRem(16),
     lineHeight: toRem(24)
   },
