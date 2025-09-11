@@ -67,6 +67,7 @@ const CredentialsSection = () => {
               borderRadius: 1
             }}
             href="https://auth.repliers.com/en/signup"
+            target="_blank"
           >
             Get Valid API Key
           </Link>

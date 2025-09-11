@@ -85,6 +85,7 @@ const PageContent = () => {
               borderRadius: 2.5
             }}
             href="https://auth.repliers.com/en/signup"
+            target="_blank"
           >
             Get An API Key
           </Link>
