@@ -6,11 +6,14 @@ interface ImagesSectionProps {
   images: string[]
 }
 
+const imageWidth = 3 * 120
+const imageHeight = 2 * 120
+
 const ImagesSection = ({ images }: ImagesSectionProps) => {
   if (!images || images.length === 0) return null
 
   return (
-    <Box sx={{ position: 'relative', height: 200 }}>
+    <Box sx={{ position: 'relative', height: imageHeight }}>
       <Box
         sx={{
           position: 'absolute',
@@ -30,8 +33,8 @@ const ImagesSection = ({ images }: ImagesSectionProps) => {
               borderRadius: 1,
               overflow: 'hidden',
               flexShrink: 0,
-              width: 3 * 100,
-              height: 2 * 100
+              width: imageWidth,
+              height: imageHeight
             }}
           >
             <img

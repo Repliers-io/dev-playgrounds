@@ -9,6 +9,55 @@ import { formatSimpleValue, getSectionTitle, shouldHideValue } from '../utils'
 import SectionHeader from './SectionHeader'
 import { ImagesSection } from './sections'
 
+// Function to escape HTML characters
+const escapeHtml = (text: string): string => {
+  const div = document.createElement('div')
+  div.textContent = text
+  return div.innerHTML
+}
+
+// Function to add basic JSON syntax highlighting
+const highlightJSONKeys = (jsonString: string): string => {
+  // First escape HTML characters for security
+  const escapedString = escapeHtml(jsonString)
+
+  // Split into lines and process each line
+  return escapedString
+    .split('\n')
+    .map((line) => {
+      let processedLine = line
+
+      // Match JSON keys: strings in quotes at the beginning of line (after whitespace)
+      // Pattern: optional whitespace, then "key", then colon (and optional whitespace)
+      const keyPattern = /^(\s*)"([^&]+)"(\s*:\s*)/
+      if (keyPattern.test(processedLine)) {
+        processedLine = processedLine.replace(
+          keyPattern,
+          '$1<strong>$2</strong>$3'
+        )
+      }
+
+      // Match null values followed by comma OR at end of line (to avoid matching in strings)
+      // Pattern: null followed by comma, or null at the end of line (before closing brackets)
+      const nullPattern = /(null)(?=,|\s*$|\s*[}\]])/g
+      processedLine = processedLine.replace(
+        nullPattern,
+        '<span style="color: #df113a;">$1</span>'
+      )
+
+      // Match numbers (integers and floats) followed by comma OR at end of line (to avoid matching in strings)
+      // Pattern: number (with optional decimal part) followed by comma, or at the end of line (before closing brackets)
+      const numberPattern = /(-?\d+(?:\.\d+)?)(?=,|\s*$|\s*[}\]])/g
+      processedLine = processedLine.replace(
+        numberPattern,
+        '<span style="color: #0b75f5;">$1</span>'
+      )
+
+      return processedLine
+    })
+    .join('\n')
+}
+
 // Function to get custom section renderer
 const getCustomSectionRenderer = (title: string, data: unknown) => {
   switch (title) {
@@ -43,6 +92,19 @@ const Section = ({
   const { tooltip, hint, link } = headerConfig || {}
   const sectionTitle = getSectionTitle(title)
 
+  const preWrapStyles = {
+    whiteSpace: 'pre-wrap',
+    fontSize: '12px',
+    lineHeight: '15px',
+    color: '#2a3f3c',
+    overflow: 'auto',
+    backgroundColor: 'white',
+    padding: '8px',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0',
+    margin: 0
+  }
+
   // Handle complex sections (including root)
   return (
     <Box
@@ -58,16 +120,9 @@ const Section = ({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          gap: 2
         }}
       >
-        <SectionHeader
-          title={sectionTitle}
-          tooltip={tooltip}
-          hint={hint}
-          link={link}
-          onClick={handleToggle}
-        />
         <IconButton
           size="small"
           sx={{ m: -1, width: 32, height: 32 }}
@@ -75,6 +130,13 @@ const Section = ({
         >
           {expanded ? <ExpandLess /> : <ExpandMore />}
         </IconButton>
+        <SectionHeader
+          title={sectionTitle}
+          tooltip={tooltip}
+          hint={hint}
+          link={link}
+          onClick={handleToggle}
+        />
       </Box>
       <Collapse in={expanded}>
         <Box sx={{ my: 1 }}>
@@ -98,18 +160,14 @@ const Section = ({
                           {typeof item === 'object' ? (
                             <pre
                               style={{
-                                whiteSpace: 'pre-wrap',
-                                fontSize: '11px',
-                                overflow: 'auto',
-                                backgroundColor: 'white',
-                                padding: '4px',
-                                borderRadius: '4px',
-                                border: '1px solid #e0e0e0',
-                                margin: 0
+                                ...preWrapStyles
                               }}
-                            >
-                              {JSON.stringify(item, null, 2)}
-                            </pre>
+                              dangerouslySetInnerHTML={{
+                                __html: highlightJSONKeys(
+                                  JSON.stringify(item, null, 2)
+                                )
+                              }}
+                            />
                           ) : (
                             <Typography variant="body2">
                               {formatSimpleValue(item)}
@@ -145,20 +203,16 @@ const Section = ({
                               </Typography>
                               <pre
                                 style={{
-                                  whiteSpace: 'pre-wrap',
-                                  fontSize: '11px',
-                                  overflow: 'auto',
-                                  backgroundColor: 'white',
-                                  padding: '8px',
-                                  borderRadius: '4px',
-                                  border: '1px solid #e0e0e0',
-                                  margin: 0,
+                                  ...preWrapStyles,
                                   maxWidth: '100%',
                                   boxSizing: 'border-box'
                                 }}
-                              >
-                                {JSON.stringify(value, null, 2)}
-                              </pre>
+                                dangerouslySetInnerHTML={{
+                                  __html: highlightJSONKeys(
+                                    JSON.stringify(value, null, 2)
+                                  )
+                                }}
+                              />
                             </Box>
                           ) : (
                             // For simple values - horizontal layout
@@ -173,7 +227,7 @@ const Section = ({
                                 variant="body2"
                                 sx={{
                                   fontWeight: 600,
-                                  minWidth: 120,
+                                  minWidth: 160,
                                   color: 'text.secondary'
                                 }}
                               >
