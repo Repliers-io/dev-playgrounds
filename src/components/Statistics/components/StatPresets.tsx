@@ -17,16 +17,15 @@ const StatPresets = () => {
     setValue('stats', true)
     onChange()
 
-    document.getElementById('stats-section')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    })
+    document
+      .getElementById('stats-section')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   return (
-    <Stack spacing={1.25}>
+    <Stack gap={1.25}>
       Usage examples:
-      <Stack direction="row" spacing={1.25} flexWrap="wrap">
+      <Stack direction="row" gap={1.25} flexWrap="wrap">
         {presets.map((preset) => (
           <Button
             size="small"
