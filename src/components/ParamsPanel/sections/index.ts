@@ -1,3 +1,4 @@
+export { default as AiSection } from './AiSection'
 export { default as BoundsSection } from './BoundsSection'
 export { default as CenterRadiusSection } from './CenterRadiusSection'
 export { default as ClustersSection } from './ClustersSection'

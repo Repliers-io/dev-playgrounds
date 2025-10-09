@@ -26,6 +26,12 @@ export type CustomFormParams = {
   locationsBoundary: string | null
   listingFields: string | null
   listingBoardId: number | null
+  imageSearchItems?: {
+    type: 'text' | 'image'
+    value?: string
+    url?: string
+    boost: number
+  }[]
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -158,7 +164,8 @@ export const listingFields: FieldsType = [
   'details.propertyType',
   'details.sqft',
   'lot',
-  'images[0]'
+  'images'
+  // 'images[0]'
   // 'imagesScore',
   // 'details.style'
 ]

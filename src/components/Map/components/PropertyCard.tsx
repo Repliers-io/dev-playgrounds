@@ -58,6 +58,16 @@ const PropertyCard = ({
     onDetailsClick?.(listing.mlsNumber, listing.boardId)
   }
 
+  const currentImage = listing.images?.[0] || ''
+  const currentIndex = Number(currentImage.match(/(\d+)\./)?.[1]) || 1
+
+  const firstIndex =
+    listing.images?.length > 1
+      ? Math.min(
+          ...listing.images.map((img) => Number(img.match(/(\d+)\./)?.[1]))
+        )
+      : 1
+
   return (
     <Stack
       id={`card-${getMarkerName(listing)}`}
@@ -84,12 +94,33 @@ const PropertyCard = ({
           width: 100,
           minWidth: 100,
           borderRadius: 0.5,
+          position: 'relative',
           bgcolor: '#384248', // marker color
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundImage: `url(${getCDNPath(listing.images?.[0], 'small')})`
+          backgroundImage: `url(${getCDNPath(currentImage, 'small')})`
         }}
-      />
+      >
+        {currentIndex !== firstIndex && (
+          <Box
+            sx={{
+              top: '50%',
+              left: '50%',
+              px: 0.75,
+              fontSize: 12,
+              fontWeight: 400,
+              textAlign: 'center',
+              borderRadius: 4,
+              position: 'absolute',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: '#0b75f5',
+              color: '#fff'
+            }}
+          >
+            #{currentIndex}
+          </Box>
+        )}
+      </Box>
       <Stack
         sx={{
           my: -0.25,
@@ -124,9 +155,9 @@ const PropertyCard = ({
               sx={{ lineHeight: 1 }}
             >
               <BedOutlinedIcon sx={{ fontSize: 14, mt: '2px' }} />
-              {numBedrooms}
+              <span>{numBedrooms}</span>
               <BathtubOutlinedIcon sx={{ fontSize: 12 }} />
-              {numBathrooms}
+              <span>{numBathrooms}</span>
             </Stack>
           </Box>
         )}

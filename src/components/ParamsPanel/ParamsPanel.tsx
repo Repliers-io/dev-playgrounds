@@ -15,6 +15,7 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
 import {
+  AiSection,
   BoundsSection,
   CenterRadiusSection,
   ClustersSection,
@@ -183,6 +184,7 @@ const ParamsPanel = () => {
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />
+              <AiSection />
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />
