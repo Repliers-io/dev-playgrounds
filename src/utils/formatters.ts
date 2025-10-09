@@ -86,3 +86,55 @@ export const toAffirmative = (value: Primitive | object) => {
   }
   return value ? 'Yes' : 'No'
 }
+
+/**
+ * Escape HTML characters to prevent XSS attacks
+ */
+export const escapeHtml = (text: string): string => {
+  const div = document.createElement('div')
+  div.textContent = text
+  return div.innerHTML
+}
+
+/**
+ * Add syntax highlighting to JSON string
+ * Highlights:
+ * - Keys in bold
+ * - null values in red (#df113a)
+ * - Numbers in blue (#0b75f5)
+ */
+export const highlightJSONKeys = (jsonString: string): string => {
+  const escapedString = escapeHtml(jsonString)
+
+  return escapedString
+    .split('\n')
+    .map((line) => {
+      let processedLine = line
+
+      // Match JSON keys: strings in quotes at the beginning of line (after whitespace)
+      const keyPattern = /^(\s*)"([^&]+)"(\s*:\s*)/
+      if (keyPattern.test(processedLine)) {
+        processedLine = processedLine.replace(
+          keyPattern,
+          '$1<strong>$2</strong>$3'
+        )
+      }
+
+      // Match null values
+      const nullPattern = /(null)(?=,|\s*$|\s*[}\]])/g
+      processedLine = processedLine.replace(
+        nullPattern,
+        '<span style="color: #df113a;">$1</span>'
+      )
+
+      // Match numbers (integers and floats)
+      const numberPattern = /(-?\d+(?:\.\d+)?)(?=,|\s*$|\s*[}\]])/g
+      processedLine = processedLine.replace(
+        numberPattern,
+        '<span style="color: #0b75f5;">$1</span>'
+      )
+
+      return processedLine
+    })
+    .join('\n')
+}

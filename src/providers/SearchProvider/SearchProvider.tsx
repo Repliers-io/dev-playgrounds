@@ -30,6 +30,9 @@ const emptySavedResponse = {
   statistics: {}
 }
 
+// Fields that should be sent in POST body instead of query params
+const POST_BODY_FIELDS = ['imageSearchItems']
+
 const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
 export const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
 
@@ -51,6 +54,7 @@ const SearchProvider = ({
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
+  const [requestBody, setRequestBody] = useState<object | null>(null)
   const [time, setTime] = useState(0)
   const [size, setSize] = useState(0)
   const [json, setJson] = useState<null | any>(null)
@@ -104,6 +108,7 @@ const SearchProvider = ({
 
   const clearData = useCallback(() => {
     setRequest('')
+    setRequestBody(null)
     setTime(0)
     setStatusCode(null)
     setSaved(emptySavedResponse)
@@ -116,12 +121,52 @@ const SearchProvider = ({
     const { apiKey, apiUrl, ...rest } = params
     const endpointUrl = `${apiUrl}/listings`
 
+    // Separate params into GET (query) and POST (body)
+    const getParams: Record<string, any> = {}
+    const postParams: Record<string, any> = {}
+
+    Object.keys(rest).forEach((key) => {
+      if (POST_BODY_FIELDS.includes(key)) {
+        const value = rest[key]
+
+        // Special handling for imageSearchItems - filter out empty items
+        if (key === 'imageSearchItems' && Array.isArray(value)) {
+          const validItems = value
+            .filter((item: any) => {
+              if (item.type === 'text') {
+                return Boolean(item.value?.trim())
+              } else {
+                return Boolean(item.url?.trim())
+              }
+            })
+            .map((item: any) => {
+              // Remove id field before sending to API
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { id, ...itemWithoutId } = item
+              return itemWithoutId
+            })
+          // Only add to POST if there are valid items
+          if (validItems.length > 0) {
+            postParams[key] = validItems
+          }
+        } else {
+          postParams[key] = value
+        }
+      } else {
+        getParams[key] = rest[key]
+      }
+    })
+
+    // Build request URL for caching and display
+    const getParamsString = queryString.stringify(getParams, queryStringOptions)
+    const requestUrl = `${endpointUrl}?${getParamsString}`
+    const requestMethod = Object.keys(postParams).length > 0 ? 'POST' : 'GET'
+    const cacheKey = `${requestMethod}:${requestUrl}${JSON.stringify(postParams)}`
+
     // cache request and filter out duplicates
-    const getParamsString = queryString.stringify(rest, queryStringOptions)
-    const request = `${endpointUrl}?${getParamsString}`
-    if (request === previousRequest.current && apiKey === previousKey.current)
+    if (cacheKey === previousRequest.current && apiKey === previousKey.current)
       return false
-    previousRequest.current = request
+    previousRequest.current = cacheKey
     previousKey.current = apiKey
 
     try {
@@ -132,11 +177,18 @@ const SearchProvider = ({
       abortController.current = controller
       const startTime = performance.now()
 
-      setRequest(request)
+      setRequest(requestUrl)
+
+      // Set beautified POST body JSON
+      if (Object.keys(postParams).length > 0) {
+        setRequestBody(postParams)
+      } else {
+        setRequestBody(null)
+      }
 
       const response = await apiFetch(
         endpointUrl,
-        { get: rest },
+        { get: getParams, post: postParams },
         {
           headers: { 'REPLIERS-API-KEY': apiKey },
           signal: controller.signal
@@ -196,6 +248,11 @@ const SearchProvider = ({
       removeParams,
       search,
       request,
+      requestMethod:
+        Object.keys(requestBody || {}).length > 0
+          ? ('POST' as const)
+          : ('GET' as const),
+      requestBody,
       statusCode,
       time,
       json,
@@ -212,6 +269,7 @@ const SearchProvider = ({
       loading,
       json,
       request,
+      requestBody,
       size,
       saved,
       search,

@@ -51,6 +51,10 @@ const ParamsRange: React.FC<RangeProps> = ({
   // sync with form state
   useEffect(() => setLocalValue(value), [value])
 
+  // Ensure value is a valid number for the Slider
+  const numericValue =
+    typeof localValue === 'number' ? localValue : Number(localValue) || 0
+
   return (
     <Box flex={1}>
       <ParamLabel
@@ -63,7 +67,7 @@ const ParamsRange: React.FC<RangeProps> = ({
       />
       <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
         <Slider
-          value={localValue || 0}
+          value={numericValue}
           onChange={handleChange}
           onChangeCommitted={handleEndChange}
           disabled={disabled}

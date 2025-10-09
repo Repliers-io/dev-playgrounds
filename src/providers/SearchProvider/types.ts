@@ -29,6 +29,8 @@ export type SearchContextType = SavedResponse & {
   removeParams: (keys: FormParamKeys[]) => void
   search: (params: any) => Promise<ApiQueryResponse | null>
   request: string
+  requestMethod: 'GET' | 'POST'
+  requestBody: object | null
   statusCode: number | null
   time: number
   json: object | null

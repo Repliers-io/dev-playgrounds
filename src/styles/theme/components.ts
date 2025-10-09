@@ -420,7 +420,7 @@ const components = {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({
           minHeight: 0,
-          '& .MuiButtonBase-root:first-child': {
+          '& .MuiButtonBase-root:first-of-type': {
             ml: 0
           }
         })

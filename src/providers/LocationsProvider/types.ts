@@ -14,6 +14,8 @@ export type LocationsContextType = SavedResponse & {
   pages: number
   count: number
   request: string
+  requestMethod: 'GET' | 'POST'
+  requestBody: object | null
   statusCode: number | null
   search: (params: any) => Promise<any>
   clearData: () => void

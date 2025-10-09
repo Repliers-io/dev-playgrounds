@@ -3,60 +3,13 @@ import { useState } from 'react'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material'
 
+import { highlightJSONKeys } from 'utils/formatters'
+
 import type { SectionHeaderConfig } from '../types'
 import { formatSimpleValue, getSectionTitle, shouldHideValue } from '../utils'
 
 import SectionHeader from './SectionHeader'
 import { ImagesSection } from './sections'
-
-// Function to escape HTML characters
-const escapeHtml = (text: string): string => {
-  const div = document.createElement('div')
-  div.textContent = text
-  return div.innerHTML
-}
-
-// Function to add basic JSON syntax highlighting
-const highlightJSONKeys = (jsonString: string): string => {
-  // First escape HTML characters for security
-  const escapedString = escapeHtml(jsonString)
-
-  // Split into lines and process each line
-  return escapedString
-    .split('\n')
-    .map((line) => {
-      let processedLine = line
-
-      // Match JSON keys: strings in quotes at the beginning of line (after whitespace)
-      // Pattern: optional whitespace, then "key", then colon (and optional whitespace)
-      const keyPattern = /^(\s*)"([^&]+)"(\s*:\s*)/
-      if (keyPattern.test(processedLine)) {
-        processedLine = processedLine.replace(
-          keyPattern,
-          '$1<strong>$2</strong>$3'
-        )
-      }
-
-      // Match null values followed by comma OR at end of line (to avoid matching in strings)
-      // Pattern: null followed by comma, or null at the end of line (before closing brackets)
-      const nullPattern = /(null)(?=,|\s*$|\s*[}\]])/g
-      processedLine = processedLine.replace(
-        nullPattern,
-        '<span style="color: #df113a;">$1</span>'
-      )
-
-      // Match numbers (integers and floats) followed by comma OR at end of line (to avoid matching in strings)
-      // Pattern: number (with optional decimal part) followed by comma, or at the end of line (before closing brackets)
-      const numberPattern = /(-?\d+(?:\.\d+)?)(?=,|\s*$|\s*[}\]])/g
-      processedLine = processedLine.replace(
-        numberPattern,
-        '<span style="color: #0b75f5;">$1</span>'
-      )
-
-      return processedLine
-    })
-    .join('\n')
-}
 
 // Function to get custom section renderer
 const getCustomSectionRenderer = (title: string, data: unknown) => {
