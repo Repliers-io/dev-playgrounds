@@ -40,6 +40,9 @@ const ImageSearchItem = ({
           size="small"
           fullWidth
           value={item.type}
+          onChange={(e) => {
+            onChange(index, 'type', e.target.value)
+          }}
           sx={{
             '& .MuiInputBase-root': {
               height: '32px',
