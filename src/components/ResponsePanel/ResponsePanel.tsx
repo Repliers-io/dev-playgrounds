@@ -203,7 +203,7 @@ const ResponsePanel = ({
             >
               <Box
                 sx={{
-                  maxHeight: '162px',
+                  maxHeight: '160px',
                   overflow: 'auto',
                   scrollbarWidth: 'thin'
                 }}
@@ -213,7 +213,7 @@ const ResponsePanel = ({
                     margin: 0,
                     whiteSpace: 'pre-wrap',
                     fontSize: '12px',
-                    lineHeight: '18px',
+                    lineHeight: '14.4px',
                     fontFamily: 'ui-monospace, Menlo, Consolas, monospace',
                     wordBreak: 'break-all'
                   }}

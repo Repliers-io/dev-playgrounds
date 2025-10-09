@@ -69,6 +69,10 @@ const ParamsPanel = () => {
       polygon: Position[] | null
     ) => {
       const { bounds } = position
+
+      // Don't fetch if neither bounds nor polygon are available
+      if (!bounds && !polygon) return
+
       const { grp, stats, statistics } = params
       const filteredParams = filterQueryParams(params)
 

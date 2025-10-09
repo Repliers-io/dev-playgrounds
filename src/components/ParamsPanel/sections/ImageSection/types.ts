@@ -1,4 +1,5 @@
 export interface ImageSearchItem {
+  id?: string
   type: 'text' | 'image'
   value?: string
   url?: string

@@ -127,7 +127,31 @@ const SearchProvider = ({
 
     Object.keys(rest).forEach((key) => {
       if (POST_BODY_FIELDS.includes(key)) {
-        postParams[key] = rest[key]
+        const value = rest[key]
+
+        // Special handling for imageSearchItems - filter out empty items
+        if (key === 'imageSearchItems' && Array.isArray(value)) {
+          const validItems = value
+            .filter((item: any) => {
+              if (item.type === 'text') {
+                return Boolean(item.value?.trim())
+              } else {
+                return Boolean(item.url?.trim())
+              }
+            })
+            .map((item: any) => {
+              // Remove id field before sending to API
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { id, ...itemWithoutId } = item
+              return itemWithoutId
+            })
+          // Only add to POST if there are valid items
+          if (validItems.length > 0) {
+            postParams[key] = validItems
+          }
+        } else {
+          postParams[key] = value
+        }
       } else {
         getParams[key] = rest[key]
       }

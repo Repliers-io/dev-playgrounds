@@ -5,32 +5,34 @@ const itemTypeOptions = ['text', 'image']
 
 interface ImageSearchItemProps {
   item: {
+    id?: string
     type: 'text' | 'image'
     value?: string
     url?: string
     boost: number
   }
   index: number
-  showRemoveButton: boolean
-  onTypeChange: (index: number, newType: 'text' | 'image') => void
-  onValueChange: (
-    index: number,
-    fieldName: string,
-    value: string | number
-  ) => void
+  itemsLength: number
+  onChange: (index: number, fieldName: string, value: string | number) => void
   onRemove: (index: number) => void
 }
 
 const ImageSearchItem = ({
   item,
   index,
-  showRemoveButton,
-  onTypeChange,
-  onValueChange,
+  itemsLength,
+  onChange,
   onRemove
 }: ImageSearchItemProps) => {
+  const isEmpty =
+    item.type === 'text'
+      ? !item.value || item.value.trim() === ''
+      : !item.url || item.url.trim() === ''
+
+  const showRemoveButton = !(itemsLength === 1 && isEmpty)
+
   return (
-    <Stack spacing={1} direction="row" sx={{ alignItems: 'flex-start', mb: 1 }}>
+    <Stack spacing={1} direction="row" sx={{ alignItems: 'flex-start' }}>
       {/* Type selector */}
       <Box sx={{ width: 58 }}>
         <TextField
@@ -38,9 +40,6 @@ const ImageSearchItem = ({
           size="small"
           fullWidth
           value={item.type}
-          onChange={(e) =>
-            onTypeChange(index, e.target.value as 'text' | 'image')
-          }
           sx={{
             '& .MuiInputBase-root': {
               height: '32px',
@@ -71,7 +70,7 @@ const ImageSearchItem = ({
         <TextField
           size="small"
           fullWidth
-          value={item.boost}
+          defaultValue={item.boost}
           placeholder="#"
           slotProps={{
             htmlInput: {
@@ -80,10 +79,10 @@ const ImageSearchItem = ({
               step: 0.1
             }
           }}
-          onChange={(e) => {
+          onBlur={(e) => {
             const value = parseFloat(e.target.value)
             const clampedValue = Math.max(0, Math.min(1, value || 0))
-            onValueChange(index, 'boost', clampedValue)
+            onChange(index, 'boost', clampedValue)
           }}
           sx={{
             '& .MuiInputBase-root': {
@@ -101,15 +100,17 @@ const ImageSearchItem = ({
         <TextField
           size="small"
           fullWidth
-          value={item.type === 'text' ? item.value || '' : item.url || ''}
+          defaultValue={
+            item.type === 'text' ? item.value || '' : item.url || ''
+          }
           placeholder={item.type === 'text' ? 'value' : 'url'}
-          onChange={(e) =>
-            onValueChange(
+          onBlur={(e) => {
+            onChange(
               index,
               item.type === 'text' ? 'value' : 'url',
               e.target.value
             )
-          }
+          }}
           sx={{
             '& .MuiInputBase-root': {
               height: '32px',
@@ -117,7 +118,6 @@ const ImageSearchItem = ({
             }
           }}
         />
-        {/* Remove button inside the input field */}
         {showRemoveButton && (
           <IconButton
             size="small"

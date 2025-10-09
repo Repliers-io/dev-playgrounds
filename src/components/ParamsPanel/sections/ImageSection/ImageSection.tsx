@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form'
 import { Stack } from '@mui/material'
 
 import {
+  ParamsField,
   ParamsMultiSelect,
   ParamsSelect
 } from 'components/ParamsPanel/components'
@@ -20,6 +21,12 @@ import {
   qualitativeInsightValues
 } from './types'
 
+const DEFAULT_ITEM: Omit<ImageSearchItem, 'id'> = {
+  type: 'text',
+  value: '',
+  boost: 1
+}
+
 const AiSection = () => {
   const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
@@ -32,12 +39,17 @@ const AiSection = () => {
   useEffect(() => {
     // Initialize with one empty item if array is empty or invalid
     if (!Array.isArray(watchedItems) || watchedItems.length === 0) {
-      setValue('imageSearchItems', [{ type: 'text', value: '', boost: 1 }])
+      setValue('imageSearchItems', [
+        { id: crypto.randomUUID(), ...DEFAULT_ITEM }
+      ])
     }
   }, [])
 
   const handleAddItem = () => {
-    const newItem: ImageSearchItem = { type: 'text', value: '', boost: 1 }
+    const newItem: ImageSearchItem = {
+      id: crypto.randomUUID(),
+      ...DEFAULT_ITEM
+    }
     setValue('imageSearchItems', [...imageSearchItems, newItem], {
       shouldValidate: false
     })
@@ -46,30 +58,14 @@ const AiSection = () => {
 
   const handleRemoveItem = (index: number) => {
     const updatedItems = imageSearchItems.filter((_, i) => i !== index)
-    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
-    // Defer onChange to avoid immediate re-fetch
-    setTimeout(() => onChange(), 0)
-  }
 
-  const handleTypeChange = (index: number, newType: 'text' | 'image') => {
-    const updatedItems = [...imageSearchItems]
-    if (newType === 'text') {
-      updatedItems[index] = {
-        type: 'text',
-        value: updatedItems[index].value || '',
-        boost: updatedItems[index].boost
-      }
-      delete updatedItems[index].url
-    } else {
-      updatedItems[index] = {
-        type: 'image',
-        url: updatedItems[index].url || '',
-        boost: updatedItems[index].boost
-      }
-      delete updatedItems[index].value
-    }
-    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
-    setTimeout(() => onChange(), 0)
+    // If removing the last item, replace with empty default item instead of empty array
+    const itemsToSet = !updatedItems.length
+      ? [{ id: crypto.randomUUID(), ...DEFAULT_ITEM }]
+      : updatedItems
+
+    setValue('imageSearchItems', itemsToSet, { shouldValidate: false })
+    onChange()
   }
 
   const handleValueChange = (
@@ -83,13 +79,14 @@ const AiSection = () => {
       [fieldName]: value
     }
     setValue('imageSearchItems', updatedItems, { shouldValidate: false })
-    // Don't trigger onChange immediately for value changes
-    // User should trigger it manually or on blur
+    onChange()
   }
 
   return (
     <SectionTemplate id="ai-section" index={8} title="Image Parameters">
       <Stack spacing={1.5}>
+        <ParamsField name="minQuality" />
+        <ParamsField name="maxQuality" />
         {/* Overall Quality - first field */}
         <ParamsMultiSelect
           name="overallQuality"
@@ -99,7 +96,7 @@ const AiSection = () => {
         {/* Individual feature quality fields */}
         {propertyInsightFeatures.map((feature) => (
           <ParamsMultiSelect
-            key={feature}
+            key={`${feature}Quality`}
             name={`${feature}Quality`}
             options={qualitativeInsightValues}
           />
@@ -111,8 +108,7 @@ const AiSection = () => {
         {/* Image Search Items */}
         <ImageSearchItemsList
           items={imageSearchItems}
-          onTypeChange={handleTypeChange}
-          onValueChange={handleValueChange}
+          onChange={handleValueChange}
           onRemove={handleRemoveItem}
           onAdd={handleAddItem}
         />

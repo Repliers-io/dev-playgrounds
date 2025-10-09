@@ -94,6 +94,26 @@ const schema = Joi.object({
       'number.base': 'Results per page must be a number',
       'number.min': 'Results per page must be at least 1',
       'number.max': 'Results per page must be at most 300'
+    }),
+  minQuality: Joi.number()
+    .min(1.0)
+    .max(6.0)
+    .allow(null, false, '')
+    .optional()
+    .messages({
+      'number.base': 'Min Quality must be a number',
+      'number.min': 'Min Quality must be at least 1.0',
+      'number.max': 'Min Quality must be at most 6.0'
+    }),
+  maxQuality: Joi.number()
+    .min(1.0)
+    .max(6.0)
+    .allow(null, false, '')
+    .optional()
+    .messages({
+      'number.base': 'Max Quality must be a number',
+      'number.min': 'Max Quality must be at least 1.0',
+      'number.max': 'Max Quality must be at most 6.0'
     })
 })
 
