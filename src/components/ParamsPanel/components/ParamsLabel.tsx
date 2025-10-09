@@ -11,7 +11,7 @@ interface ParamLabelProps extends StackOwnProps {
   title?: string
   hint?: string
   link?: string
-  tooltip?: string
+  tooltip?: string | React.ReactNode
 }
 
 const ParamsLabel: React.FC<ParamLabelProps> = ({

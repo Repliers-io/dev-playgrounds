@@ -1,41 +1,54 @@
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Stack, Typography } from '@mui/material'
+import { Stack } from '@mui/material'
 
-import { ParamsSelect } from 'components/ParamsPanel/components'
+import {
+  ParamsMultiSelect,
+  ParamsSelect
+} from 'components/ParamsPanel/components'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import SectionTemplate from '../SectionTemplate'
 
 import { ImageSearchItemsList } from './components'
-import { coverImageOptions, type ImageSearchItem } from './types'
+import {
+  coverImageOptions,
+  type ImageSearchItem,
+  propertyInsightFeatures,
+  qualitativeInsightValues
+} from './types'
 
 const AiSection = () => {
   const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
 
-  const imageSearchItems: ImageSearchItem[] = watch('imageSearchItems') || []
+  const watchedItems = watch('imageSearchItems')
+  const imageSearchItems: ImageSearchItem[] = Array.isArray(watchedItems)
+    ? watchedItems
+    : []
 
   useEffect(() => {
-    // Initialize with one empty item if array is empty
-    if (!imageSearchItems || imageSearchItems.length === 0) {
+    // Initialize with one empty item if array is empty or invalid
+    if (!Array.isArray(watchedItems) || watchedItems.length === 0) {
       setValue('imageSearchItems', [{ type: 'text', value: '', boost: 1 }])
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleAddItem = () => {
     const newItem: ImageSearchItem = { type: 'text', value: '', boost: 1 }
-    setValue('imageSearchItems', [...imageSearchItems, newItem])
-    onChange()
+    setValue('imageSearchItems', [...imageSearchItems, newItem], {
+      shouldValidate: false
+    })
+    // Don't trigger onChange for NEW empty items
   }
 
   const handleRemoveItem = (index: number) => {
     const updatedItems = imageSearchItems.filter((_, i) => i !== index)
-    setValue('imageSearchItems', updatedItems)
-    onChange()
+    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
+    // Defer onChange to avoid immediate re-fetch
+    setTimeout(() => onChange(), 0)
   }
 
   const handleTypeChange = (index: number, newType: 'text' | 'image') => {
@@ -55,8 +68,8 @@ const AiSection = () => {
       }
       delete updatedItems[index].value
     }
-    setValue('imageSearchItems', updatedItems)
-    onChange()
+    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
+    setTimeout(() => onChange(), 0)
   }
 
   const handleValueChange = (
@@ -69,31 +82,40 @@ const AiSection = () => {
       ...updatedItems[index],
       [fieldName]: value
     }
-    setValue('imageSearchItems', updatedItems)
-    onChange()
+    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
+    // Don't trigger onChange immediately for value changes
+    // User should trigger it manually or on blur
   }
 
   return (
-    <SectionTemplate
-      id="ai-section"
-      index={7}
-      title="AI Parameters"
-      rightSlot={
-        <Typography variant="body2" sx={{ pb: 1, pr: 1.5 }}>
-          * POST Body
-        </Typography>
-      }
-    >
+    <SectionTemplate id="ai-section" index={8} title="Image Parameters">
       <Stack spacing={1.5}>
+        {/* Overall Quality - first field */}
+        <ParamsMultiSelect
+          name="overallQuality"
+          options={qualitativeInsightValues}
+        />
+
+        {/* Individual feature quality fields */}
+        {propertyInsightFeatures.map((feature) => (
+          <ParamsMultiSelect
+            key={feature}
+            name={`${feature}Quality`}
+            options={qualitativeInsightValues}
+          />
+        ))}
+
+        {/* Cover Image selector */}
         <ParamsSelect name="coverImage" options={coverImageOptions} />
-        {/*
+
+        {/* Image Search Items */}
         <ImageSearchItemsList
           items={imageSearchItems}
           onTypeChange={handleTypeChange}
           onValueChange={handleValueChange}
           onRemove={handleRemoveItem}
           onAdd={handleAddItem}
-        /> */}
+        />
       </Stack>
     </SectionTemplate>
   )

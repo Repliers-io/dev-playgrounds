@@ -15,11 +15,11 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
 import {
-  AiSection,
   BoundsSection,
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
+  ImageSection,
   ListingParamsSection,
   LocationParamsSection,
   QueryParamsSection,
@@ -48,8 +48,13 @@ const ParamsPanel = () => {
     (position: MapPosition, params: Partial<FormParams>) => {
       const { center, zoom } = position
       const { lng, lat } = center || {}
+
+      // Filter out POST-only fields from URL params
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { imageSearchItems, ...urlParams } = params
+
       const query = queryString.stringify(
-        { lng, lat, zoom, ...params },
+        { lng, lat, zoom, ...urlParams },
         queryStringOptions
       )
       window.history.pushState(null, '', `?${query}`)
@@ -165,8 +170,6 @@ const ParamsPanel = () => {
     <Box
       sx={{
         flex: 1,
-        pr: 1.75,
-        mr: -1.75,
         width: 280,
         maxWidth: 280,
         height: '100%',
@@ -184,7 +187,7 @@ const ParamsPanel = () => {
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />
-              <AiSection />
+              <ImageSection />
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />

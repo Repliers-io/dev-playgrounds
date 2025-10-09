@@ -5,6 +5,23 @@ export interface ImageSearchItem {
   boost: number
 }
 
+export const qualitativeInsightValues = [
+  'excellent',
+  'above average',
+  'average',
+  'below average',
+  'poor'
+] as const
+
+export const propertyInsightFeatures = [
+  'bedroom',
+  'bathroom',
+  'livingRoom',
+  'diningRoom',
+  'kitchen',
+  'frontOfStructure'
+] as const
+
 export const coverImageOptions = [
   'kitchen',
   'bathroom',

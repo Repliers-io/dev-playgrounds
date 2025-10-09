@@ -141,6 +141,8 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
       setLoading,
       search,
       request,
+      requestMethod: 'GET' as const,
+      requestBody: null,
       statusCode,
       time,
       json,

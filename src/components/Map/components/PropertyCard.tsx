@@ -113,7 +113,7 @@ const PropertyCard = ({
               borderRadius: 4,
               position: 'absolute',
               transform: 'translate(-50%, -50%)',
-              bgcolor: '#0b75f5',
+              bgcolor: '#7974ec',
               color: '#fff'
             }}
           >

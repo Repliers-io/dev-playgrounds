@@ -144,6 +144,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       loading,
       search,
       request,
+      requestMethod: 'GET' as const,
+      requestBody: null,
       statusCode,
       time,
       json,
