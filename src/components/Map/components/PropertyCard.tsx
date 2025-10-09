@@ -3,7 +3,6 @@ import React from 'react'
 import BathtubOutlinedIcon from '@mui/icons-material/BathtubOutlined'
 import BedOutlinedIcon from '@mui/icons-material/BedOutlined'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-// import ShowerOutlinedIcon from '@mui/icons-material/ShowerOutlined'
 import { Box, IconButton, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
@@ -59,14 +58,6 @@ const PropertyCard = ({
   }
 
   const currentImage = listing.images?.[0] || ''
-  const currentIndex = Number(currentImage.match(/(\d+)\./)?.[1]) || 1
-
-  const firstIndex =
-    listing.images?.length > 1
-      ? Math.min(
-          ...listing.images.map((img) => Number(img.match(/(\d+)\./)?.[1]))
-        )
-      : 1
 
   return (
     <Stack
@@ -100,27 +91,7 @@ const PropertyCard = ({
           backgroundPosition: 'center',
           backgroundImage: `url(${getCDNPath(currentImage, 'small')})`
         }}
-      >
-        {currentIndex !== firstIndex && (
-          <Box
-            sx={{
-              top: '50%',
-              left: '50%',
-              px: 0.75,
-              fontSize: 12,
-              fontWeight: 400,
-              textAlign: 'center',
-              borderRadius: 4,
-              position: 'absolute',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: '#7974ec',
-              color: '#fff'
-            }}
-          >
-            #{currentIndex}
-          </Box>
-        )}
-      </Box>
+      ></Box>
       <Stack
         sx={{
           my: -0.25,
