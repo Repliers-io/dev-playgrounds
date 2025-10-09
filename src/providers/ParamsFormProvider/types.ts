@@ -164,7 +164,9 @@ export const listingFields: FieldsType = [
   'details.propertyType',
   'details.sqft',
   'lot',
-  'images'
+  'images',
+  'imagesScore',
+  'imageInsights'
   // 'images[0]'
   // 'imagesScore',
   // 'details.style'

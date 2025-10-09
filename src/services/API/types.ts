@@ -323,6 +323,7 @@ export interface Listing {
   timestamps: ApiTimestamps
   images: string[]
   imagesScore?: number[]
+  imageInsights?: any
   startImage?: number
   agents: ApiAgent[]
   comparables?: Listing[]
