@@ -17,7 +17,8 @@ const paramsPresets: PresetType = [
       minSoldDate: undefined,
       maxSoldDate: undefined,
       minListDate: undefined,
-      maxListDate: undefined
+      maxListDate: undefined,
+      stats: undefined
     }
   },
   {
@@ -32,7 +33,8 @@ const paramsPresets: PresetType = [
       minSoldDate: undefined,
       maxSoldDate: undefined,
       minListDate: undefined,
-      maxListDate: undefined
+      maxListDate: undefined,
+      stats: undefined
     }
   },
   {
@@ -44,6 +46,7 @@ const paramsPresets: PresetType = [
       maxPrice: undefined,
       minBedrooms: 3,
       minBaths: 2,
+      stats: true, // Enable statistics and date ranges
       minSoldDate: dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
       maxSoldDate: dayjs().format('YYYY-MM-DD'),
       minListDate: undefined,

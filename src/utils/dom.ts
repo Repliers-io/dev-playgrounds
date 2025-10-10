@@ -42,11 +42,8 @@ export const highlightJsonItem = (text: string) => {
 export const highlightPresetField = (fieldName: string) => {
   const element = document.getElementById(fieldName)
   if (!element) {
-    console.log(`❌ Field NOT FOUND: "${fieldName}"`)
     return
   }
-
-  console.log(`✅ Highlighting field: "${fieldName}"`, element)
 
   // Always remove class first to ensure clean state
   element.classList.remove('preset-highlight')
@@ -55,12 +52,10 @@ export const highlightPresetField = (fieldName: string) => {
   // This ensures browser processes the removal before adding it back
   requestAnimationFrame(() => {
     element.classList.add('preset-highlight')
-    console.log(`✨ Class added to: "${fieldName}"`)
   })
 }
 
 export const highlightPresetFields = (fieldNames: string[]) => {
-  console.log('🎯 Starting highlight for fields:', fieldNames)
   setTimeout(() => {
     fieldNames.forEach((fieldName) => {
       highlightPresetField(fieldName)

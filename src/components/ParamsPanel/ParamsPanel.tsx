@@ -19,7 +19,6 @@ import {
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
-  ExamplesTemplate,
   ImageSection,
   ListingParamsSection,
   LocationParamsSection,
