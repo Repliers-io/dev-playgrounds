@@ -34,7 +34,11 @@ export const apiFetch = async <T = Response>(
         : {
             method: 'GET'
           }),
-      ...options
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+      }
     })
     return response as unknown as T
   } catch (error: any) {
