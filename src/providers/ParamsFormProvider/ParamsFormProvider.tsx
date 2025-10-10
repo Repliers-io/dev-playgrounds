@@ -35,7 +35,7 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
     shouldFocusError: false, // Do not auto-focus on errors
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-  const { trigger, handleSubmit, reset, getValues } = methods
+  const { trigger, handleSubmit, reset, getValues, setValue } = methods
 
   const onSubmit = (data: FormParams) => {
     setParams(data as Partial<FormParams>)
@@ -57,6 +57,10 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
       apiKey,
       tab: tab || 'map'
     })
+    // After reset, ensure imageSearchItems has at least one default item
+    setValue('imageSearchItems', [
+      { id: crypto.randomUUID(), type: 'text', value: '', boost: 1 }
+    ])
     handleSubmit(onSubmit, onError)()
   }
 
