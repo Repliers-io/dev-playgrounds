@@ -14,7 +14,7 @@
   pointer-events: none;
   border: 1px solid #fd9;
   border-radius: 4px;
-  animation: presetBorderFade 1s ease-in forwards;
+  animation: presetBorderFade 2s ease-in forwards;
   z-index: 10000;
 }
 
@@ -30,7 +30,7 @@
   background-color: #fff8e8;
   border-radius: 4px;
   mix-blend-mode: multiply;
-  animation: presetBackgroundFade 1s ease-in forwards;
+  animation: presetBackgroundFade 2s ease-in forwards;
   z-index: 9999;
 }
 
