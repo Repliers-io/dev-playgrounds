@@ -16,6 +16,7 @@ interface ImageSearchItem {
 interface ImageSearchItemsListProps {
   items: ImageSearchItem[]
   onChange: (index: number, fieldName: string, value: string | number) => void
+  onTypeChange: (index: number, newType: 'text' | 'image') => void
   onRemove: (index: number) => void
   onAdd: () => void
 }
@@ -23,6 +24,7 @@ interface ImageSearchItemsListProps {
 const ImageSearchItemsList = ({
   items,
   onChange,
+  onTypeChange,
   onRemove,
   onAdd
 }: ImageSearchItemsListProps) => {
@@ -90,6 +92,7 @@ const ImageSearchItemsList = ({
             key={item.id || index}
             itemsLength={items.length}
             onChange={onChange}
+            onTypeChange={onTypeChange}
             onRemove={onRemove}
           />
         ))}

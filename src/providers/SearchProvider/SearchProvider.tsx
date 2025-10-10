@@ -142,8 +142,14 @@ const SearchProvider = ({
             .map((item: any) => {
               // Remove id field before sending to API
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              const { id, ...itemWithoutId } = item
-              return itemWithoutId
+              const { id, value, url, ...rest } = item
+
+              // Only include the field that matches the type
+              if (item.type === 'text') {
+                return { value, ...rest }
+              } else {
+                return { url, ...rest }
+              }
             })
           // Only add to POST if there are valid items
           if (validItems.length > 0) {

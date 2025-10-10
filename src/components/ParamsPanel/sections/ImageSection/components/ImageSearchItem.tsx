@@ -14,6 +14,7 @@ interface ImageSearchItemProps {
   index: number
   itemsLength: number
   onChange: (index: number, fieldName: string, value: string | number) => void
+  onTypeChange: (index: number, newType: 'text' | 'image') => void
   onRemove: (index: number) => void
 }
 
@@ -22,6 +23,7 @@ const ImageSearchItem = ({
   index,
   itemsLength,
   onChange,
+  onTypeChange,
   onRemove
 }: ImageSearchItemProps) => {
   const isEmpty =
@@ -41,7 +43,8 @@ const ImageSearchItem = ({
           fullWidth
           value={item.type}
           onChange={(e) => {
-            onChange(index, 'type', e.target.value)
+            const newType = e.target.value as 'text' | 'image'
+            onTypeChange(index, newType)
           }}
           sx={{
             '& .MuiInputBase-root': {
@@ -101,6 +104,7 @@ const ImageSearchItem = ({
       {/* Value/URL field with remove button inside */}
       <Box sx={{ flex: 1, position: 'relative' }}>
         <TextField
+          key={`${item.id || index}-${item.type}`}
           size="small"
           fullWidth
           defaultValue={

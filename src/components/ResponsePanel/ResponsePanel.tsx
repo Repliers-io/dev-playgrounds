@@ -203,7 +203,7 @@ const ResponsePanel = ({
             >
               <Box
                 sx={{
-                  maxHeight: '160px',
+                  maxHeight: '200px',
                   overflow: 'auto',
                   scrollbarWidth: 'thin'
                 }}

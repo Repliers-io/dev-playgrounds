@@ -82,6 +82,18 @@ const AiSection = () => {
     onChange()
   }
 
+  const handleTypeChange = (index: number, newType: 'text' | 'image') => {
+    const updatedItems = [...imageSearchItems]
+    updatedItems[index] = {
+      ...updatedItems[index],
+      type: newType,
+      value: '',
+      url: ''
+    }
+    setValue('imageSearchItems', updatedItems, { shouldValidate: false })
+    onChange() // Trigger API request with updated array
+  }
+
   return (
     <SectionTemplate id="ai-section" index={8} title="Image Parameters">
       <Stack spacing={1.5}>
@@ -109,6 +121,7 @@ const AiSection = () => {
         <ImageSearchItemsList
           items={imageSearchItems}
           onChange={handleValueChange}
+          onTypeChange={handleTypeChange}
           onRemove={handleRemoveItem}
           onAdd={handleAddItem}
         />
