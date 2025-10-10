@@ -9,6 +9,7 @@ const paramsPresets: PresetType = [
     name: 'Luxury Properties (2M+)',
     params: {
       status: ['A'],
+      lastStatus: undefined,
       class: ['residential', 'condo'],
       minPrice: 2000000,
       maxPrice: undefined,
@@ -25,6 +26,7 @@ const paramsPresets: PresetType = [
     name: 'Affordable Condos (Under 500K)',
     params: {
       status: ['A'],
+      lastStatus: undefined,
       class: ['condo'],
       minPrice: undefined,
       maxPrice: 500000,
@@ -41,6 +43,7 @@ const paramsPresets: PresetType = [
     name: 'Recently Sold Houses (Last 30 Days)',
     params: {
       status: ['U'],
+      lastStatus: ['Sld'],
       class: ['residential'],
       minPrice: undefined,
       maxPrice: undefined,
