@@ -34,21 +34,16 @@ const ParamsPresets = () => {
     })
     onChange()
 
+    // Highlight changed fields with animation
+    highlightPresetFields(Object.keys(params))
+
     // Get the first parameter key to scroll to
     const firstParamKey = Object.keys(params)[0]
-
     // Scroll to the first parameter field with a delay to allow section expansion
-    setTimeout(() => {
-      if (firstParamKey) {
-        const element = document.getElementById(firstParamKey)
-        element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    }, 50)
-
-    setTimeout(() => {
-      // Highlight changed fields with animation
-      highlightPresetFields(Object.keys(params))
-    }, 200)
+    if (firstParamKey) {
+      const element = document.getElementById(firstParamKey)
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   }
 
   return (

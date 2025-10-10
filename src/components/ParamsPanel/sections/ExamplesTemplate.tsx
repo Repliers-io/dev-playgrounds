@@ -10,28 +10,25 @@ interface ExamplesTemplateProps extends BoxProps {
 
 const ExamplesTemplate: React.FC<ExamplesTemplateProps> = ({
   title = 'Usage examples:',
-  children,
-  ...rest
+  children
 }) => {
   return (
-    <Box width="100%" {...rest}>
-      <Stack
-        sx={{
-          p: 1.25,
-          width: '100%',
-          boxSizing: 'border-box',
-          bgcolor: '#fff',
-          border: 1,
-          borderRadius: 2,
-          borderColor: '#eee',
-          fontSize: 12
-        }}
-        spacing={1.25}
-      >
-        <Box>{title}</Box>
-        {children}
-      </Stack>
-    </Box>
+    <Stack
+      sx={{
+        p: 1.25,
+        fontSize: 12,
+        width: '100%',
+        boxSizing: 'border-box',
+        bgcolor: '#fff',
+        border: 1,
+        borderRadius: 2,
+        borderColor: '#eee'
+      }}
+      spacing={1.25}
+    >
+      <Box>{title}</Box>
+      {children}
+    </Stack>
   )
 }
 
