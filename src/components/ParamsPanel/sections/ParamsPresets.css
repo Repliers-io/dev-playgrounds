@@ -1,0 +1,53 @@
+/* Preset field animation - highlights fields that changed when applying a preset */
+.preset-highlight {
+  position: relative;
+}
+
+/* Border layer - no blending to keep bright color */
+.preset-highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border: 1px solid #fd9;
+  border-radius: 4px;
+  animation: presetBorderFade 1s ease-in forwards;
+  z-index: 10000;
+}
+
+/* Background layer - with multiply blend mode so text stays visible */
+.preset-highlight::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-color: #fff8e8;
+  border-radius: 4px;
+  mix-blend-mode: multiply;
+  animation: presetBackgroundFade 1s ease-in forwards;
+  z-index: 9999;
+}
+
+@keyframes presetBorderFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes presetBackgroundFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

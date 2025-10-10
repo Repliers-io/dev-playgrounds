@@ -65,35 +65,36 @@ const ParamsRange: React.FC<RangeProps> = ({
         tooltip={tooltip}
         pb={0}
       />
-      <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
-        <Slider
-          value={numericValue}
-          onChange={handleChange}
-          onChangeCommitted={handleEndChange}
-          disabled={disabled}
-          sx={{
-            '& .MuiSlider-thumb': {
-              boxShadow: 'none !important',
-              transition: 'none'
-            },
-            '& .MuiSlider-track': {
-              transition: 'none'
-            },
-            '& .MuiSlider-rail': {
-              transition: 'none'
-            }
-          }}
-          {...rest}
-        />
-        <TextField
-          id={name}
-          disabled
-          size="small"
-          // value={localValue}
-          value={localValue ? localValue : 'null'}
-          sx={{ width: 48, '& input': { textAlign: 'center' } }}
-        />
-      </Stack>
+      <Box id={name} sx={{ position: 'relative' }}>
+        <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
+          <Slider
+            value={numericValue}
+            onChange={handleChange}
+            onChangeCommitted={handleEndChange}
+            disabled={disabled}
+            sx={{
+              '& .MuiSlider-thumb': {
+                boxShadow: 'none !important',
+                transition: 'none'
+              },
+              '& .MuiSlider-track': {
+                transition: 'none'
+              },
+              '& .MuiSlider-rail': {
+                transition: 'none'
+              }
+            }}
+            {...rest}
+          />
+          <TextField
+            disabled
+            size="small"
+            // value={localValue}
+            value={localValue ? localValue : 'null'}
+            sx={{ width: 48, '& input': { textAlign: 'center' } }}
+          />
+        </Stack>
+      </Box>
       {errors[name] && (
         <FormHelperText error>
           {errors[name]?.message?.toString()}

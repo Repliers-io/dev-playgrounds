@@ -97,9 +97,8 @@ const ParamsMultiSelect = ({
           }, [field.value])
 
           return (
-            <Box sx={{ position: 'relative' }}>
+            <Box id={name} sx={{ position: 'relative' }}>
               <TextField
-                id={name}
                 select
                 fullWidth
                 size="small"

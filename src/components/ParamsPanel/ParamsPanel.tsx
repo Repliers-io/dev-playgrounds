@@ -19,9 +19,11 @@ import {
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
+  ExamplesTemplate,
   ImageSection,
   ListingParamsSection,
   LocationParamsSection,
+  ParamsPresets,
   QueryParamsSection,
   SearchSection,
   StatisticsSection
@@ -190,6 +192,7 @@ const ParamsPanel = () => {
             <ListingParamsSection />
           ) : !locationsMap ? (
             <>
+              <ParamsPresets />
               <QueryParamsSection />
               <ImageSection />
               <LocationParamsSection />

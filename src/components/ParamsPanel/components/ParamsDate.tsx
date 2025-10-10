@@ -63,65 +63,69 @@ const ParamsDate: React.FC<InputProps> = ({
         link={link}
         tooltip={tooltip}
       />
-      <DatePicker
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        value={parsedValue}
-        format="YYYY-MM-DD"
-        disabled={disabled}
-        onChange={(newValue) => {
-          setValue(name, newValue ? dayjs(newValue).format('YYYY-MM-DD') : null)
-          onChange()
-          setOpen(false) // Close picker after selection
-        }}
-        slotProps={{
-          textField: {
-            id: name,
-            size: 'small',
-            fullWidth: true,
-            error: !!errors[name],
-            helperText: errors[name]?.message?.toString(),
-            // Open picker when clicking anywhere in the field
-            onClick: () => !disabled && value && setOpen(true),
-            onMouseDown: (e) => {
-              if (value) e.preventDefault()
-            },
-            ...(value
-              ? {
-                  InputProps: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          tabIndex={-1}
-                          onClick={handleClearClick}
-                          edge="end"
-                          size="small"
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    )
+      <Box id={name} sx={{ position: 'relative' }}>
+        <DatePicker
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          value={parsedValue}
+          format="YYYY-MM-DD"
+          disabled={disabled}
+          onChange={(newValue) => {
+            setValue(
+              name,
+              newValue ? dayjs(newValue).format('YYYY-MM-DD') : null
+            )
+            onChange()
+            setOpen(false) // Close picker after selection
+          }}
+          slotProps={{
+            textField: {
+              size: 'small',
+              fullWidth: true,
+              error: !!errors[name],
+              helperText: errors[name]?.message?.toString(),
+              // Open picker when clicking anywhere in the field
+              onClick: () => !disabled && value && setOpen(true),
+              onMouseDown: (e) => {
+                if (value) e.preventDefault()
+              },
+              ...(value
+                ? {
+                    InputProps: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            tabIndex={-1}
+                            onClick={handleClearClick}
+                            edge="end"
+                            size="small"
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }
                   }
-                }
-              : {})
-          }
-        }}
-        sx={{
-          '& .MuiInputBase-input': {
-            cursor: value ? 'pointer' : 'text'
-          },
-          '& .MuiIconButton-root': {
-            p: 0.5,
-            mr: 0.5,
-            ml: -1.5,
-            '& .MuiSvgIcon-root': {
-              fontSize: 18,
-              color: 'rgb(56, 66, 72)'
+                : {})
             }
-          }
-        }}
-      />
+          }}
+          sx={{
+            '& .MuiInputBase-input': {
+              cursor: value ? 'pointer' : 'text'
+            },
+            '& .MuiIconButton-root': {
+              p: 0.5,
+              mr: 0.5,
+              ml: -1.5,
+              '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: 'rgb(56, 66, 72)'
+              }
+            }
+          }}
+        />
+      </Box>
     </Box>
   )
 }
