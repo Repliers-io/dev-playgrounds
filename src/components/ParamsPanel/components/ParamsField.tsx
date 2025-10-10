@@ -39,12 +39,12 @@ const ParamsField: React.FC<InputProps> = ({
     trigger,
     register,
     setValue,
-    getValues,
+    watch,
     formState: { errors }
   } = useFormContext()
   const { onChange } = useParamsForm()
 
-  const value = getValues(name)
+  const value = watch(name)
 
   const handleFocus = () => {
     trigger(name)

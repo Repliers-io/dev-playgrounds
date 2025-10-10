@@ -23,10 +23,13 @@ export const ParamsFormContext = createContext<
 
 const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   const { params, setParams } = useSearch()
-  const defaultValues = merge(defaultFormState, params)
 
+  const initialValues = useMemo(() => merge(defaultFormState, params), [params])
+
+  // Create form with clean defaults
   const methods = useForm<FormParams>({
-    defaultValues,
+    defaultValues: defaultFormState,
+    values: initialValues,
     mode: 'onBlur', // Validate on blur
     reValidateMode: 'onBlur', // Re-validate on blur
     shouldFocusError: false, // Do not auto-focus on errors

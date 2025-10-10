@@ -34,12 +34,12 @@ const ParamsDate: React.FC<InputProps> = ({
 }) => {
   const {
     setValue,
-    getValues,
+    watch,
     formState: { errors }
   } = useFormContext()
   const { onChange } = useParamsForm()
   const [open, setOpen] = useState(false)
-  const value = getValues(name)
+  const value = watch(name)
 
   // optimized: memoize parsedValue
   const parsedValue = useMemo(() => (value ? dayjs(value) : null), [value])
