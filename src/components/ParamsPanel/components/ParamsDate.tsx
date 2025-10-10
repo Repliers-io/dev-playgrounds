@@ -77,6 +77,7 @@ const ParamsDate: React.FC<InputProps> = ({
         }}
         slotProps={{
           textField: {
+            id: name,
             size: 'small',
             fullWidth: true,
             error: !!errors[name],

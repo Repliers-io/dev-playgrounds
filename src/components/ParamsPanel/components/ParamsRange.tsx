@@ -86,6 +86,7 @@ const ParamsRange: React.FC<RangeProps> = ({
           {...rest}
         />
         <TextField
+          id={name}
           disabled
           size="small"
           // value={localValue}
