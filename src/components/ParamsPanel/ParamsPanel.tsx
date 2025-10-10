@@ -191,8 +191,8 @@ const ParamsPanel = () => {
             <ListingParamsSection />
           ) : !locationsMap ? (
             <>
-              <ParamsPresets />
               <QueryParamsSection />
+              <ParamsPresets />
               <ImageSection />
               <LocationParamsSection />
               <StatisticsSection />
