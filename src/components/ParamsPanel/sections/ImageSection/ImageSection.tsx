@@ -95,38 +95,59 @@ const AiSection = () => {
   }
 
   return (
-    <SectionTemplate id="ai-section" index={8} title="Image Parameters">
-      <Stack spacing={1.5}>
-        <ParamsField name="minQuality" />
-        <ParamsField name="maxQuality" />
-        {/* Overall Quality - first field */}
-        <ParamsMultiSelect
-          name="overallQuality"
-          options={qualitativeInsightValues}
-        />
-
-        {/* Individual feature quality fields */}
-        {propertyInsightFeatures.map((feature) => (
+    <>
+      <SectionTemplate
+        id="quality-scores"
+        index={8}
+        title="Quality Scores"
+        link="https://help.repliers.com/en/article/quality-scores-feature-implementation-guide-1kkedog/"
+      >
+        <Stack spacing={1.5}>
+          <ParamsField name="minQuality" />
+          <ParamsField name="maxQuality" />
+          {/* Overall Quality - first field */}
           <ParamsMultiSelect
-            key={`${feature}Quality`}
-            name={`${feature}Quality`}
+            name="overallQuality"
             options={qualitativeInsightValues}
           />
-        ))}
 
-        {/* Cover Image selector */}
-        <ParamsSelect name="coverImage" options={coverImageOptions} />
+          {/* Individual feature quality fields */}
+          {propertyInsightFeatures.map((feature) => (
+            <ParamsMultiSelect
+              key={`${feature}Quality`}
+              name={`${feature}Quality`}
+              options={qualitativeInsightValues}
+            />
+          ))}
+        </Stack>
+      </SectionTemplate>
 
-        {/* Image Search Items */}
-        <ImageSearchItemsList
-          items={imageSearchItems}
-          onChange={handleValueChange}
-          onTypeChange={handleTypeChange}
-          onRemove={handleRemoveItem}
-          onAdd={handleAddItem}
-        />
-      </Stack>
-    </SectionTemplate>
+      <SectionTemplate
+        id="ai-section"
+        index={8}
+        title="AI Image Search"
+        link="https://help.repliers.com/en/article/ai-image-search-implementation-guide-mx30ji/"
+      >
+        <Stack spacing={1.5}>
+          {/* Cover Image selector */}
+          <ParamsSelect
+            name="coverImage"
+            options={coverImageOptions}
+            hint="docs"
+            link="https://help.repliers.com/en/article/changing-the-cover-image-of-property-listings-with-ai-powered-coverimage-parameter-40861n/"
+          />
+
+          {/* Image Search Items */}
+          <ImageSearchItemsList
+            items={imageSearchItems}
+            onChange={handleValueChange}
+            onTypeChange={handleTypeChange}
+            onRemove={handleRemoveItem}
+            onAdd={handleAddItem}
+          />
+        </Stack>
+      </SectionTemplate>
+    </>
   )
 }
 

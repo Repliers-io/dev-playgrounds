@@ -92,7 +92,9 @@ export const sortByOptions = [
   'statusAscListPriceAsc',
   'statusAscListPriceDesc',
   'repliersUpdatedOnAsc',
-  'repliersUpdatedOnDesc'
+  'repliersUpdatedOnDesc',
+  'qualityAsc',
+  'qualityDesc'
 ] as const
 export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
 
