@@ -19,7 +19,8 @@ const paramsPresets: PresetType = [
       maxSoldDate: undefined,
       minListDate: undefined,
       maxListDate: undefined,
-      stats: undefined
+      stats: undefined,
+      type: ['sale']
     }
   },
   {
@@ -36,7 +37,8 @@ const paramsPresets: PresetType = [
       maxSoldDate: undefined,
       minListDate: undefined,
       maxListDate: undefined,
-      stats: undefined
+      stats: undefined,
+      type: ['sale']
     }
   },
   {
@@ -53,7 +55,8 @@ const paramsPresets: PresetType = [
       minSoldDate: dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
       maxSoldDate: dayjs().format('YYYY-MM-DD'),
       minListDate: undefined,
-      maxListDate: undefined
+      maxListDate: undefined,
+      type: ['sale']
     }
   }
 ]
