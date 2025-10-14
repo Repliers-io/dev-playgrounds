@@ -128,7 +128,7 @@ const AiSection = () => {
         title="AI Image Search"
         link="https://help.repliers.com/en/article/ai-image-search-implementation-guide-mx30ji/"
       >
-        <Stack spacing={1.5}>
+        <Stack spacing={3}>
           {/* Cover Image selector */}
           <ParamsSelect
             name="coverImage"
