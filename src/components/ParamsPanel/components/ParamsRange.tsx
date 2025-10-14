@@ -51,6 +51,10 @@ const ParamsRange: React.FC<RangeProps> = ({
   // sync with form state
   useEffect(() => setLocalValue(value), [value])
 
+  // Ensure value is a valid number for the Slider
+  const numericValue =
+    typeof localValue === 'number' ? localValue : Number(localValue) || 0
+
   return (
     <Box flex={1}>
       <ParamLabel
@@ -61,34 +65,36 @@ const ParamsRange: React.FC<RangeProps> = ({
         tooltip={tooltip}
         pb={0}
       />
-      <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
-        <Slider
-          value={localValue || 0}
-          onChange={handleChange}
-          onChangeCommitted={handleEndChange}
-          disabled={disabled}
-          sx={{
-            '& .MuiSlider-thumb': {
-              boxShadow: 'none !important',
-              transition: 'none'
-            },
-            '& .MuiSlider-track': {
-              transition: 'none'
-            },
-            '& .MuiSlider-rail': {
-              transition: 'none'
-            }
-          }}
-          {...rest}
-        />
-        <TextField
-          disabled
-          size="small"
-          // value={localValue}
-          value={localValue ? localValue : 'null'}
-          sx={{ width: 48, '& input': { textAlign: 'center' } }}
-        />
-      </Stack>
+      <Box id={name} sx={{ position: 'relative' }}>
+        <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
+          <Slider
+            value={numericValue}
+            onChange={handleChange}
+            onChangeCommitted={handleEndChange}
+            disabled={disabled}
+            sx={{
+              '& .MuiSlider-thumb': {
+                boxShadow: 'none !important',
+                transition: 'none'
+              },
+              '& .MuiSlider-track': {
+                transition: 'none'
+              },
+              '& .MuiSlider-rail': {
+                transition: 'none'
+              }
+            }}
+            {...rest}
+          />
+          <TextField
+            disabled
+            size="small"
+            // value={localValue}
+            value={localValue ? localValue : 'null'}
+            sx={{ width: 48, '& input': { textAlign: 'center' } }}
+          />
+        </Stack>
+      </Box>
       {errors[name] && (
         <FormHelperText error>
           {errors[name]?.message?.toString()}

@@ -1,11 +1,8 @@
 import dayjs from 'dayjs'
 
-import { type FormParams } from 'providers/SearchProvider'
+import { type FormParams } from 'providers/ParamsFormProvider'
 
-type PresetType = Array<{
-  name: string
-  params: Partial<FormParams>
-}>
+type PresetType = Array<{ name: string; params: Partial<FormParams> }>
 
 const presets: PresetType = [
   {

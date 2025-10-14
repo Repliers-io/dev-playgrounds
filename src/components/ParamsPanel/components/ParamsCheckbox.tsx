@@ -33,6 +33,7 @@ const ParamsCheckbox = ({ name, label }: { name: string; label?: string }) => {
       >
         <Typography variant="body2">{label || name}</Typography>
         <AndroidSwitch
+          id={name}
           checked={checked}
           onChange={handleChange}
           sx={{ transform: 'scale(0.8)', mr: -1.5 }}

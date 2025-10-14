@@ -56,7 +56,8 @@ const defaultFormState: Partial<FormParams> = {
   clusterLimit: 100,
   clusterPrecision: 10,
   fields: listingFields.join(','),
-  statistics: defaultStatisticsFields.join(',')
+  statistics: defaultStatisticsFields.join(','),
+  imageSearchItems: []
 }
 
 export default defaultFormState

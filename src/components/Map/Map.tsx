@@ -67,10 +67,20 @@ const MapRoot = () => {
 
   setMapContainerRef(mapContainerRef)
 
-  const initializeMap = (container: HTMLElement) => {
+  const initializeMap = (container: HTMLElement, attempt: number = 0) => {
     const { center, zoom } = position ?? {}
     if (!zoom || !center) return
 
+    const { width, height } = container.getBoundingClientRect()
+    if (width === 0 || height === 0) {
+      // Limit attempts: ~60 fps * 2 seconds = 120 attempts
+      const maxAttempts = 120
+      if (attempt >= maxAttempts) return
+
+      // Use requestAnimationFrame to check on every frame until dimensions are available
+      requestAnimationFrame(() => initializeMap(container, attempt + 1))
+      return
+    }
     const map = new MapboxMap({
       container,
       ...mapboxDefaults,
@@ -92,13 +102,6 @@ const MapRoot = () => {
     map.on('moveend', updatePosition)
 
     setMapRef(map)
-  }
-
-  const reinitializeMap = () => {
-    const container = mapContainerRef.current
-    if (!container) return
-    destroyMap()
-    initializeMap(container)
   }
 
   const showMarkersAndClusters = () => {
@@ -213,7 +216,7 @@ const MapRoot = () => {
 
     if (canRenderMap) {
       if (!map) initializeMap(container)
-      else reinitializeMap()
+      else map.resize()
     } else {
       destroyMap()
     }

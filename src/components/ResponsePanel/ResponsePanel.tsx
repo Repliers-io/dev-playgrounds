@@ -23,6 +23,7 @@ import {
   removeHighlight,
   scrollToElementByText
 } from 'utils/dom'
+import { highlightJSONKeys } from 'utils/formatters'
 
 import 'react-json-view-lite/dist/index.css'
 import './ResponsePanel.css'
@@ -56,21 +57,30 @@ const ResponsePanel = ({
   const { focusedMarker } = useMapOptions()
   const searchContext = useSearch()
   const locationsContext = useLocations()
-  const listing = useListing()
+  const listingContext = useListing()
   const locationsTab = searchContext.params.tab === 'locations'
   const listingTab = searchContext.params.tab === 'listing'
 
   // Select the appropriate context based on active tab
   let response
   if (listingTab) {
-    response = listing
+    response = listingContext
   } else if (locationsTab) {
     response = locationsContext
   } else {
     response = searchContext
   }
 
-  const { size, json, statusCode, request, time, loading } = response
+  const {
+    size,
+    json,
+    statusCode,
+    request,
+    time,
+    loading,
+    requestMethod,
+    requestBody
+  } = response
 
   const customStyles = { ...defaultStyles, quotesForFieldNames: false }
   const error = statusCode && statusCode > 200
@@ -132,11 +142,11 @@ const ResponsePanel = ({
             <Typography
               flex={1}
               variant="h6"
-              textAlign="center"
               fontSize="12px"
+              textAlign="center"
               textTransform="uppercase"
             >
-              Request
+              {requestMethod} Request {requestMethod === 'POST' && '+ Body'}
             </Typography>
             <Stack
               spacing={1}
@@ -177,6 +187,45 @@ const ResponsePanel = ({
               </Typography>
             )}
           </Box>
+
+          {requestMethod === 'POST' && requestBody && (
+            <Box
+              sx={{
+                mt: 2,
+                p: 1.25,
+                width: '100%',
+                boxSizing: 'border-box',
+                bgcolor: 'background.default',
+                border: 1,
+                borderColor: '#eee',
+                borderRadius: 2
+              }}
+            >
+              <Box
+                sx={{
+                  maxHeight: '200px',
+                  overflow: 'auto',
+                  scrollbarWidth: 'thin'
+                }}
+              >
+                <pre
+                  style={{
+                    margin: 0,
+                    whiteSpace: 'pre-wrap',
+                    fontSize: '12px',
+                    lineHeight: '14.4px',
+                    fontFamily: 'ui-monospace, Menlo, Consolas, monospace',
+                    wordBreak: 'break-all'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: highlightJSONKeys(
+                      JSON.stringify(requestBody, null, 2)
+                    )
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
           <Stack spacing={2} direction="row" width="100%" alignItems="center">
             <Box sx={{ width: 100 }}>
               {loading ? (

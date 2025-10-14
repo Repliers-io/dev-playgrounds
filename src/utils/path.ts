@@ -91,5 +91,5 @@ export const removePaths = (obj: any, paths: string[]): any => {
 export const CDN = 'https://cdn.repliers.io'
 
 export const getCDNPath = (fileName: string, size = 'large') => {
-  return `${CDN}/${fileName}?webp&class=${size}`
+  return `${CDN}/${fileName}?class=${size}`
 }

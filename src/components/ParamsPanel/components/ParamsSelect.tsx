@@ -53,9 +53,8 @@ const ParamsSelect = ({
         control={control}
         render={({ field }) => {
           return (
-            <Box sx={{ position: 'relative' }}>
+            <Box id={name} sx={{ position: 'relative' }}>
               <TextField
-                id={name}
                 select
                 fullWidth
                 size="small"

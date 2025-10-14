@@ -38,3 +38,27 @@ export const highlightJsonItem = (text: string) => {
   const parent = element?.closest('ul')?.parentElement
   parent?.classList.add('highlight')
 }
+
+export const highlightPresetField = (fieldName: string) => {
+  const element = document.getElementById(fieldName)
+  if (!element) {
+    return
+  }
+
+  // Always remove class first to ensure clean state
+  element.classList.remove('preset-highlight')
+
+  // Use requestAnimationFrame to defer adding class to next frame
+  // This ensures browser processes the removal before adding it back
+  requestAnimationFrame(() => {
+    element.classList.add('preset-highlight')
+  })
+}
+
+export const highlightPresetFields = (fieldNames: string[]) => {
+  setTimeout(() => {
+    fieldNames.forEach((fieldName) => {
+      highlightPresetField(fieldName)
+    })
+  }, 50)
+}

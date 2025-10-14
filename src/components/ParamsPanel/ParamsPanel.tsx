@@ -19,8 +19,10 @@ import {
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
+  ImageSection,
   ListingParamsSection,
   LocationParamsSection,
+  ParamsPresets,
   QueryParamsSection,
   SearchSection,
   StatisticsSection
@@ -47,8 +49,13 @@ const ParamsPanel = () => {
     (position: MapPosition, params: Partial<FormParams>) => {
       const { center, zoom } = position
       const { lng, lat } = center || {}
+
+      // Filter out POST-only fields from URL params
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { imageSearchItems, ...urlParams } = params
+
       const query = queryString.stringify(
-        { lng, lat, zoom, ...params },
+        { lng, lat, zoom, ...urlParams },
         queryStringOptions
       )
       window.history.pushState(null, '', `?${query}`)
@@ -63,6 +70,10 @@ const ParamsPanel = () => {
       polygon: Position[] | null
     ) => {
       const { bounds } = position
+
+      // Don't fetch if neither bounds nor polygon are available
+      if (!bounds && !polygon) return
+
       const { grp, stats, statistics } = params
       const filteredParams = filterQueryParams(params)
 
@@ -164,8 +175,6 @@ const ParamsPanel = () => {
     <Box
       sx={{
         flex: 1,
-        pr: 1.75,
-        mr: -1.75,
         width: 280,
         maxWidth: 280,
         height: '100%',
@@ -183,6 +192,8 @@ const ParamsPanel = () => {
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />
+              <ParamsPresets />
+              <ImageSection />
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />

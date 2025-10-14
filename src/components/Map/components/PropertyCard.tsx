@@ -3,7 +3,6 @@ import React from 'react'
 import BathtubOutlinedIcon from '@mui/icons-material/BathtubOutlined'
 import BedOutlinedIcon from '@mui/icons-material/BedOutlined'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-// import ShowerOutlinedIcon from '@mui/icons-material/ShowerOutlined'
 import { Box, IconButton, Stack } from '@mui/material'
 
 import { type Listing } from 'services/API/types'
@@ -58,6 +57,8 @@ const PropertyCard = ({
     onDetailsClick?.(listing.mlsNumber, listing.boardId)
   }
 
+  const currentImage = listing.images?.[0] || ''
+
   return (
     <Stack
       id={`card-${getMarkerName(listing)}`}
@@ -84,12 +85,13 @@ const PropertyCard = ({
           width: 100,
           minWidth: 100,
           borderRadius: 0.5,
+          position: 'relative',
           bgcolor: '#384248', // marker color
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundImage: `url(${getCDNPath(listing.images?.[0], 'small')})`
+          backgroundImage: `url(${getCDNPath(currentImage, 'small')})`
         }}
-      />
+      ></Box>
       <Stack
         sx={{
           my: -0.25,
@@ -124,9 +126,9 @@ const PropertyCard = ({
               sx={{ lineHeight: 1 }}
             >
               <BedOutlinedIcon sx={{ fontSize: 14, mt: '2px' }} />
-              {numBedrooms}
+              <span>{numBedrooms}</span>
               <BathtubOutlinedIcon sx={{ fontSize: 12 }} />
-              {numBathrooms}
+              <span>{numBathrooms}</span>
             </Stack>
           </Box>
         )}

@@ -26,6 +26,12 @@ export type CustomFormParams = {
   locationsBoundary: string | null
   listingFields: string | null
   listingBoardId: number | null
+  imageSearchItems?: {
+    type: 'text' | 'image'
+    value?: string
+    url?: string
+    boost: number
+  }[]
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams
@@ -86,7 +92,9 @@ export const sortByOptions = [
   'statusAscListPriceAsc',
   'statusAscListPriceDesc',
   'repliersUpdatedOnAsc',
-  'repliersUpdatedOnDesc'
+  'repliersUpdatedOnDesc',
+  'qualityAsc',
+  'qualityDesc'
 ] as const
 export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
 
@@ -158,7 +166,10 @@ export const listingFields: FieldsType = [
   'details.propertyType',
   'details.sqft',
   'lot',
-  'images[0]'
+  'images',
+  'imagesScore',
+  'imageInsights'
+  // 'images[0]'
   // 'imagesScore',
   // 'details.style'
 ]

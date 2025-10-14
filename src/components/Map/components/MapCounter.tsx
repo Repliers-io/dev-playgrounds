@@ -1,5 +1,7 @@
 import { alpha, CircularProgress, Stack, Typography } from '@mui/material'
 
+import { formatEnglishNumber } from 'utils/formatters'
+
 const MapCounter = ({
   count,
   loading
@@ -29,7 +31,7 @@ const MapCounter = ({
         </>
       ) : (
         <Typography sx={{ px: 1.25, lineHeight: '30px' }}>
-          {count} Listings
+          {formatEnglishNumber(count, 0)} Listings
         </Typography>
       )}
     </Stack>

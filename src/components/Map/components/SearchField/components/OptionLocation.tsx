@@ -76,7 +76,7 @@ const OptionLocation = ({
             noWrap
             variant="body1"
             fontWeight={600}
-            sx={{ maxWidth: 166, lineHeight: 1.4 }}
+            sx={{ maxWidth: 158, lineHeight: 1.4 }}
             title={option.name}
           >
             {option.name}
@@ -86,7 +86,7 @@ const OptionLocation = ({
               noWrap
               variant="body2"
               color="text.secondary"
-              sx={{ maxWidth: 166 }}
+              sx={{ maxWidth: 158 }}
               title={formattedAddress}
             >
               {formattedAddress}

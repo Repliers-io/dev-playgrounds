@@ -39,12 +39,12 @@ const ParamsField: React.FC<InputProps> = ({
     trigger,
     register,
     setValue,
-    getValues,
+    watch,
     formState: { errors }
   } = useFormContext()
   const { onChange } = useParamsForm()
 
-  const value = getValues(name)
+  const value = watch(name)
 
   const handleFocus = () => {
     trigger(name)
@@ -76,37 +76,40 @@ const ParamsField: React.FC<InputProps> = ({
         link={link}
         tooltip={tooltip}
       />
-      <TextField
-        id={name}
-        inputRef={inputRef}
-        fullWidth
-        type={type}
-        size="small"
-        placeholder={'null'}
-        error={!!errors[name]}
-        helperText={errors[name]?.message?.toString()}
-        {...register(name)}
-        {...rest}
-        onBlur={handleFocus}
-        onKeyDown={handleKeyDown}
-        slotProps={{
-          input: {
-            endAdornment: Boolean(!noClear && value) && (
-              <InputAdornment position="end" sx={{ pr: 0.75 }}>
-                <IconButton
-                  tabIndex={-1}
-                  onClick={handleClearClick}
-                  edge="end"
-                  size="small"
-                  sx={{ '&:hover': { bgcolor: 'transparent' } }}
-                >
-                  <ClearIcon sx={{ fontSize: 18, color: 'rgb(56, 66, 72)' }} />
-                </IconButton>
-              </InputAdornment>
-            )
-          }
-        }}
-      />
+      <Box id={name} sx={{ position: 'relative' }}>
+        <TextField
+          inputRef={inputRef}
+          fullWidth
+          type={type}
+          size="small"
+          placeholder={'null'}
+          error={!!errors[name]}
+          helperText={errors[name]?.message?.toString()}
+          {...register(name)}
+          {...rest}
+          onBlur={handleFocus}
+          onKeyDown={handleKeyDown}
+          slotProps={{
+            input: {
+              endAdornment: Boolean(!noClear && value) && (
+                <InputAdornment position="end" sx={{ pr: 0.75 }}>
+                  <IconButton
+                    tabIndex={-1}
+                    onClick={handleClearClick}
+                    edge="end"
+                    size="small"
+                    sx={{ '&:hover': { bgcolor: 'transparent' } }}
+                  >
+                    <ClearIcon
+                      sx={{ fontSize: 18, color: 'rgb(56, 66, 72)' }}
+                    />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          }}
+        />
+      </Box>
     </Box>
   )
 }

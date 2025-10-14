@@ -23,16 +23,19 @@ export const ParamsFormContext = createContext<
 
 const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
   const { params, setParams } = useSearch()
-  const defaultValues = merge(defaultFormState, params)
 
+  const initialValues = useMemo(() => merge(defaultFormState, params), [params])
+
+  // Create form with clean defaults
   const methods = useForm<FormParams>({
-    defaultValues,
+    defaultValues: defaultFormState,
+    values: initialValues,
     mode: 'onBlur', // Validate on blur
     reValidateMode: 'onBlur', // Re-validate on blur
     shouldFocusError: false, // Do not auto-focus on errors
     resolver: joiResolver(schema, { allowUnknown: true })
   })
-  const { trigger, handleSubmit, reset, getValues } = methods
+  const { trigger, handleSubmit, reset, getValues, setValue } = methods
 
   const onSubmit = (data: FormParams) => {
     setParams(data as Partial<FormParams>)
@@ -54,6 +57,10 @@ const ParamsFormProvider = ({ children }: { children: React.ReactNode }) => {
       apiKey,
       tab: tab || 'map'
     })
+    // After reset, ensure imageSearchItems has at least one default item
+    setValue('imageSearchItems', [
+      { id: crypto.randomUUID(), type: 'text', value: '', boost: 1 }
+    ])
     handleSubmit(onSubmit, onError)()
   }
 

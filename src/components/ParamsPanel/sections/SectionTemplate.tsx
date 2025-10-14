@@ -1,12 +1,10 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { Box, IconButton, Stack } from '@mui/material'
 import { type BoxProps } from '@mui/material/Box/Box'
-
-import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import { ParamsLabel } from '../components'
 
@@ -33,17 +31,23 @@ const SectionTemplate: React.FC<SectionTemplateProps> = ({
   ...rest
 }) => {
   const { setValue, watch } = useFormContext()
-  const { onChange } = useParamsForm()
 
   const sections = watch('sections')
-  const sectionsArr = String(sections).split(',')
-  const collapsed = Boolean(sectionsArr[index])
 
-  const handleClick = () => {
+  // Memoize collapsed state to avoid unnecessary recalculations
+  const collapsed = useMemo(() => {
+    const sectionsArr = String(sections).split(',')
+    return Boolean(sectionsArr[index])
+  }, [sections, index])
+
+  // Memoize click handler to avoid recreating function on every render
+  const handleClick = useCallback(() => {
+    const sectionsArr = String(sections).split(',')
     sectionsArr[index] = collapsed ? '' : '1'
-    setValue('sections', sectionsArr.join(','))
-    onChange()
-  }
+    setValue('sections', sectionsArr.join(','), { shouldValidate: false })
+    // Don't trigger onChange for section collapse/expand - it's just UI state
+    // onChange()
+  }, [sections, index, collapsed, setValue])
 
   return (
     <Box width="100%" {...rest}>
