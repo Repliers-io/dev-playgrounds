@@ -124,7 +124,7 @@ const AiSection = () => {
 
       <SectionTemplate
         id="ai-section"
-        index={8}
+        index={9}
         title="AI Image Search"
         link="https://help.repliers.com/en/article/ai-image-search-implementation-guide-mx30ji/"
       >
