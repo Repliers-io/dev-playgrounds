@@ -81,13 +81,12 @@ const ImageSearchItem = ({
           slotProps={{
             htmlInput: {
               min: 0,
-              max: 1,
-              step: 0.1
+              max: 1000
             }
           }}
           onBlur={(e) => {
             const value = parseFloat(e.target.value)
-            const clampedValue = Math.max(0, Math.min(1, value || 0))
+            const clampedValue = Math.max(0, Math.min(1000, value || 0))
             onChange(index, 'boost', clampedValue)
           }}
           sx={{
