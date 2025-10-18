@@ -120,10 +120,10 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
         const { count, page, numPages, locations } = jsonResponse
 
         const remappedResponse: SavedResponse = {
-          page,
-          pages: numPages,
-          count,
-          locations
+          page: page || 0,
+          pages: numPages || 0,
+          count: count || 0,
+          locations: Array.isArray(locations) ? locations : []
         }
 
         setSaved(remappedResponse)

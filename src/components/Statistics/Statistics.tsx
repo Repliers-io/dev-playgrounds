@@ -53,7 +53,7 @@ const getColumns = (data: any) => {
 
 const Statistics = () => {
   const { statistics } = useSearch()
-  const statCharts = Object.entries(statistics) || []
+  const statCharts = Object.entries(statistics || {})
 
   // split charts array into multiple charts for each column of dates
   const charts: typeof statCharts = []
