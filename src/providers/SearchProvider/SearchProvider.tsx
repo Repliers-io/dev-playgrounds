@@ -223,12 +223,14 @@ const SearchProvider = ({
         const { listings, count, page, numPages, aggregates, statistics } = json
 
         const remappedResponse: SavedResponse = {
-          page,
-          pages: numPages,
-          count,
-          statistics,
-          listings,
-          clusters: aggregates ? aggregates.map.clusters : []
+          page: page || 0,
+          pages: numPages || 0,
+          count: count || 0,
+          statistics: statistics || null,
+          listings: Array.isArray(listings) ? listings : [],
+          clusters: Array.isArray(aggregates?.map?.clusters)
+            ? aggregates.map.clusters
+            : []
         }
 
         setSaved(remappedResponse)
