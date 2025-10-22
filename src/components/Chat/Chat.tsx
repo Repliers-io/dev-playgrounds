@@ -1,12 +1,64 @@
+import React, { useRef, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+
+import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { Box, Button, Stack, TextField } from '@mui/material'
+import { Box, Button, IconButton, Stack, TextField } from '@mui/material'
 
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
-import { EmptyChat } from './components'
+import { ChatHistoryList, EmptyChat } from './components'
+import { type ChatItem } from './types'
 const nlpVersionOptions = ['1', '2'] as const
 
 const Chat = () => {
+  const [history, setHistory] = useState<ChatItem[]>([])
+  const [message, setMessage] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { setValue } = useFormContext()
+
+  const resetFilters = () => {}
+
+  const applyFilters = (item: ChatItem) => {}
+
+  const submitMessage = () => {
+    if (!message.trim()) return
+
+    // Add user message
+    const userMessage: ChatItem = {
+      value: message,
+      type: 'client'
+    }
+    setHistory((prev) => [...prev, userMessage])
+
+    // Mock AI response
+    setTimeout(() => {
+      const aiMessage: ChatItem = {
+        value: `Mock AI response to: "${message}"`,
+        type: 'ai'
+      }
+      setHistory((prev) => [...prev, aiMessage])
+    }, 500)
+
+    // Clear input
+    setMessage('')
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
+  }
+
+  const handleMessageTyping = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      submitMessage()
+    }
+  }
+
+  const restartSession = () => {
+    setHistory([])
+    setValue('nlpId', '')
+  }
+
   return (
     <Box
       sx={{
@@ -29,11 +81,24 @@ const Chat = () => {
       <Box
         sx={{
           flex: 1,
-          overflowY: 'auto',
-          scrollbarWidth: 'thin'
+          mx: 'auto',
+          width: '100%',
+          maxWidth: 640,
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          overflow: 'hidden'
         }}
       >
-        <EmptyChat />
+        {!history.length ? (
+          <EmptyChat />
+        ) : (
+          <ChatHistoryList
+            history={history}
+            onResetFilters={resetFilters}
+            onApplyFilters={applyFilters}
+          />
+        )}
       </Box>
 
       {/* Fixed bottom input bar */}
@@ -59,15 +124,16 @@ const Chat = () => {
             </Box>
             <ParamsField name="nlpId" />
             <Button
-              disabled
               variant="outlined"
+              onClick={restartSession}
+              disabled={!history.length}
               startIcon={<ReplayIcon fontSize="small" sx={{ mr: -0.5 }} />}
               sx={{
+                px: 1.25,
+                py: 0.25,
                 fontSize: 13,
                 fontWeight: 600,
                 fontFamily: 'Urbanist Variable',
-                px: 1.25,
-                py: 0.25,
                 height: 'auto',
                 borderRadius: 1,
                 textTransform: 'none',
@@ -80,13 +146,36 @@ const Chat = () => {
               Restart session
             </Button>
           </Stack>
-          <TextField
-            rows={2}
-            multiline
-            fullWidth
-            placeholder="Type your message..."
-            sx={{ '& .MuiInputBase-input': { bgcolor: '#f4f4f4' } }}
-          />
+          <Box sx={{ position: 'relative' }}>
+            <TextField
+              rows={2}
+              multiline
+              fullWidth
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              inputRef={inputRef}
+              placeholder="Type your message..."
+              sx={{ '& .MuiInputBase-input': { bgcolor: '#f4f4f4', pr: 6 } }}
+              slotProps={{
+                input: {
+                  onKeyDown: handleMessageTyping
+                }
+              }}
+            />
+            <IconButton
+              size="small"
+              onClick={submitMessage}
+              sx={{
+                right: 8,
+                bottom: 8,
+                borderRadius: 8,
+                position: 'absolute',
+                bgcolor: '#fff'
+              }}
+            >
+              <ArrowUpwardOutlinedIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Box>
         </Stack>
       </Box>
     </Box>

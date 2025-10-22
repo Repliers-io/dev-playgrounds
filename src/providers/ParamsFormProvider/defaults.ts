@@ -63,7 +63,7 @@ const defaultFormState: Partial<FormParams> = {
    * chat parameters
    */
   nlpVersion: '2',
-  nlpId: undefined
+  nlpId: ''
 }
 
 export default defaultFormState

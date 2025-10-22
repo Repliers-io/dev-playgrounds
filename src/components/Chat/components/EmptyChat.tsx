@@ -4,7 +4,7 @@ const EmptyChat = () => {
   return (
     <Box
       sx={{
-        pt: 11.5,
+        pt: 11.25,
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',

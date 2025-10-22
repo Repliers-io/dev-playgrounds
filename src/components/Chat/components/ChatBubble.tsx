@@ -40,7 +40,7 @@ const ChatBubble = ({
           }
         }}
       >
-        <Typography variant="body2" overflow="hidden">
+        <Typography fontSize={16} overflow="hidden">
           {children}
         </Typography>
       </Box>

@@ -64,30 +64,22 @@ const ChatHistoryList = ({
     setTimeout(() => scrollToBottom('smooth'), 100)
   }, [history.length])
 
-  useEffect(() => {
-    if (!open) return
-
-    checkFiltersAvailability()
-    setTimeout(() => scrollToBottom('instant'), 0)
-  }, [open])
-
   return (
     <Box
       ref={containerRef}
       sx={{
-        overflowX: 'none',
+        flex: 1,
+        width: '100%',
         overflowY: 'auto',
         position: 'relative',
-        scrollbarWidth: 'none',
-        bgcolor: 'background.paper',
-        transition: 'opacity 0.2s linear'
+        scrollbarWidth: 'thin'
       }}
     >
       <Stack
         spacing={1}
         sx={{
           '&:first-child': { pt: 1 },
-          '&:last-child': { pb: 1.2 }
+          '&:last-child': { pb: 1 }
         }}
       >
         {history.map(({ value, type }, index) => (
@@ -109,15 +101,14 @@ const ChatHistoryList = ({
           <Stack
             spacing={1}
             direction="row"
-            alignItems="center"
-            justifyContent="center"
+            alignItems="flex-start"
+            justifyContent="flex-start"
             px={2}
           >
             {showButton === 'apply' && (
               <Button
                 size="small"
-                color="secondary"
-                variant="contained"
+                variant="outlined"
                 startIcon={<HolidayVillageOutlinedIcon />}
                 onClick={handleApplyFilters}
                 sx={{ width: 140 }}
@@ -129,8 +120,7 @@ const ChatHistoryList = ({
             {showButton === 'reset' && (
               <Button
                 size="small"
-                color="secondary"
-                variant="contained"
+                variant="outlined"
                 startIcon={<DeleteOutlineOutlinedIcon />}
                 onClick={handleResetFilters}
                 sx={{ width: 140 }}
