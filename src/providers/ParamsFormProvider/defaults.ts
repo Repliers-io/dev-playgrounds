@@ -57,7 +57,13 @@ const defaultFormState: Partial<FormParams> = {
   clusterPrecision: 10,
   fields: listingFields.join(','),
   statistics: defaultStatisticsFields.join(','),
-  imageSearchItems: []
+  imageSearchItems: [],
+
+  /**
+   * chat parameters
+   */
+  nlpVersion: '2',
+  nlpId: undefined
 }
 
 export default defaultFormState

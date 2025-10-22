@@ -15,7 +15,8 @@ const ParamsSelect = ({
   hint,
   link,
   tooltip,
-  options = []
+  options = [],
+  noNull = false
 }: {
   name: string
   label?: string
@@ -23,6 +24,7 @@ const ParamsSelect = ({
   link?: string
   tooltip?: string
   options: readonly string[]
+  noNull?: boolean
 }) => {
   const {
     control,
@@ -78,16 +80,18 @@ const ParamsSelect = ({
                   }
                 }}
               >
-                <MenuItem value="">
-                  <span style={{ color: '#AAA' }}>null</span>
-                </MenuItem>
+                {!noNull && (
+                  <MenuItem value="">
+                    <span style={{ color: '#AAA' }}>null</span>
+                  </MenuItem>
+                )}
                 {options.map((option) => (
                   <MenuItem key={option} value={option}>
                     {option}
                   </MenuItem>
                 ))}
               </TextField>
-              {Boolean(field.value) && (
+              {Boolean(field.value && !noNull) && (
                 <Box sx={endIconStyles}>
                   <IconButton
                     onClick={handleClearClick}

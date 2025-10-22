@@ -60,10 +60,11 @@ const ResponsePanel = ({
   const listingContext = useListing()
   const locationsTab = searchContext.params.tab === 'locations'
   const listingTab = searchContext.params.tab === 'listing'
+  const chatTab = searchContext.params.tab === 'chat'
 
   // Select the appropriate context based on active tab
   let response
-  if (listingTab) {
+  if (listingTab || chatTab) {
     response = listingContext
   } else if (locationsTab) {
     response = locationsContext

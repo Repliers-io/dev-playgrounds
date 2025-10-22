@@ -32,6 +32,10 @@ export type CustomFormParams = {
     url?: string
     boost: number
   }[]
+
+  // Chat params
+  nlpVersion: string
+  nlpId: string
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams

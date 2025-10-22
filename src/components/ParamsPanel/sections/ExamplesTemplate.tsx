@@ -16,6 +16,7 @@ const ExamplesTemplate: React.FC<ExamplesTemplateProps> = ({
     <Stack
       sx={{
         p: 1.25,
+        mt: 0.5,
         fontSize: 12,
         width: '100%',
         boxSizing: 'border-box',
