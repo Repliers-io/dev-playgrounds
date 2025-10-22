@@ -64,6 +64,7 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'locationsType',
     'locationsFields',
     'locationsBoundary',
+    'locationsHasBoundary',
     'locationsPageNum',
     'locationsResultsPerPage'
   ])

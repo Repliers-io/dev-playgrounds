@@ -21,6 +21,7 @@ export type CustomFormParams = {
   locationsType: ('area' | 'neighbourhood' | 'city')[]
   locationsFields: string
   locationId: string
+  locationsHasBoundary: boolean
   locationsPageNum: number | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null

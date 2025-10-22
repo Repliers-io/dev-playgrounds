@@ -101,6 +101,13 @@ const SearchSection = () => {
             </>
           )}
 
+          <ParamsSelect
+            label="hasBoundary"
+            name="locationsHasBoundary"
+            tooltip="Only fetch locations that has boundary polygons"
+            options={trueFalseOptions}
+          />
+
           <ParamsField noClear label="fields" name="locationsFields" />
         </Stack>
       </Box>

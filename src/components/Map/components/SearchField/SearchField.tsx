@@ -125,6 +125,7 @@ const SearchField = () => {
       setValue('city', null)
       setValue('neighborhood', null)
       setValue('endpoint', 'locations')
+      setValue('hasBoundary', false)
       onChange()
     }
   }
