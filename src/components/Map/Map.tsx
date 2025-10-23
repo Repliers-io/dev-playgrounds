@@ -45,8 +45,7 @@ const MapRoot = () => {
     setMapContainerRef, // TODO: remove
     setMapRef, // TODO: remove
     position,
-    setPosition,
-    destroyMap
+    setPosition
   } = useMapOptions()
   const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
@@ -214,13 +213,15 @@ const MapRoot = () => {
 
     if (!container) return
 
-    if (canRenderMap) {
+    const isMapTabActive = locationsTab || listingsTab
+
+    if (canRenderMap && isMapTabActive) {
       if (!map) initializeMap(container)
       else map.resize()
-    } else {
-      destroyMap()
+    } else if (!isMapTabActive) {
+      // Don't destroy map when switching tabs, just keep it hidden
     }
-  }, [canRenderMap])
+  }, [canRenderMap, locationsTab, listingsTab])
 
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
