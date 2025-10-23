@@ -4,6 +4,8 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import HolidayVillageOutlinedIcon from '@mui/icons-material/HolidayVillageOutlined'
 import { Box, Button, Stack } from '@mui/material'
 
+import { useSelectOptions } from 'providers/SelectOptionsProvider'
+
 import { type ChatItem } from '../types'
 import { hasFilters } from '../utils'
 
@@ -21,6 +23,7 @@ const ChatHistoryList = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showButton, setShowButton] = useState<'apply' | 'reset' | false>(false)
+  const { options } = useSelectOptions()
 
   const scrollToBottom = (behavior: 'smooth' | 'instant') => {
     if (containerRef.current) {
@@ -32,7 +35,12 @@ const ChatHistoryList = ({
   }
 
   const checkFiltersAvailability = () => {
-    if (history.length > 1 && hasFilters(history.at(-1)!)) {
+    const lastMessage = history.at(-1)
+    if (
+      history.length > 1 &&
+      lastMessage?.type === 'ai' &&
+      hasFilters(lastMessage, options)
+    ) {
       setShowButton('apply')
     }
   }
@@ -58,13 +66,11 @@ const ChatHistoryList = ({
 
   useEffect(() => {
     setShowButton(false)
-    // Check for filters on the last message
-    if (history.length > 1 && hasFilters(history.at(-1)!)) {
-      setShowButton('apply')
-    }
+    checkFiltersAvailability()
+
     // skip one frame to allow the chat history to be rendered
     setTimeout(() => scrollToBottom('smooth'), 100)
-  }, [history.length])
+  }, [history.length, options])
 
   return (
     <Box
