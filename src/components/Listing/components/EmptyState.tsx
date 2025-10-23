@@ -5,12 +5,12 @@ const EmptyState = () => {
   return (
     <Box
       sx={{
+        pt: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '50%',
         textAlign: 'center'
       }}
     >

@@ -43,6 +43,7 @@ const ParamsPanel = () => {
   const { canRenderMap, position } = useMapOptions()
   const locationsMap = tab === 'locations'
   const listingTab = tab === 'listing'
+  const chatTab = tab === 'chat'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -153,6 +154,8 @@ const ParamsPanel = () => {
     // THEN execute tab-specific logic
     if (listingTab) {
       fetchProperty(params)
+    } else if (chatTab) {
+      // Do nothing - chat tab doesn't need API requests
     } else if (position) {
       if (locationsMap) {
         // we should NOT react on polygon changes when in locationsMap mode
@@ -168,12 +171,15 @@ const ParamsPanel = () => {
     polygon,
     canRenderMap,
     locationsMap,
-    listingTab
+    listingTab,
+    chatTab
   ])
 
   return (
     <Box
       sx={{
+        pr: 1.75,
+        mr: -1.75,
         flex: 1,
         width: 280,
         maxWidth: 280,
@@ -185,7 +191,7 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <Stack spacing={1} sx={{ pt: '3px' }}>
+        <Stack gap={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
           {listingTab ? (
             <ListingParamsSection />

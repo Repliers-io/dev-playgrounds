@@ -15,14 +15,6 @@ import { separateProperties } from './utils'
 const Listing = () => {
   const { loading, property } = useListing()
 
-  if (loading) {
-    return <LoadingState />
-  }
-
-  if (!property) {
-    return <EmptyState />
-  }
-
   return (
     <Box
       sx={{
@@ -39,29 +31,35 @@ const Listing = () => {
         p: 1.25
       }}
     >
-      {(() => {
-        const sections = separateProperties(property, {
-          sectionOrder,
-          hiddenSections,
-          hideEmptyValues,
-          expandedSections,
-          sectionHeaders
-        })
+      {loading ? (
+        <LoadingState />
+      ) : !property ? (
+        <EmptyState />
+      ) : (
+        (() => {
+          const sections = separateProperties(property, {
+            sectionOrder,
+            hiddenSections,
+            hideEmptyValues,
+            expandedSections,
+            sectionHeaders
+          })
 
-        return (
-          <>
-            {sections.map(([key, value]) => (
-              <Section
-                key={key}
-                title={key}
-                data={value}
-                initiallyExpanded={expandedSections.includes(key)}
-                headerConfig={sectionHeaders[key]}
-              />
-            ))}
-          </>
-        )
-      })()}
+          return (
+            <>
+              {sections.map(([key, value]) => (
+                <Section
+                  key={key}
+                  title={key}
+                  data={value}
+                  initiallyExpanded={expandedSections.includes(key)}
+                  headerConfig={sectionHeaders[key]}
+                />
+              ))}
+            </>
+          )
+        })()
+      )}
     </Box>
   )
 }

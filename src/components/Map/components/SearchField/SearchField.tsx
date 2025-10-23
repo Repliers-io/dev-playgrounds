@@ -134,8 +134,8 @@ const SearchField = () => {
     return (
       <TextField
         {...params}
-        variant="filled"
         placeholder={'Search for a location...'}
+        sx={{ '& .MuiOutlinedInput-notchedOutline': { borderColor: '#999' } }}
         slotProps={{
           input: {
             ...params.InputProps,
