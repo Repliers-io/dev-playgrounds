@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined'
 import ReplayIcon from '@mui/icons-material/Replay'
@@ -14,19 +15,29 @@ import {
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
 import { useChat } from 'providers/ChatProvider'
+import { useSelectOptions } from 'providers/SelectOptionsProvider'
 
 import { ChatHistoryList, EmptyChat } from './components'
 import { type ChatItem } from './types'
+import { extractFilters } from './utils'
+
 const nlpVersionOptions = ['1', '2'] as const
 
 const Chat = () => {
   const [message, setMessage] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const { loading, history, sendMessage, restartSession } = useChat()
+  const { watch } = useFormContext()
+  const { options } = useSelectOptions()
+  const nlpId = watch('nlpId')
 
   const resetFilters = () => {}
 
-  const applyFilters = (item: ChatItem) => {}
+  const applyFilters = (item: ChatItem) => {
+    const filters = extractFilters(item, options)
+    // eslint-disable-next-line no-console
+    console.log('Filters to apply:', filters)
+  }
 
   const submitMessage = async () => {
     if (!message.trim()) return
@@ -112,7 +123,7 @@ const Chat = () => {
             <Button
               variant="outlined"
               onClick={restartSession}
-              disabled={!history.length}
+              disabled={!nlpId}
               startIcon={<ReplayIcon fontSize="small" sx={{ mr: -0.5 }} />}
               sx={{
                 px: 1.25,
