@@ -54,7 +54,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const controller = new AbortController()
       const getParams = {
-        // nlpVersion
+        nlpVersion
       }
       const paramsString = queryString.stringify(getParams, queryStringOptions)
 
@@ -62,7 +62,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const requestUrl = `${endpointUrl}${paramsString ? `?${paramsString}` : ''}`
 
       const bodyParams: Record<string, string> = { prompt: message }
-
       if (nlpId) bodyParams.nlpId = nlpId
 
       setRequest(requestUrl)
@@ -71,8 +70,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       try {
         const startTime = performance.now()
         const response = await apiFetch(
-          requestUrl,
+          endpointUrl,
           {
+            get: getParams,
             post: bodyParams
           },
           {
