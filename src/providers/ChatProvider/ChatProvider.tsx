@@ -53,11 +53,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setStatusCode(null)
 
       const controller = new AbortController()
-      const getParams = { nlpVersion }
+      const getParams = {
+        // nlpVersion
+      }
       const paramsString = queryString.stringify(getParams, queryStringOptions)
 
       const endpointUrl = `${apiUrl}/nlp`
-      const requestUrl = `${endpointUrl}?${paramsString}`
+      const requestUrl = `${endpointUrl}${paramsString ? `?${paramsString}` : ''}`
 
       const bodyParams: Record<string, string> = { prompt: message }
 
