@@ -114,7 +114,8 @@ const schema = Joi.object({
       'number.base': 'Max Quality must be a number',
       'number.min': 'Max Quality must be at least 1.0',
       'number.max': 'Max Quality must be at most 6.0'
-    })
+    }),
+  unknowns: Joi.object().optional()
 })
 
 export default schema

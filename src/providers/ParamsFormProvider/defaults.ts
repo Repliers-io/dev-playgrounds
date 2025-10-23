@@ -48,9 +48,13 @@ const defaultFormState: Partial<FormParams> = {
   minPrice: undefined,
   maxPrice: undefined,
   minBedrooms: undefined,
+  maxBedrooms: undefined,
   minBaths: undefined,
+  maxBaths: undefined,
   minGarageSpaces: undefined,
+  maxGarageSpaces: undefined,
   minParkingSpaces: undefined,
+  maxParkingSpaces: undefined,
   resultsPerPage: undefined,
   cluster: undefined,
   clusterLimit: 100,
@@ -58,12 +62,17 @@ const defaultFormState: Partial<FormParams> = {
   fields: listingFields.join(','),
   statistics: defaultStatisticsFields.join(','),
   imageSearchItems: [],
+  minListDate: undefined,
+  maxListDate: undefined,
+  minSoldDate: undefined,
+  maxSoldDate: undefined,
 
   /**
    * chat parameters
    */
   nlpVersion: '2',
-  nlpId: ''
+  nlpId: '',
+  unknowns: {}
 }
 
 export default defaultFormState

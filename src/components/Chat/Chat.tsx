@@ -15,7 +15,10 @@ import {
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
 import { useChat } from 'providers/ChatProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSelectOptions } from 'providers/SelectOptionsProvider'
+import { highlightPresetFields } from 'utils/dom'
+import { clusterOnlyParams, statsOnlyParams } from 'constants/form'
 
 import { ChatHistoryList, EmptyChat } from './components'
 import { type ChatItem } from './types'
@@ -27,16 +30,49 @@ const Chat = () => {
   const [message, setMessage] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const { loading, history, sendMessage, restartSession } = useChat()
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
   const { options } = useSelectOptions()
+  const { onChange } = useParamsForm()
   const nlpId = watch('nlpId')
 
-  const resetFilters = () => {}
-
   const applyFilters = (item: ChatItem) => {
-    const filters = extractFilters(item, options)
-    // eslint-disable-next-line no-console
-    console.log('Filters to apply:', filters)
+    const { filters, unknowns } = extractFilters(item, options)
+
+    const hasStatisticsFilters = Object.keys(filters).some((key) =>
+      statsOnlyParams.includes(key as any)
+    )
+
+    const hasClusterFilters = Object.keys(filters).some((key) =>
+      clusterOnlyParams.includes(key as any)
+    )
+
+    if (hasStatisticsFilters) setValue('stats', true)
+    if (hasClusterFilters) setValue('cluster', true)
+
+    setValue('tab', 'map')
+
+    // Apply each filter to the form (same as presets)
+    Object.entries(filters).forEach(([key, value]) => {
+      setValue(key, value)
+    })
+
+    // Store unknowns in the form
+    if (Object.keys(unknowns).length > 0) {
+      setValue('unknowns', unknowns)
+    }
+
+    // Trigger form change
+    onChange()
+
+    // Highlight changed fields with animation
+    highlightPresetFields(Object.keys(filters))
+
+    // Scroll to the first filter field
+    const firstFilterKey = Object.keys(filters)[0]
+    if (firstFilterKey) {
+      const element = document.getElementById(firstFilterKey)
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   }
 
   const submitMessage = async () => {
@@ -90,11 +126,7 @@ const Chat = () => {
         {!history.length ? (
           <EmptyChat />
         ) : (
-          <ChatHistoryList
-            history={history}
-            onResetFilters={resetFilters}
-            onApplyFilters={applyFilters}
-          />
+          <ChatHistoryList history={history} onApplyFilters={applyFilters} />
         )}
       </Box>
 

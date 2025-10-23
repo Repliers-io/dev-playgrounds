@@ -31,9 +31,13 @@ export interface Filters {
   minPrice?: number
   maxPrice?: number
   minBaths?: number
+  maxBaths?: number
   minBedrooms?: number
+  maxBedrooms?: number
   minParkingSpaces?: number
+  maxParkingSpaces?: number
   minGarageSpaces?: number
+  maxGarageSpaces?: number
   propertyType?: string | string[] | string[][]
   type?: string | string[]
   class?: string | string[]

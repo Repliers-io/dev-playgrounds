@@ -25,7 +25,8 @@ import {
   ParamsPresets,
   QueryParamsSection,
   SearchSection,
-  StatisticsSection
+  StatisticsSection,
+  UnknownParametersSection
 } from './sections'
 import {
   filterLocationsParams,
@@ -53,7 +54,7 @@ const ParamsPanel = () => {
 
       // Filter out POST-only fields from URL params
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageSearchItems, ...urlParams } = params
+      const { imageSearchItems, unknowns, nlpId, ...urlParams } = params
 
       const query = queryString.stringify(
         { lng, lat, zoom, ...urlParams },
@@ -193,6 +194,7 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack gap={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
+          <UnknownParametersSection />
           {listingTab ? (
             <ListingParamsSection />
           ) : !locationsMap ? (

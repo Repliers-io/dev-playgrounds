@@ -37,6 +37,7 @@ export type CustomFormParams = {
   // Chat params
   nlpVersion: string
   nlpId: string
+  unknowns: Record<string, any>
 }
 
 export type FormParams = Filters & ApiCredentials & CustomFormParams

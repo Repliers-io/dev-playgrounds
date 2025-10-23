@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import HolidayVillageOutlinedIcon from '@mui/icons-material/HolidayVillageOutlined'
 import { Box, Button, Stack } from '@mui/material'
 
@@ -13,16 +12,14 @@ import { ChatBubble, TypingText } from '.'
 
 const ChatHistoryList = ({
   history,
-  onResetFilters,
   onApplyFilters
 }: {
   history: ChatItem[]
   open?: boolean
-  onResetFilters?: () => void
   onApplyFilters?: (item: ChatItem) => void
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [showButton, setShowButton] = useState<'apply' | 'reset' | false>(false)
+  const [showButton, setShowButton] = useState<boolean>(false)
   const { options } = useSelectOptions()
 
   const scrollToBottom = (behavior: 'smooth' | 'instant') => {
@@ -41,7 +38,7 @@ const ChatHistoryList = ({
       lastMessage?.type === 'ai' &&
       hasFilters(lastMessage, options)
     ) {
-      setShowButton('apply')
+      setShowButton(true)
     }
   }
 
@@ -55,13 +52,7 @@ const ChatHistoryList = ({
   }
 
   const handleApplyFilters = () => {
-    setShowButton('reset')
     onApplyFilters?.(history.at(-1)!)
-  }
-
-  const handleResetFilters = () => {
-    setShowButton('apply')
-    onResetFilters?.()
   }
 
   useEffect(() => {
@@ -86,8 +77,8 @@ const ChatHistoryList = ({
       <Stack
         spacing={1}
         sx={{
-          '&:first-child': { pt: 1 },
-          '&:last-child': { pb: 1 }
+          '&:first-of-type': { pt: 1 },
+          '&:last-of-type': { pb: 1 }
         }}
       >
         {history.map(({ value, type }, index) => {
@@ -117,29 +108,15 @@ const ChatHistoryList = ({
             justifyContent="flex-start"
             px={2}
           >
-            {showButton === 'apply' && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<HolidayVillageOutlinedIcon />}
-                onClick={handleApplyFilters}
-                sx={{ width: 140 }}
-              >
-                Apply Filters
-              </Button>
-            )}
-
-            {showButton === 'reset' && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<DeleteOutlineOutlinedIcon />}
-                onClick={handleResetFilters}
-                sx={{ width: 140 }}
-              >
-                Reset Filters
-              </Button>
-            )}
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<HolidayVillageOutlinedIcon />}
+              onClick={handleApplyFilters}
+              sx={{ width: 140 }}
+            >
+              Apply Filters
+            </Button>
           </Stack>
         )}
       </Stack>

@@ -8,25 +8,26 @@ import { type ChatItem } from './types'
 // Get all form field keys from default form state
 const FORM_FIELDS = Object.keys(defaultFormState)
 
+// Determine which fields should be arrays based on their default values
+const ARRAY_FIELDS = Object.entries(defaultFormState)
+  .filter(([, value]) => Array.isArray(value))
+  .map(([key]) => key)
+
 // Extract valid values for fields with select options
+// Returns { valid, invalid } where invalid contains values that didn't pass validation
 const getValidValues = (
   field: string,
   value: string | string[],
   selectOptions: Record<string, string[]>
-): string | string[] | null => {
+): { valid: string | string[] | null; invalid: string[] } => {
   const allowedValues = selectOptions[field]
   if (!allowedValues) {
-    return value // Return original value if no validation needed
+    return { valid: value, invalid: [] } // No validation needed
   }
 
   const values = Array.isArray(value) ? value : [value]
   const validValues = values.filter((v) => allowedValues.includes(v))
   const invalidValues = values.filter((v) => !allowedValues.includes(v))
-
-  if (validValues.length > 0) {
-    // eslint-disable-next-line no-console
-    console.log(`[VALID] Field "${field}": ${validValues.join(', ')}`)
-  }
 
   if (invalidValues.length > 0) {
     // eslint-disable-next-line no-console
@@ -36,16 +37,24 @@ const getValidValues = (
     )
   }
 
-  // Return valid values in same format as input
-  if (validValues.length === 0) return null
-  return Array.isArray(value) ? validValues : validValues[0]
+  // Return valid values - always as array for array fields
+  const valid =
+    validValues.length === 0
+      ? null
+      : ARRAY_FIELDS.includes(field)
+        ? validValues
+        : validValues[0]
+
+  return { valid, invalid: invalidValues }
 }
 
 export const extractFilters = (
   obj: ChatItem,
   selectOptions?: Record<string, string[]>
-): Record<string, any> => {
+): { filters: Record<string, any>; unknowns: Record<string, any> } => {
   const filters: Record<string, any> = {}
+  const unknowns: Record<string, any> = {}
+
   // Check URL query parameters
   const parsed = queryString.parseUrl(obj.url || '')
   const queryKeys = Object.keys(parsed.query || {})
@@ -53,22 +62,35 @@ export const extractFilters = (
     const matchedFields = queryKeys.filter((key) => FORM_FIELDS.includes(key))
     const unknownFields = queryKeys.filter((key) => !FORM_FIELDS.includes(key))
 
+    // Store unknown fields
     if (unknownFields.length > 0) {
       // eslint-disable-next-line no-console
       console.error(
         `[UNKNOWN FIELDS] Not present in form: ${unknownFields.join(', ')}`
       )
+      unknownFields.forEach((field) => {
+        unknowns[field] = parsed.query[field]
+      })
     }
 
     // Process matched fields
     matchedFields.forEach((field) => {
-      const value = parsed.query[field] as string | string[]
+      let value = parsed.query[field] as string | string[]
+
+      // Ensure array fields are always arrays
+      if (ARRAY_FIELDS.includes(field) && !Array.isArray(value)) {
+        value = [value]
+      }
 
       // Validate and filter values for fields with select options
       if (selectOptions && selectOptions[field]) {
-        const validValue = getValidValues(field, value, selectOptions)
-        if (validValue !== null) {
-          filters[field] = validValue
+        const { valid, invalid } = getValidValues(field, value, selectOptions)
+        if (valid !== null) {
+          filters[field] = valid
+        }
+        // Store invalid values in unknowns
+        if (invalid.length > 0) {
+          unknowns[field] = ARRAY_FIELDS.includes(field) ? invalid : invalid[0]
         }
       } else {
         // No validation needed - use value as is
@@ -83,24 +105,34 @@ export const extractFilters = (
     const matchedBodyFields = bodyKeys.filter((key) =>
       FORM_FIELDS.includes(key)
     )
+    const unknownBodyFields = bodyKeys.filter(
+      (key) => !FORM_FIELDS.includes(key)
+    )
+
+    // Store unknown body fields
+    if (unknownBodyFields.length > 0) {
+      unknownBodyFields.forEach((field) => {
+        unknowns[field] = obj.body![field]
+      })
+    }
 
     matchedBodyFields.forEach((field) => {
-      filters[field] = obj.body![field]
+      let value = obj.body![field]
+      // Ensure array fields are always arrays
+      if (ARRAY_FIELDS.includes(field) && !Array.isArray(value)) {
+        value = [value]
+      }
+      filters[field] = value
     })
   }
 
-  if (Object.keys(filters).length > 0) {
-    // eslint-disable-next-line no-console
-    console.log('[EXTRACTED FILTERS]', filters)
-  }
-
-  return filters
+  return { filters, unknowns }
 }
 
 export const hasFilters = (
   obj: ChatItem,
   selectOptions?: Record<string, string[]>
 ): boolean => {
-  const filters = extractFilters(obj, selectOptions)
-  return Object.keys(filters).length > 0
+  const { filters, unknowns } = extractFilters(obj, selectOptions)
+  return Object.keys(filters).length > 0 || Object.keys(unknowns).length > 0
 }

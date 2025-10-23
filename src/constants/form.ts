@@ -25,7 +25,8 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'sections',
   'center',
   'nlpVersion',
-  'nlpId'
+  'nlpId',
+  'unknowns'
 ]
 
 export const listingOnlyParams: (keyof FormParams)[] = [
