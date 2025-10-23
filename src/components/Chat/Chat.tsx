@@ -21,7 +21,7 @@ import { ChatHistoryList, EmptyChat } from './components'
 import { type ChatItem } from './types'
 import { extractFilters } from './utils'
 
-const nlpVersionOptions = ['1', '2'] as const
+const nlpVersionOptions = ['1', '2', '3'] as const
 
 const Chat = () => {
   const [message, setMessage] = useState('')

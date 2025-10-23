@@ -6,11 +6,13 @@ import {
   useMemo,
   useState
 } from 'react'
+import React from 'react'
+import queryString from 'query-string'
 import { useFormContext } from 'react-hook-form'
 
 import { type ChatItem } from 'components/Chat/types'
 
-import { apiFetch } from 'utils/api'
+import { apiFetch, queryStringOptions } from 'utils/api'
 
 import { type APIChatResponse, type ChatContextType } from './types'
 
@@ -51,19 +53,23 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setStatusCode(null)
 
       const controller = new AbortController()
-      const endpoint = `${apiUrl}/nlp`
+      const getParams = { nlpVersion }
+      const paramsString = queryString.stringify(getParams, queryStringOptions)
+
+      const endpointUrl = `${apiUrl}/nlp`
+      const requestUrl = `${endpointUrl}?${paramsString}`
+
       const bodyParams: Record<string, string> = { prompt: message }
 
       if (nlpId) bodyParams.nlpId = nlpId
-      if (nlpVersion) bodyParams.nlpVersion = nlpVersion
 
-      setRequest(endpoint)
+      setRequest(requestUrl)
       setRequestBody(bodyParams)
 
       try {
         const startTime = performance.now()
         const response = await apiFetch(
-          endpoint,
+          requestUrl,
           {
             post: bodyParams
           },

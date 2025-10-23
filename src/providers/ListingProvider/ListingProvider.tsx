@@ -61,7 +61,6 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
 
     // Build the full request URL for display
     const paramsString = queryString.stringify(getParams, queryStringOptions)
-
     const requestUrl = `${endpointUrl}?${paramsString}`
 
     if (
