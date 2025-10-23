@@ -65,6 +65,7 @@ const PageContent = () => {
           <Tab label="Locations" value="locations" />
           <Tab label="Map Search" value="map" />
           <Tab label="Statistics" value="stats" />
+          <Tab label="Chat" value="chat" />
           <Tab label="Listing" value="listing" />
         </Tabs>
 
