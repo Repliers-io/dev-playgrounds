@@ -22,7 +22,7 @@ const ChatBubble = ({
           py: 1,
           px: 2,
           bgcolor,
-          maxWidth: 250,
+          maxWidth: 320,
           borderRadius: 2,
           position: 'relative',
           display: 'inline-block',

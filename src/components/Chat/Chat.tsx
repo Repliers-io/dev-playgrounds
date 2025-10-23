@@ -1,46 +1,39 @@
 import React, { useRef, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { Box, Button, IconButton, Stack, TextField } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Stack,
+  TextField
+} from '@mui/material'
 
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
+
+import { useChat } from 'providers/ChatProvider'
 
 import { ChatHistoryList, EmptyChat } from './components'
 import { type ChatItem } from './types'
 const nlpVersionOptions = ['1', '2'] as const
 
 const Chat = () => {
-  const [history, setHistory] = useState<ChatItem[]>([])
   const [message, setMessage] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const { setValue } = useFormContext()
+  const { loading, history, sendMessage, restartSession } = useChat()
 
   const resetFilters = () => {}
 
   const applyFilters = (item: ChatItem) => {}
 
-  const submitMessage = () => {
+  const submitMessage = async () => {
     if (!message.trim()) return
 
-    // Add user message
-    const userMessage: ChatItem = {
-      value: message,
-      type: 'client'
-    }
-    setHistory((prev) => [...prev, userMessage])
+    await sendMessage(message)
 
-    // Mock AI response
-    setTimeout(() => {
-      const aiMessage: ChatItem = {
-        value: `Mock AI response to: "${message}"`,
-        type: 'ai'
-      }
-      setHistory((prev) => [...prev, aiMessage])
-    }, 500)
-
-    // Clear input
+    // Always clear input after sending
     setMessage('')
     if (inputRef.current) {
       inputRef.current.value = ''
@@ -54,27 +47,20 @@ const Chat = () => {
     }
   }
 
-  const restartSession = () => {
-    setHistory([])
-    setValue('nlpId', '')
-  }
-
   return (
-    <Box
+    <Stack
       sx={{
-        flex: 1,
-        maxHeight: 'calc(100svh - 89px)',
         px: 3,
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        maxHeight: 'calc(100svh - 89px)',
+        overflowX: 'hidden',
+        bgcolor: '#fff',
         border: 1,
         borderRadius: 2,
         borderColor: '#eee',
-        boxSizing: 'border-box',
-        bgcolor: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        overflowX: 'hidden'
+        boxSizing: 'border-box'
       }}
     >
       {/* Main chat area - takes all available height */}
@@ -84,10 +70,10 @@ const Chat = () => {
           mx: 'auto',
           width: '100%',
           maxWidth: 640,
-          display: 'flex',
-          flexDirection: 'column',
           minHeight: 0,
-          overflow: 'hidden'
+          display: 'flex',
+          overflow: 'hidden',
+          flexDirection: 'column'
         }}
       >
         {!history.length ? (
@@ -131,16 +117,11 @@ const Chat = () => {
               sx={{
                 px: 1.25,
                 py: 0.25,
+                width: 130,
+                height: 'auto',
                 fontSize: 13,
                 fontWeight: 600,
-                fontFamily: 'Urbanist Variable',
-                height: 'auto',
-                borderRadius: 1,
-                textTransform: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 130
+                fontFamily: 'Urbanist Variable'
               }}
             >
               Restart session
@@ -152,9 +133,10 @@ const Chat = () => {
               multiline
               fullWidth
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              disabled={loading}
               inputRef={inputRef}
               placeholder="Type your message..."
+              onChange={(e) => setMessage(e.target.value)}
               sx={{ '& .MuiInputBase-input': { bgcolor: '#f4f4f4', pr: 6 } }}
               slotProps={{
                 input: {
@@ -164,6 +146,7 @@ const Chat = () => {
             />
             <IconButton
               size="small"
+              disabled={loading}
               onClick={submitMessage}
               sx={{
                 right: 8,
@@ -173,12 +156,16 @@ const Chat = () => {
                 bgcolor: '#fff'
               }}
             >
-              <ArrowUpwardOutlinedIcon sx={{ fontSize: 20 }} />
+              {loading ? (
+                <CircularProgress size={14} />
+              ) : (
+                <ArrowUpwardOutlinedIcon sx={{ fontSize: 20 }} />
+              )}
             </IconButton>
           </Box>
         </Stack>
       </Box>
-    </Box>
+    </Stack>
   )
 }
 

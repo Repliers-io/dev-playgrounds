@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import HolidayVillageOutlinedIcon from '@mui/icons-material/HolidayVillageOutlined'
 import { Box, Button, Stack } from '@mui/material'
-
-import useIntersectionObserver from 'hooks/useIntersectionObserver'
 
 import { type ChatItem } from '../types'
 import { hasFilters } from '../utils'
@@ -21,7 +19,7 @@ const ChatHistoryList = ({
   onResetFilters?: () => void
   onApplyFilters?: (item: ChatItem) => void
 }) => {
-  const [visible, containerRef] = useIntersectionObserver(0)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [showButton, setShowButton] = useState<'apply' | 'reset' | false>(false)
 
   const scrollToBottom = (behavior: 'smooth' | 'instant') => {
@@ -60,6 +58,10 @@ const ChatHistoryList = ({
 
   useEffect(() => {
     setShowButton(false)
+    // Check for filters on the last message
+    if (history.length > 1 && hasFilters(history.at(-1)!)) {
+      setShowButton('apply')
+    }
     // skip one frame to allow the chat history to be rendered
     setTimeout(() => scrollToBottom('smooth'), 100)
   }, [history.length])
@@ -82,20 +84,24 @@ const ChatHistoryList = ({
           '&:last-child': { pb: 1 }
         }}
       >
-        {history.map(({ value, type }, index) => (
-          <ChatBubble type={type} key={index}>
-            {type === 'ai' ? (
-              <TypingText
-                text={value}
-                animate={visible}
-                onTyping={handleTyping}
-                onTypingEnd={handleTypingEnd}
-              />
-            ) : (
-              value
-            )}
-          </ChatBubble>
-        ))}
+        {history.map(({ value, type }, index) => {
+          const lastAiMessage = type === 'ai' && index === history.length - 1
+
+          return (
+            <ChatBubble type={type} key={index}>
+              {type === 'ai' ? (
+                <TypingText
+                  text={value}
+                  animate={lastAiMessage}
+                  onTyping={handleTyping}
+                  onTypingEnd={handleTypingEnd}
+                />
+              ) : (
+                value
+              )}
+            </ChatBubble>
+          )
+        })}
 
         {showButton && (
           <Stack

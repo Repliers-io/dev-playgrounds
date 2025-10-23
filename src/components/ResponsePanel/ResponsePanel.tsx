@@ -14,6 +14,7 @@ import {
   Typography
 } from '@mui/material'
 
+import { useChat } from 'providers/ChatProvider'
 import { useListing } from 'providers/ListingProvider'
 import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
@@ -58,13 +59,16 @@ const ResponsePanel = ({
   const searchContext = useSearch()
   const locationsContext = useLocations()
   const listingContext = useListing()
+  const chatContext = useChat()
   const locationsTab = searchContext.params.tab === 'locations'
   const listingTab = searchContext.params.tab === 'listing'
   const chatTab = searchContext.params.tab === 'chat'
 
   // Select the appropriate context based on active tab
   let response
-  if (listingTab || chatTab) {
+  if (chatTab) {
+    response = chatContext
+  } else if (listingTab) {
     response = listingContext
   } else if (locationsTab) {
     response = locationsContext
