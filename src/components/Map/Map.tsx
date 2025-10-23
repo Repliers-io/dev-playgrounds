@@ -59,8 +59,7 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const listingTab = params.tab === 'listing'
-  const listingsTab = !locationsTab && !statisticsTab && !listingTab
+  const listingsTab = params.tab === 'map'
 
   const centerPoint = params.center
 
@@ -216,10 +215,11 @@ const MapRoot = () => {
     const isMapTabActive = locationsTab || listingsTab
 
     if (canRenderMap && isMapTabActive) {
-      if (!map) initializeMap(container)
-      else map.resize()
-    } else if (!isMapTabActive) {
-      // Don't destroy map when switching tabs, just keep it hidden
+      if (!map) {
+        initializeMap(container)
+      } else {
+        map.resize()
+      }
     }
   }, [canRenderMap, locationsTab, listingsTab])
 
