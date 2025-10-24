@@ -50,16 +50,12 @@ const parseQuotedCommaString = (str: string): string[] => {
     ...unquotedParts,
     ...quotedParts.map((q) => q.slice(1, -1).trim())
   ]
-
   return result.filter(Boolean)
 }
 
 // Process maybeArray fields - convert comma-separated strings to arrays
 const processMaybeArrayValue = (value: any): any => {
-  const valueStr = String(value || '')
-  const valueArr = parseQuotedCommaString(valueStr)
-
-  return valueArr.length > 1 ? valueArr : value
+  return parseQuotedCommaString(String(value || ''))
 }
 
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
@@ -130,12 +126,7 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   )
 
   Object.entries(locationsParams).forEach(([key, value]) => {
-    const valueArr = String(value || '').split(',')
-    if (valueArr.length > 1) {
-      locationsParams[key] = valueArr
-        .map((item: string) => item.trim())
-        .filter(Boolean)
-    }
+    locationsParams[key] = parseQuotedCommaString(String(value || ''))
   })
 
   return locationsParams
