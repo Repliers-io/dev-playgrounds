@@ -72,7 +72,7 @@ const ImageSearchItem = ({
       </Box>
 
       {/* Boost field */}
-      <Box sx={{ width: 32 }}>
+      <Box sx={{ width: 38 }}>
         <TextField
           size="small"
           fullWidth
