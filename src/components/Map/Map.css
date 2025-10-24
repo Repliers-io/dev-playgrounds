@@ -1,3 +1,7 @@
+.mapboxgl-marker:has(.focused) {
+  z-index: 1000 !important;
+}
+
 .mapboxgl-map .focused .MuiBox-root {
   background: #fa3 !important;
 }
