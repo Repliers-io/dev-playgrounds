@@ -33,6 +33,7 @@ const UnknownParametersSection = () => {
 
   return (
     <SectionTemplate
+      id="unknown-parameters"
       index={99}
       title="Unknown Parameters"
       rightSlot={
@@ -44,8 +45,7 @@ const UnknownParametersSection = () => {
             mb: 1,
             px: 1,
             height: 32,
-            whiteSpace: 'nowrap',
-            color: '#c62828'
+            whiteSpace: 'nowrap'
           }}
           onClick={handleClearAll}
           endIcon={<ClearAllIcon />}
@@ -60,7 +60,7 @@ const UnknownParametersSection = () => {
         }
       }}
     >
-      <Stack spacing={1}>
+      <Stack spacing={1} id="unknown-parameters-list" sx={{ m: -2, p: 2 }}>
         {unknownKeys.map((key) => {
           const value = unknowns[key]
           const displayValue = Array.isArray(value)
@@ -78,6 +78,7 @@ const UnknownParametersSection = () => {
               <Typography
                 variant="body2"
                 sx={{
+                  pl: 1,
                   fontSize: 12,
                   color: '#c62828',
                   wordBreak: 'break-word'
@@ -93,7 +94,7 @@ const UnknownParametersSection = () => {
                 size="small"
                 sx={{
                   position: 'absolute',
-                  right: -6,
+                  right: 0,
                   top: '50%',
                   transform: 'translateY(-50%)',
                   '&:hover': { bgcolor: 'transparent' }

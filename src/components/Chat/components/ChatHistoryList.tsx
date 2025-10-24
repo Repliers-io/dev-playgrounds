@@ -113,7 +113,7 @@ const ChatHistoryList = ({
               variant="outlined"
               startIcon={<HolidayVillageOutlinedIcon />}
               onClick={handleApplyFilters}
-              sx={{ width: 140 }}
+              sx={{ width: 134 }}
             >
               Apply Filters
             </Button>

@@ -76,7 +76,7 @@ const ParamsPanel = () => {
       // Don't fetch if neither bounds nor polygon are available
       if (!bounds && !polygon) return
 
-      const { grp, stats, statistics } = params
+      const { grp, stats, statistics, unknowns } = params
       const filteredParams = filterQueryParams(params)
 
       // WARN: additional parameters modifications for statistics
@@ -90,11 +90,15 @@ const ParamsPanel = () => {
           ? getMapPolygon(polygon)
           : getMapRectangle(bounds!)
 
-        // Call the search function from the context
-        await searchContext.search({
+        // Add unknowns to the request (they will be sent as regular query params)
+        const searchParams = {
           ...filteredParams,
-          ...fetchBounds
-        })
+          ...fetchBounds,
+          ...unknowns
+        }
+
+        // Call the search function from the context
+        await searchContext.search(searchParams)
       } catch (error: any) {
         console.error('fetchData error:', error)
       }

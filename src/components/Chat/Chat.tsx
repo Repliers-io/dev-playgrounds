@@ -17,7 +17,7 @@ import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 import { useChat } from 'providers/ChatProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSelectOptions } from 'providers/SelectOptionsProvider'
-import { highlightPresetFields } from 'utils/dom'
+import { highlightPresetField, highlightPresetFields } from 'utils/dom'
 import { clusterOnlyParams, statsOnlyParams } from 'constants/form'
 
 import { ChatHistoryList, EmptyChat } from './components'
@@ -56,10 +56,8 @@ const Chat = () => {
       setValue(key, value)
     })
 
-    // Store unknowns in the form
-    if (Object.keys(unknowns).length > 0) {
-      setValue('unknowns', unknowns)
-    }
+    // Always set unknowns (even if empty)
+    setValue('unknowns', unknowns)
 
     // Trigger form change
     onChange()
@@ -67,24 +65,35 @@ const Chat = () => {
     // Highlight changed fields with animation
     highlightPresetFields(Object.keys(filters))
 
-    // Scroll to the first filter field
-    const firstFilterKey = Object.keys(filters)[0]
-    if (firstFilterKey) {
-      const element = document.getElementById(firstFilterKey)
-      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // Scroll to unknowns section if present, otherwise to first filter field
+    if (Object.keys(unknowns).length > 0) {
+      // Highlight the unknowns section
+      setTimeout(() => {
+        highlightPresetField('unknown-parameters-list')
+      }, 100)
+
+      const unknownsSection = document.getElementById('unknown-parameters')
+      unknownsSection?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else {
+      const firstFilterKey = Object.keys(filters)[0]
+      if (firstFilterKey) {
+        const element = document.getElementById(firstFilterKey)
+        element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
   }
 
   const submitMessage = async () => {
     if (!message.trim()) return
 
-    await sendMessage(message)
-
-    // Always clear input after sending
+    // Clear input immediately before sending
+    const messageToSend = message
     setMessage('')
     if (inputRef.current) {
       inputRef.current.value = ''
     }
+
+    await sendMessage(messageToSend)
   }
 
   const handleMessageTyping = (e: React.KeyboardEvent<HTMLInputElement>) => {
