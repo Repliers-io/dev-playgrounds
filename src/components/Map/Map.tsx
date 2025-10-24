@@ -124,6 +124,9 @@ const MapRoot = () => {
           focusMarker(listing.mlsNumber, listing.boardId)
         }
       })
+    } else {
+      // No clusters and no listings - clear all markers
+      MapService.resetAllMarkers()
     }
   }
 
