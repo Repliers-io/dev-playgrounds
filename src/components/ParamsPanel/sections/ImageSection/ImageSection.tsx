@@ -33,21 +33,44 @@ const AiSection = () => {
 
   const watchedItems = watch('imageSearchItems')
   const imageSearchItems: ImageSearchItem[] = Array.isArray(watchedItems)
-    ? watchedItems
+    ? watchedItems.filter((item) => typeof item !== 'string') // Filter out strings for display
     : []
 
   useEffect(() => {
+    // Normalize imageSearchItems if they come as plain strings
+    if (Array.isArray(watchedItems) && watchedItems.length > 0) {
+      const needsNormalization = watchedItems.some(
+        (item) => typeof item === 'string'
+      )
+
+      if (needsNormalization) {
+        const normalized = watchedItems.map((item, index) => {
+          if (typeof item === 'string') {
+            // Convert string to proper object with defaults
+            return {
+              id: `${Date.now()}-${index}`,
+              type: 'text' as const,
+              value: item,
+              boost: 1
+            }
+          }
+          // Already an object, ensure it has an id
+          return item.id ? item : { id: `${Date.now()}-${index}`, ...item }
+        })
+        setValue('imageSearchItems', normalized, { shouldValidate: false })
+        return
+      }
+    }
+
     // Initialize with one empty item if array is empty or invalid
     if (!Array.isArray(watchedItems) || watchedItems.length === 0) {
-      setValue('imageSearchItems', [
-        { id: crypto.randomUUID(), ...DEFAULT_ITEM }
-      ])
+      setValue('imageSearchItems', [{ id: `${Date.now()}-0`, ...DEFAULT_ITEM }])
     }
-  }, [])
+  }, [watchedItems])
 
   const handleAddItem = () => {
     const newItem: ImageSearchItem = {
-      id: crypto.randomUUID(),
+      id: `${Date.now()}-${imageSearchItems.length}`,
       ...DEFAULT_ITEM
     }
     setValue('imageSearchItems', [...imageSearchItems, newItem], {
@@ -61,7 +84,7 @@ const AiSection = () => {
 
     // If removing the last item, replace with empty default item instead of empty array
     const itemsToSet = !updatedItems.length
-      ? [{ id: crypto.randomUUID(), ...DEFAULT_ITEM }]
+      ? [{ id: `${Date.now()}-0`, ...DEFAULT_ITEM }]
       : updatedItems
 
     setValue('imageSearchItems', itemsToSet, { shouldValidate: false })
