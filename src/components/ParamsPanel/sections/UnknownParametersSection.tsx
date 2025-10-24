@@ -34,7 +34,7 @@ const UnknownParametersSection = () => {
   return (
     <SectionTemplate
       id="unknown-parameters"
-      index={99}
+      index={11}
       title="Unknown Parameters"
       rightSlot={
         <Button
