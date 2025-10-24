@@ -6,7 +6,14 @@ export const multiSelectFields = [
   'lastStatus',
   'propertyType',
   'grp',
-  'locationsType'
+  'locationsType',
+  'overallQuality',
+  'bedroomQuality',
+  'bathroomQuality',
+  'livingRoomQuality',
+  'diningRoomQuality',
+  'kitchenQuality',
+  'frontOfStructureQuality'
 ] as const
 
 export const booleanFields = [

@@ -126,8 +126,11 @@ const AiSection = () => {
         link="https://help.repliers.com/en/article/quality-scores-feature-implementation-guide-1kkedog/"
       >
         <Stack spacing={1.5}>
-          <ParamsField name="minQuality" />
-          <ParamsField name="maxQuality" />
+          <Stack spacing={1} direction="row" justifyContent="space-between">
+            <ParamsField name="minQuality" />
+            <ParamsField name="maxQuality" />
+          </Stack>
+
           {/* Overall Quality - first field */}
           <ParamsMultiSelect
             name="overallQuality"
