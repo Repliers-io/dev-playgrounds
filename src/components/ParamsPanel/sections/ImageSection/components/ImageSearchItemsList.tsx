@@ -30,39 +30,14 @@ const ImageSearchItemsList = ({
 }: ImageSearchItemsListProps) => {
   return (
     <Box flex={1}>
-      <Stack direction="row" width="100%" justifyContent="space-between">
-        <ParamsLabel
-          label="imageSearchItems[]"
-          tooltip={
-            <>
-              This filter should be passed in <b>POST</b> body
-            </>
-          }
-        />
-        {/* Add button */}
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon sx={{ mr: -0.5 }} />}
-          onClick={onAdd}
-          sx={{
-            fontSize: 13,
-            fontWeight: 600,
-            fontFamily: 'Urbanist Variable',
-            px: 1.25,
-            py: 0.25,
-            mb: -0.5,
-            mt: 0.25,
-            height: 'auto',
-            borderRadius: 1,
-            textTransform: 'none',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          Item
-        </Button>
-      </Stack>
+      <ParamsLabel
+        label="imageSearchItems[]"
+        tooltip={
+          <>
+            This filter should be passed in <b>POST</b> body
+          </>
+        }
+      />
 
       {/* Header row */}
       <Stack spacing={1} direction="row" sx={{ mt: -1.25 }}>
@@ -96,6 +71,31 @@ const ImageSearchItemsList = ({
             onRemove={onRemove}
           />
         ))}
+        <Box>
+          {/* Add button */}
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon sx={{ mr: -0.5 }} />}
+            onClick={onAdd}
+            sx={{
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: 'Urbanist Variable',
+              width: 102,
+              px: 1,
+              py: 0.25,
+              height: 'auto',
+              borderRadius: 1,
+              bgcolor: '#FFF',
+              textTransform: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            Add Item
+          </Button>
+        </Box>
       </Stack>
     </Box>
   )

@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/system'
 import GoogleTagManager from 'components/GoogleTagManager'
 import PageContent from 'components/PageContent'
 
+import { ChatProvider } from 'providers/ChatProvider'
 import ListingProvider from 'providers/ListingProvider'
 import LocationsProvider from 'providers/LocationsProvider'
 import MapOptionsProvider, {
@@ -45,7 +46,9 @@ function App() {
               <MapOptionsProvider style="map" params={mapParams}>
                 <SelectOptionsProvider>
                   <ParamsFormProvider>
-                    <PageContent />
+                    <ChatProvider>
+                      <PageContent />
+                    </ChatProvider>
                   </ParamsFormProvider>
                 </SelectOptionsProvider>
               </MapOptionsProvider>

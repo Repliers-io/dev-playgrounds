@@ -45,8 +45,7 @@ const MapRoot = () => {
     setMapContainerRef, // TODO: remove
     setMapRef, // TODO: remove
     position,
-    setPosition,
-    destroyMap
+    setPosition
   } = useMapOptions()
   const { locations } = useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
@@ -60,8 +59,7 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const listingTab = params.tab === 'listing'
-  const listingsTab = !locationsTab && !statisticsTab && !listingTab
+  const listingsTab = params.tab === 'map'
 
   const centerPoint = params.center
 
@@ -126,6 +124,9 @@ const MapRoot = () => {
           focusMarker(listing.mlsNumber, listing.boardId)
         }
       })
+    } else {
+      // No clusters and no listings - clear all markers
+      MapService.resetAllMarkers()
     }
   }
 
@@ -214,13 +215,16 @@ const MapRoot = () => {
 
     if (!container) return
 
-    if (canRenderMap) {
-      if (!map) initializeMap(container)
-      else map.resize()
-    } else {
-      destroyMap()
+    const isMapTabActive = locationsTab || listingsTab
+
+    if (canRenderMap && isMapTabActive) {
+      if (!map) {
+        initializeMap(container)
+      } else {
+        map.resize()
+      }
     }
-  }, [canRenderMap])
+  }, [canRenderMap, locationsTab, listingsTab])
 
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>

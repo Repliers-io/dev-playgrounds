@@ -30,10 +30,21 @@ export interface Filters {
   sortBy?: ApiSortBy
   minPrice?: number
   maxPrice?: number
+  overallQuality?: string[]
+  bedroomQuality?: string[]
+  bathroomQuality?: string[]
+  livingRoomQuality?: string[]
+  diningRoomQuality?: string[]
+  kitchenQuality?: string[]
+  frontOfStructureQuality?: string[]
   minBaths?: number
+  maxBaths?: number
   minBedrooms?: number
+  maxBedrooms?: number
   minParkingSpaces?: number
+  maxParkingSpaces?: number
   minGarageSpaces?: number
+  maxGarageSpaces?: number
   propertyType?: string | string[] | string[][]
   type?: string | string[]
   class?: string | string[]

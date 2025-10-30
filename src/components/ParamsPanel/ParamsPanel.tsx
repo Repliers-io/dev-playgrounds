@@ -25,7 +25,8 @@ import {
   ParamsPresets,
   QueryParamsSection,
   SearchSection,
-  StatisticsSection
+  StatisticsSection,
+  UnknownParametersSection
 } from './sections'
 import {
   filterLocationsParams,
@@ -43,6 +44,7 @@ const ParamsPanel = () => {
   const { canRenderMap, position } = useMapOptions()
   const locationsMap = tab === 'locations'
   const listingTab = tab === 'listing'
+  const chatTab = tab === 'chat'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -52,7 +54,7 @@ const ParamsPanel = () => {
 
       // Filter out POST-only fields from URL params
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageSearchItems, ...urlParams } = params
+      const { imageSearchItems, unknowns, nlpId, ...urlParams } = params
 
       const query = queryString.stringify(
         { lng, lat, zoom, ...urlParams },
@@ -74,7 +76,7 @@ const ParamsPanel = () => {
       // Don't fetch if neither bounds nor polygon are available
       if (!bounds && !polygon) return
 
-      const { grp, stats, statistics } = params
+      const { grp, stats, statistics, unknowns } = params
       const filteredParams = filterQueryParams(params)
 
       // WARN: additional parameters modifications for statistics
@@ -88,11 +90,15 @@ const ParamsPanel = () => {
           ? getMapPolygon(polygon)
           : getMapRectangle(bounds!)
 
-        // Call the search function from the context
-        await searchContext.search({
+        // Add unknowns to the request (they will be sent as regular query params)
+        const searchParams = {
           ...filteredParams,
-          ...fetchBounds
-        })
+          ...fetchBounds,
+          ...unknowns
+        }
+
+        // Call the search function from the context
+        await searchContext.search(searchParams)
       } catch (error: any) {
         console.error('fetchData error:', error)
       }
@@ -153,6 +159,8 @@ const ParamsPanel = () => {
     // THEN execute tab-specific logic
     if (listingTab) {
       fetchProperty(params)
+    } else if (chatTab) {
+      // Do nothing - chat tab doesn't need API requests
     } else if (position) {
       if (locationsMap) {
         // we should NOT react on polygon changes when in locationsMap mode
@@ -168,12 +176,15 @@ const ParamsPanel = () => {
     polygon,
     canRenderMap,
     locationsMap,
-    listingTab
+    listingTab,
+    chatTab
   ])
 
   return (
     <Box
       sx={{
+        pr: 1.75,
+        mr: -1.75,
         flex: 1,
         width: 280,
         maxWidth: 280,
@@ -185,8 +196,9 @@ const ParamsPanel = () => {
       }}
     >
       <Stack spacing={1}>
-        <Stack spacing={1} sx={{ pt: '3px' }}>
+        <Stack gap={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
+          <UnknownParametersSection />
           {listingTab ? (
             <ListingParamsSection />
           ) : !locationsMap ? (

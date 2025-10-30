@@ -83,6 +83,11 @@ const QueryParamsSection = () => {
             hint="docs"
             link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
           />
+          {/* <ParamsMultiSelect
+            name="swimmingPool"
+            options={options?.swimmingPool}
+            loading={loading}
+          /> */}
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField
               name="minPrice"
@@ -93,11 +98,19 @@ const QueryParamsSection = () => {
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minBedrooms" />
+            <ParamsField name="maxBedrooms" />
+          </Stack>
+          <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minBaths" />
+            <ParamsField name="maxBaths" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minGarageSpaces" />
+            <ParamsField name="maxGarageSpaces" />
+          </Stack>
+          <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minParkingSpaces" />
+            <ParamsField name="maxParkingSpaces" />
           </Stack>
           <ParamsField
             noClear

@@ -6,7 +6,7 @@ import { Box, Link, Stack, Tab, Tabs } from '@mui/material'
 
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
-import MapPanel from './MapPanel'
+import ContentPanel from './ContentPanel'
 import ParamsPanel from './ParamsPanel'
 import ResponsePanel from './ResponsePanel'
 
@@ -65,6 +65,7 @@ const PageContent = () => {
           <Tab label="Locations" value="locations" />
           <Tab label="Map Search" value="map" />
           <Tab label="Statistics" value="stats" />
+          <Tab label="AI search" value="chat" />
           <Tab label="Listing" value="listing" />
         </Tabs>
 
@@ -93,13 +94,13 @@ const PageContent = () => {
       </Stack>
       <Box sx={{ px: 2.5 }}>
         <Stack
-          spacing={2.5}
+          gap={2.5}
           direction="row"
           justifyContent="stretch"
           sx={{ height: 'calc(100vh - 89px)', minHeight: 500 }}
         >
           <ParamsPanel />
-          <MapPanel collapsed={expandedResponse} />
+          <ContentPanel collapsed={expandedResponse} />
 
           <ResponsePanel
             expanded={expandedResponse}

@@ -2,14 +2,16 @@ import { Box } from '@mui/material'
 
 import { useSearch } from 'providers/SearchProvider'
 
+import Chat from './Chat'
 import Listing from './Listing'
 import Map from './Map'
 import Statistics from './Statistics'
 
-const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
+const ContentPanel = ({ collapsed = false }: { collapsed: boolean }) => {
   const { params } = useSearch()
   const statisticsTab = params.tab === 'stats'
   const listingTab = params.tab === 'listing'
+  const chatTab = params.tab === 'chat'
 
   return (
     <Box
@@ -24,7 +26,7 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
       <Box
         sx={{
           flex: 1,
-          display: !statisticsTab && !listingTab ? 'flex' : 'none'
+          display: !statisticsTab && !listingTab && !chatTab ? 'flex' : 'none'
         }}
       >
         <Map />
@@ -40,8 +42,16 @@ const MapPanel = ({ collapsed = false }: { collapsed: boolean }) => {
       >
         <Listing />
       </Box>
+      <Box
+        sx={{
+          flex: 1,
+          display: chatTab ? 'flex' : 'none'
+        }}
+      >
+        <Chat />
+      </Box>
     </Box>
   )
 }
 
-export default MapPanel
+export default ContentPanel

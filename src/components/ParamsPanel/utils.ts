@@ -11,6 +11,53 @@ import {
   statsOnlyParams
 } from 'constants/form'
 
+// Parse comma-separated values respecting quoted strings
+// Example: 'York,"Stormont, Dundas and Glengarry",Toronto,Peel' => ['York', 'Stormont, Dundas and Glengarry', 'Toronto', 'Peel']
+const parseQuotedCommaString = (str: string): string[] => {
+  const hasCommas = str.includes(',')
+  const doubleQuoteCount = (str.match(/"/g) || []).length
+  const singleQuoteCount = (str.match(/'/g) || []).length
+  const hasEvenDoubleQuotes = doubleQuoteCount > 0 && doubleQuoteCount % 2 === 0
+  const hasEvenSingleQuotes = singleQuoteCount > 0 && singleQuoteCount % 2 === 0
+
+  // Use complex logic only if has both commas and paired quotes (either type)
+  if (!hasCommas || (!hasEvenDoubleQuotes && !hasEvenSingleQuotes)) {
+    // Simple split by comma
+    return str
+      .split(',')
+      .map((s) => s.trim().replace(/['"]/g, ''))
+      .filter(Boolean)
+  }
+
+  // Extract parts: support both single and double quotes
+  const regex = /"[^"]*"|'[^']*'/g
+  const quotedParts: string[] = []
+  let match
+
+  // Find all quoted parts
+  while ((match = regex.exec(str)) !== null) {
+    quotedParts.push(match[0]) // Keep quotes in the match
+  }
+
+  // Replace quoted parts with empty strings
+  const processed = str.replace(regex, '')
+
+  // Split by comma (now safe, no commas inside quotes)
+  const unquotedParts = processed.split(',').map((s) => s.trim())
+
+  // Combine unquoted and quoted parts (remove surrounding quotes from quoted)
+  const result = [
+    ...unquotedParts,
+    ...quotedParts.map((q) => q.slice(1, -1).trim())
+  ]
+  return result.filter(Boolean)
+}
+
+// Process maybeArray fields - convert comma-separated strings to arrays
+const processMaybeArrayValue = (value: any): any => {
+  return parseQuotedCommaString(String(value || ''))
+}
+
 export const filterQueryParams = (params: Partial<FormParams> = {}) => {
   const fieldsToRemove = [
     ...customFormParams,
@@ -24,19 +71,10 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
 
   const acc = Object.entries(params).reduce((acc, [key, value]) => {
     if (!fieldsToRemove.includes(key as FormParamKeys)) {
-      // Force TypeScript to accept the value by using "as any"
-      if (maybeArrays.includes(key)) {
-        const valueArr = String(value || '').split(',')
-        if (valueArr.length > 1) {
-          acc[key as FormParamKeys] = valueArr
-            .map((item: string) => item.trim())
-            .filter(Boolean) as any
-        } else {
-          acc[key as FormParamKeys] = value as any
-        }
-      } else {
-        acc[key as FormParamKeys] = value as any
-      }
+      const processedValue = maybeArrays.includes(key)
+        ? processMaybeArrayValue(value)
+        : value
+      acc[key as FormParamKeys] = processedValue as any
     }
     return acc
   }, {} as Partial<FormParams>)
@@ -88,12 +126,7 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   )
 
   Object.entries(locationsParams).forEach(([key, value]) => {
-    const valueArr = String(value || '').split(',')
-    if (valueArr.length > 1) {
-      locationsParams[key] = valueArr
-        .map((item: string) => item.trim())
-        .filter(Boolean)
-    }
+    locationsParams[key] = parseQuotedCommaString(String(value || ''))
   })
 
   return locationsParams

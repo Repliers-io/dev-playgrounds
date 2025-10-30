@@ -518,6 +518,9 @@ const components = {
     }
   },
   MuiTextField: {
+    defaultProps: {
+      variant: 'outlined'
+    },
     styleOverrides: {
       root: ({ theme }: ThemeProps) =>
         theme.unstable_sx({

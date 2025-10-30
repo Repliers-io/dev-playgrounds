@@ -19,7 +19,7 @@ const StatsSection = () => {
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setValue('stats', event.target.checked ? true : null)
+    setValue('stats', event.target.checked)
     onChange()
   }
 

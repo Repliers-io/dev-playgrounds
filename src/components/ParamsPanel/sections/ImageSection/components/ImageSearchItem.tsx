@@ -41,7 +41,7 @@ const ImageSearchItem = ({
           select
           size="small"
           fullWidth
-          value={item.type}
+          value={item.type || 'text'}
           onChange={(e) => {
             const newType = e.target.value as 'text' | 'image'
             onTypeChange(index, newType)
@@ -72,7 +72,7 @@ const ImageSearchItem = ({
       </Box>
 
       {/* Boost field */}
-      <Box sx={{ width: 32 }}>
+      <Box sx={{ width: 38 }}>
         <TextField
           size="small"
           fullWidth

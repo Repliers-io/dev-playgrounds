@@ -23,7 +23,10 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'grp',
   'tab',
   'sections',
-  'center'
+  'center',
+  'nlpVersion',
+  'nlpId',
+  'unknowns'
 ]
 
 export const listingOnlyParams: (keyof FormParams)[] = [
