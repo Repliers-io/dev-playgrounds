@@ -2,18 +2,21 @@ import { type ReactNode } from 'react'
 
 import { Box, Typography } from '@mui/material'
 
-import { aiBgColor, clientBgColor } from '../constants'
+import { aiBgColor, aiErrorBgColor, clientBgColor } from '../constants'
 import { type ChatItem } from '../types'
 
 const ChatBubble = ({
   type,
+  error,
   children
 }: {
   type: ChatItem['type']
+  error?: boolean
   children: ReactNode | string
 }) => {
   const aiBubble = type === 'ai'
-  const bgcolor = aiBubble ? aiBgColor : clientBgColor
+  const bgcolor = error ? aiErrorBgColor : aiBubble ? aiBgColor : clientBgColor
+
   return (
     <Box sx={{ overflow: 'hidden', px: 1 }}>
       <Box

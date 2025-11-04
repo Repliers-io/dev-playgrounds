@@ -81,11 +81,11 @@ const ChatHistoryList = ({
           '&:last-of-type': { pb: 1 }
         }}
       >
-        {history.map(({ value, type }, index) => {
+        {history.map(({ value, type, error }, index) => {
           const lastAiMessage = type === 'ai' && index === history.length - 1
 
           return (
-            <ChatBubble type={type} key={index}>
+            <ChatBubble type={type} error={error} key={index}>
               {type === 'ai' ? (
                 <TypingText
                   text={value}
