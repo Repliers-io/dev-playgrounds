@@ -25,6 +25,7 @@ const defaultFormState: Partial<FormParams> = {
   locationsType: [],
   locationsFields: locationsFields.join(','),
   locationId: '',
+  state: '',
   area: '',
   city: '',
   neighborhood: '',

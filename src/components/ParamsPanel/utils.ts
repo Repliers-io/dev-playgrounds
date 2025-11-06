@@ -67,7 +67,7 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...(params.tab !== 'locations' ? searchOnlyParams : [])
   ]
 
-  const maybeArrays = ['area', 'city', 'neighborhood', 'areaOrCity']
+  const maybeArrays = ['state', 'area', 'city', 'neighborhood', 'areaOrCity']
 
   const acc = Object.entries(params).reduce((acc, [key, value]) => {
     if (!fieldsToRemove.includes(key as FormParamKeys)) {
@@ -121,8 +121,8 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   const locationsParams = pick(
     params,
     params.endpoint === 'locations'
-      ? ['area', 'city', 'neighborhood', 'locationId']
-      : ['area', 'city']
+      ? ['state', 'area', 'city', 'neighborhood', 'locationId']
+      : ['state', 'area', 'city']
   )
 
   Object.entries(locationsParams).forEach(([key, value]) => {

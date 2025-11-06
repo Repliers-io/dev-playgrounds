@@ -121,6 +121,7 @@ const SearchField = () => {
       // onChange()
     } else {
       setValue('locationId', option.locationId)
+      setValue('state', null)
       setValue('area', null)
       setValue('city', null)
       setValue('neighborhood', null)

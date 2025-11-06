@@ -55,6 +55,11 @@ const SearchSection = () => {
           />
 
           <ParamsField
+            name="state"
+            tooltip="Array of states. For now to be provided as a comma-separated list"
+          />
+
+          <ParamsField
             name="area"
             tooltip="Array of areas. For now to be provided as a comma-separated list"
           />
