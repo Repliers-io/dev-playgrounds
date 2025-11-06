@@ -72,22 +72,24 @@ const RequestParser = ({ request }: { request: string }) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* <b style={{ color: protocolColor }}>GET:</b>{' '} */}
-      <span style={{ color: baseColor }}>{baseUrl}</span>
-      {params.map(([key, value], index) => {
-        return (
-          <span key={`${key}-${index}`}>
-            {index > 0 ? '&' : '?'}
-            <span style={{ color: keyColor }}>{key}</span>=
-            <span
-              onDoubleClick={handleValueClick}
-              style={{ color: valueColor }}
-            >
-              {decodeURIComponent(value)}
+      <div className="request-text">
+        {/* <b style={{ color: protocolColor }}>GET:</b>{' '} */}
+        <span style={{ color: baseColor }}>{baseUrl}</span>
+        {params.map(([key, value], index) => {
+          return (
+            <span key={`${key}-${index}`}>
+              {index > 0 ? '&' : '?'}
+              <span style={{ color: keyColor }}>{key}</span>=
+              <span
+                onDoubleClick={handleValueClick}
+                style={{ color: valueColor }}
+              >
+                {decodeURIComponent(value)}
+              </span>
             </span>
-          </span>
-        )
-      })}
+          )
+        })}
+      </div>
       <div
         style={{
           position: 'absolute',

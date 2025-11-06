@@ -96,7 +96,13 @@ const ResponsePanel = ({
 
   const handleRequestCopyClick = () => {
     if (!requestContainerRef.current) return
-    navigator.clipboard.writeText(requestContainerRef.current.innerText)
+    const requestText =
+      (
+        requestContainerRef.current.querySelector(
+          '.request-text'
+        ) as HTMLElement
+      )?.innerText || ''
+    navigator.clipboard.writeText(requestText)
   }
 
   const handleResponseCopyClick = () => {
