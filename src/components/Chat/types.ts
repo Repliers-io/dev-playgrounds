@@ -1,6 +1,7 @@
 export type ChatItem = {
   value: string
   type: 'ai' | 'client'
+  error?: boolean
   params?: { [key: string]: any }
   body?: { [key: string]: any }
   url?: string

@@ -376,6 +376,7 @@ type ApiImageSearchItem = {
 
 export interface ApiQueryParams {
   mlsNumber: string
+  state: string[]
   area: string[]
   city: string[]
   neighborhood: string

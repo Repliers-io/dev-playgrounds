@@ -24,6 +24,7 @@ const SearchSection = () => {
     <SectionTemplate
       index={5}
       title="search parameters"
+      link="https://help.repliers.com/en/article/locations-api-implementation-guide-s4c68b/?bust=1761417756418"
       rightSlot={
         <Button
           type="submit"
@@ -52,6 +53,11 @@ const SearchSection = () => {
             label="type"
             name="locationsType"
             options={locationTypes}
+          />
+
+          <ParamsField
+            name="state"
+            tooltip="Array of states. For now to be provided as a comma-separated list"
           />
 
           <ParamsField

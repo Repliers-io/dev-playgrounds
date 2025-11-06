@@ -59,7 +59,8 @@ const MapRoot = () => {
 
   const locationsTab = params.tab === 'locations'
   const statisticsTab = params.tab === 'stats'
-  const listingsTab = params.tab === 'map'
+  // Default to map tab when no tab is specified
+  const listingsTab = !params.tab || params.tab === 'map'
 
   const centerPoint = params.center
 

@@ -49,6 +49,7 @@ export interface Filters {
   type?: string | string[]
   class?: string | string[]
   style?: string | string[]
+  state?: string | string[]
   area?: string | string[]
   city?: string | string[]
   neighborhood?: string | string[]

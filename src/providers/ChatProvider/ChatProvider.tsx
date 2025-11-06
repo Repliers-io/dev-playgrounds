@@ -6,7 +6,6 @@ import {
   useMemo,
   useState
 } from 'react'
-import React from 'react'
 import queryString from 'query-string'
 import { useFormContext } from 'react-hook-form'
 
@@ -15,6 +14,14 @@ import { type ChatItem } from 'components/Chat/types'
 import { apiFetch, queryStringOptions } from 'utils/api'
 
 import { type APIChatResponse, type ChatContextType } from './types'
+
+export type APIError = {
+  status: number
+  data: {
+    userMessage?: string
+    [key: string]: any
+  }
+}
 
 const ChatContext = createContext<ChatContextType | null>(null)
 
@@ -98,21 +105,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
         let jsonResponse: APIChatResponse | null = null
 
-        if (response.ok) {
-          try {
-            jsonResponse = await response.json()
-            setJson(jsonResponse as Record<string, unknown>)
-          } catch {
-            console.error('Failed to parse JSON response')
-          }
-        } else {
-          // Store error response
-          try {
-            const errorJson = await response.json()
-            setJson(errorJson as Record<string, unknown>)
-          } catch {
-            console.error('Failed to parse error response')
-          }
+        try {
+          jsonResponse = await response.json()
+          setJson(jsonResponse as Record<string, unknown>)
+        } catch {
+          console.error('Failed to parse JSON response')
         }
 
         if (jsonResponse) {
@@ -123,6 +120,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           const aiMessage: ChatItem = {
             value: jsonResponse.request.summary,
             type: 'ai',
+            error: !response.ok,
             body: jsonResponse.request.body,
             url: jsonResponse.request.url
           }
