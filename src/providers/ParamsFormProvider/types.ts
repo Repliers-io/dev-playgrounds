@@ -18,6 +18,7 @@ export type CustomFormParams = {
   radius: number | null
   search: string
 
+  locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
   locationsType: ('area' | 'neighbourhood' | 'city')[]
   locationsFields: string
   locationId: string
