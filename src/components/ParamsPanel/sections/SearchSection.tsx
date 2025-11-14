@@ -10,7 +10,8 @@ import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationTypes = ['area', 'city', 'neighborhood']
+const locationsTypeOptions = ['area', 'city', 'neighborhood']
+const locationsSortByOptions = ['typeAsc', 'typeDesc']
 
 const SearchSection = () => {
   const { params } = useSearch()
@@ -52,7 +53,13 @@ const SearchSection = () => {
             allowEmpty
             label="type"
             name="locationsType"
-            options={locationTypes}
+            options={locationsTypeOptions}
+          />
+
+          <ParamsSelect
+            label="sortBy"
+            name="locationsSortBy"
+            options={locationsSortByOptions}
           />
 
           <ParamsField
