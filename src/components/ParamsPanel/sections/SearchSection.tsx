@@ -56,12 +56,16 @@ const SearchSection = () => {
             options={locationsTypeOptions}
           />
 
-          <ParamsSelect
-            label="sortBy"
-            name="locationsSortBy"
-            options={locationsSortByOptions}
-            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
-          />
+          {locationsEndpoint && (
+            <>
+              <ParamsSelect
+                label="sortBy"
+                name="locationsSortBy"
+                options={locationsSortByOptions}
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
+              />
+            </>
+          )}
 
           <ParamsField
             name="state"
