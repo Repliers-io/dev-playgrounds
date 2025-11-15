@@ -60,6 +60,7 @@ const SearchSection = () => {
             label="sortBy"
             name="locationsSortBy"
             options={locationsSortByOptions}
+            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
           />
 
           <ParamsField
@@ -86,6 +87,7 @@ const SearchSection = () => {
               <ParamsField
                 name="locationId"
                 tooltip="Array of locations to fetch by locationId. For now to be provided as a comma-separated list"
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L79"
               />
 
               <Stack spacing={1} direction="row" justifyContent="space-between">
@@ -121,7 +123,12 @@ const SearchSection = () => {
             options={trueFalseOptions}
           />
 
-          <ParamsField noClear label="fields" name="locationsFields" />
+          <ParamsField
+            noClear
+            label="fields"
+            name="locationsFields"
+            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L88C17"
+          />
         </Stack>
       </Box>
     </SectionTemplate>
