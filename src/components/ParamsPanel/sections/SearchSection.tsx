@@ -127,7 +127,7 @@ const SearchSection = () => {
             noClear
             label="fields"
             name="locationsFields"
-            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L88C17"
+            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L88"
           />
         </Stack>
       </Box>
