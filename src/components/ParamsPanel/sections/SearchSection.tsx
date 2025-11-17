@@ -10,7 +10,8 @@ import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationTypes = ['area', 'city', 'neighborhood']
+const locationsTypeOptions = ['area', 'city', 'neighborhood']
+const locationsSortByOptions = ['typeAsc', 'typeDesc']
 
 const SearchSection = () => {
   const { params } = useSearch()
@@ -52,8 +53,19 @@ const SearchSection = () => {
             allowEmpty
             label="type"
             name="locationsType"
-            options={locationTypes}
+            options={locationsTypeOptions}
           />
+
+          {locationsEndpoint && (
+            <>
+              <ParamsSelect
+                label="sortBy"
+                name="locationsSortBy"
+                options={locationsSortByOptions}
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
+              />
+            </>
+          )}
 
           <ParamsField
             name="state"
@@ -79,6 +91,7 @@ const SearchSection = () => {
               <ParamsField
                 name="locationId"
                 tooltip="Array of locations to fetch by locationId. For now to be provided as a comma-separated list"
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L79"
               />
 
               <Stack spacing={1} direction="row" justifyContent="space-between">
@@ -114,7 +127,12 @@ const SearchSection = () => {
             options={trueFalseOptions}
           />
 
-          <ParamsField noClear label="fields" name="locationsFields" />
+          <ParamsField
+            noClear
+            label="fields"
+            name="locationsFields"
+            link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L88"
+          />
         </Stack>
       </Box>
     </SectionTemplate>

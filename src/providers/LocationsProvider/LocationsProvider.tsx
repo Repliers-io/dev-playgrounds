@@ -48,6 +48,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       apiKey,
       apiUrl,
       locationsType,
+      locationsSortBy,
       locationsFields,
       locationsPageNum,
       locationsResultsPerPage,
@@ -60,6 +61,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     if (!apiKey || !apiUrl) return
 
     rest.type = locationsType
+    rest.sortBy = locationsSortBy
     rest.fields = locationsFields || ''
     rest.pageNum = locationsPageNum
     rest.resultsPerPage = locationsResultsPerPage
