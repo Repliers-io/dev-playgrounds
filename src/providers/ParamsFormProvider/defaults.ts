@@ -71,6 +71,10 @@ const defaultFormState: Partial<FormParams> = {
   fields: listingFields.join(','),
   statistics: defaultStatisticsFields.join(','),
   imageSearchItems: [],
+  textSearchItems: {
+    model: 'small',
+    items: []
+  },
   minListDate: undefined,
   maxListDate: undefined,
   minSoldDate: undefined,

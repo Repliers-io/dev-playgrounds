@@ -26,7 +26,14 @@ function App() {
   const gtmKey = import.meta.env.VITE_GTM_KEY || ''
   const urlParams = queryString.parse(window.location.search)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { lat, lng, zoom, imageSearchItems, ...filteredParams } = urlParams // remove mapbox coords and POST-only fields
+  const {
+    lat,
+    lng,
+    zoom,
+    imageSearchItems, // eslint-disable-line @typescript-eslint/no-unused-vars
+    textSearchItems, // eslint-disable-line @typescript-eslint/no-unused-vars
+    ...filteredParams
+  } = urlParams // remove mapbox coords and POST-only fields
 
   const mapParams = useMemo(() => ({ lat, lng, zoom }) as MapCoords, [])
 

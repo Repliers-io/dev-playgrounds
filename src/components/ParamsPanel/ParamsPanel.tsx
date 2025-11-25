@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback } from 'react'
 import { type Position } from 'geojson'
 import queryString from 'query-string'
@@ -15,6 +16,7 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
 import {
+  AiTextSection,
   BoundsSection,
   CenterRadiusSection,
   ClustersSection,
@@ -53,8 +55,13 @@ const ParamsPanel = () => {
       const { lng, lat } = center || {}
 
       // Filter out POST-only fields from URL params
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageSearchItems, unknowns, nlpId, ...urlParams } = params
+      const {
+        imageSearchItems,
+        textSearchItems,
+        unknowns,
+        nlpId,
+        ...urlParams
+      } = params
 
       const query = queryString.stringify(
         { lng, lat, zoom, ...urlParams },
@@ -206,6 +213,7 @@ const ParamsPanel = () => {
               <QueryParamsSection />
               <ParamsPresets />
               <ImageSection />
+              <AiTextSection />
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />

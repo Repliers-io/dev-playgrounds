@@ -52,7 +52,12 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'endpoint',
   'search',
   'locationsType',
+  'locationsSortBy',
   'locationsFields',
+  'locationsBoundary',
+  'locationsHasBoundary',
+  'locationsPageNum',
+  'locationsResultsPerPage',
   'locationId',
   'radius'
 ]

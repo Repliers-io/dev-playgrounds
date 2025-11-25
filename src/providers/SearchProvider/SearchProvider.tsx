@@ -31,7 +31,7 @@ const emptySavedResponse = {
 }
 
 // Fields that should be sent in POST body instead of query params
-const POST_BODY_FIELDS = ['imageSearchItems']
+const POST_BODY_FIELDS = ['imageSearchItems', 'textSearchItems']
 
 const apiUrl = import.meta.env.VITE_REPLIERS_API_URL || ''
 export const apiKey = import.meta.env.VITE_REPLIERS_API_KEY || ''
@@ -154,6 +154,24 @@ const SearchProvider = ({
           // Only add to POST if there are valid items
           if (validItems.length > 0) {
             postParams[key] = validItems
+          }
+        } else if (key === 'textSearchItems' && typeof value === 'object') {
+          // Special handling for textSearchItems - filter out empty items
+          const items = Array.isArray(value.items) ? value.items : []
+          const validItems = items
+            .filter((item: any) => Boolean(item.value?.trim()))
+            .map((item: any) => {
+              // Remove id field before sending to API
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { id, ...rest } = item
+              return rest
+            })
+          // Only add to POST if there are valid items
+          if (validItems.length > 0) {
+            postParams[key] = {
+              model: value.model || 'small',
+              items: validItems
+            }
           }
         } else {
           postParams[key] = value
