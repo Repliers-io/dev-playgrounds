@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import queryString from 'query-string'
 import { useFormContext } from 'react-hook-form'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -9,6 +10,7 @@ import { useListing } from 'providers/ListingProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
+import { queryStringOptions } from 'utils/api'
 
 import './CardsCarousel.css'
 
@@ -23,7 +25,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const ref = useRef<HTMLDivElement>(null)
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
-  const cardWidth = 258
+  const cardWidth = 246
   const scrollBy = cardWidth * 1 // one card at a time
 
   const handleNextClick = () =>
@@ -32,8 +34,30 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
   const handlePrevClick = () =>
     ref.current?.scrollBy({ left: -scrollBy, behavior: 'smooth' })
 
-  const handleDetailsClick = (mlsNumber: string, boardId: number) => {
-    // Switch to property tab
+  const getListingUrl = (mlsNumber: string, boardId: number) => {
+    const currentParams = queryString.parse(window.location.search)
+    const newParams = {
+      ...currentParams,
+      tab: 'listing',
+      mlsNumber,
+      listingBoardId: boardId
+    }
+    return `${window.location.pathname}?${queryString.stringify(newParams, queryStringOptions)}`
+  }
+
+  const handleDetailsClick = (
+    mlsNumber: string,
+    boardId: number,
+    event?: React.MouseEvent
+  ) => {
+    // Check if Ctrl/Cmd key is pressed or middle mouse button (button === 1)
+    if (event && (event.ctrlKey || event.metaKey || event.button === 1)) {
+      // Let the browser handle it via href
+      return
+    }
+
+    // Normal click - prevent default and switch to property tab in current window
+    event?.preventDefault()
     setLoading(true)
     setValue('tab', 'listing')
     // Fill property fields
@@ -129,7 +153,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
                 <Skeleton
                   key={index}
                   variant="rounded"
-                  sx={{ minWidth: 232, height: 84, mr: 1 }}
+                  sx={{ minWidth: 212, height: 84, mr: 1 }}
                 />
               ))}
             </>
@@ -140,6 +164,7 @@ const CardsCarousel = ({ open }: { open: boolean }) => {
               listing={listing}
               onClick={focusMarker}
               onDetailsClick={handleDetailsClick}
+              url={getListingUrl(listing.mlsNumber, listing.boardId)}
             />
           ))}
         </Box>
