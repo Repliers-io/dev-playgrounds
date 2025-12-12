@@ -20,8 +20,9 @@ const EmptyState = () => {
         No Listing Data
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Enter an <b style={{ fontWeight: 600 }}>mlsNumber</b> in the Listing
-        Parameters to view listing details.
+        Enter an <b style={{ fontWeight: 600 }}>mlsNumber</b> in the{' '}
+        <span style={{ textTransform: 'uppercase' }}>Listing Parameters</span>{' '}
+        to view listing details.
       </Typography>
       <ProTip
         width="auto"
