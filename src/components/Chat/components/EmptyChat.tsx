@@ -1,5 +1,7 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
 
+import ProTip from 'components/ProTip'
+
 import { useChat } from 'providers/ChatProvider'
 
 const startPhrases = [
@@ -29,23 +31,13 @@ const EmptyChat = () => {
         textAlign: 'center'
       }}
     >
-      <Typography variant="h6" color="text.secondary" gutterBottom>
+      <Typography variant="h6" color="text.secondary">
         Chat messages will appear here
       </Typography>
-      <Typography variant="body2" color="text.secondary">
-        You can use an existing (stored externally) <i>nlpId</i> to continue the
-        conversation,
-        <br /> or leave it blank to start a new chat session.
-        <br />
-      </Typography>
 
-      <Box sx={{ mt: 6, maxWidth: 600 }}>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mb: 2, fontWeight: 500 }}
-        >
-          Try these examples to get started:
+      <Box sx={{ maxWidth: 600, mt: 2, mb: 4 }}>
+        <Typography variant="body2" sx={{ mb: 1.25 }}>
+          Try these examples to get started
         </Typography>
         <Stack
           gap={1.25}
@@ -66,6 +58,19 @@ const EmptyChat = () => {
           ))}
         </Stack>
       </Box>
+
+      <ProTip
+        width="auto"
+        message={
+          <>
+            You can use an existing <b style={{ fontWeight: 600 }}>nlpId</b>{' '}
+            and/or <b style={{ fontWeight: 600 }}>clientId</b> to continue the
+            conversation,
+            <br />
+            or leave it blank to start a new chat session.
+          </>
+        }
+      />
     </Box>
   )
 }

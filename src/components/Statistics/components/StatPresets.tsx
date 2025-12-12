@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form'
 
-import { Button, Stack } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 
 import { type FormParams, useParamsForm } from 'providers/ParamsFormProvider'
 import { highlightPresetFields } from 'utils/dom'
@@ -32,7 +32,9 @@ const StatPresets = () => {
 
   return (
     <Stack gap={1.25}>
-      Usage examples:
+      <Typography variant="body2" fontWeight={600}>
+        Usage examples
+      </Typography>
       <Stack direction="row" gap={1.25} flexWrap="wrap">
         {presets.map((preset) => (
           <Button
