@@ -38,7 +38,7 @@ const ProTip: React.FC<ProTipProps> = ({ message, width = 'auto', button }) => {
               sx={{
                 py: 0.5,
                 borderRadius: 1,
-                margin: '-6px -18px -6px !important'
+                margin: '-6px -8px -6px !important'
               }}
               endIcon={button.icon}
               onClick={button.onClick}
