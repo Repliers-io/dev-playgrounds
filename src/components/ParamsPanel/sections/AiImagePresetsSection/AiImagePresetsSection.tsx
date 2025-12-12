@@ -21,12 +21,12 @@ const isImagePreset = (preset: Preset): preset is ImagePreset => {
 }
 
 const textPresets: TextPreset[] = [
-  { value: 'wine cellar' },
   { value: 'sauna' },
-  { value: 'dock' },
   { value: 'gym' },
   { value: 'library' },
-  { value: 'koi pond' }
+  { value: 'wine cellar' },
+  { value: 'koi pond' },
+  { value: 'dock' }
 ]
 
 const imagePresets: ImagePreset[] = [
