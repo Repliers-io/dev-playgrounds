@@ -154,17 +154,21 @@ const Chat = () => {
         <Stack spacing={1.5} direction="column" width="100%">
           <Stack spacing={1.5} direction="row" alignItems="flex-end">
             <Box sx={{ width: 130 }}>
+              <ParamsField name="clientId" />
+            </Box>
+            <ParamsField name="nlpId" />
+            <Box sx={{ width: 60 }}>
               <ParamsSelect
                 noNull
                 name="nlpVersion"
                 options={nlpVersionOptions}
               />
             </Box>
-            <ParamsField name="nlpId" />
+
             <Button
+              disabled={!nlpId}
               variant="outlined"
               onClick={restartSession}
-              disabled={!nlpId}
               startIcon={<ReplayIcon fontSize="small" sx={{ mr: -0.5 }} />}
               sx={{
                 px: 1.25,

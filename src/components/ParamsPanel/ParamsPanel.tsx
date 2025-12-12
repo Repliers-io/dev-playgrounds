@@ -16,12 +16,13 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
 import {
+  AiImagePresetsSection,
+  AiImageSection,
   AiTextSection,
   BoundsSection,
   CenterRadiusSection,
   ClustersSection,
   CredentialsSection,
-  ImageSection,
   ListingParamsSection,
   LocationParamsSection,
   ParamsPresets,
@@ -212,7 +213,8 @@ const ParamsPanel = () => {
             <>
               <QueryParamsSection />
               <ParamsPresets />
-              <ImageSection />
+              <AiImageSection />
+              <AiImagePresetsSection />
               <AiTextSection />
               <LocationParamsSection />
               <StatisticsSection />
