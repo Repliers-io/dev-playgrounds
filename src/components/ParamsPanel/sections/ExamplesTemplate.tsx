@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box, Stack } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { type BoxProps } from '@mui/material/Box/Box'
 
 interface ExamplesTemplateProps extends BoxProps {
@@ -9,7 +9,7 @@ interface ExamplesTemplateProps extends BoxProps {
 }
 
 const ExamplesTemplate: React.FC<ExamplesTemplateProps> = ({
-  title = 'Usage examples:',
+  title = 'Usage examples',
   children
 }) => {
   return (
@@ -27,7 +27,9 @@ const ExamplesTemplate: React.FC<ExamplesTemplateProps> = ({
       }}
       spacing={1.25}
     >
-      <Box>{title}</Box>
+      <Typography variant="body2" fontWeight={600}>
+        {title}
+      </Typography>
       {children}
     </Stack>
   )
