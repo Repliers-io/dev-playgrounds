@@ -85,6 +85,9 @@ const defaultFormState: Partial<FormParams> = {
    */
   nlpVersion: '3',
   nlpId: '',
+  clientId: '',
+  nlpListings: null,
+  nlpFields: '',
   unknowns: {}
 }
 

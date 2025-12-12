@@ -21,6 +21,7 @@ import {
   AiTextSection,
   BoundsSection,
   CenterRadiusSection,
+  ChatParamsSection,
   ClustersSection,
   CredentialsSection,
   ListingParamsSection,
@@ -209,6 +210,8 @@ const ParamsPanel = () => {
           <UnknownParametersSection />
           {listingTab ? (
             <ListingParamsSection />
+          ) : chatTab ? (
+            <ChatParamsSection />
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />
@@ -226,7 +229,7 @@ const ParamsPanel = () => {
               <CenterRadiusSection />
             </>
           )}
-          {!listingTab && <BoundsSection />}
+          {!listingTab && !chatTab && <BoundsSection />}
         </Stack>
       </Stack>
     </Box>

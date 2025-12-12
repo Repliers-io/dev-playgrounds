@@ -64,7 +64,7 @@ const EmptyChat = () => {
         message={
           <>
             You can use an existing <b style={{ fontWeight: 600 }}>nlpId</b>{' '}
-            and/or <b style={{ fontWeight: 600 }}>clientId</b> to continue the
+            (and <b style={{ fontWeight: 600 }}>clientId</b>) to continue the
             conversation,
             <br />
             or leave it blank to start a new chat session.

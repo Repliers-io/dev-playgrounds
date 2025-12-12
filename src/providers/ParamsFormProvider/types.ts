@@ -44,6 +44,9 @@ export type CustomFormParams = {
   // Chat params
   nlpVersion: string
   nlpId: string
+  clientId: string
+  nlpListings: string | null
+  nlpFields: string
   unknowns: Record<string, any>
 }
 
