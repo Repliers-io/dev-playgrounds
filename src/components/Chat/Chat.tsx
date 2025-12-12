@@ -2,17 +2,13 @@ import React, { useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined'
-import ReplayIcon from '@mui/icons-material/Replay'
 import {
   Box,
-  Button,
   CircularProgress,
   IconButton,
   Stack,
   TextField
 } from '@mui/material'
-
-import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
 import { useChat } from 'providers/ChatProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
@@ -24,16 +20,13 @@ import { ChatHistoryList, EmptyChat } from './components'
 import { type ChatItem } from './types'
 import { extractFilters } from './utils'
 
-const nlpVersionOptions = ['1', '2', '3'] as const
-
 const Chat = () => {
   const [message, setMessage] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const { loading, history, sendMessage, restartSession } = useChat()
-  const { watch, setValue } = useFormContext()
+  const { loading, history, sendMessage } = useChat()
+  const { setValue } = useFormContext()
   const { options } = useSelectOptions()
   const { onChange } = useParamsForm()
-  const nlpId = watch('nlpId')
 
   const applyFilters = (item: ChatItem) => {
     const { filters, unknowns } = extractFilters(item, options)
@@ -151,75 +144,42 @@ const Chat = () => {
           borderColor: '#eee'
         }}
       >
-        <Stack spacing={1.5} direction="column" width="100%">
-          <Stack spacing={1.5} direction="row" alignItems="flex-end">
-            <Box sx={{ width: 130 }}>
-              <ParamsField name="clientId" />
-            </Box>
-            <ParamsField name="nlpId" />
-            <Box sx={{ width: 60 }}>
-              <ParamsSelect
-                noNull
-                name="nlpVersion"
-                options={nlpVersionOptions}
-              />
-            </Box>
-
-            <Button
-              disabled={!nlpId}
-              variant="outlined"
-              onClick={restartSession}
-              startIcon={<ReplayIcon fontSize="small" sx={{ mr: -0.5 }} />}
-              sx={{
-                px: 1.25,
-                py: 0.25,
-                width: 130,
-                height: 'auto',
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: 'Urbanist Variable'
-              }}
-            >
-              Restart session
-            </Button>
-          </Stack>
-          <Box sx={{ position: 'relative' }}>
-            <TextField
-              rows={2}
-              multiline
-              fullWidth
-              value={message}
-              disabled={loading}
-              inputRef={inputRef}
-              placeholder="Type your message..."
-              onChange={(e) => setMessage(e.target.value)}
-              sx={{ '& .MuiInputBase-input': { bgcolor: '#f4f4f4', pr: 6 } }}
-              slotProps={{
-                input: {
-                  onKeyDown: handleMessageTyping
-                }
-              }}
-            />
-            <IconButton
-              size="small"
-              disabled={loading}
-              onClick={submitMessage}
-              sx={{
-                right: 8,
-                bottom: 8,
-                borderRadius: 8,
-                position: 'absolute',
-                bgcolor: '#fff'
-              }}
-            >
-              {loading ? (
-                <CircularProgress size={14} />
-              ) : (
-                <ArrowUpwardOutlinedIcon sx={{ fontSize: 20 }} />
-              )}
-            </IconButton>
-          </Box>
-        </Stack>
+        <Box sx={{ position: 'relative', width: '100%' }}>
+          <TextField
+            rows={2}
+            multiline
+            fullWidth
+            value={message}
+            disabled={loading}
+            inputRef={inputRef}
+            placeholder="Type your message..."
+            onChange={(e) => setMessage(e.target.value)}
+            sx={{ '& .MuiInputBase-input': { bgcolor: '#f4f4f4', pr: 6 } }}
+            slotProps={{
+              input: {
+                onKeyDown: handleMessageTyping
+              }
+            }}
+          />
+          <IconButton
+            size="small"
+            disabled={loading}
+            onClick={submitMessage}
+            sx={{
+              right: 8,
+              bottom: 8,
+              borderRadius: 8,
+              position: 'absolute',
+              bgcolor: '#fff'
+            }}
+          >
+            {loading ? (
+              <CircularProgress size={14} />
+            ) : (
+              <ArrowUpwardOutlinedIcon sx={{ fontSize: 20 }} />
+            )}
+          </IconButton>
+        </Box>
       </Box>
     </Stack>
   )
