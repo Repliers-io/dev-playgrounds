@@ -218,7 +218,8 @@ const ParamsPanel = () => {
               <ParamsPresets />
               <AiImageSection />
               <AiImagePresetsSection />
-              <AiTextSection />
+              {/** AiTextSection is temporary removed until we make this feature generally available */}
+              {/* <AiTextSection /> */}
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />
