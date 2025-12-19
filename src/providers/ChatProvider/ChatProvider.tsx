@@ -48,6 +48,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const nlpId = getValues('nlpId')
       const nlpVersion = getValues('nlpVersion')
+      const clientId = getValues('clientId')
+      const nlpListings = getValues('nlpListings')
+      const nlpFields = getValues('nlpFields')
 
       // Add user message to history immediately
       const userMessage: ChatItem = {
@@ -70,6 +73,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const bodyParams: Record<string, string> = { prompt: message }
       if (nlpId) bodyParams.nlpId = nlpId
+      if (clientId) bodyParams.clientId = clientId
+      if (nlpListings !== null && nlpListings !== undefined)
+        bodyParams.listings = nlpListings
+      if (nlpFields) bodyParams.fields = nlpFields
 
       setRequest(requestUrl)
       setRequestBody(bodyParams)

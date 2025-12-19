@@ -1,14 +1,18 @@
+import { useFormContext } from 'react-hook-form'
 import { Area, Bar } from 'recharts'
 
+import AutoGraphOutlinedIcon from '@mui/icons-material/AutoGraphOutlined'
 import { Box, Stack } from '@mui/material'
 
+import ProTip from 'components/ProTip'
+
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import colors from './colors'
 import {
   DisabledResults,
   EmptyResults,
-  ProTip,
   StatAreaChart,
   StatBarChart,
   StatPresets
@@ -52,8 +56,20 @@ const getColumns = (data: any) => {
 }
 
 const Statistics = () => {
+  const { onChange } = useParamsForm()
+  const { watch, setValue } = useFormContext()
   const { statistics } = useSearch()
   const statCharts = Object.entries(statistics || {})
+
+  const statsEnabled = watch('stats')
+  const listingsEnabled = watch('listings')
+
+  const handleProTipClick = () => {
+    setValue('listings', 'false')
+    onChange()
+  }
+
+  const showProTip = statsEnabled && listingsEnabled !== 'false'
 
   // split charts array into multiple charts for each column of dates
   const charts: typeof statCharts = []
@@ -100,7 +116,16 @@ const Statistics = () => {
             spacing={1.25}
           >
             <DisabledResults />
-            <ProTip />
+            {showProTip && (
+              <ProTip
+                message="PRO tip: Set `listings=false` to speed up load time."
+                button={{
+                  label: 'Set',
+                  icon: <AutoGraphOutlinedIcon />,
+                  onClick: handleProTipClick
+                }}
+              />
+            )}
             <StatPresets />
           </Stack>
         )}

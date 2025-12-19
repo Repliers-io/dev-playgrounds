@@ -34,10 +34,19 @@ export type CustomFormParams = {
     url?: string
     boost: number
   }[]
+  textSearchItems?: {
+    model: 'small' | 'large'
+    items: {
+      value: string
+    }[]
+  }
 
   // Chat params
   nlpVersion: string
   nlpId: string
+  clientId: string
+  nlpListings: string | null
+  nlpFields: string
   unknowns: Record<string, any>
 }
 

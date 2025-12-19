@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback } from 'react'
 import { type Position } from 'geojson'
 import queryString from 'query-string'
@@ -15,11 +16,14 @@ import useDeepCompareEffect from 'hooks/useDeepCompareEffect'
 import { queryStringOptions } from 'utils/api'
 
 import {
+  AiImagePresetsSection,
+  AiImageSection,
+  AiTextSection,
   BoundsSection,
   CenterRadiusSection,
+  ChatParamsSection,
   ClustersSection,
   CredentialsSection,
-  ImageSection,
   ListingParamsSection,
   LocationParamsSection,
   ParamsPresets,
@@ -53,8 +57,13 @@ const ParamsPanel = () => {
       const { lng, lat } = center || {}
 
       // Filter out POST-only fields from URL params
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageSearchItems, unknowns, nlpId, ...urlParams } = params
+      const {
+        imageSearchItems,
+        textSearchItems,
+        unknowns,
+        nlpId,
+        ...urlParams
+      } = params
 
       const query = queryString.stringify(
         { lng, lat, zoom, ...urlParams },
@@ -201,11 +210,15 @@ const ParamsPanel = () => {
           <UnknownParametersSection />
           {listingTab ? (
             <ListingParamsSection />
+          ) : chatTab ? (
+            <ChatParamsSection />
           ) : !locationsMap ? (
             <>
               <QueryParamsSection />
               <ParamsPresets />
-              <ImageSection />
+              <AiImageSection />
+              <AiImagePresetsSection />
+              <AiTextSection />
               <LocationParamsSection />
               <StatisticsSection />
               <ClustersSection />
@@ -216,7 +229,7 @@ const ParamsPanel = () => {
               <CenterRadiusSection />
             </>
           )}
-          {!listingTab && <BoundsSection />}
+          {!listingTab && !chatTab && <BoundsSection />}
         </Stack>
       </Stack>
     </Box>

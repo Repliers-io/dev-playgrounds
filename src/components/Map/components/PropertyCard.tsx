@@ -15,11 +15,17 @@ const defaultPrice = '$,$$$,$$$'
 const PropertyCard = ({
   listing,
   onClick,
-  onDetailsClick
+  onDetailsClick,
+  url
 }: {
   listing: Listing
   onClick?: (mlsNumber: string, boardId: number) => void
-  onDetailsClick?: (mlsNumber: string, boardId: number) => void
+  onDetailsClick?: (
+    mlsNumber: string,
+    boardId: number,
+    event?: React.MouseEvent
+  ) => void
+  url?: string
 }) => {
   const {
     address,
@@ -54,7 +60,7 @@ const PropertyCard = ({
 
   const handleDetailsClick = (event: React.MouseEvent) => {
     event.stopPropagation() // Prevent card click
-    onDetailsClick?.(listing.mlsNumber, listing.boardId)
+    onDetailsClick?.(listing.mlsNumber, listing.boardId, event)
   }
 
   const currentImage = listing.images?.[0] || ''
@@ -69,7 +75,7 @@ const PropertyCard = ({
         p: 1,
         mr: 1,
         '&:last-child': { mr: 0 },
-        width: 232,
+        width: 220,
         cursor: 'pointer',
         bgcolor: 'background.default',
         border: 1,
@@ -135,6 +141,8 @@ const PropertyCard = ({
       </Stack>
       <IconButton
         size="small"
+        component="a"
+        href={url}
         onClick={handleDetailsClick}
         sx={{
           position: 'absolute',

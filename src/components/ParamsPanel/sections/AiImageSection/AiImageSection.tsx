@@ -27,7 +27,7 @@ const DEFAULT_ITEM: Omit<ImageSearchItem, 'id'> = {
   boost: 1
 }
 
-const AiSection = () => {
+const AiImageSection = () => {
   const { onChange } = useParamsForm()
   const { watch, setValue } = useFormContext()
 
@@ -154,7 +154,7 @@ const AiSection = () => {
         title="AI Image Search"
         link="https://help.repliers.com/en/article/ai-image-search-implementation-guide-mx30ji/"
       >
-        <Stack spacing={3}>
+        <Stack spacing={1.5}>
           {/* Cover Image selector */}
           <ParamsSelect
             name="coverImage"
@@ -177,4 +177,4 @@ const AiSection = () => {
   )
 }
 
-export default AiSection
+export default AiImageSection

@@ -71,6 +71,10 @@ const defaultFormState: Partial<FormParams> = {
   fields: listingFields.join(','),
   statistics: defaultStatisticsFields.join(','),
   imageSearchItems: [],
+  textSearchItems: {
+    model: 'small',
+    items: []
+  },
   minListDate: undefined,
   maxListDate: undefined,
   minSoldDate: undefined,
@@ -81,6 +85,9 @@ const defaultFormState: Partial<FormParams> = {
    */
   nlpVersion: '3',
   nlpId: '',
+  clientId: '',
+  nlpListings: null,
+  nlpFields: '',
   unknowns: {}
 }
 
