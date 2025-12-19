@@ -1,5 +1,3 @@
-import { useSearch } from 'providers/SearchProvider'
-
 /**
  * Gets the value at path of object
  * @param obj The object to query
