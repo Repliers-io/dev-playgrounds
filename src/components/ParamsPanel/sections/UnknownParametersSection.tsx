@@ -35,7 +35,7 @@ const UnknownParametersSection = () => {
     <SectionTemplate
       id="unknown-parameters"
       index={11}
-      title="Unknown Parameters"
+      title="Other Parameters"
       rightSlot={
         <Button
           type="submit"
@@ -80,7 +80,7 @@ const UnknownParametersSection = () => {
                 sx={{
                   pl: 1,
                   fontSize: 12,
-                  color: '#c62828',
+                  color: '#000000',
                   wordBreak: 'break-word'
                 }}
               >
