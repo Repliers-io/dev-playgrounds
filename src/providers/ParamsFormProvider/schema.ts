@@ -67,9 +67,13 @@ const schema = Joi.object({
       'number.max': 'Results per page must be at most 100'
     }),
   minBedrooms: Joi.number().integer().positive().allow(null, false, ''),
-  minBaths: Joi.number().integer().positive().allow(null, false, ''),
+  maxBedrooms: Joi.number().integer().positive().allow(null, false, ''),
+  minBathrooms: Joi.number().integer().positive().allow(null, false, ''),
+  maxBathrooms: Joi.number().integer().positive().allow(null, false, ''),
   minGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
+  maxGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
   minParkingSpaces: Joi.number().integer().positive().allow(null, false, ''),
+  maxParkingSpaces: Joi.number().integer().positive().allow(null, false, ''),
   fields: Joi.string().allow(null, false, ''),
   statistics: Joi.string().allow(null, false, ''),
 
