@@ -101,8 +101,8 @@ const QueryParamsSection = () => {
             <ParamsField name="maxBedrooms" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
-            <ParamsField name="minBaths" />
-            <ParamsField name="maxBaths" />
+            <ParamsField name="minBathrooms" />
+            <ParamsField name="maxBathrooms" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minGarageSpaces" />
