@@ -55,8 +55,8 @@ const UnknownParametersSection = () => {
       }
       sx={{
         '& > div:nth-of-type(2)': {
-          bgcolor: '#fff5f5',
-          borderColor: '#ffcccc'
+          bgcolor: 'background.default',
+          borderColor: '#EEE'
         }
       }}
     >
@@ -100,7 +100,7 @@ const UnknownParametersSection = () => {
                   '&:hover': { bgcolor: 'transparent' }
                 }}
               >
-                <ClearIcon sx={{ fontSize: 18, color: '#c62828' }} />
+                <ClearIcon sx={{ fontSize: 18, color: 'rgb(56, 66, 72)' }} />
               </IconButton>
             </Box>
           )
