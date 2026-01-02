@@ -23,7 +23,7 @@ const TypingText = ({
       return
     }
 
-    let currentText = text[0]
+    let currentText = text[0] || ''
     let index = 1
 
     const interval = setInterval(() => {
