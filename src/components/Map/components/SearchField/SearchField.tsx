@@ -22,10 +22,10 @@ const debounceDelay = 300
 
 const SearchField = () => {
   const { onChange } = useParamsForm()
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const { loading, locations, clearData } = useLocations()
+  const { params, clearData: clearSearchData } = useSearch()
   const { mapRef, focusedMarker, focusLocation } = useMapOptions()
-  const { params /*, setPolygon, clearData: clearSearchData*/ } = useSearch()
   const initialValue = params.search || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
@@ -35,6 +35,7 @@ const SearchField = () => {
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
 
   const setValues = (values: Record<string, any>) => {
+    clearSearchData()
     Object.entries(values).forEach(([key, value]) => {
       setValue(key as any, value, { shouldValidate: false })
     })
@@ -128,22 +129,18 @@ const SearchField = () => {
       // onChange()
     } else {
       setValues({
-        state: null,
-        area: null,
-        city: null,
-        neighborhood: null,
+        state: undefined,
+        area: undefined,
+        city: undefined,
+        neighborhood: undefined,
         locationsLocationId: option.locationId,
-        endpoint: 'locations',
-        hasBoundary: false
+        locationsHasBoundary: false,
+        endpoint: 'locations'
       })
     }
   }
 
   const handleUseClick = (locationId: string) => {
-    // const currentLocationId = getValues('locationId') || ''
-    // const newLocationId = currentLocationId
-    //   ? `${currentLocationId},${locationId}`
-    //   : locationId
     setValues({
       tab: 'map',
       locationId
