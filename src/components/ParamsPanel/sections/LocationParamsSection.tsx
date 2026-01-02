@@ -10,6 +10,10 @@ const LocationParamsSection = () => {
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
           <ParamsField
+            name="locationId"
+            tooltip="Array of location identifiers. For now to be provided as a comma-separated list"
+          />
+          <ParamsField
             name="state"
             tooltip="Array of states. For now to be provided as a comma-separated list"
           />

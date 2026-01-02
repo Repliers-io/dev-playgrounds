@@ -22,7 +22,7 @@ const debounceDelay = 300
 
 const SearchField = () => {
   const { onChange } = useParamsForm()
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { loading, locations, clearData } = useLocations()
   const { mapRef, focusedMarker, focusLocation } = useMapOptions()
   const { params /*, setPolygon, clearData: clearSearchData*/ } = useSearch()
@@ -33,6 +33,13 @@ const SearchField = () => {
   const prevQuery = useRef<string>(initialValue)
 
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
+
+  const setValues = (values: Record<string, any>) => {
+    Object.entries(values).forEach(([key, value]) => {
+      setValue(key as any, value, { shouldValidate: false })
+    })
+    onChange()
+  }
 
   useEffect(() => {
     prevFocusedMarker.current?.classList.remove('focused')
@@ -120,15 +127,27 @@ const SearchField = () => {
       // clearSearchData()
       // onChange()
     } else {
-      setValue('locationId', option.locationId)
-      setValue('state', null)
-      setValue('area', null)
-      setValue('city', null)
-      setValue('neighborhood', null)
-      setValue('endpoint', 'locations')
-      setValue('hasBoundary', false)
-      onChange()
+      setValues({
+        state: null,
+        area: null,
+        city: null,
+        neighborhood: null,
+        locationsLocationId: option.locationId,
+        endpoint: 'locations',
+        hasBoundary: false
+      })
     }
+  }
+
+  const handleUseClick = (locationId: string) => {
+    // const currentLocationId = getValues('locationId') || ''
+    // const newLocationId = currentLocationId
+    //   ? `${currentLocationId},${locationId}`
+    //   : locationId
+    setValues({
+      tab: 'map',
+      locationId
+    })
   }
 
   const renderInputElement = (params: any) => {
@@ -179,6 +198,7 @@ const SearchField = () => {
         showBounds={!locationsEndpoint || Boolean(option.map.boundary)}
         onBoundsClick={() => handleBoundsClick(option)}
         onCenterClick={() => centerMap(option)}
+        onUseClick={handleUseClick}
         {...props}
         key={option.locationId}
         id={`option-${getLocationName(option)}`}
@@ -192,7 +212,7 @@ const SearchField = () => {
         left: 16,
         top: locationsEndpoint ? -46 : 16,
         boxShadow: locationsEndpoint ? 0 : 1,
-        width: 'min(calc(100% - 32px), 300px)',
+        width: 'min(calc(100% - 32px), 328px)',
         position: 'absolute',
         borderRadius: 1
       }}

@@ -35,6 +35,8 @@ export const listingOnlyParams: (keyof FormParams)[] = [
   'listingBoardId'
 ]
 
+export const listingsOnlyParams: (keyof FormParams)[] = ['locationId']
+
 export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterLimit',
   'clusterPrecision'
@@ -58,6 +60,6 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsHasBoundary',
   'locationsPageNum',
   'locationsResultsPerPage',
-  'locationId',
+  'locationsLocationId',
   'radius'
 ]

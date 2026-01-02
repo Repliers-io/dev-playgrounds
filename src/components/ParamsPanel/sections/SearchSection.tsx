@@ -64,6 +64,13 @@ const SearchSection = () => {
                 options={locationsSortByOptions}
                 link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
               />
+
+              <ParamsField
+                label="locationId"
+                name="locationsLocationId"
+                tooltip="Array of locations to fetch by locationId. For now to be provided as a comma-separated list"
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L79"
+              />
             </>
           )}
 
@@ -88,11 +95,6 @@ const SearchSection = () => {
                 name="neighborhood"
                 tooltip="Array of neighborhoods. For now to be provided as a comma-separated list"
               />
-              <ParamsField
-                name="locationId"
-                tooltip="Array of locations to fetch by locationId. For now to be provided as a comma-separated list"
-                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L79"
-              />
 
               <Stack spacing={1} direction="row" justifyContent="space-between">
                 <ParamsField
@@ -109,23 +111,21 @@ const SearchSection = () => {
             </>
           )}
 
-          {locationsAutocompleteEndpoint && (
-            <>
-              <ParamsSelect
-                label="boundary"
-                name="locationsBoundary"
-                tooltip="Fetch locations with boundary polygons for a small performance penalty"
-                options={trueFalseOptions}
-              />
-            </>
-          )}
-
           <ParamsSelect
             label="hasBoundary"
             name="locationsHasBoundary"
             tooltip="Only fetch locations that have boundary polygons"
             options={trueFalseOptions}
           />
+
+          {locationsAutocompleteEndpoint && (
+            <ParamsSelect
+              label="boundary"
+              name="locationsBoundary"
+              tooltip="Fetch locations with boundary polygons for a small performance penalty"
+              options={trueFalseOptions}
+            />
+          )}
 
           <ParamsField
             noClear
