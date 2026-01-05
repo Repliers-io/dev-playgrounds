@@ -37,8 +37,8 @@ export interface Filters {
   diningRoomQuality?: string[]
   kitchenQuality?: string[]
   frontOfStructureQuality?: string[]
-  minBaths?: number
-  maxBaths?: number
+  minBathrooms?: number
+  maxBathrooms?: number
   minBedrooms?: number
   maxBedrooms?: number
   minParkingSpaces?: number
@@ -49,6 +49,7 @@ export interface Filters {
   type?: string | string[]
   class?: string | string[]
   style?: string | string[]
+  locationId?: string | string[]
   state?: string | string[]
   area?: string | string[]
   city?: string | string[]

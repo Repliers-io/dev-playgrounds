@@ -21,7 +21,7 @@ export type CustomFormParams = {
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
   locationsType: ('area' | 'neighbourhood' | 'city')[]
   locationsFields: string
-  locationId: string
+  locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
   locationsResultsPerPage: number | null

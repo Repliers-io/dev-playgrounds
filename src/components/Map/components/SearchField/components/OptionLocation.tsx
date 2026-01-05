@@ -1,5 +1,6 @@
 import CropFreeIcon from '@mui/icons-material/CropFree'
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage'
+import InputOutlinedIcon from '@mui/icons-material/InputOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import LocationCityIcon from '@mui/icons-material/LocationCity'
 import MyLocationIcon from '@mui/icons-material/MyLocation'
@@ -16,6 +17,7 @@ const OptionLocation = ({
   onItemClick,
   onBoundsClick,
   onCenterClick,
+  onUseClick,
   ...props
 }: {
   id: string
@@ -24,6 +26,7 @@ const OptionLocation = ({
   onItemClick?: () => void
   onBoundsClick?: () => void
   onCenterClick?: () => void
+  onUseClick?: (locationId: string) => void
 }) => {
   const { address = {} } = option
   const addrScale =
@@ -48,18 +51,19 @@ const OptionLocation = ({
     <li
       {...props}
       id={id}
-      style={{ padding: '0 8px', margin: '-8px 0' }}
+      style={{ padding: '0 8px 0 8px', margin: '-8px 0' }}
       onClick={(e) => {
         e.stopPropagation()
       }}
     >
       <Stack
-        spacing={1}
-        direction="row"
+        gap={0.5}
         width="100%"
+        direction="row"
         alignItems="center"
         sx={{
-          p: 1,
+          pl: 1,
+          pr: 0.75,
           py: 0.25,
           width: '100%',
           borderRadius: 1,
@@ -71,7 +75,7 @@ const OptionLocation = ({
         onClick={onItemClick}
       >
         <Icon />
-        <Stack sx={{ flex: 1 }}>
+        <Stack sx={{ flex: 1, pl: 0.5 }}>
           <Typography
             noWrap
             variant="body1"
@@ -96,7 +100,6 @@ const OptionLocation = ({
         {showBounds && (
           <IconButton
             size="small"
-            sx={{ ml: 'auto', mr: -0.75 }}
             onClick={(e) => {
               e.stopPropagation()
               onBoundsClick?.()
@@ -107,13 +110,21 @@ const OptionLocation = ({
         )}
         <IconButton
           size="small"
-          sx={{ ml: 'auto', mr: -0.5 }}
           onClick={(e) => {
             e.stopPropagation()
             onCenterClick?.()
           }}
         >
           <MyLocationIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation()
+            onUseClick?.(option.locationId)
+          }}
+        >
+          <InputOutlinedIcon sx={{ fontSize: 17 }} />
         </IconButton>
       </Stack>
     </li>

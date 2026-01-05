@@ -7,6 +7,7 @@ import {
   clusterOnlyParams,
   customFormParams,
   listingOnlyParams,
+  listingsOnlyParams,
   searchOnlyParams,
   statsOnlyParams
 } from 'constants/form'
@@ -64,10 +65,19 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...listingOnlyParams, // Always exclude property-only params from listings
     ...(!params.stats ? statsOnlyParams : []),
     ...(!params.cluster ? clusterOnlyParams : []),
-    ...(params.tab !== 'locations' ? searchOnlyParams : [])
+    ...(params.tab !== 'locations' ? searchOnlyParams : []),
+    ...(params.tab === 'locations' ? listingsOnlyParams : [])
   ]
 
-  const maybeArrays = ['state', 'area', 'city', 'neighborhood', 'areaOrCity']
+  const maybeArrays = [
+    'locationsLocationId',
+    'locationId',
+    'state',
+    'area',
+    'city',
+    'neighborhood',
+    'areaOrCity'
+  ]
 
   const acc = Object.entries(params).reduce((acc, [key, value]) => {
     if (!fieldsToRemove.includes(key as FormParamKeys)) {
@@ -122,7 +132,7 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   const locationsParams = pick(
     params,
     params.endpoint === 'locations'
-      ? ['state', 'area', 'city', 'neighborhood', 'locationId']
+      ? ['state', 'area', 'city', 'neighborhood', 'locationsLocationId']
       : ['state', 'area', 'city']
   )
 

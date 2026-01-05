@@ -1,5 +1,3 @@
-import { useFormContext } from 'react-hook-form'
-
 import ReplayIcon from '@mui/icons-material/Replay'
 import { Box, Button, Stack } from '@mui/material'
 
@@ -12,9 +10,7 @@ import SectionTemplate from './SectionTemplate'
 const nlpVersionOptions = ['1', '2', '3'] as const
 
 const ChatParamsSection = () => {
-  const { watch } = useFormContext()
-  const { restartSession } = useChat()
-  const nlpId = watch('nlpId')
+  const { restartSession, history } = useChat()
 
   return (
     <SectionTemplate id="chat-params-section" index={1} title="Chat Parameters">
@@ -35,7 +31,7 @@ const ChatParamsSection = () => {
         <ParamsField name="nlpFields" label="fields" />
         <Box pt={0.5} width="100%" display="flex">
           <Button
-            disabled={!nlpId}
+            disabled={!history.length}
             variant="outlined"
             onClick={restartSession}
             startIcon={<ReplayIcon fontSize="small" sx={{ mr: -0.5 }} />}

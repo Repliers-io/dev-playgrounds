@@ -4,7 +4,8 @@ export type APIChatResponse = {
   nlpId: string
   request: {
     body?: Record<string, unknown>
-    summary: string
+    summary?: string
+    error?: string
     url?: string
   }
 }

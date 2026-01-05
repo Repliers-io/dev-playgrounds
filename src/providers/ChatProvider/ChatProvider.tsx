@@ -125,7 +125,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
           // Add AI response
           const aiMessage: ChatItem = {
-            value: jsonResponse.request.summary,
+            value:
+              jsonResponse.request.summary ||
+              jsonResponse.request.error ||
+              `Error ${response.status}: ${response.statusText}`,
             type: 'ai',
             error: !response.ok,
             body: jsonResponse.request.body,
