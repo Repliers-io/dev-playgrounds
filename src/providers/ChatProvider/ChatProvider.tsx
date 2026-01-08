@@ -141,7 +141,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
         return null
       } catch (error: any) {
-        console.error('1234')
         console.error('Chat API error:', error)
         setStatusCode(error?.status || 500)
         return null
