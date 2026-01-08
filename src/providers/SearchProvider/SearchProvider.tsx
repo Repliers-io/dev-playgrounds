@@ -255,7 +255,7 @@ const SearchProvider = ({
       }
       return json
     } catch (error: any) {
-      setStatusCode(error.status)
+      setStatusCode(error?.status)
       return null
     } finally {
       setLoading(false)
