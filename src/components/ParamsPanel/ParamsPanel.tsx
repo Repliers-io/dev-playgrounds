@@ -49,6 +49,8 @@ const ParamsPanel = () => {
   const locationsMap = tab === 'locations'
   const listingTab = tab === 'listing'
   const chatTab = tab === 'chat'
+  const mapTab = tab === 'map'
+  const statsTab = tab === 'stats'
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -186,7 +188,8 @@ const ParamsPanel = () => {
     canRenderMap,
     locationsMap,
     listingTab,
-    chatTab
+    chatTab,
+    mapTab
   ])
 
   return (
@@ -207,7 +210,7 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack gap={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
-          <UnknownParametersSection />
+          {mapTab || statsTab ? <UnknownParametersSection /> : null}
           {listingTab ? (
             <ListingParamsSection />
           ) : chatTab ? (
