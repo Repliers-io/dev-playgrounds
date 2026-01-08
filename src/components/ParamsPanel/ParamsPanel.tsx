@@ -48,7 +48,6 @@ const ParamsPanel = () => {
   const locationsMap = tab === 'locations'
   const listingTab = tab === 'listing'
   const chatTab = tab === 'chat'
-  const mapTab = tab === 'map'
 
   const renderTabContent = () => {
     switch (tab) {
