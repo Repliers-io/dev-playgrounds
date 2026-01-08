@@ -126,13 +126,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           // Add AI response
           const aiMessage: ChatItem = {
             value:
-              jsonResponse.request.summary ||
-              jsonResponse.request.error ||
+              jsonResponse?.request?.summary ||
+              jsonResponse?.request?.error ||
               `Error ${response.status}: ${response.statusText}`,
             type: 'ai',
             error: !response.ok,
-            body: jsonResponse.request.body,
-            url: jsonResponse.request.url
+            body: jsonResponse?.request?.body,
+            url: jsonResponse?.request?.url
           }
 
           setHistory((prev) => [...prev, aiMessage])
@@ -140,9 +140,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
 
         return null
-      } catch (error) {
+      } catch (error: any) {
+        console.error('1234')
         console.error('Chat API error:', error)
-        setStatusCode(500)
+        setStatusCode(error?.status || 500)
         return null
       } finally {
         setLoading(false)
