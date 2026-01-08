@@ -44,7 +44,7 @@ const ChatParamsSection = () => {
         <ParamsField
           name="nlpFields"
           label="fields"
-          tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice "
+          tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice"
         />
         <Box pt={0.5} width="100%" display="flex">
           <Button
