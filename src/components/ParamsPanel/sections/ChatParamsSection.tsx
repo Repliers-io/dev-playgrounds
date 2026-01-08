@@ -13,22 +13,39 @@ const ChatParamsSection = () => {
   const { restartSession, history } = useChat()
 
   return (
-    <SectionTemplate id="chat-params-section" index={1} title="Chat Parameters">
+    <SectionTemplate
+      id="chat-params-section"
+      index={1}
+      title="Chat Parameters"
+      link="https://docs.repliers.io/reference/post_nlp"
+    >
       <Stack spacing={1.25}>
         <ParamsSelect
           noNull
           name="nlpVersion"
           label="nlpVersion"
           options={nlpVersionOptions}
+          tooltip="Repliers NLP Model version"
         />
-        <ParamsField name="nlpId" />
-        <ParamsField name="clientId" />
+        <ParamsField
+          name="nlpId"
+          tooltip="Unique identifier for maintaining context-aware interactions across multiple prompts"
+        />
+        <ParamsField
+          name="clientId"
+          tooltip="The clientId of the client that the NLP prompt is for"
+        />
         <ParamsSelect
           name="nlpListings"
           label="listings"
           options={['true', 'false']}
+          tooltip="If true, the endpoint will return listings according to the generated urlQueryString parameters"
         />
-        <ParamsField name="nlpFields" label="fields" />
+        <ParamsField
+          name="nlpFields"
+          label="fields"
+          tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice "
+        />
         <Box pt={0.5} width="100%" display="flex">
           <Button
             disabled={!history.length}
