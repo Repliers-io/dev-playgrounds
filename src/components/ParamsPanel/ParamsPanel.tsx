@@ -18,7 +18,6 @@ import { queryStringOptions } from 'utils/api'
 import {
   AiImagePresetsSection,
   AiImageSection,
-  AiTextSection,
   BoundsSection,
   CenterRadiusSection,
   ChatParamsSection,
@@ -49,6 +48,44 @@ const ParamsPanel = () => {
   const locationsMap = tab === 'locations'
   const listingTab = tab === 'listing'
   const chatTab = tab === 'chat'
+
+  const renderTabContent = () => {
+    switch (tab) {
+      case 'listing':
+        return <ListingParamsSection />
+
+      case 'chat':
+        return <ChatParamsSection />
+
+      case 'locations':
+        return (
+          <>
+            <SearchSection />
+            <CenterRadiusSection />
+            <BoundsSection />
+          </>
+        )
+
+      case 'map':
+      case 'stats':
+      default:
+        return (
+          <>
+            <UnknownParametersSection />
+            <QueryParamsSection />
+            <ParamsPresets />
+            <AiImageSection />
+            <AiImagePresetsSection />
+            {/** AiTextSection is temporary removed until we make this feature generally available */}
+            {/* <AiTextSection /> */}
+            <LocationParamsSection />
+            <StatisticsSection />
+            <ClustersSection />
+            <BoundsSection />
+          </>
+        )
+    }
+  }
 
   // TODO: add polygon to url
   const updateUrlState = useCallback(
@@ -207,30 +244,7 @@ const ParamsPanel = () => {
       <Stack spacing={1}>
         <Stack gap={1} sx={{ pt: '3px' }}>
           <CredentialsSection />
-          <UnknownParametersSection />
-          {listingTab ? (
-            <ListingParamsSection />
-          ) : chatTab ? (
-            <ChatParamsSection />
-          ) : !locationsMap ? (
-            <>
-              <QueryParamsSection />
-              <ParamsPresets />
-              <AiImageSection />
-              <AiImagePresetsSection />
-              {/** AiTextSection is temporary removed until we make this feature generally available */}
-              {/* <AiTextSection /> */}
-              <LocationParamsSection />
-              <StatisticsSection />
-              <ClustersSection />
-            </>
-          ) : (
-            <>
-              <SearchSection />
-              <CenterRadiusSection />
-            </>
-          )}
-          {!listingTab && !chatTab && <BoundsSection />}
+          {renderTabContent()}
         </Stack>
       </Stack>
     </Box>

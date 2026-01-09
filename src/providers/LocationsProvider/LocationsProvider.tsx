@@ -137,7 +137,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
 
       return json
     } catch (error: any) {
-      setStatusCode(error.status)
+      setStatusCode(error?.status)
       return null
     } finally {
       setLoading(false)
