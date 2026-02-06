@@ -10,7 +10,13 @@ import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationsTypeOptions = ['area', 'city', 'neighborhood']
+const locationsTypeOptions = [
+  'area',
+  'city',
+  'neighborhood',
+  'postalCode',
+  'schoolDistrict'
+]
 const locationsSortByOptions = ['typeAsc', 'typeDesc']
 
 const SearchSection = () => {
@@ -91,6 +97,11 @@ const SearchSection = () => {
 
           {locationsEndpoint && (
             <>
+              <ParamsField
+                label="source"
+                name="locationsSource"
+                tooltip="Source"
+              />
               <ParamsField
                 name="neighborhood"
                 tooltip="Array of neighborhoods. For now to be provided as a comma-separated list"

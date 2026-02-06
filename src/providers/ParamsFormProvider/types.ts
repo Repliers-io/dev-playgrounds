@@ -24,6 +24,7 @@ export type CustomFormParams = {
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
+  locationsSource: string | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   listingFields: string | null

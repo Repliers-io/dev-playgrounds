@@ -81,6 +81,12 @@ const schema = Joi.object({
   clusterLimit: Joi.number().integer().positive().allow(null, false, ''),
   clusterPrecision: Joi.number().integer().positive().allow(null, false, ''),
 
+  locationsSource: Joi.string()
+    .valid('MLS', 'Universal', 'UDL')
+    .empty('')
+    .default(null)
+    .allow(null),
+
   locationsPageNum: Joi.number()
     .integer()
     .min(1)
