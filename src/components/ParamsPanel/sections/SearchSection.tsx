@@ -2,10 +2,19 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
+import {
+  trueFalseOptions,
+  typeOptions,
+  useParamsForm
+} from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
-import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
+import {
+  ParamsField,
+  ParamsMultiSelect,
+  ParamsSelect,
+  ParamsToggleGroup
+} from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -18,6 +27,7 @@ const locationsTypeOptions = [
   'schoolDistrict'
 ]
 const locationsSortByOptions = ['typeAsc', 'typeDesc']
+const locationsSourceOptions = ['MLS', 'Universal', 'UDL']
 
 const SearchSection = () => {
   const { params } = useSearch()
@@ -55,13 +65,17 @@ const SearchSection = () => {
             onChange={clearData}
           />
 
-          <ParamsToggleGroup
-            allowEmpty
+          <ParamsSelect
+            label="source"
+            name="locationsSource"
+            options={locationsSourceOptions}
+          />
+
+          <ParamsMultiSelect
             label="type"
             name="locationsType"
             options={locationsTypeOptions}
           />
-
           {locationsEndpoint && (
             <>
               <ParamsSelect
@@ -97,11 +111,6 @@ const SearchSection = () => {
 
           {locationsEndpoint && (
             <>
-              <ParamsField
-                label="source"
-                name="locationsSource"
-                tooltip="Source"
-              />
               <ParamsField
                 name="neighborhood"
                 tooltip="Array of neighborhoods. For now to be provided as a comma-separated list"
