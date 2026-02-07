@@ -110,6 +110,8 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'apiUrl',
     'endpoint',
     'locationsType',
+    'locationsSubType',
+    'locationsClassification',
     'locationsSortBy',
     'locationsFields',
     'locationsBoundary',

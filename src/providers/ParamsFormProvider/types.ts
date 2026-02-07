@@ -19,7 +19,15 @@ export type CustomFormParams = {
   search: string
 
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
-  locationsType: ('area' | 'neighbourhood' | 'city')[]
+  locationsType: (
+    | 'area'
+    | 'neighborhood'
+    | 'city'
+    | 'postalCode'
+    | 'schoolDistrict'
+  )[]
+  locationsSubType: 'village'[]
+  locationsClassification: ('Unified' | 'Non-Unique' | 'PO Box')[]
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
@@ -157,7 +165,15 @@ export const statisticsFields = [
 
 export type StatisticsField = (typeof statisticsFields)[number]
 
-export const locationsFields = ['locationId', 'name', 'type', 'map', 'address']
+export const locationsFields = [
+  'locationId',
+  'name',
+  'type',
+  'map',
+  'address',
+  'classification',
+  'subType'
+] as const
 
 type FieldsType = Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
@@ -189,7 +205,7 @@ export const listingFields: FieldsType = [
   // 'images[0]'
   // 'imagesScore',
   // 'details.style'
-]
+] as const
 
 export const defaultStatisticsFields: StatisticsField[] = [
   'med-listPrice',
@@ -200,4 +216,4 @@ export const defaultStatisticsFields: StatisticsField[] = [
   // 'avg-daysOnMarket',
   // 'med-soldPrice',
   // 'avg-soldPrice',
-]
+] as const

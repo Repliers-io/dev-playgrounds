@@ -48,6 +48,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       apiKey,
       apiUrl,
       locationsType,
+      locationsSubType,
+      locationsClassification,
       locationsSortBy,
       locationsFields,
       locationsLocationId,
@@ -62,7 +64,10 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
 
     if (!apiKey || !apiUrl) return
 
-    rest.type = locationsType
+    rest.source = locationsSource || null
+    rest.type = locationsType || null
+    rest.subType = locationsSubType || null
+    rest.classification = locationsClassification || null
     rest.sortBy = locationsSortBy
     rest.fields = locationsFields || ''
     rest.locationId = locationsLocationId
@@ -70,7 +75,6 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     rest.resultsPerPage = locationsResultsPerPage
     rest.boundary = locationsBoundary || null
     rest.hasBoundary = locationsHasBoundary || null
-    rest.source = locationsSource || null
 
     const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

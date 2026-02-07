@@ -7,6 +7,8 @@ export const multiSelectFields = [
   'propertyType',
   'grp',
   'locationsType',
+  'locationsSubType',
+  'locationsClassification',
   'overallQuality',
   'bedroomQuality',
   'bathroomQuality',

@@ -2,11 +2,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import {
-  trueFalseOptions,
-  typeOptions,
-  useParamsForm
-} from 'providers/ParamsFormProvider'
+import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import {
@@ -25,9 +21,15 @@ const locationsTypeOptions = [
   'neighborhood',
   'postalCode',
   'schoolDistrict'
-]
-const locationsSortByOptions = ['typeAsc', 'typeDesc']
-const locationsSourceOptions = ['MLS', 'Universal', 'UDL']
+] as const
+const locationsSubTypeOptions = ['village'] as const
+const locationsClassificationOptions = [
+  'Unified',
+  'Non-Unique',
+  'PO Box'
+] as const
+const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
+const locationsSourceOptions = ['MLS', 'Universal', 'UDL'] as const
 
 const SearchSection = () => {
   const { params } = useSearch()
@@ -76,6 +78,19 @@ const SearchSection = () => {
             name="locationsType"
             options={locationsTypeOptions}
           />
+
+          <ParamsMultiSelect
+            label="subType"
+            name="locationsSubType"
+            options={locationsSubTypeOptions}
+          />
+
+          <ParamsMultiSelect
+            label="classification"
+            name="locationsClassification"
+            options={locationsClassificationOptions}
+          />
+
           {locationsEndpoint && (
             <>
               <ParamsSelect
