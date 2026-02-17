@@ -1,3 +1,5 @@
+import { type LocationSourceOption } from 'components/ParamsPanel/sections/SearchSection'
+
 import {
   type ApiCredentials,
   type ApiQueryParamsAllowedFields,
@@ -32,7 +34,7 @@ export type CustomFormParams = {
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
-  locationsSource: string | null
+  locationSource: LocationSourceOption | null
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   listingFields: string | null

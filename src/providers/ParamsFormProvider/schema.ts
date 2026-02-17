@@ -1,5 +1,7 @@
 import Joi from 'joi'
 
+import { locationSourceOptions } from 'components/ParamsPanel/sections/SearchSection'
+
 import {
   classOptions,
   lastStatusOptions,
@@ -81,8 +83,8 @@ const schema = Joi.object({
   clusterLimit: Joi.number().integer().positive().allow(null, false, ''),
   clusterPrecision: Joi.number().integer().positive().allow(null, false, ''),
 
-  locationsSource: Joi.string()
-    .valid('MLS', 'Universal', 'UDL')
+  locationSource: Joi.string()
+    .valid(...Object.values(locationSourceOptions))
     .empty('')
     .default(null)
     .allow(null),

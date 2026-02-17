@@ -1,7 +1,8 @@
 import { Box, Stack } from '@mui/material'
 
-import { ParamsField } from '../components'
+import { ParamsField, ParamsSelect } from '../components'
 
+import { locationSourceOptions } from './SearchSection'
 import SectionTemplate from './SectionTemplate'
 
 const LocationParamsSection = () => {
@@ -9,6 +10,12 @@ const LocationParamsSection = () => {
     <SectionTemplate index={7} title="location parameters">
       <Box sx={{ width: '100%' }}>
         <Stack spacing={1.25}>
+          <ParamsSelect
+            label="locationSource"
+            name="locationSource"
+            options={locationSourceOptions}
+          />
+
           <ParamsField
             name="locationId"
             tooltip="Array of location identifiers. For now to be provided as a comma-separated list"

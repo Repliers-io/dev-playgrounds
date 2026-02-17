@@ -118,7 +118,7 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'locationsHasBoundary',
     'locationsPageNum',
     'locationsResultsPerPage',
-    'locationsSource'
+    'locationSource'
   ])
 
   if (params.endpoint === 'locations') {

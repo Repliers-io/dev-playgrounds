@@ -53,7 +53,7 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     // Use the specific listings endpoint format: /listings/mlsNumber
     const endpointUrl = `${apiUrl}/listings/${mlsNumber}`
 
-    // Map parameters for property endpoint
+    // Map parameters for listings endpoint
     const getParams = {
       boardId: listingBoardId,
       fields: listingFields

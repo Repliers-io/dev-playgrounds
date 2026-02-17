@@ -58,13 +58,13 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       locationsBoundary,
       locationsHasBoundary,
       endpoint,
-      locationsSource,
+      locationSource,
       ...rest
     } = params
 
     if (!apiKey || !apiUrl) return
 
-    rest.source = locationsSource || null
+    rest.source = locationSource || null
     rest.type = locationsType || null
     rest.subType = locationsSubType || null
     rest.classification = locationsClassification || null
