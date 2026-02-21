@@ -4,7 +4,7 @@
 
 You can find a hosted version of Repliers Playgrounds at <https://playgrounds.repliers.com/>
 
-Get your Free [Test API Key](https://help.repliers.com/en/article/understanding-test-api-keys-1bmol07/) by signing up at [Repliers Customer Portal](https://login.repliers.com/). You will immdiately get access to [Sample Data](https://help.repliers.com/en/article/accessing-our-sample-data-for-prototyping-purposes-14ddh9z/) and you can start testing [Repliers APIs](https://docs.repliers.io/reference/getting-started-1) right away.
+Get your Free [Test API Key](https://help.repliers.com/en/article/understanding-test-api-keys-1bmol07/) by signing up at [Repliers Customer Portal](https://login.repliers.com/). You will immediately get access to [Sample Data](https://help.repliers.com/en/article/accessing-our-sample-data-for-prototyping-purposes-14ddh9z/) and you can start testing [Repliers APIs](https://docs.repliers.io/reference/getting-started-1) right away.
 
 Fork the repo and see what you can do with Repliers APIs at your localhost.
 
