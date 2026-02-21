@@ -29,16 +29,17 @@ Tech Stack: React + TypeScript + Vite
 
 3. **Configure environment variables**
 
-   Create a `.env` file based on the provided `env.example` template:
+   Create a `.env` file based on the provided `.env.example` template:
 
    ```bash
-   cp env.example .env
+   cp .env.example .env
    ```
 
    Then update the `.env` file with your actual values:
 
    **API Configuration:**
    - `VITE_REPLIERS_API_KEY` - Your Repliers API key. Get yours at <https://login.repliers.com/>
+   - `VITE_REPLIERS_API_URL` - The base URL for Repliers API (default is `https://api.repliers.io`)
 
    **Mapbox Configuration:**
    - `VITE_MAPBOX_KEY` - Your Mapbox API key for location and mapping features. Get yours for free at [mapbox.com](https://www.mapbox.com/).
