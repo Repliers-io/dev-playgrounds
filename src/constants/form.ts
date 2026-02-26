@@ -35,10 +35,7 @@ export const listingOnlyParams: (keyof FormParams)[] = [
   'listingBoardId'
 ]
 
-export const listingsOnlyParams: (keyof FormParams)[] = [
-  // 'locationId',
-  // 'locationSource'
-]
+export const listingsOnlyParams: (keyof FormParams)[] = []
 
 export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterLimit',
@@ -66,6 +63,6 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsPageNum',
   'locationsResultsPerPage',
   'locationsLocationId',
-  'radius'
-  // 'locationSource'
+  'radius',
+  'locationSource'
 ]

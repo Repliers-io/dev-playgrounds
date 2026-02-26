@@ -15,7 +15,8 @@ export const multiSelectFields = [
   'livingRoomQuality',
   'diningRoomQuality',
   'kitchenQuality',
-  'frontOfStructureQuality'
+  'frontOfStructureQuality',
+  'source'
 ] as const
 
 export const booleanFields = [

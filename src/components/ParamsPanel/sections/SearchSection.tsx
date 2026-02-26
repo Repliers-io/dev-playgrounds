@@ -29,7 +29,7 @@ const locationsClassificationOptions = [
   'PO Box'
 ] as const
 const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
-export const locationSourceOptions = ['MLS', 'Universal', 'UDL'] as const
+export const locationSourceOptions = ['MLS', 'UserDefined'] as const
 export type LocationSourceOption = (typeof locationSourceOptions)[number]
 
 const SearchSection = () => {
@@ -68,7 +68,7 @@ const SearchSection = () => {
             onChange={clearData}
           />
 
-          <ParamsSelect
+          <ParamsMultiSelect
             label="source"
             name="locationSource"
             options={locationSourceOptions}

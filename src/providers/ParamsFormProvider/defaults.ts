@@ -82,7 +82,7 @@ const defaultFormState: Partial<FormParams> = {
   maxListDate: undefined,
   minSoldDate: undefined,
   maxSoldDate: undefined,
-  listingLocationSource: null,
+  // listingLocationSource: null,
 
   /**
    * chat parameters

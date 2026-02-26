@@ -79,5 +79,5 @@ export interface Filters {
   fields?: string
   statistics?: string
   resultsPerPage?: number
-  locationSource?: LocationSourceOption | null
+  // locationSource?: LocationSourceOption | null
 }
