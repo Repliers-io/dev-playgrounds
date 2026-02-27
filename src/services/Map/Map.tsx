@@ -1,6 +1,11 @@
 import { type MouseEvent } from 'react'
 import { createRoot } from 'react-dom/client'
-import { type Feature, type Position } from 'geojson'
+import {
+  type Feature,
+  type MultiPolygon,
+  type Polygon,
+  type Position
+} from 'geojson'
 import { type LngLatLike, type Map, Marker as MapboxMarker } from 'mapbox-gl'
 
 import { lighten } from '@mui/material'
@@ -60,12 +65,13 @@ export class MapService {
       const singleViewOnMap = this.markers[id]
       if (singleViewOnMap) return
 
-      const { boundary } = item.map as any
+      const { boundary, geometryType = 'Polygon' } = item.map as any
       if (boundary?.length) {
         this.createPolygon({
           id,
           map,
-          polygon: boundary,
+          coordinates: boundary,
+          geometryType,
           onClick: () => onClick?.(item)
         })
       } else {
@@ -165,21 +171,25 @@ export class MapService {
   createPolygon({
     map,
     id,
-    polygon,
+    coordinates,
+    geometryType,
     onClick
   }: {
     map: Map
     id: string
-    polygon: Position[][]
+    coordinates: Position[][] | Position[][][]
+    geometryType: 'Polygon' | 'MultiPolygon'
     onClick?: () => void
   }): void {
     try {
+      const geometry: Polygon | MultiPolygon =
+        geometryType === 'Polygon'
+          ? { type: 'Polygon', coordinates: coordinates as Position[][] }
+          : { type: 'MultiPolygon', coordinates: coordinates as Position[][][] }
+
       const polygonGeoJSON: Feature = {
         type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: polygon
-        },
+        geometry,
         properties: {}
       }
 
