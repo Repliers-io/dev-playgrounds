@@ -1,5 +1,3 @@
-import { type LocationSourceOption } from 'components/ParamsPanel/sections/SearchSection'
-
 import { type ApiLastStatus, type ApiSortBy } from 'services/API/types'
 
 export const statsGroupingOptions = [
@@ -79,5 +77,4 @@ export interface Filters {
   fields?: string
   statistics?: string
   resultsPerPage?: number
-  // locationSource?: LocationSourceOption | null
 }

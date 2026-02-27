@@ -28,7 +28,7 @@ const defaultFormState: Partial<FormParams> = {
   locationsSortBy: undefined,
   locationsFields: locationsFields.join(','),
   locationsLocationId: '',
-  locationSource: null,
+  locationSource: [],
   state: '',
   area: '',
   city: '',
@@ -82,7 +82,6 @@ const defaultFormState: Partial<FormParams> = {
   maxListDate: undefined,
   minSoldDate: undefined,
   maxSoldDate: undefined,
-  // listingLocationSource: null,
 
   /**
    * chat parameters

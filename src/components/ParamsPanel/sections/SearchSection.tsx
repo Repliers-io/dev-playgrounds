@@ -2,7 +2,11 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
+import {
+  locationSourceOptions,
+  trueFalseOptions,
+  useParamsForm
+} from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import {
@@ -29,8 +33,6 @@ const locationsClassificationOptions = [
   'PO Box'
 ] as const
 const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
-export const locationSourceOptions = ['MLS', 'UserDefined'] as const
-export type LocationSourceOption = (typeof locationSourceOptions)[number]
 
 const SearchSection = () => {
   const { params } = useSearch()

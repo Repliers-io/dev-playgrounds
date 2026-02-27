@@ -1,11 +1,12 @@
-import { type LocationSourceOption } from 'components/ParamsPanel/sections/SearchSection'
-
 import {
   type ApiCredentials,
   type ApiQueryParamsAllowedFields,
   type Listing
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
+
+export const locationSourceOptions = ['MLS', 'UserDefined'] as const
+export type LocationSourceOption = (typeof locationSourceOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -34,7 +35,7 @@ export type CustomFormParams = {
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
-  locationSource: LocationSourceOption | null
+  locationSource: LocationSourceOption[]
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   listingFields: string | null
@@ -209,7 +210,7 @@ export const listingFields: FieldsType = [
   // 'details.style'
 ] as const
 
-export const defaultStatisticsFields: StatisticsField[] = [
+export const defaultStatisticsFields: readonly StatisticsField[] = [
   'med-listPrice',
   'avg-listPrice',
   'sd-listPrice'
