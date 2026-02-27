@@ -81,6 +81,9 @@ const schema = Joi.object({
   clusterLimit: Joi.number().integer().positive().allow(null, false, ''),
   clusterPrecision: Joi.number().integer().positive().allow(null, false, ''),
 
+  locationsMinSize: Joi.number().integer().positive().allow(null, false, ''),
+  locationsMaxSize: Joi.number().integer().positive().allow(null, false, ''),
+
   locationsPageNum: Joi.number()
     .integer()
     .min(1)

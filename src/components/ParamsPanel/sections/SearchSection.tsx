@@ -2,16 +2,37 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
+import {
+  locationsSourceOptions,
+  trueFalseOptions,
+  useParamsForm
+} from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
-import { ParamsField, ParamsSelect, ParamsToggleGroup } from '../components'
+import {
+  ParamsField,
+  ParamsMultiSelect,
+  ParamsSelect,
+  ParamsToggleGroup
+} from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationsTypeOptions = ['area', 'city', 'neighborhood']
-const locationsSortByOptions = ['typeAsc', 'typeDesc']
+const locationsTypeOptions = [
+  'area',
+  'city',
+  'neighborhood',
+  'postalCode',
+  'schoolDistrict'
+] as const
+const locationsSubTypeOptions = ['village'] as const
+const locationsClassificationOptions = [
+  'Unified',
+  'Non-Unique',
+  'PO Box'
+] as const
+const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
 
 const SearchSection = () => {
   const { params } = useSearch()
@@ -49,11 +70,31 @@ const SearchSection = () => {
             onChange={clearData}
           />
 
-          <ParamsToggleGroup
-            allowEmpty
+          <ParamsMultiSelect
+            label="source"
+            name="locationsSource"
+            options={locationsSourceOptions}
+          />
+
+          <ParamsMultiSelect
             label="type"
             name="locationsType"
             options={locationsTypeOptions}
+            tooltip="type=postalCode || type=schoolDistrict  used with source=UserDefined for now"
+          />
+
+          <ParamsMultiSelect
+            label="subType"
+            name="locationsSubType"
+            options={locationsSubTypeOptions}
+            tooltip="Only used with source=UserDefined for now"
+          />
+
+          <ParamsMultiSelect
+            label="classification"
+            name="locationsClassification"
+            options={locationsClassificationOptions}
+            tooltip="Only used with source=UserDefined for now"
           />
 
           {locationsEndpoint && (
@@ -111,21 +152,35 @@ const SearchSection = () => {
             </>
           )}
 
-          <ParamsSelect
-            label="hasBoundary"
-            name="locationsHasBoundary"
-            tooltip="Only fetch locations that have boundary polygons"
-            options={trueFalseOptions}
-          />
-
-          {locationsAutocompleteEndpoint && (
+          <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsSelect
-              label="boundary"
-              name="locationsBoundary"
-              tooltip="Fetch locations with boundary polygons for a small performance penalty"
+              label="hasBoundary"
+              name="locationsHasBoundary"
+              tooltip="Only fetch locations that have boundary polygons"
               options={trueFalseOptions}
             />
-          )}
+            {locationsAutocompleteEndpoint && (
+              <ParamsSelect
+                label="boundary"
+                name="locationsBoundary"
+                tooltip="Fetch locations with boundary polygons for a small performance penalty"
+                options={trueFalseOptions}
+              />
+            )}
+          </Stack>
+
+          <Stack spacing={1} direction="row" justifyContent="space-between">
+            <ParamsField
+              label="minSize"
+              name="locationsMinSize"
+              tooltip="minimum surface size in square kilometers"
+            />
+            <ParamsField
+              label="maxSize"
+              name="locationsMaxSize"
+              tooltip="maximum surface size in square kilometers"
+            />
+          </Stack>
 
           <ParamsField
             noClear

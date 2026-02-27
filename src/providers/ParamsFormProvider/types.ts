@@ -5,6 +5,9 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
+export const locationsSourceOptions = ['MLS', 'UserDefined'] as const
+export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
+
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
@@ -18,14 +21,27 @@ export type CustomFormParams = {
   radius: number | null
   search: string
 
+  // location params
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
-  locationsType: ('area' | 'neighbourhood' | 'city')[]
+  locationsType: (
+    | 'area'
+    | 'neighborhood'
+    | 'city'
+    | 'postalCode'
+    | 'schoolDistrict'
+  )[]
+  locationsSubType: 'village'[]
+  locationsClassification: ('Unified' | 'Non-Unique' | 'PO Box')[]
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
+  locationsSource: LocationsSourceOption[]
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
+  locationsMinSize: number | null
+  locationsMaxSize: number | null
+
   listingFields: string | null
   listingBoardId: number | null
   imageSearchItems?: {
@@ -156,13 +172,22 @@ export const statisticsFields = [
 
 export type StatisticsField = (typeof statisticsFields)[number]
 
-export const locationsFields = ['locationId', 'name', 'type', 'map', 'address']
+export const locationsFields = [
+  'locationId',
+  'name',
+  'type',
+  'map',
+  'address',
+  'classification',
+  'subType',
+  'size'
+] as const
 
 type FieldsType = Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
 >
 
-export const listingFields: FieldsType = [
+export const listingFields: ReadonlyArray<FieldsType[number]> = [
   'boardId',
   'mlsNumber',
   'map',
@@ -188,9 +213,9 @@ export const listingFields: FieldsType = [
   // 'images[0]'
   // 'imagesScore',
   // 'details.style'
-]
+] as const
 
-export const defaultStatisticsFields: StatisticsField[] = [
+export const defaultStatisticsFields: readonly StatisticsField[] = [
   'med-listPrice',
   'avg-listPrice',
   'sd-listPrice'
@@ -199,4 +224,4 @@ export const defaultStatisticsFields: StatisticsField[] = [
   // 'avg-daysOnMarket',
   // 'med-soldPrice',
   // 'avg-soldPrice',
-]
+] as const

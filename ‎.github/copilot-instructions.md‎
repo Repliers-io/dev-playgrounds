@@ -1,0 +1,231 @@
+# Copilot Coding Agent Instructions — Repliers Developer Playground
+
+## Project Overview
+
+This is **Repliers Developer Playground**, a React + TypeScript single-page application built with Vite. It provides an interactive UI for exploring and testing the [Repliers real estate API](https://docs.repliers.io/). The app includes property search, map visualization (Mapbox), listing details, statistics/charts, and an AI chat interface.
+
+Hosted version: <https://playgrounds.repliers.com/>
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | React 18 |
+| Language | TypeScript 5.6.x |
+| Build Tool | Vite 6 (with SWC plugin for React) |
+| UI Library | Material-UI (MUI) v6 + Emotion CSS-in-JS |
+| Forms | react-hook-form + Joi validation |
+| Maps | Mapbox GL JS + @mapbox/mapbox-gl-draw + Turf.js |
+| Charts | Recharts + MUI X Charts |
+| State Management | React Context + custom hooks (no Redux) |
+| Linting | ESLint 8 (Airbnb-based config) + Prettier |
+| Testing | Jest 29 + ts-jest (see known issues below) |
+| Node Version | v22.x (see `.nvmrc`) |
+| Package Manager | npm |
+
+
+## Environment Variables
+
+The app uses Vite's `import.meta.env` with the `VITE_` prefix. Create a `.env` file in the project root:
+
+## Project Structure
+
+```
+src/
+├── main.tsx                 # App entry point with ErrorBoundary
+├── App.tsx                  # Root component with provider tree
+├── utils.ts                 # URL param parsing helpers
+├── components/              # UI components
+│   ├── PageContent.tsx      # Main layout
+│   ├── ContentPanel.tsx     # Content area wrapper
+│   ├── Autosuggest/         # Location autocomplete
+│   ├── Chat/                # AI chat interface
+│   ├── Listing/             # Property detail view
+│   ├── Map/                 # Mapbox map integration
+│   ├── ParamsPanel/         # Search parameters sidebar
+│   ├── ResponsePanel/       # API response JSON viewer
+│   ├── Statistics/          # Charts and data visualization
+│   └── ProTip/              # Tip display component
+├── providers/               # React Context providers
+│   ├── SearchProvider/      # Search state & API calls to listings
+│   ├── ChatProvider/        # Chat state & NLP API calls
+│   ├── ListingProvider/     # Selected listing details
+│   ├── LocationsProvider/   # Cities, neighborhoods, areas
+│   ├── ParamsFormProvider/  # Form state (react-hook-form + Joi)
+│   ├── MapOptionsProvider.tsx
+│   └── SelectOptionsProvider.tsx
+├── services/                # API types and service utilities
+│   ├── API/types.ts         # Repliers API type definitions
+│   ├── Map/                 # Map service logic
+│   └── Search/              # Search params and utilities
+├── hooks/                   # Custom React hooks
+│   ├── useDeepCompareEffect.ts
+│   └── useIntersectionObserver.ts
+├── constants/               # Application configuration
+│   ├── colors.ts            # Color palette
+│   ├── common.ts            # Site name, URL
+│   ├── form.ts              # Form defaults
+│   ├── i18n.ts              # Internationalization
+│   ├── map.ts               # Mapbox config
+│   ├── map-styles.ts        # Mapbox layer styles
+│   ├── params-presets.ts    # Search filter presets
+│   ├── search.ts            # Search defaults
+│   ├── stat-presets.ts      # Statistics presets
+│   └── storage.ts           # Cookie/localStorage key names
+├── styles/                  # MUI theme configuration
+│   ├── theme.ts             # Theme entry point
+│   └── theme/               # palette, typography, breakpoints, etc.
+├── utils/                   # Utility functions (with tests)
+│   ├── api.ts               # apiFetch() — generic HTTP client
+│   ├── dom.ts               # DOM helpers
+│   ├── formatters.ts        # Number/price formatting
+│   ├── geo.ts               # Geolocation utilities
+│   ├── map.ts               # Map data helpers
+│   ├── numbers.ts           # Numeric utilities
+│   ├── path.ts              # Object path traversal
+│   ├── strings.ts           # String manipulation
+│   ├── tokens.ts            # JWT/cookie token management
+│   ├── validators.ts        # Input validation
+│   └── theme.ts             # Theme helper utilities
+└── assets/
+    └── icons/               # SVG icons (loaded via vite-plugin-svgr)
+```
+
+## Architecture & Patterns
+
+### Provider Tree
+
+The app uses nested React Context providers for state management. The nesting order matters:
+
+```
+SearchProvider → LocationsProvider → ListingProvider → MapOptionsProvider
+  → SelectOptionsProvider → ParamsFormProvider → ChatProvider → PageContent
+```
+
+### API Communication
+
+- **`src/utils/api.ts`** contains `apiFetch()`, the core HTTP utility using the native `fetch` API.
+- API key is passed via the `REPLIERS-API-KEY` header.
+- Large payloads (e.g., `imageSearchItems`, `textSearchItems`) are sent as POST body.
+- `SearchProvider` manages request caching and uses `AbortController` for cancellation.
+
+### Path Aliases
+
+Both `tsconfig.json` (via `baseUrl: "./src/"`) and `vite.config.ts` (via `resolve.alias`) define path aliases. Use bare imports for these directories:
+
+```typescript
+import SomeComponent from 'components/SomeComponent'
+import { apiFetch } from 'utils/api'
+import { colors } from 'constants/colors'
+```
+
+Available aliases: `components`, `constants`, `providers`, `services`, `styles`, `assets`, `hooks`, `utils`.
+
+## Code Style & Conventions
+
+### Formatting (Prettier)
+
+Check .prettierc file
+
+### Linting (ESLint)
+
+Check .eslintrc.cjs file
+
+
+### Component Conventions
+
+- **Function components only** (arrow functions or function declarations)
+- Components are colocated in directories with barrel `index.ts` exports
+- Presentational components consume context via custom hooks (e.g., `useSearch()`, `useParamsForm()`)
+- Config-driven rendering (e.g., Listing uses `config.ts` to define section order)
+
+### TypeScript
+
+- Strict mode enabled
+- Use `type` keyword for type-only imports: `import { type MyType } from '...'`
+- Avoid `any` where possible; use `unknown` or specific types
+- Target: ESNext, Module: ESNext, Module resolution: bundler
+
+## Common Tasks
+
+### Adding a New Utility Function
+
+1. Add the function to the appropriate file in `src/utils/`
+2. Run `npm run eslint` to verify no lint errors
+
+### Adding a New Component
+
+1. Create a directory under `src/components/` with the component file and an `index.ts` barrel export
+2. Use MUI components for UI elements and Emotion for custom styling
+3. Consume state from context providers via their custom hooks
+4. Import using path aliases: `import Foo from 'components/Foo'`
+
+### Modifying Search Parameters
+
+#### Data flow
+
+```
+ParamsPanel UI → react-hook-form (ParamsFormProvider) → SearchProvider.setParams() → apiFetch()
+```
+
+- All form state lives in `react-hook-form` inside `ParamsFormProvider`.
+- On every blur/change, `onChange()` calls `handleSubmit()` → `setParams()` in `SearchProvider`, which triggers a new API request.
+- `FormParams` = `Filters & ApiCredentials & CustomFormParams` (see `src/providers/ParamsFormProvider/types.ts`).
+- Fields prefixed `locations*` (e.g. `locationsType`, `locationsPageNum`) are sent to the `/locations` or `/locations/autocomplete` endpoints. Other fields are sent to the listings endpoint.
+- `unknowns` is a free-form `Record<string, any>` escape hatch for ad-hoc params not yet modelled in the form.
+
+#### Adding a new search parameter — checklist
+
+1. **Type** — add the field to `CustomFormParams` (for app-internal params) or confirm it already exists in `Filters`/`ApiCredentials` in `src/services/API/types.ts`.
+
+2. **Joi schema** — add a validation rule in `src/providers/ParamsFormProvider/schema.ts`.
+   ```ts
+   myNewParam: Joi.number().integer().positive().allow(null, false, ''),
+   ```
+   Use `.allow(null, false, '')` for optional numeric fields so empty inputs don't fail validation.
+
+3. **Default value** — add the field with its empty/null default to `src/providers/ParamsFormProvider/defaults.ts`.
+   ```ts
+   myNewParam: undefined,   // or null / [] / ''
+   ```
+
+4. **UI control** — add a control inside the relevant section component under `src/components/ParamsPanel/sections/`. Choose the right reusable control:
+
+   | Component | When to use |
+   |-----------|-------------|
+   | `ParamsField` | Free-text or numeric input |
+   | `ParamsSelect` | Single value from a fixed list |
+   | `ParamsMultiSelect` | Multiple values from a fixed list (sent as array) |
+   | `ParamsToggleGroup` | Small set of mutually-exclusive values rendered as buttons |
+   | `ParamsRange` | Two related numeric fields (min/max pair) |
+   | `ParamsCheckbox` | Boolean toggle |
+   | `ParamsDate` | Date picker (uses MUI X DatePicker + dayjs) |
+
+   All controls read/write form state via `useFormContext()` internally and call `useParamsForm().onChange()` to submit. Pass `name` matching the `FormParams` key exactly.
+
+5. **Section placement** — each section is a `<SectionTemplate index={N} title="..." link="...">` wrapper. The `index` prop controls which slot in the `sections` collapse-state string the panel occupies. Use the next available integer and keep sections logically grouped.
+
+6. **Validated options** — if the field accepts only specific string values, add an `as const` array + type export to `types.ts` (like `classOptions`, `sortByOptions`) and reference it in both the schema (`Joi.string().valid(...myOptions)`) and the UI control's `options` prop.
+
+#### Example: adding a `minLotSize` filter
+
+```ts
+// types.ts — nothing needed (it's a plain number)
+
+// schema.ts
+minLotSize: Joi.number().integer().positive().allow(null, false, ''),
+
+// defaults.ts
+minLotSize: undefined,
+
+// In the relevant ParamsPanel section JSX:
+<ParamsField name="minLotSize" tooltip="Minimum lot size in sq ft" />
+```
+
+#### Notes
+
+- `ParamsField` fires `onChange()` on **blur** and on **Enter key**. Other controls fire immediately on selection.
+- Use the `tooltip` prop for inline help text and `hint="docs"` + `link="https://..."` to render a clickable docs badge next to the label.
+- `noClear` on `ParamsField` hides the ✕ clear button (used for fields that must always have a value, e.g. `locationsFields`).
+- For parameters that only make sense for a specific endpoint, gate the control with a boolean derived from `params.endpoint` (see `SearchSection.tsx` for examples).
+- `SectionTemplate` sections are collapsible; collapse state is persisted in the `sections` form field as a comma-separated string of `'1'`/`''` values indexed by `SectionTemplate.index`.
