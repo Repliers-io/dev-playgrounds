@@ -5,8 +5,8 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
-export const locationSourceOptions = ['MLS', 'UserDefined'] as const
-export type LocationSourceOption = (typeof locationSourceOptions)[number]
+export const locationsSourceOptions = ['MLS', 'UserDefined'] as const
+export type locationsSourceOption = (typeof locationsSourceOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -21,6 +21,7 @@ export type CustomFormParams = {
   radius: number | null
   search: string
 
+  // location params
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
   locationsType: (
     | 'area'
@@ -35,9 +36,12 @@ export type CustomFormParams = {
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
-  locationSource: LocationSourceOption[]
+  locationsSource: locationsSourceOption[]
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
+  locationsMinSize: number | null
+  locationsMaxSize: number | null
+
   listingFields: string | null
   listingBoardId: number | null
   imageSearchItems?: {
@@ -175,7 +179,8 @@ export const locationsFields = [
   'map',
   'address',
   'classification',
-  'subType'
+  'subType',
+  'size'
 ] as const
 
 type FieldsType = Array<

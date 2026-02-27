@@ -58,13 +58,15 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       locationsBoundary,
       locationsHasBoundary,
       endpoint,
-      locationSource,
+      locationsSource,
+      locationsMinSize,
+      locationsMaxSize,
       ...rest
     } = params
 
     if (!apiKey || !apiUrl) return
 
-    rest.source = locationSource || null
+    rest.source = locationsSource || null
     rest.type = locationsType || null
     rest.subType = locationsSubType || null
     rest.classification = locationsClassification || null
@@ -75,6 +77,8 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     rest.resultsPerPage = locationsResultsPerPage
     rest.boundary = locationsBoundary || null
     rest.hasBoundary = locationsHasBoundary || null
+    rest.minSize = locationsMinSize || null
+    rest.maxSize = locationsMaxSize || null
 
     const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

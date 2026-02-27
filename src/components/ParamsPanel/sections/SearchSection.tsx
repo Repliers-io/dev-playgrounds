@@ -3,7 +3,7 @@ import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
 import {
-  locationSourceOptions,
+  locationsSourceOptions,
   trueFalseOptions,
   useParamsForm
 } from 'providers/ParamsFormProvider'
@@ -72,26 +72,29 @@ const SearchSection = () => {
 
           <ParamsMultiSelect
             label="source"
-            name="locationSource"
-            options={locationSourceOptions}
+            name="locationsSource"
+            options={locationsSourceOptions}
           />
 
           <ParamsMultiSelect
             label="type"
             name="locationsType"
             options={locationsTypeOptions}
+            tooltip="type=postalCode || type=schoolDistrict  used with source=UserDefined for now"
           />
 
           <ParamsMultiSelect
             label="subType"
             name="locationsSubType"
             options={locationsSubTypeOptions}
+            tooltip="Only used with source=UserDefined for now"
           />
 
           <ParamsMultiSelect
             label="classification"
             name="locationsClassification"
             options={locationsClassificationOptions}
+            tooltip="Only used with source=UserDefined for now"
           />
 
           {locationsEndpoint && (
@@ -164,6 +167,19 @@ const SearchSection = () => {
                 options={trueFalseOptions}
               />
             )}
+          </Stack>
+
+          <Stack spacing={1} direction="row" justifyContent="space-between">
+            <ParamsField
+              label="minSize"
+              name="locationsMinSize"
+              tooltip="minimum surface size in square kilometers"
+            />
+            <ParamsField
+              label="maxSize"
+              name="locationsMaxSize"
+              tooltip="maximum surface size in square kilometers"
+            />
           </Stack>
 
           <ParamsField
