@@ -29,6 +29,7 @@ import {
   QueryParamsSection,
   SearchSection,
   StatisticsSection,
+  TimerangeSection,
   UnknownParametersSection
 } from './sections'
 import {
@@ -79,6 +80,7 @@ const ParamsPanel = () => {
             {/** AiTextSection is temporary removed until we make this feature generally available */}
             {/* <AiTextSection /> */}
             <LocationParamsSection />
+            <TimerangeSection />
             <StatisticsSection />
             <ClustersSection />
             <BoundsSection />
