@@ -42,13 +42,7 @@ export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterPrecision'
 ]
 
-export const statsOnlyParams: (keyof FormParams)[] = [
-  'statistics',
-  'minListDate',
-  'maxListDate',
-  'minSoldDate',
-  'maxSoldDate'
-]
+export const statsOnlyParams: (keyof FormParams)[] = ['statistics', 'grp']
 
 export const searchOnlyParams: (keyof FormParams)[] = [
   'endpoint',

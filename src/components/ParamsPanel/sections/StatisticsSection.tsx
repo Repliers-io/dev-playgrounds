@@ -6,7 +6,7 @@ import { Box, Stack } from '@mui/material'
 import { statsGroupingOptions } from 'services/Search/types'
 import { statisticsFields, useParamsForm } from 'providers/ParamsFormProvider'
 
-import { AndroidSwitch, ParamsDate, ParamsMultiSelect } from '../components'
+import { AndroidSwitch, ParamsMultiSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -51,15 +51,6 @@ const StatsSection = () => {
           options={statsGroupingOptions}
           link="https://help.repliers.com/en/article/real-time-market-statistics-implementation-guide-l3b1uy/#1-grouping-statistics"
         />
-        <Stack spacing={1} direction="row">
-          <ParamsDate name="minListDate" />
-          <ParamsDate name="maxListDate" />
-        </Stack>
-
-        <Stack spacing={1} direction="row">
-          <ParamsDate name="minSoldDate" />
-          <ParamsDate name="maxSoldDate" />
-        </Stack>
       </Stack>
     </SectionTemplate>
   )
