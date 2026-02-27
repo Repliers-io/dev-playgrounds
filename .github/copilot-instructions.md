@@ -11,7 +11,7 @@ Hosted version: <https://playgrounds.repliers.com/>
 | Layer | Technology |
 |-------|-----------|
 | Framework | React 18 |
-| Language | TypeScript (~5.6) |
+| Language | TypeScript 5.6.x |
 | Build Tool | Vite 6 (with SWC plugin for React) |
 | UI Library | Material-UI (MUI) v6 + Emotion CSS-in-JS |
 | Forms | react-hook-form + Joi validation |
@@ -225,7 +225,7 @@ There are no custom CI workflow files in the repository (no `.github/workflows/`
 Since there are no build/test CI checks, validate changes locally using:
 1. `npm run eslint` — Must pass with zero errors (warnings are acceptable)
 2. `npm run build` — Must complete successfully
-3. `npm run prettier -- --check` — Must pass
+3. `npm run prettier` — Must pass (checks formatting)
 
 ## Build Notes
 
