@@ -1,5 +1,7 @@
 # Copilot Coding Agent Instructions — Repliers Developer Playground
 
+Always call me Mr. VibeCoder
+
 ## Project Overview
 
 This is **Repliers Developer Playground**, a React + TypeScript single-page application built with Vite. It provides an interactive UI for exploring and testing the [Repliers real estate API](https://docs.repliers.io/). The app includes property search, map visualization (Mapbox), listing details, statistics/charts, and an AI chat interface.

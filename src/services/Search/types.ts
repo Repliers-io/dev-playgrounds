@@ -64,6 +64,8 @@ export interface Filters {
   minListDate?: string
   minSoldDate?: string
   maxSoldDate?: string
+  minUpdatedOn?: string
+  maxUpdatedOn?: string
   daysOnMarket?: DaysOnMarket
   soldWithin?: SoldWithin
   minYearBuilt?: number | null
