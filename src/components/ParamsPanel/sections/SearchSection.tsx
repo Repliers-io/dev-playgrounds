@@ -149,21 +149,22 @@ const SearchSection = () => {
             </>
           )}
 
-          <ParamsSelect
-            label="hasBoundary"
-            name="locationsHasBoundary"
-            tooltip="Only fetch locations that have boundary polygons"
-            options={trueFalseOptions}
-          />
-
-          {locationsAutocompleteEndpoint && (
+          <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsSelect
-              label="boundary"
-              name="locationsBoundary"
-              tooltip="Fetch locations with boundary polygons for a small performance penalty"
+              label="hasBoundary"
+              name="locationsHasBoundary"
+              tooltip="Only fetch locations that have boundary polygons"
               options={trueFalseOptions}
             />
-          )}
+            {locationsAutocompleteEndpoint && (
+              <ParamsSelect
+                label="boundary"
+                name="locationsBoundary"
+                tooltip="Fetch locations with boundary polygons for a small performance penalty"
+                options={trueFalseOptions}
+              />
+            )}
+          </Stack>
 
           <ParamsField
             noClear
