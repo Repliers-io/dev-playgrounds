@@ -6,7 +6,7 @@ import {
 import { type Filters } from 'services/Search'
 
 export const locationsSourceOptions = ['MLS', 'UserDefined'] as const
-export type locationsSourceOption = (typeof locationsSourceOptions)[number]
+export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -36,7 +36,7 @@ export type CustomFormParams = {
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPageNum: number | null
-  locationsSource: locationsSourceOption[]
+  locationsSource: LocationsSourceOption[]
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   locationsMinSize: number | null
@@ -187,7 +187,7 @@ type FieldsType = Array<
   keyof Listing | ApiQueryParamsAllowedFields | 'images[0]' // WTF ???
 >
 
-export const listingFields: FieldsType = [
+export const listingFields: ReadonlyArray<FieldsType[number]> = [
   'boardId',
   'mlsNumber',
   'map',
