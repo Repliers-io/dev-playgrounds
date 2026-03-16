@@ -66,7 +66,8 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...(!params.stats ? statsOnlyParams : []),
     ...(!params.cluster ? clusterOnlyParams : []),
     ...(params.tab !== 'locations' ? searchOnlyParams : []),
-    ...(params.tab === 'locations' ? listingsOnlyParams : [])
+    ...(params.tab === 'locations' ? listingsOnlyParams : []),
+    ...(!params.center ? ['radius'] : []) // radius requires lat/long which only exist when center is enabled
   ]
 
   const maybeArrays = [

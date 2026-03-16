@@ -49,6 +49,9 @@ const Chat = () => {
       setValue(key, value)
     })
 
+    // Sync center toggle with whether radius is being applied
+    setValue('center', 'radius' in filters)
+
     // Always set unknowns (even if empty)
     setValue('unknowns', unknowns)
 
