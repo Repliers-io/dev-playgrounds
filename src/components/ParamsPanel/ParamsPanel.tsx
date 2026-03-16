@@ -83,6 +83,7 @@ const ParamsPanel = () => {
             <TimerangeSection />
             <StatisticsSection />
             <ClustersSection />
+            {/* <CenterRadiusSection /> */}
             <BoundsSection />
           </>
         )
