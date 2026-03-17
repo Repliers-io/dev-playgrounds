@@ -50,7 +50,7 @@ const CenterRadiusSection = () => {
           <ParamsRange min={0} max={100} name="radius" hint="km" />
           {radiusRequiredButMissing && (
             <FormHelperText error>
-              radius is required for Listings Search
+              `radius` is required for Listings Search
             </FormHelperText>
           )}
         </Stack>

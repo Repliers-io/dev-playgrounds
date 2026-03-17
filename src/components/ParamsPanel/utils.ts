@@ -155,7 +155,7 @@ export const getCenterPoint = (
   { requireRadius = false } = {}
 ) => {
   if (params.center) {
-    if (requireRadius && params.radius === null) return {}
+    if (requireRadius && params.radius == null) return {}
     return {
       radius: params.radius,
       lat: position.center?.lat,

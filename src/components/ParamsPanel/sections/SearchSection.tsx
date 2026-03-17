@@ -6,10 +6,10 @@ import {
   locationsClassificationOptions,
   locationsSourceOptions,
   locationsSubTypeOptions,
+  locationsTypeOptions,
   trueFalseOptions,
   useParamsForm
 } from 'providers/ParamsFormProvider'
-import { locationsTypeOptions } from 'providers/ParamsFormProvider/types'
 import { useSearch } from 'providers/SearchProvider'
 
 import {
