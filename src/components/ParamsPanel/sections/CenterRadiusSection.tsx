@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Stack } from '@mui/material'
+import { Box, FormHelperText, Stack } from '@mui/material'
 
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
@@ -17,6 +17,10 @@ const CenterRadiusSection = () => {
   const { position: { center } = {} } = useMapOptions()
   const { watch, setValue } = useFormContext()
   const mapCenter = watch('center')
+  const radius = watch('radius')
+  const tab = watch('tab')
+  const radiusRequiredButMissing =
+    mapCenter && radius === null && tab !== 'locations'
 
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -44,6 +48,11 @@ const CenterRadiusSection = () => {
           </Box>
 
           <ParamsRange min={0} max={100} name="radius" hint="km" />
+          {radiusRequiredButMissing && (
+            <FormHelperText error>
+              radius is required for Listings Search
+            </FormHelperText>
+          )}
         </Stack>
       </Box>
     </SectionTemplate>

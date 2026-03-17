@@ -11,12 +11,23 @@ export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
 export const locationsSubTypeOptions = ['village', 'tier-1', 'tier-2'] as const
 export type LocationsSubTypeOption = (typeof locationsSubTypeOptions)[number]
 
+export const locationsTypeOptions = [
+  'area',
+  'city',
+  'neighborhood',
+  'postalCode',
+  'schoolDistrict',
+  'district'
+] as const
+export type LocationsTypeOption = (typeof locationsTypeOptions)[number]
+
 export const locationsClassificationOptions = [
   'Unified',
   'Non-Unique',
   'PO Box'
 ] as const
-export type LocationsClassificationOption = (typeof locationsClassificationOptions)[number]
+export type LocationsClassificationOption =
+  (typeof locationsClassificationOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -33,13 +44,7 @@ export type CustomFormParams = {
 
   // location params
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
-  locationsType: (
-    | 'area'
-    | 'neighborhood'
-    | 'city'
-    | 'postalCode'
-    | 'schoolDistrict'
-  )[]
+  locationsType: LocationsTypeOption[]
   locationsSubType: LocationsSubTypeOption[]
   locationsClassification: LocationsClassificationOption[]
   locationsFields: string
@@ -190,7 +195,8 @@ export const locationsFields = [
   'address',
   'classification',
   'subType',
-  'size'
+  'size',
+  'demographics'
 ] as const
 
 type FieldsType = Array<

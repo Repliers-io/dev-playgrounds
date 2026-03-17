@@ -9,6 +9,7 @@ import {
   trueFalseOptions,
   useParamsForm
 } from 'providers/ParamsFormProvider'
+import { locationsTypeOptions } from 'providers/ParamsFormProvider/types'
 import { useSearch } from 'providers/SearchProvider'
 
 import {
@@ -21,13 +22,6 @@ import {
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationsTypeOptions = [
-  'area',
-  'city',
-  'neighborhood',
-  'postalCode',
-  'schoolDistrict'
-] as const
 const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
 
 const SearchSection = () => {

@@ -151,9 +151,11 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
 
 export const getCenterPoint = (
   params: Partial<FormParams>,
-  position: MapPosition
+  position: MapPosition,
+  { requireRadius = false } = {}
 ) => {
   if (params.center) {
+    if (requireRadius && params.radius === null) return {}
     return {
       radius: params.radius,
       lat: position.center?.lat,
