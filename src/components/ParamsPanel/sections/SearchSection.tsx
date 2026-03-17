@@ -3,7 +3,9 @@ import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
 import {
+  locationsClassificationOptions,
   locationsSourceOptions,
+  locationsSubTypeOptions,
   trueFalseOptions,
   useParamsForm
 } from 'providers/ParamsFormProvider'
@@ -25,12 +27,6 @@ const locationsTypeOptions = [
   'neighborhood',
   'postalCode',
   'schoolDistrict'
-] as const
-const locationsSubTypeOptions = ['village'] as const
-const locationsClassificationOptions = [
-  'Unified',
-  'Non-Unique',
-  'PO Box'
 ] as const
 const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
 

@@ -5,8 +5,18 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
-export const locationsSourceOptions = ['MLS', 'UserDefined'] as const
+export const locationsSourceOptions = ['MLS', 'UserDefined', 'LiveBy'] as const
 export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
+
+export const locationsSubTypeOptions = ['village', 'tier-1', 'tier-2'] as const
+export type LocationsSubTypeOption = (typeof locationsSubTypeOptions)[number]
+
+export const locationsClassificationOptions = [
+  'Unified',
+  'Non-Unique',
+  'PO Box'
+] as const
+export type LocationsClassificationOption = (typeof locationsClassificationOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -30,8 +40,8 @@ export type CustomFormParams = {
     | 'postalCode'
     | 'schoolDistrict'
   )[]
-  locationsSubType: 'village'[]
-  locationsClassification: ('Unified' | 'Non-Unique' | 'PO Box')[]
+  locationsSubType: LocationsSubTypeOption[]
+  locationsClassification: LocationsClassificationOption[]
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
