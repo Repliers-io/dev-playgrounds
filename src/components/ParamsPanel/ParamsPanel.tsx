@@ -83,6 +83,7 @@ const ParamsPanel = () => {
             <TimerangeSection />
             <StatisticsSection />
             <ClustersSection />
+            <CenterRadiusSection />
             <BoundsSection />
           </>
         )
@@ -142,6 +143,7 @@ const ParamsPanel = () => {
         const searchParams = {
           ...filteredParams,
           ...fetchBounds,
+          ...getCenterPoint(params, position),
           ...unknowns
         }
 
