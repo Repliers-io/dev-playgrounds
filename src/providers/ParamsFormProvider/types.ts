@@ -8,13 +8,15 @@ import { type Filters } from 'services/Search'
 export const locationsSourceOptions = ['MLS', 'UserDefined', 'LiveBy'] as const
 export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
 
-export const locationsSubTypeOptions = ['village', 'tier-1', 'tier-2'] as const
+export const locationsSubTypeOptions = ['village'] as const
 export type LocationsSubTypeOption = (typeof locationsSubTypeOptions)[number]
 
 export const locationsTypeOptions = [
   'area',
   'city',
+  'city-alternate',
   'neighborhood',
+  'neighborhood-alternate',
   'postalCode',
   'schoolDistrict',
   'district'
