@@ -3,7 +3,10 @@ import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
 import {
+  locationsClassificationOptions,
   locationsSourceOptions,
+  locationsSubTypeOptions,
+  locationsTypeOptions,
   trueFalseOptions,
   useParamsForm
 } from 'providers/ParamsFormProvider'
@@ -19,19 +22,6 @@ import {
 import SectionTemplate from './SectionTemplate'
 
 const endpoints = ['locations', 'locations/autocomplete']
-const locationsTypeOptions = [
-  'area',
-  'city',
-  'neighborhood',
-  'postalCode',
-  'schoolDistrict'
-] as const
-const locationsSubTypeOptions = ['village'] as const
-const locationsClassificationOptions = [
-  'Unified',
-  'Non-Unique',
-  'PO Box'
-] as const
 const locationsSortByOptions = ['typeAsc', 'typeDesc'] as const
 
 const SearchSection = () => {

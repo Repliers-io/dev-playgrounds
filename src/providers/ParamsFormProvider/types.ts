@@ -5,8 +5,31 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
-export const locationsSourceOptions = ['MLS', 'UserDefined'] as const
+export const locationsSourceOptions = ['MLS', 'UserDefined', 'LiveBy'] as const
 export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
+
+export const locationsSubTypeOptions = ['village'] as const
+export type LocationsSubTypeOption = (typeof locationsSubTypeOptions)[number]
+
+export const locationsTypeOptions = [
+  'area',
+  'city',
+  'city-alternate',
+  'neighborhood',
+  'neighborhood-alternate',
+  'postalCode',
+  'schoolDistrict',
+  'district'
+] as const
+export type LocationsTypeOption = (typeof locationsTypeOptions)[number]
+
+export const locationsClassificationOptions = [
+  'Unified',
+  'Non-Unique',
+  'PO Box'
+] as const
+export type LocationsClassificationOption =
+  (typeof locationsClassificationOptions)[number]
 
 export type CustomFormParams = {
   dynamicClustering: boolean
@@ -23,15 +46,9 @@ export type CustomFormParams = {
 
   // location params
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
-  locationsType: (
-    | 'area'
-    | 'neighborhood'
-    | 'city'
-    | 'postalCode'
-    | 'schoolDistrict'
-  )[]
-  locationsSubType: 'village'[]
-  locationsClassification: ('Unified' | 'Non-Unique' | 'PO Box')[]
+  locationsType: LocationsTypeOption[]
+  locationsSubType: LocationsSubTypeOption[]
+  locationsClassification: LocationsClassificationOption[]
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
@@ -180,7 +197,8 @@ export const locationsFields = [
   'address',
   'classification',
   'subType',
-  'size'
+  'size',
+  'demographics'
 ] as const
 
 type FieldsType = Array<
