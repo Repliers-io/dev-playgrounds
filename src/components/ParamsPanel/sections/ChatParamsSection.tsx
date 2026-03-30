@@ -1,5 +1,5 @@
 import ReplayIcon from '@mui/icons-material/Replay'
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Stack } from '@mui/material'
 
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
@@ -10,7 +10,7 @@ import SectionTemplate from './SectionTemplate'
 const nlpVersionOptions = ['1', '2', '3'] as const
 
 const ChatParamsSection = () => {
-  const { restartSession, history } = useChat()
+  const { restartSession, history, stickySession, setStickySession } = useChat()
 
   return (
     <SectionTemplate
@@ -56,7 +56,7 @@ const ChatParamsSection = () => {
           label="long"
           tooltip="Longitude coordinate to provide location context to the NLP model"
         />
-        <Box pt={0.5} width="100%" display="flex">
+        <Box pt={0.5} width="100%" display="flex" flexDirection="column" gap={0.5}>
           <Button
             disabled={!history.length}
             variant="outlined"
@@ -73,11 +73,29 @@ const ChatParamsSection = () => {
               borderRadius: 1,
               bgcolor: '#FFF',
               textTransform: 'none',
-              alignSelf: 'center'
+              alignSelf: 'flex-start'
             }}
           >
             Restart session
           </Button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={stickySession}
+                onChange={(e) => setStickySession(e.target.checked)}
+                size="small"
+              />
+            }
+            label="Sticky Session"
+            sx={{
+              ml: 0,
+              '& .MuiFormControlLabel-label': {
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'Urbanist Variable'
+              }
+            }}
+          />
         </Box>
       </Stack>
     </SectionTemplate>

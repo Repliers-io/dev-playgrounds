@@ -35,6 +35,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [size, setSize] = useState(0)
   const [json, setJson] = useState<Record<string, unknown> | null>(null)
   const [history, setHistory] = useState<ChatItem[]>([])
+  const [stickySession, setStickySession] = useState(true)
 
   const apiKey = getValues('apiKey')
   const apiUrl = getValues('apiUrl')
@@ -124,8 +125,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (jsonResponse) {
-          // Update nlpId in form
-          setValue('nlpId', jsonResponse.nlpId)
+          // Update nlpId in form if sticky session is enabled
+          if (stickySession) {
+            setValue('nlpId', jsonResponse.nlpId)
+          }
 
           // Add AI response
           const aiMessage: ChatItem = {
@@ -152,7 +155,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false)
       }
     },
-    [apiKey, apiUrl, getValues, setValue]
+    [apiKey, apiUrl, getValues, setValue, stickySession]
   )
 
   const restartSession = useCallback(() => {
@@ -189,7 +192,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       history,
       sendMessage,
       clearData,
-      restartSession
+      restartSession,
+      stickySession,
+      setStickySession
     }),
     [
       loading,
@@ -202,7 +207,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       history,
       sendMessage,
       clearData,
-      restartSession
+      restartSession,
+      stickySession
     ]
   )
 
