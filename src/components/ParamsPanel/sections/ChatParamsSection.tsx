@@ -46,6 +46,16 @@ const ChatParamsSection = () => {
           label="fields"
           tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice"
         />
+        <ParamsField
+          name="nlpLat"
+          label="lat"
+          tooltip="Latitude coordinate to provide location context to the NLP model"
+        />
+        <ParamsField
+          name="nlpLong"
+          label="long"
+          tooltip="Longitude coordinate to provide location context to the NLP model"
+        />
         <Box pt={0.5} width="100%" display="flex">
           <Button
             disabled={!history.length}

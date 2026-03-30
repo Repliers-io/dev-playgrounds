@@ -26,6 +26,8 @@ export const customFormParams: (keyof CustomFormParams)[] = [
   'center',
   'nlpVersion',
   'nlpId',
+  'nlpLat',
+  'nlpLong',
   'unknowns'
 ]
 

@@ -102,6 +102,8 @@ const ParamsPanel = () => {
         textSearchItems,
         unknowns,
         nlpId,
+        nlpLat,
+        nlpLong,
         ...urlParams
       } = params
 

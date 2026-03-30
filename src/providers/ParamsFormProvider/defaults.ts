@@ -95,6 +95,8 @@ const defaultFormState: Partial<FormParams> = {
   clientId: '',
   nlpListings: null,
   nlpFields: '',
+  nlpLat: null,
+  nlpLong: null,
   unknowns: {}
 }
 
