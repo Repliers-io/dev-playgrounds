@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form'
+
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
@@ -18,6 +20,14 @@ import SectionTemplate from './SectionTemplate'
 const QueryParamsSection = () => {
   const { onClear } = useParamsForm()
   const { options, loading } = useSelectOptions()
+  const { watch } = useFormContext()
+
+  const status = watch('status')
+  const lastStatus = watch('lastStatus')
+  const standardStatus = watch('standardStatus')
+
+  const hasStandardStatus = standardStatus?.length > 0
+  const hasLegacyStatus = status?.length > 0 || lastStatus?.length > 0
   return (
     <SectionTemplate
       index={1}
@@ -63,6 +73,17 @@ const QueryParamsSection = () => {
             options={statusOptions}
             hint="docs"
             link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/"
+            disabled={hasStandardStatus}
+            tooltip="status cannot be combined with standardStatus"
+          />
+          <ParamsMultiSelect
+            name="lastStatus"
+            options={options?.lastStatus}
+            loading={loading}
+            hint="docs"
+            link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
+            disabled={hasStandardStatus}
+            tooltip="lastStatus cannot be combined with standardStatus"
           />
           <ParamsMultiSelect
             name="standardStatus"
@@ -71,18 +92,7 @@ const QueryParamsSection = () => {
             hint="docs"
             link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/#3-3-standardstatus-reso-compliant-standard"
             tooltip="standardStatus cannot be combined with status or lastStatus. Use standardStatus for RESO compliant status values."
-          />
-          <ParamsMultiSelect
-            name="style"
-            options={options?.style}
-            loading={loading}
-          />
-          <ParamsMultiSelect
-            name="lastStatus"
-            options={options?.lastStatus}
-            loading={loading}
-            hint="docs"
-            link="https://help.repliers.com/en/article/laststatus-definitions-8mokhu/"
+            disabled={hasLegacyStatus}
           />
           <ParamsMultiSelect
             name="propertyType"
@@ -90,6 +100,11 @@ const QueryParamsSection = () => {
             loading={loading}
             hint="docs"
             link="https://help.repliers.com/en/article/using-aggregates-to-determine-acceptable-values-for-filters-c88csc/#6-determining-acceptable-values"
+          />
+          <ParamsMultiSelect
+            name="style"
+            options={options?.style}
+            loading={loading}
           />
           {/* <ParamsMultiSelect
             name="swimmingPool"

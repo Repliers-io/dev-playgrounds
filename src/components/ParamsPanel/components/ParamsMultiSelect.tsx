@@ -9,6 +9,7 @@ import {
   IconButton,
   MenuItem,
   TextField,
+  Tooltip,
   Typography
 } from '@mui/material'
 
@@ -42,7 +43,8 @@ const ParamsMultiSelect = ({
   options = [],
   noNull = true,
   noClear = false,
-  stringValue = false
+  stringValue = false,
+  disabled = false
 }: {
   name: string
   label?: string
@@ -54,6 +56,7 @@ const ParamsMultiSelect = ({
   noNull?: boolean
   noClear?: boolean
   stringValue?: boolean
+  disabled?: boolean
 }) => {
   const {
     control,
@@ -98,10 +101,17 @@ const ParamsMultiSelect = ({
 
           return (
             <Box id={name} sx={{ position: 'relative' }}>
+              <Tooltip
+                title={disabled && tooltip ? tooltip : ''}
+                arrow
+                placement="top"
+              >
+              <span>
               <TextField
                 select
                 fullWidth
                 size="small"
+                disabled={disabled}
                 error={!!errors[name]}
                 helperText={errors[name]?.message?.toString()}
                 {...field}
@@ -165,8 +175,10 @@ const ParamsMultiSelect = ({
                   </MenuItem>
                 ))}
               </TextField>
+              </span>
+              </Tooltip>
 
-              {Boolean(!noClear && localValue.length > 0) && !loading && (
+              {Boolean(!noClear && !disabled && localValue.length > 0) && !loading && (
                 <Box sx={endIconStyles}>
                   <IconButton
                     onClick={handleClearClick}
