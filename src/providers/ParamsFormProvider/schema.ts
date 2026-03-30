@@ -42,6 +42,7 @@ const schema = Joi.object({
     .messages({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
+  standardStatus: Joi.array().items(Joi.string()).allow(null, ''),
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),

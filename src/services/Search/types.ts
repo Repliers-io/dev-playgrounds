@@ -57,6 +57,7 @@ export interface Filters {
   areaOrCity?: string | string[]
   status?: string[]
   lastStatus?: ApiLastStatus | ApiLastStatus[]
+  standardStatus?: string | string[]
   amenities?: string[]
   minSqft?: string
   maxSqft?: string
