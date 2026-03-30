@@ -35,7 +35,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [size, setSize] = useState(0)
   const [json, setJson] = useState<Record<string, unknown> | null>(null)
   const [history, setHistory] = useState<ChatItem[]>([])
-  const [stickySession, setStickySession] = useState(true)
+  const [stickySession, setStickySessionState] = useState(true)
+
+  const setStickySession = useCallback(
+    (value: boolean) => {
+      setStickySessionState(value)
+      if (!value) {
+        setValue('nlpId', '')
+      }
+    },
+    [setValue]
+  )
 
   const apiKey = getValues('apiKey')
   const apiUrl = getValues('apiUrl')
@@ -74,14 +84,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const endpointUrl = `${apiUrl}/nlp`
       const requestUrl = `${endpointUrl}${paramsString ? `?${paramsString}` : ''}`
 
-      const bodyParams: Record<string, string> = { prompt: message }
-      if (nlpId) bodyParams.nlpId = nlpId
+      const bodyParams: Record<string, unknown> = { prompt: message }
+      if (stickySession && nlpId) bodyParams.nlpId = nlpId
       if (clientId) bodyParams.clientId = clientId
       if (nlpListings !== null && nlpListings !== undefined)
         bodyParams.listings = nlpListings
       if (nlpFields) bodyParams.fields = nlpFields
-      if (nlpLat != null) bodyParams.lat = nlpLat
-      if (nlpLong != null) bodyParams.long = nlpLong
+
+      const parsedLat = Number(nlpLat)
+      const parsedLong = Number(nlpLong)
+      if (nlpLat !== '' && nlpLat != null && Number.isFinite(parsedLat))
+        bodyParams.lat = parsedLat
+      if (nlpLong !== '' && nlpLong != null && Number.isFinite(parsedLong))
+        bodyParams.long = parsedLong
 
       setRequest(requestUrl)
       setRequestBody(bodyParams)

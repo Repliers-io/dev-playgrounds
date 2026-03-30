@@ -80,8 +80,8 @@ export type CustomFormParams = {
   clientId: string
   nlpListings: string | null
   nlpFields: string
-  nlpLat: number | null
-  nlpLong: number | null
+  nlpLat: string | null
+  nlpLong: string | null
   unknowns: Record<string, any>
 }
 

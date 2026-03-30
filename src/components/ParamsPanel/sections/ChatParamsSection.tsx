@@ -89,6 +89,9 @@ const ChatParamsSection = () => {
             label="Sticky Session"
             sx={{
               ml: 0,
+              '& .MuiCheckbox-root': {
+                pl: 0
+              },
               '& .MuiFormControlLabel-label': {
                 fontSize: 13,
                 fontWeight: 600,
