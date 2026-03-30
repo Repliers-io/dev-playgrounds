@@ -65,6 +65,14 @@ const QueryParamsSection = () => {
             link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/"
           />
           <ParamsMultiSelect
+            name="standardStatus"
+            options={options?.standardStatus}
+            loading={loading}
+            hint="docs"
+            link="https://help.repliers.com/en/article/filtering-listings-by-status-16fc4yd/#3-3-standardstatus-reso-compliant-standard"
+            tooltip="standardStatus cannot be combined with status or lastStatus. Use standardStatus for RESO compliant status values."
+          />
+          <ParamsMultiSelect
             name="style"
             options={options?.style}
             loading={loading}

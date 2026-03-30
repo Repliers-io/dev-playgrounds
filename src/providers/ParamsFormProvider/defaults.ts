@@ -48,6 +48,7 @@ const defaultFormState: Partial<FormParams> = {
   class: [],
   status: [],
   lastStatus: [],
+  standardStatus: [],
   type: [],
   style: [],
   propertyType: [],

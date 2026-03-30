@@ -6,7 +6,8 @@ import {
 export const apiFields = [
   'details.style',
   'details.propertyType',
-  'lastStatus'
+  'lastStatus',
+  'standardStatus'
 ] as const
 
 export const apiFieldsMappings: Partial<
