@@ -29,7 +29,7 @@ const SelectOptionsContext = createContext<SelectOptionsContextType | null>(
 )
 
 const SelectOptionsProvider = ({
-  minCount = 10,
+  minCount = 0,
   children
 }: {
   minCount?: number
