@@ -24,4 +24,6 @@ export type ChatContextType = {
   sendMessage: (message: string) => Promise<APIChatResponse | null>
   clearData: () => void
   restartSession: () => void
+  stickySession: boolean
+  setStickySession: (value: boolean) => void
 }

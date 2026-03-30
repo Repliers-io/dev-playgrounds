@@ -1,8 +1,9 @@
 import ReplayIcon from '@mui/icons-material/Replay'
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Stack } from '@mui/material'
 
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
+import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 import { useChat } from 'providers/ChatProvider'
 
 import SectionTemplate from './SectionTemplate'
@@ -10,7 +11,7 @@ import SectionTemplate from './SectionTemplate'
 const nlpVersionOptions = ['1', '2', '3'] as const
 
 const ChatParamsSection = () => {
-  const { restartSession, history } = useChat()
+  const { restartSession, history, stickySession, setStickySession } = useChat()
 
   return (
     <SectionTemplate
@@ -46,7 +47,21 @@ const ChatParamsSection = () => {
           label="fields"
           tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice"
         />
-        <Box pt={0.5} width="100%" display="flex">
+        {ENABLE_NLP_COORDINATES && (
+          <>
+            <ParamsField
+              name="nlpLat"
+              label="lat"
+              tooltip="Latitude coordinate to provide location context to the NLP model"
+            />
+            <ParamsField
+              name="nlpLong"
+              label="long"
+              tooltip="Longitude coordinate to provide location context to the NLP model"
+            />
+          </>
+        )}
+        <Box pt={0.5} width="100%" display="flex" flexDirection="column" gap={0.5}>
           <Button
             disabled={!history.length}
             variant="outlined"
@@ -63,11 +78,32 @@ const ChatParamsSection = () => {
               borderRadius: 1,
               bgcolor: '#FFF',
               textTransform: 'none',
-              alignSelf: 'center'
+              alignSelf: 'flex-start'
             }}
           >
             Restart session
           </Button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={stickySession}
+                onChange={(e) => setStickySession(e.target.checked)}
+                size="small"
+              />
+            }
+            label="Sticky Session"
+            sx={{
+              ml: 0,
+              '& .MuiCheckbox-root': {
+                pl: 0
+              },
+              '& .MuiFormControlLabel-label': {
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'Urbanist Variable'
+              }
+            }}
+          />
         </Box>
       </Stack>
     </SectionTemplate>
