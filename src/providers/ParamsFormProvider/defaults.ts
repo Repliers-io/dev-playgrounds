@@ -48,6 +48,7 @@ const defaultFormState: Partial<FormParams> = {
   class: [],
   status: [],
   lastStatus: [],
+  standardStatus: [],
   type: [],
   style: [],
   propertyType: [],
@@ -63,8 +64,8 @@ const defaultFormState: Partial<FormParams> = {
   frontOfStructureQuality: [],
   minBedrooms: undefined,
   maxBedrooms: undefined,
-  minBathrooms: undefined,
-  maxBathrooms: undefined,
+  minBaths: undefined,
+  maxBaths: undefined,
   minGarageSpaces: undefined,
   maxGarageSpaces: undefined,
   minParkingSpaces: undefined,
@@ -95,6 +96,8 @@ const defaultFormState: Partial<FormParams> = {
   clientId: '',
   nlpListings: null,
   nlpFields: '',
+  nlpLat: null,
+  nlpLong: null,
   unknowns: {}
 }
 

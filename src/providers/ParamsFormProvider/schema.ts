@@ -42,6 +42,7 @@ const schema = Joi.object({
     .messages({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
+  standardStatus: Joi.array().items(Joi.string()).allow(null, ''),
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
     .allow(null, ''),
@@ -68,8 +69,8 @@ const schema = Joi.object({
     }),
   minBedrooms: Joi.number().integer().positive().allow(null, false, ''),
   maxBedrooms: Joi.number().integer().positive().allow(null, false, ''),
-  minBathrooms: Joi.number().integer().positive().allow(null, false, ''),
-  maxBathrooms: Joi.number().integer().positive().allow(null, false, ''),
+  minBaths: Joi.number().integer().positive().allow(null, false, ''),
+  maxBaths: Joi.number().integer().positive().allow(null, false, ''),
   minGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
   maxGarageSpaces: Joi.number().integer().positive().allow(null, false, ''),
   minParkingSpaces: Joi.number().integer().positive().allow(null, false, ''),

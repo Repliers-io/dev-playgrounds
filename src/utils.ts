@@ -3,6 +3,7 @@ export const multiSelectFields = [
   'class',
   'style',
   'status',
+  'standardStatus',
   'lastStatus',
   'propertyType',
   'grp',

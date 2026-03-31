@@ -7,7 +7,7 @@ import path from 'path'
 const getBase = (mode: string) => {
   switch (mode) {
     case 'github':
-      return '/gh-api-tool/' // TODO: update to the real path
+      return '/'
     case 'development':
     default:
       return '/'
