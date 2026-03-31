@@ -398,8 +398,8 @@ export interface ApiQueryParams {
   resultsPerPage: number
   type: 'sale' | 'lease'
   map: string
-  minBathrooms: number
-  maxBathrooms: number
+  minBaths: number
+  maxBaths: number
   boardId: number
   status: ApiStatus | ApiStatus[]
   lastStatus: ApiLastStatus[]
@@ -759,8 +759,8 @@ export interface ApiSavedSearch {
   minBeds?: number
   maxBeds?: number
   maxMaintenanceFee: number
-  minBathrooms?: number
-  maxBathrooms?: number
+  minBaths?: number
+  maxBaths?: number
   areas: string[]
   cities: string[]
   neighborhoods: string[]
@@ -801,7 +801,7 @@ export interface ApiSavedSearchCreateRequest {
   streetNumbers?: Array<string>
   streetNames?: Array<string>
   minBeds?: number
-  minBathrooms?: number
+  minBaths?: number
   propertyTypes?: string[]
   styles?: string[]
   status?: boolean

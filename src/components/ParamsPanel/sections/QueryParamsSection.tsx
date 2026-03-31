@@ -120,12 +120,20 @@ const QueryParamsSection = () => {
             <ParamsField name="maxPrice" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
-            <ParamsField name="minBedrooms" />
+            <ParamsField
+              name="minBedrooms"
+              hint="docs"
+              link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#6-supported-filters"
+            />
             <ParamsField name="maxBedrooms" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
-            <ParamsField name="minBathrooms" />
-            <ParamsField name="maxBathrooms" />
+            <ParamsField
+              name="minBaths"
+              hint="docs"
+              link="https://help.repliers.com/en/article/searching-filtering-and-pagination-guide-1q1n7x0/#6-supported-filters"
+            />
+            <ParamsField name="maxBaths" />
           </Stack>
           <Stack spacing={1} direction="row" justifyContent="space-between">
             <ParamsField name="minGarageSpaces" />
