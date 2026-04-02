@@ -62,6 +62,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const clientId = getValues('clientId')
       const nlpListings = getValues('nlpListings')
       const nlpFields = getValues('nlpFields')
+      const nlpUseLocationId = getValues('nlpUseLocationId')
       const nlpLat = getValues('nlpLat')
       const nlpLong = getValues('nlpLong')
 
@@ -90,6 +91,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       if (nlpListings !== null && nlpListings !== undefined)
         bodyParams.listings = nlpListings
       if (nlpFields) bodyParams.fields = nlpFields
+      if (nlpUseLocationId) bodyParams.useLocationId = nlpUseLocationId
 
       const parsedLat = Number(nlpLat)
       const parsedLong = Number(nlpLong)

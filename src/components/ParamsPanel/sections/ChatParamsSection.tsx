@@ -3,8 +3,8 @@ import { Box, Button, Checkbox, FormControlLabel, Stack } from '@mui/material'
 
 import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
 
-import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 import { useChat } from 'providers/ChatProvider'
+import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -47,6 +47,12 @@ const ChatParamsSection = () => {
           label="fields"
           tooltip="Use if you want to limit the listings response object to containing certain fields only. For example: fields=listPrice,soldPrice"
         />
+        <ParamsSelect
+          name="nlpUseLocationId"
+          label="useLocationId"
+          options={['true', 'false']}
+          tooltip="If true, the NLP model will return locationIDs inside `request.url` for location context"
+        />
         {ENABLE_NLP_COORDINATES && (
           <>
             <ParamsField
@@ -61,7 +67,13 @@ const ChatParamsSection = () => {
             />
           </>
         )}
-        <Box pt={0.5} width="100%" display="flex" flexDirection="column" gap={0.5}>
+        <Box
+          pt={0.5}
+          width="100%"
+          display="flex"
+          flexDirection="column"
+          gap={0.5}
+        >
           <Button
             disabled={!history.length}
             variant="outlined"
