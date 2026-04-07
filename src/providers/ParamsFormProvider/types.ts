@@ -52,6 +52,7 @@ export type CustomFormParams = {
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
+  locationsPointWithinBoundary: boolean
   locationsPageNum: number | null
   locationsSource: LocationsSourceOption[]
   locationsResultsPerPage: number | null

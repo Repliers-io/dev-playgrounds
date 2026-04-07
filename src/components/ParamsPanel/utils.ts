@@ -121,7 +121,8 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'locationsResultsPerPage',
     'locationsSource',
     'locationsMinSize',
-    'locationsMaxSize'
+    'locationsMaxSize',
+    'locationsPointWithinBoundary'
   ])
 
   if (params.endpoint === 'locations') {

@@ -172,6 +172,14 @@ const SearchSection = () => {
             />
           </Stack>
 
+          {locationsEndpoint && (
+            <ParamsSelect
+              label="pointWithinBoundary"
+              name="locationsPointWithinBoundary"
+              options={trueFalseOptions}
+            />
+          )}
+
           <ParamsField
             noClear
             label="fields"

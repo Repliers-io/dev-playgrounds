@@ -62,5 +62,6 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsLocationId',
   'locationsSource',
   'locationsMinSize',
-  'locationsMaxSize'
+  'locationsMaxSize',
+  'locationsPointWithinBoundary'
 ]
