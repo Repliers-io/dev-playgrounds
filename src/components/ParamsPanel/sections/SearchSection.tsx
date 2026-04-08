@@ -172,6 +172,15 @@ const SearchSection = () => {
             />
           </Stack>
 
+          {locationsEndpoint && (
+            <ParamsSelect
+              label="pointWithinBoundary"
+              name="locationsPointWithinBoundary"
+              options={trueFalseOptions}
+              tooltip="When set to `true`, returns only locations whose boundaries contain the point specified by `lat` and `long` parameters."
+            />
+          )}
+
           <ParamsField
             noClear
             label="fields"

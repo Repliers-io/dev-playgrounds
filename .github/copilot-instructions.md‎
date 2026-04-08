@@ -231,3 +231,13 @@ minLotSize: undefined,
 - `noClear` on `ParamsField` hides the ✕ clear button (used for fields that must always have a value, e.g. `locationsFields`).
 - For parameters that only make sense for a specific endpoint, gate the control with a boolean derived from `params.endpoint` (see `SearchSection.tsx` for examples).
 - `SectionTemplate` sections are collapsible; collapse state is persisted in the `sections` form field as a comma-separated string of `'1'`/`''` values indexed by `SectionTemplate.index`.
+
+## Gotchas & Lessons Learned
+
+### ParamsSelect returns empty string, not null
+
+When adding optional params that use `ParamsSelect`, the cleared value is `""`, not `null` or `undefined`. Always use a truthy check (`if (value)`) before including them in API requests — not a `!== null` check. Empty strings pass null checks and get sent as `""`, which is incorrect.
+
+### filterSearchParams allowlist
+
+When adding a new locations parameter, updating types/defaults/constants/UI/provider is **not enough**. `filterSearchParams` in `src/components/ParamsPanel/utils.ts` uses an explicit `pick()` allowlist that gates which params reach the LocationsProvider. Missing this causes the param to silently not appear in API requests. Always add the new param to this allowlist too.
