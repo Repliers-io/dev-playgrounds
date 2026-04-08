@@ -61,6 +61,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       locationsSource,
       locationsMinSize,
       locationsMaxSize,
+      locationsPointWithinBoundary,
       ...rest
     } = params
 
@@ -79,6 +80,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     rest.hasBoundary = locationsHasBoundary || null
     rest.minSize = locationsMinSize || null
     rest.maxSize = locationsMaxSize || null
+    rest.pointWithinBoundary = locationsPointWithinBoundary || null
 
     const endpointUrl = `${apiUrl}/${endpoint}`
     const getParamsString = queryString.stringify(rest, queryStringOptions)

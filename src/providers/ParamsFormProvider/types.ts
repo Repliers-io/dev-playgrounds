@@ -52,6 +52,7 @@ export type CustomFormParams = {
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
+  locationsPointWithinBoundary: boolean
   locationsPageNum: number | null
   locationsSource: LocationsSourceOption[]
   locationsResultsPerPage: number | null
@@ -80,6 +81,7 @@ export type CustomFormParams = {
   clientId: string
   nlpListings: string | null
   nlpFields: string
+  nlpUseLocationId: string | null
   nlpLat: string | null
   nlpLong: string | null
   unknowns: Record<string, any>
