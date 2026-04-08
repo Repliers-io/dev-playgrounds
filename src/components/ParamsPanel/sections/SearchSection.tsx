@@ -177,6 +177,7 @@ const SearchSection = () => {
               label="pointWithinBoundary"
               name="locationsPointWithinBoundary"
               options={trueFalseOptions}
+              tooltip="When set to `true`, returns only locations whose boundaries contain the point specified by `lat` and `long` parameters."
             />
           )}
 
