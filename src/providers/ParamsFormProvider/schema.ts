@@ -32,25 +32,29 @@ const schema = Joi.object({
   listingFields: Joi.string().allow(null, false, '').optional(),
   class: Joi.array()
     .items(Joi.string().valid(...classOptions))
-    .allow(null, ''),
+    .allow(null, '')
+    .single(),
   status: Joi.array()
     .items(Joi.string().valid(...statusOptions))
-    .allow(null, ''),
+    .allow(null, '')
+    .single(),
   lastStatus: Joi.array()
     .items(Joi.string().valid(...lastStatusOptions))
     .allow(null, '')
+    .single()
     .messages({
       'any.only': `Must be one of [${lastStatusOptions.join(', ')}]`
     }),
-  standardStatus: Joi.array().items(Joi.string()).allow(null, ''),
+  standardStatus: Joi.array().items(Joi.string()).allow(null, '').single(),
   type: Joi.array()
     .items(Joi.string().valid(...typeOptions))
-    .allow(null, ''),
-  style: Joi.array().items(Joi.string()).allow(null, ''),
+    .allow(null, '')
+    .single(),
+  style: Joi.array().items(Joi.string()).allow(null, '').single(),
   sortBy: Joi.string()
     .valid(...sortByOptions)
     .allow(null, ''),
-  propertyType: Joi.array().items(Joi.string()).allow(null, ''),
+  propertyType: Joi.array().items(Joi.string()).allow(null, '').single(),
   minPrice: Joi.number().integer().positive().allow(null, false, ''),
   maxPrice: Joi.number().integer().positive().allow(null, false, ''),
   pageNum: Joi.number().integer().min(1).allow(null, false, '').messages({
@@ -130,10 +134,12 @@ const schema = Joi.object({
     .optional(),
   listingLocationsSource: Joi.array()
     .items(Joi.string())
-    .allow(null, ''),
+    .allow(null, '')
+    .single(),
   listingLocationsType: Joi.array()
     .items(Joi.string())
-    .allow(null, ''),
+    .allow(null, '')
+    .single(),
   unknowns: Joi.object().optional()
 })
 

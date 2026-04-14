@@ -63,14 +63,16 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     const endpointUrl = `${apiUrl}/listings/${mlsNumber}`
 
     // Map parameters for listings endpoint
+    const includeLocations = listingLocations === 'true'
+
     const getParams = {
       boardId: listingBoardId,
       fields: listingFields,
-      locations: listingLocations === 'true' ? 'true' : undefined,
-      locationsSource: listingLocationsSource?.length
+      locations: includeLocations ? 'true' : undefined,
+      locationsSource: includeLocations && listingLocationsSource?.length
         ? listingLocationsSource
         : undefined,
-      locationsType: listingLocationsType?.length
+      locationsType: includeLocations && listingLocationsType?.length
         ? listingLocationsType
         : undefined
     }

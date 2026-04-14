@@ -80,8 +80,7 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
     link: 'https://help.repliers.com/en/article/ai-powered-property-photo-classification-implementation-guide-l8jltq/'
   },
   locations: {
-    tooltip:
-      'Locations containing this listing inside location boundary based on listing lat/long coordinates'
+    tooltip: "Locations whose boundary contains this listing's coordinates"
   },
   timestamps: {
     hint: 'DOM docs',
