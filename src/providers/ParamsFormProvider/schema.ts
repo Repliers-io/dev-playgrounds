@@ -124,6 +124,16 @@ const schema = Joi.object({
       'number.min': 'Max Quality must be at least 1.0',
       'number.max': 'Max Quality must be at most 6.0'
     }),
+  listingLocations: Joi.string()
+    .valid('true', 'false')
+    .allow(null, '')
+    .optional(),
+  listingLocationsSource: Joi.array()
+    .items(Joi.string())
+    .allow(null, ''),
+  listingLocationsType: Joi.array()
+    .items(Joi.string())
+    .allow(null, ''),
   unknowns: Joi.object().optional()
 })
 

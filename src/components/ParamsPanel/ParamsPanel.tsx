@@ -180,7 +180,16 @@ const ParamsPanel = () => {
   )
 
   const fetchProperty = useCallback(async (params: Partial<FormParams>) => {
-    const { mlsNumber, listingBoardId, listingFields, apiKey, apiUrl } = params
+    const {
+      mlsNumber,
+      listingBoardId,
+      listingFields,
+      listingLocations,
+      listingLocationsSource,
+      listingLocationsType,
+      apiKey,
+      apiUrl
+    } = params
 
     // Only search if we have at least mlsNumber or listingBoardId
     if (!mlsNumber && !listingBoardId) return
@@ -190,6 +199,9 @@ const ParamsPanel = () => {
         mlsNumber,
         listingBoardId,
         listingFields,
+        listingLocations,
+        listingLocationsSource,
+        listingLocationsType,
         apiKey,
         apiUrl,
         endpoint: 'property'

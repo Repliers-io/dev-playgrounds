@@ -1,10 +1,20 @@
 import { Box, Stack } from '@mui/material'
+import { useFormContext } from 'react-hook-form'
 
-import { ParamsField, ParamsSelect } from '../components'
+import {
+  locationsSourceOptions,
+  locationsTypeOptions,
+  trueFalseOptions
+} from 'providers/ParamsFormProvider'
+
+import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
+  const { watch } = useFormContext()
+  const listingLocations = watch('listingLocations')
+
   return (
     <SectionTemplate
       index={10}
@@ -31,6 +41,30 @@ const ListingParamsSection = () => {
             link="https://help.repliers.com/en/article/raw-mls-data-access-with-repliers-nhlg5o/#1-accessing-raw-fields-via-the-get-a-single-listing-endpoint"
             options={['raw']}
           />
+
+          <ParamsSelect
+            name="listingLocations"
+            label="locations"
+            tooltip="When set to true, the API will return locations that contain this listing based on its lat/long coordinates"
+            options={trueFalseOptions}
+          />
+
+          {listingLocations === 'true' && (
+            <>
+              <ParamsMultiSelect
+                label="locationsSource"
+                name="listingLocationsSource"
+                options={locationsSourceOptions}
+              />
+
+              <ParamsMultiSelect
+                label="locationsType"
+                name="listingLocationsType"
+                options={locationsTypeOptions}
+                tooltip="Filter which location types are returned"
+              />
+            </>
+          )}
         </Stack>
       </Box>
     </SectionTemplate>
