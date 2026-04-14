@@ -62,6 +62,9 @@ export type CustomFormParams = {
 
   listingFields: string | null
   listingBoardId: number | null
+  listingLocations: string | null
+  listingLocationsSource: LocationsSourceOption[]
+  listingLocationsType: LocationsTypeOption[]
   imageSearchItems?: {
     type: 'text' | 'image'
     value?: string

@@ -35,7 +35,10 @@ export const customFormParams: (keyof CustomFormParams)[] = [
 export const listingOnlyParams: (keyof FormParams)[] = [
   'mlsNumber',
   'listingFields',
-  'listingBoardId'
+  'listingBoardId',
+  'listingLocations',
+  'listingLocationsSource',
+  'listingLocationsType'
 ]
 
 export const listingsOnlyParams: (keyof FormParams)[] = []
