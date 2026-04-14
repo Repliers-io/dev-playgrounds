@@ -81,6 +81,14 @@ ParamsPanel UI → react-hook-form (ParamsFormProvider) → SearchProvider.setPa
 
 6. **Validated options** — if the field accepts only specific string values, add an `as const` array + type export to `types.ts` (like `classOptions`, `sortByOptions`) and reference it in both the schema (`Joi.string().valid(...myOptions)`) and the UI control's `options` prop.
 
+7. **Endpoint filtering** — add the field to the correct array in `src/constants/form.ts`:
+   - `customFormParams` — app-internal params that should NEVER reach any API endpoint (NLP params, UI state like `tab`, `sections`, etc.)
+   - `listingOnlyParams` — params sent only to the single-listing endpoint
+   - `searchOnlyParams` — params sent only to search/locations endpoints
+   - `clusterOnlyParams` / `statsOnlyParams` — params scoped to those endpoints
+
+   Missing this causes params to either leak into wrong API requests or get silently dropped.
+
 ### Example: adding a `minLotSize` filter
 
 ```ts
