@@ -46,7 +46,16 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
   }, [])
 
   const search = useCallback(async (params: any) => {
-    const { apiKey, apiUrl, mlsNumber, listingBoardId, listingFields } = params
+    const {
+      apiKey,
+      apiUrl,
+      mlsNumber,
+      listingBoardId,
+      listingFields,
+      listingLocations,
+      listingLocationsSource,
+      listingLocationsType
+    } = params
 
     if (!apiKey || !apiUrl || !mlsNumber) return
 
@@ -54,9 +63,18 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     const endpointUrl = `${apiUrl}/listings/${mlsNumber}`
 
     // Map parameters for listings endpoint
+    const includeLocations = listingLocations === 'true'
+
     const getParams = {
       boardId: listingBoardId,
-      fields: listingFields
+      fields: listingFields,
+      locations: includeLocations ? 'true' : undefined,
+      locationsSource: includeLocations && listingLocationsSource?.length
+        ? listingLocationsSource
+        : undefined,
+      locationsType: includeLocations && listingLocationsType?.length
+        ? listingLocationsType
+        : undefined
     }
 
     // Build the full request URL for display

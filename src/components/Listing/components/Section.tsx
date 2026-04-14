@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material'
@@ -44,19 +45,6 @@ const Section = ({
 
   const { tooltip, hint, link } = headerConfig || {}
   const sectionTitle = getSectionTitle(title)
-
-  const preWrapStyles = {
-    whiteSpace: 'pre-wrap',
-    fontSize: '12px',
-    lineHeight: '15px',
-    color: '#2a3f3c',
-    overflow: 'auto',
-    backgroundColor: 'white',
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #e0e0e0',
-    margin: 0
-  }
 
   // Handle complex sections (including root)
   return (
@@ -111,16 +99,28 @@ const Section = ({
                       .map((item, index) => (
                         <Box key={index}>
                           {typeof item === 'object' ? (
-                            <pre
-                              style={{
-                                ...preWrapStyles
+                            <Box
+                              sx={{
+                                fontSize: '12px',
+                                lineHeight: '15px',
+                                color: '#2a3f3c',
+                                overflow: 'auto',
+                                backgroundColor: 'white',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #e0e0e0'
                               }}
-                              dangerouslySetInnerHTML={{
-                                __html: highlightJSONKeys(
-                                  JSON.stringify(item, null, 2)
-                                )
-                              }}
-                            />
+                            >
+                              <JsonView
+                                data={item}
+                                style={{
+                                  ...defaultStyles,
+                                  quotesForFieldNames: false
+                                }}
+                                clickToExpandNode={true}
+                                shouldExpandNode={(level: number) => level < 2}
+                              />
+                            </Box>
                           ) : (
                             <Typography variant="body2">
                               {formatSimpleValue(item)}
@@ -156,7 +156,16 @@ const Section = ({
                               </Typography>
                               <pre
                                 style={{
-                                  ...preWrapStyles,
+                                  whiteSpace: 'pre-wrap',
+                                  fontSize: '12px',
+                                  lineHeight: '15px',
+                                  color: '#2a3f3c',
+                                  overflow: 'auto',
+                                  backgroundColor: 'white',
+                                  padding: '8px',
+                                  borderRadius: '4px',
+                                  border: '1px solid #e0e0e0',
+                                  margin: 0,
                                   maxWidth: '100%',
                                   boxSizing: 'border-box'
                                 }}

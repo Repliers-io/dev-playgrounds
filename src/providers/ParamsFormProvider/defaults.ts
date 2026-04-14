@@ -38,6 +38,9 @@ const defaultFormState: Partial<FormParams> = {
   areaOrCity: '',
   listingFields: null,
   listingBoardId: undefined,
+  listingLocations: null,
+  listingLocationsSource: [],
+  listingLocationsType: [],
 
   /**
    * request parameters

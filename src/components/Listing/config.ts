@@ -3,7 +3,14 @@ import type { HideEmptyValuesOptions, SectionHeaderConfig } from './types'
 // Configuration for property display order
 
 // Order for all sections (including root for simple properties)
-export const sectionOrder = ['images', 'root', 'address', 'details', 'history']
+export const sectionOrder = [
+  'images',
+  'root',
+  'address',
+  'details',
+  'locations',
+  'history'
+]
 
 // Sections to hide completely
 export const hiddenSections = [
@@ -71,6 +78,9 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   imageInsights: {
     hint: 'docs',
     link: 'https://help.repliers.com/en/article/ai-powered-property-photo-classification-implementation-guide-l8jltq/'
+  },
+  locations: {
+    tooltip: "Locations whose boundary contains this listing's coordinates"
   },
   timestamps: {
     hint: 'DOM docs',
