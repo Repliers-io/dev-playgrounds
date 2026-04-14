@@ -8,6 +8,7 @@ import { highlightJSONKeys } from 'utils/formatters'
 import type { SectionHeaderConfig } from '../types'
 import { formatSimpleValue, getSectionTitle, shouldHideValue } from '../utils'
 
+import CollapsibleJson from './CollapsibleJson'
 import SectionHeader from './SectionHeader'
 import { ImagesSection } from './sections'
 
@@ -44,19 +45,6 @@ const Section = ({
 
   const { tooltip, hint, link } = headerConfig || {}
   const sectionTitle = getSectionTitle(title)
-
-  const preWrapStyles = {
-    whiteSpace: 'pre-wrap',
-    fontSize: '12px',
-    lineHeight: '15px',
-    color: '#2a3f3c',
-    overflow: 'auto',
-    backgroundColor: 'white',
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #e0e0e0',
-    margin: 0
-  }
 
   // Handle complex sections (including root)
   return (
@@ -111,15 +99,8 @@ const Section = ({
                       .map((item, index) => (
                         <Box key={index}>
                           {typeof item === 'object' ? (
-                            <pre
-                              style={{
-                                ...preWrapStyles
-                              }}
-                              dangerouslySetInnerHTML={{
-                                __html: highlightJSONKeys(
-                                  JSON.stringify(item, null, 2)
-                                )
-                              }}
+                            <CollapsibleJson
+                              data={item as Record<string, unknown>}
                             />
                           ) : (
                             <Typography variant="body2">
@@ -156,7 +137,16 @@ const Section = ({
                               </Typography>
                               <pre
                                 style={{
-                                  ...preWrapStyles,
+                                  whiteSpace: 'pre-wrap',
+                                  fontSize: '12px',
+                                  lineHeight: '15px',
+                                  color: '#2a3f3c',
+                                  overflow: 'auto',
+                                  backgroundColor: 'white',
+                                  padding: '8px',
+                                  borderRadius: '4px',
+                                  border: '1px solid #e0e0e0',
+                                  margin: 0,
                                   maxWidth: '100%',
                                   boxSizing: 'border-box'
                                 }}

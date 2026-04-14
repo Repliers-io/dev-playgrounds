@@ -68,10 +68,10 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
       fields: listingFields,
       locations: listingLocations === 'true' ? 'true' : undefined,
       locationsSource: listingLocationsSource?.length
-        ? listingLocationsSource.join(',')
+        ? listingLocationsSource
         : undefined,
       locationsType: listingLocationsType?.length
-        ? listingLocationsType.join(',')
+        ? listingLocationsType
         : undefined
     }
 
