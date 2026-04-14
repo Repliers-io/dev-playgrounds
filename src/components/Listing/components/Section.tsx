@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { defaultStyles, JsonView } from 'react-json-view-lite'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material'
@@ -8,7 +9,6 @@ import { highlightJSONKeys } from 'utils/formatters'
 import type { SectionHeaderConfig } from '../types'
 import { formatSimpleValue, getSectionTitle, shouldHideValue } from '../utils'
 
-import CollapsibleJson from './CollapsibleJson'
 import SectionHeader from './SectionHeader'
 import { ImagesSection } from './sections'
 
@@ -99,9 +99,28 @@ const Section = ({
                       .map((item, index) => (
                         <Box key={index}>
                           {typeof item === 'object' ? (
-                            <CollapsibleJson
-                              data={item as Record<string, unknown>}
-                            />
+                            <Box
+                              sx={{
+                                fontSize: '12px',
+                                lineHeight: '15px',
+                                color: '#2a3f3c',
+                                overflow: 'auto',
+                                backgroundColor: 'white',
+                                padding: '8px',
+                                borderRadius: '4px',
+                                border: '1px solid #e0e0e0'
+                              }}
+                            >
+                              <JsonView
+                                data={item}
+                                style={{
+                                  ...defaultStyles,
+                                  quotesForFieldNames: false
+                                }}
+                                clickToExpandNode={true}
+                                shouldExpandNode={(level: number) => level < 2}
+                              />
+                            </Box>
                           ) : (
                             <Typography variant="body2">
                               {formatSimpleValue(item)}

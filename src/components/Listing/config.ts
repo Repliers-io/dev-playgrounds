@@ -81,7 +81,7 @@ export const sectionHeaders: Record<string, SectionHeaderConfig> = {
   },
   locations: {
     tooltip:
-      'Locations containing this listing based on its lat/long coordinates'
+      'Locations containing this listing inside location boundary based on listing lat/long coordinates'
   },
   timestamps: {
     hint: 'DOM docs',
