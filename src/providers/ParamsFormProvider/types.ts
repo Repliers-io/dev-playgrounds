@@ -18,8 +18,9 @@ export const locationsTypeOptions = [
   'neighborhood',
   'neighborhood-alternate',
   'postalCode',
+  'district',
   'schoolDistrict',
-  'district'
+  'school'
 ] as const
 export type LocationsTypeOption = (typeof locationsTypeOptions)[number]
 

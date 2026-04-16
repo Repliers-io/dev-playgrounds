@@ -12,6 +12,7 @@ import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
 import { type MapPosition } from 'services/Map/types'
 import { fetchListings } from 'utils/api'
 import { getLocations, getMapPosition } from 'utils/map'
+import { continentalUsCenter, continentalUsZoom } from 'constants/map'
 import { type MapStyle } from 'constants/map-styles'
 
 import { useSearch } from './SearchProvider'
@@ -98,20 +99,37 @@ const MapOptionsProvider = ({
 
   const centerMap = useCallback(
     (apiKey: string, apiUrl: string) => {
-      fetchListings({ apiKey, apiUrl }).then((listings) => {
-        const locations = getLocations(listings)
-        if (!locations?.length || !mapContainerRef.current) return
-        const mapPosition = getMapPosition(locations, mapContainerRef.current)
+      const applyPosition = (mapPosition: MapPosition) => {
         setPosition(mapPosition)
         if (canRenderMap) {
           mapRef.current?.jumpTo({
-            center: mapPosition.center,
+            center: mapPosition.center!,
             zoom: mapPosition.zoom
           })
         } else {
           setCanRenderMap(true)
         }
+      }
+
+      const fallbackPosition = (): MapPosition => ({
+        center: new LngLat(continentalUsCenter.lng, continentalUsCenter.lat),
+        zoom: continentalUsZoom,
+        bounds: undefined
       })
+
+      fetchListings({ apiKey, apiUrl })
+        .then((listings) => {
+          if (!mapContainerRef.current) return
+          const locations = getLocations(listings)
+          const mapPosition = locations.length
+            ? getMapPosition(locations, mapContainerRef.current)
+            : fallbackPosition()
+          applyPosition(mapPosition)
+        })
+        .catch(() => {
+          if (!mapContainerRef.current) return
+          applyPosition(fallbackPosition())
+        })
     },
     [canRenderMap]
   )
