@@ -206,7 +206,8 @@ export const locationsFields = [
   'classification',
   'subType',
   'size',
-  'demographics'
+  'demographics',
+  'school'
 ] as const
 
 type FieldsType = Array<
