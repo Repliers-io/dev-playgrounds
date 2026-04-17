@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 
 import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
@@ -17,36 +17,34 @@ const SchoolParamsSection = () => {
     <SectionTemplate
       index={14}
       title="School Params"
-      tooltip="Acceptable values for these filters are pulled from GET /locations?aggregates=school.schoolType,school.schoolLevel,school.privateSchoolAffiliation,school.districtName"
+      tooltip="Acceptable values come from the /locations aggregates endpoint"
     >
-      <Box sx={{ width: '100%' }}>
-        <Stack spacing={1.25}>
-          <ParamsMultiSelect
-            name="schoolType"
-            options={options?.schoolType}
-            loading={loading}
-            tooltip="Filter locations type=school by school type"
-          />
-          <ParamsMultiSelect
-            name="schoolLevel"
-            options={options?.schoolLevel}
-            loading={loading}
-            tooltip="Filter locations type=school by level"
-          />
-          <ParamsMultiSelect
-            name="privateSchoolAffiliation"
-            options={options?.privateSchoolAffiliation}
-            loading={loading}
-            tooltip="Filter locations type=school by private school affiliation"
-          />
-          <ParamsMultiSelect
-            name="schoolDistrictName"
-            options={options?.schoolDistrictName}
-            loading={loading}
-            tooltip="Filter locations type=school by school district name"
-          />
-        </Stack>
-      </Box>
+      <Stack spacing={1.25}>
+        <ParamsMultiSelect
+          name="schoolType"
+          options={options?.schoolType}
+          loading={loading}
+          tooltip="Filter locations type=school by school type"
+        />
+        <ParamsMultiSelect
+          name="schoolLevel"
+          options={options?.schoolLevel}
+          loading={loading}
+          tooltip="Filter locations type=school by level"
+        />
+        <ParamsMultiSelect
+          name="privateSchoolAffiliation"
+          options={options?.privateSchoolAffiliation}
+          loading={loading}
+          tooltip="Filter locations type=school by private school affiliation"
+        />
+        <ParamsMultiSelect
+          name="schoolDistrictName"
+          options={options?.schoolDistrictName}
+          loading={loading}
+          tooltip="Filter locations type=school by school district name"
+        />
+      </Stack>
     </SectionTemplate>
   )
 }

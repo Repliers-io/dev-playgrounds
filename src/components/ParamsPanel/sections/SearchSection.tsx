@@ -119,10 +119,12 @@ const SearchSection = () => {
             tooltip="Array of cities. For now to be provided as a comma-separated list"
           />
 
-          <ParamsField
-            name="name"
-            tooltip="Filter locations by name - case-insensitive exact match"
-          />
+          {locationsEndpoint && (
+            <ParamsField
+              name="name"
+              tooltip="Filter locations by name - case-insensitive exact match"
+            />
+          )}
 
           {locationsEndpoint && (
             <>

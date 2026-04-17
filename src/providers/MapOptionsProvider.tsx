@@ -12,7 +12,7 @@ import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
 import { type MapPosition } from 'services/Map/types'
 import { fetchListings } from 'utils/api'
 import { getLocations, getMapPosition } from 'utils/map'
-import { continentalUsCenter, continentalUsZoom } from 'constants/map'
+import { defaultMapCenter, defaultMapZoom } from 'constants/map'
 import { type MapStyle } from 'constants/map-styles'
 
 import { useSearch } from './SearchProvider'
@@ -112,8 +112,8 @@ const MapOptionsProvider = ({
       }
 
       const fallbackPosition = (): MapPosition => ({
-        center: new LngLat(continentalUsCenter.lng, continentalUsCenter.lat),
-        zoom: continentalUsZoom,
+        center: new LngLat(defaultMapCenter.lng, defaultMapCenter.lat),
+        zoom: defaultMapZoom,
         bounds: undefined
       })
 
@@ -126,10 +126,7 @@ const MapOptionsProvider = ({
             : fallbackPosition()
           applyPosition(mapPosition)
         })
-        .catch(() => {
-          if (!mapContainerRef.current) return
-          applyPosition(fallbackPosition())
-        })
+        .catch((err) => console.error(err))
     },
     [canRenderMap]
   )

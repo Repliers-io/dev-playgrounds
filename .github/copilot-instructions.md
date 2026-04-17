@@ -147,3 +147,9 @@ Params prefixed `listing*` (e.g. `listingFields`, `listingBoardId`, `listingLoca
 ### Pre-existing TypeScript errors
 
 `tsc --noEmit` produces some pre-existing errors (e.g., in `ParamsFormProvider.tsx` and `theme.ts`). Do not try to fix these. When verifying your changes, grep the `tsc` output for your modified filenames only — no output means your changes are clean.
+
+### AI-collaboration memory lives in the repo
+
+Durable rules, project facts, and agent-specific notes that AI coding agents should remember across sessions belong in `.claude/agent-memory/` in this repo (agent-specific notes under `.claude/agent-memory/<agent-name>/`). Do NOT save them to per-user locations like `~/.claude/projects/.../memory/` — those aren't visible to other coders on the team.
+
+Use `.claude/agent-memory/MEMORY.md` (or `.claude/agent-memory/<agent-name>/MEMORY.md`) as a one-line-per-entry index pointing to sibling markdown files with YAML frontmatter.

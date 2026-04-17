@@ -44,7 +44,7 @@ const LocationsSelectOptionsProvider = ({
       fieldNames: readonly K[]
     ): Promise<Record<K, string[]>> => {
       const endpoint = `${apiUrl}/locations`
-      const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
+      const fetchOpts = { headers: { 'REPLIERS-API-KEY': apiKey } }
       const query = {
         aggregates: fieldNames.join(','),
         locations: 'false'
@@ -54,7 +54,11 @@ const LocationsSelectOptionsProvider = ({
       const result: Record<K, string[]> = {} as Record<K, string[]>
 
       try {
-        const response = await apiFetch<any>(endpoint, { get: query }, options)
+        const response = await apiFetch<any>(
+          endpoint,
+          { get: query },
+          fetchOpts
+        )
         aggregates = (await response.json()).aggregates
       } catch (error) {
         console.error('No locations field options provided from API', error)
