@@ -10,6 +10,22 @@ export const apiFields = [
   'standardStatus'
 ] as const
 
+export const locationsApiFields = [
+  'school.schoolType',
+  'school.schoolLevel',
+  'school.privateSchoolAffiliation',
+  'school.districtName'
+] as const
+
+export const locationsApiFieldsMappings: Partial<
+  Record<(typeof locationsApiFields)[number], string>
+> = {
+  'school.schoolType': 'schoolType',
+  'school.schoolLevel': 'schoolLevel',
+  'school.privateSchoolAffiliation': 'privateSchoolAffiliation',
+  'school.districtName': 'schoolDistrictName'
+}
+
 export const apiFieldsMappings: Partial<
   Record<(typeof apiFields)[number], string>
 > = {
@@ -67,5 +83,10 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsSource',
   'locationsMinSize',
   'locationsMaxSize',
-  'locationsPointWithinBoundary'
+  'locationsPointWithinBoundary',
+  'name',
+  'schoolType',
+  'schoolLevel',
+  'privateSchoolAffiliation',
+  'schoolDistrictName'
 ]

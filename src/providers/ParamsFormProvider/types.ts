@@ -60,6 +60,13 @@ export type CustomFormParams = {
   locationsBoundary: string | null
   locationsMinSize: number | null
   locationsMaxSize: number | null
+  name: string
+
+  // school aggregates (GET /locations only)
+  schoolType: string[]
+  schoolLevel: string[]
+  privateSchoolAffiliation: string[]
+  schoolDistrictName: string[]
 
   listingFields: string | null
   listingBoardId: number | null

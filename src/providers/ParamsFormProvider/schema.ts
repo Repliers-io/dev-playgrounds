@@ -89,6 +89,15 @@ const schema = Joi.object({
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),
   locationsMaxSize: Joi.number().positive().allow(null, false, ''),
+  name: Joi.string().allow(null, false, '').optional(),
+
+  schoolType: Joi.array().items(Joi.string()).allow(null, '').single(),
+  schoolLevel: Joi.array().items(Joi.string()).allow(null, '').single(),
+  privateSchoolAffiliation: Joi.array()
+    .items(Joi.string())
+    .allow(null, '')
+    .single(),
+  schoolDistrictName: Joi.array().items(Joi.string()).allow(null, '').single(),
 
   locationsPageNum: Joi.number()
     .integer()
