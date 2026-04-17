@@ -122,7 +122,12 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
     'locationsSource',
     'locationsMinSize',
     'locationsMaxSize',
-    'locationsPointWithinBoundary'
+    'locationsPointWithinBoundary',
+    'name',
+    'schoolType',
+    'schoolLevel',
+    'privateSchoolAffiliation',
+    'schoolDistrictName'
   ])
 
   if (params.endpoint === 'locations') {
@@ -130,6 +135,11 @@ export const filterSearchParams = (params: Partial<FormParams>) => {
   } else {
     searchParams.locationsPageNum = null // remove `locationsPageNum` parameter from `locations/autocomplete` endpoint
     searchParams.locationsResultsPerPage = null // remove `locationsResultsPerPage` parameter from `locations/autocomplete` endpoint
+    searchParams.name = null
+    searchParams.schoolType = null
+    searchParams.schoolLevel = null
+    searchParams.privateSchoolAffiliation = null
+    searchParams.schoolDistrictName = null
   }
 
   return searchParams

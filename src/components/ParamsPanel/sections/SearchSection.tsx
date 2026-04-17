@@ -70,7 +70,6 @@ const SearchSection = () => {
             label="type"
             name="locationsType"
             options={locationsTypeOptions}
-            tooltip="type=postalCode || type=schoolDistrict  used with source=UserDefined for now"
           />
 
           <ParamsMultiSelect
@@ -93,7 +92,7 @@ const SearchSection = () => {
                 label="sortBy"
                 name="locationsSortBy"
                 options={locationsSortByOptions}
-                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L206"
+                link="https://github.com/Repliers-io/api-docs/blob/main/docs/locations.yml#L224"
               />
 
               <ParamsField
@@ -119,6 +118,13 @@ const SearchSection = () => {
             name="city"
             tooltip="Array of cities. For now to be provided as a comma-separated list"
           />
+
+          {locationsEndpoint && (
+            <ParamsField
+              name="name"
+              tooltip="Filter locations by name - case-insensitive exact match"
+            />
+          )}
 
           {locationsEndpoint && (
             <>

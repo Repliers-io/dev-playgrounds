@@ -9,6 +9,7 @@ import PageContent from 'components/PageContent'
 import { ChatProvider } from 'providers/ChatProvider'
 import ListingProvider from 'providers/ListingProvider'
 import LocationsProvider from 'providers/LocationsProvider'
+import LocationsSelectOptionsProvider from 'providers/LocationsSelectOptionsProvider'
 import MapOptionsProvider, {
   type MapCoords
 } from 'providers/MapOptionsProvider'
@@ -52,11 +53,13 @@ function App() {
             <ListingProvider>
               <MapOptionsProvider style="map" params={mapParams}>
                 <SelectOptionsProvider>
-                  <ParamsFormProvider>
-                    <ChatProvider>
-                      <PageContent />
-                    </ChatProvider>
-                  </ParamsFormProvider>
+                  <LocationsSelectOptionsProvider>
+                    <ParamsFormProvider>
+                      <ChatProvider>
+                        <PageContent />
+                      </ChatProvider>
+                    </ParamsFormProvider>
+                  </LocationsSelectOptionsProvider>
                 </SelectOptionsProvider>
               </MapOptionsProvider>
             </ListingProvider>
