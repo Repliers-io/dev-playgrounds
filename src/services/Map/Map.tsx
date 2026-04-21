@@ -54,46 +54,26 @@ export class MapService {
     items.forEach((item) => {
       const { id, status } = item
 
-      const center = item.map
-        ? ({
-            lng: Number(item.map.longitude),
-            lat: Number(item.map.latitude)
-          } as LngLatLike)
-        : null
-      if (!center) return
+      const lng = Number(item.map?.longitude)
+      const lat = Number(item.map?.latitude)
+      const hasValidCenter = Number.isFinite(lng) && Number.isFinite(lat)
+      const center = hasValidCenter ? ({ lng, lat } as LngLatLike) : null
 
       const singleViewOnMap = this.markers[id]
       if (singleViewOnMap) return
 
-      const { boundary, geometryType = 'Polygon' } = item.map as any
+      const { boundary, geometryType = 'Polygon' } = (item.map as any) || {}
       if (boundary?.length) {
-        this.createPolygon({
-          id,
-          map,
-          coordinates: boundary,
-          geometryType,
-          onClick: () => onClick?.(item)
-        })
+        this.showBoundary({ id, map, boundary, geometryType, item, onClick })
+      } else if (center) {
+        this.showMarker({ map, center, item, status, onClick })
       } else {
-        const isLocation = item.size === 'location'
-        const id = isLocation ? getLocationName(item) : getMarkerName(item)
-        const markerElement = this.createMarkerElement({
-          id,
-          status,
-          size: item.size || 'point',
-          ...(isLocation && { className: 'location' }),
-          onClick: (e: MouseEvent) => {
-            // Prevent redirect on click
-            e.preventDefault()
-            onClick?.(item)
-          }
+        console.error('Skipping location with invalid coordinates:', {
+          id: item.id,
+          longitude: item.map?.longitude,
+          latitude: item.map?.latitude,
+          item
         })
-
-        const marker = new MapboxMarker(markerElement)
-          .setLngLat(center)
-          .addTo(map)
-
-        this.addMarker(id, marker)
       }
     })
 
@@ -102,6 +82,61 @@ export class MapService {
       (key) => !items.some((prop) => prop.id === key)
     )
     this.removeMarkers(markersToRemove)
+  }
+
+  private showBoundary({
+    id,
+    map,
+    boundary,
+    geometryType,
+    item,
+    onClick
+  }: {
+    id: string
+    map: Map
+    boundary: Position[][] | Position[][][]
+    geometryType: 'Polygon' | 'MultiPolygon'
+    item: any
+    onClick?: (item: any) => void
+  }) {
+    this.createPolygon({
+      id,
+      map,
+      coordinates: boundary,
+      geometryType,
+      onClick: () => onClick?.(item)
+    })
+  }
+
+  private showMarker({
+    map,
+    center,
+    item,
+    status,
+    onClick
+  }: {
+    map: Map
+    center: LngLatLike
+    item: any
+    status: string
+    onClick?: (item: any) => void
+  }) {
+    const isLocation = item.size === 'location'
+    const id = isLocation ? getLocationName(item) : getMarkerName(item)
+    const markerElement = this.createMarkerElement({
+      id,
+      status,
+      size: item.size || 'point',
+      ...(isLocation && { className: 'location' }),
+      onClick: (e: MouseEvent) => {
+        e.preventDefault()
+        onClick?.(item)
+      }
+    })
+
+    const marker = new MapboxMarker(markerElement).setLngLat(center).addTo(map)
+
+    this.addMarker(id, marker)
   }
 
   addMarker(key: string, marker: MapboxMarker) {

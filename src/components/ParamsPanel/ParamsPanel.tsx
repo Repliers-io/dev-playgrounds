@@ -27,6 +27,7 @@ import {
   LocationParamsSection,
   ParamsPresets,
   QueryParamsSection,
+  SchoolParamsSection,
   SearchSection,
   StatisticsSection,
   TimerangeSection,
@@ -62,6 +63,7 @@ const ParamsPanel = () => {
         return (
           <>
             <SearchSection />
+            <SchoolParamsSection />
             <CenterRadiusSection />
             <BoundsSection />
           </>

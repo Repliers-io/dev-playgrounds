@@ -1,0 +1,1 @@
+- [Locations `name` param scope](project_locations_name_param.md) — `name` is /locations-only; must be nulled out for /locations/autocomplete

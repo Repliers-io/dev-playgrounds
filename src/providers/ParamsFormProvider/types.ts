@@ -18,8 +18,9 @@ export const locationsTypeOptions = [
   'neighborhood',
   'neighborhood-alternate',
   'postalCode',
+  'district',
   'schoolDistrict',
-  'district'
+  'school'
 ] as const
 export type LocationsTypeOption = (typeof locationsTypeOptions)[number]
 
@@ -59,6 +60,13 @@ export type CustomFormParams = {
   locationsBoundary: string | null
   locationsMinSize: number | null
   locationsMaxSize: number | null
+  name: string
+
+  // school aggregates (GET /locations only)
+  schoolType: string[]
+  schoolLevel: string[]
+  privateSchoolAffiliation: string[]
+  schoolDistrictName: string[]
 
   listingFields: string | null
   listingBoardId: number | null
@@ -205,7 +213,8 @@ export const locationsFields = [
   'classification',
   'subType',
   'size',
-  'demographics'
+  'demographics',
+  'school'
 ] as const
 
 type FieldsType = Array<

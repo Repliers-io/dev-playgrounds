@@ -81,6 +81,14 @@ ParamsPanel UI → react-hook-form (ParamsFormProvider) → SearchProvider.setPa
 
 6. **Validated options** — if the field accepts only specific string values, add an `as const` array + type export to `types.ts` (like `classOptions`, `sortByOptions`) and reference it in both the schema (`Joi.string().valid(...myOptions)`) and the UI control's `options` prop.
 
+7. **Endpoint filtering** — add the field to the correct array in `src/constants/form.ts`:
+   - `customFormParams` — app-internal params that should NEVER reach any API endpoint (NLP params, UI state like `tab`, `sections`, etc.)
+   - `listingOnlyParams` — params sent only to the single-listing endpoint
+   - `searchOnlyParams` — params sent only to search/locations endpoints
+   - `clusterOnlyParams` / `statsOnlyParams` — params scoped to those endpoints
+
+   Missing this causes params to either leak into wrong API requests or get silently dropped.
+
 ### Example: adding a `minLotSize` filter
 
 ```ts
@@ -136,6 +144,16 @@ Params prefixed `listing*` (e.g. `listingFields`, `listingBoardId`, `listingLoca
 
 `listingOnlyParams`, `searchOnlyParams`, `customFormParams`, `clusterOnlyParams`, `statsOnlyParams` in `src/constants/form.ts` determine which params are sent to which endpoint. `filterQueryParams` in `src/components/ParamsPanel/utils.ts` uses these arrays to strip params before API calls. Missing a param from the right array causes it to either leak into wrong requests or get silently dropped.
 
+### URL bootstrap coercion in `src/utils.ts`
+
+`multiSelectFields` and `booleanFields` in `src/utils.ts` coerce URL query params into arrays and booleans **before** they reach the form. If you add a `ParamsMultiSelect` field, add its name to `multiSelectFields` — otherwise a single-value URL (`?foo=bar`) bootstraps as the string `"bar"` instead of `["bar"]`, and the control misbehaves. Same for `booleanFields` when adding a `ParamsCheckbox` or other boolean field. This is separate from the Joi `.single()` rule (submission) and the endpoint-filter arrays (API-send).
+
 ### Pre-existing TypeScript errors
 
 `tsc --noEmit` produces some pre-existing errors (e.g., in `ParamsFormProvider.tsx` and `theme.ts`). Do not try to fix these. When verifying your changes, grep the `tsc` output for your modified filenames only — no output means your changes are clean.
+
+### AI-collaboration memory lives in the repo
+
+Durable rules, project facts, and agent-specific notes that AI coding agents should remember across sessions belong in `.claude/agent-memory/` in this repo (agent-specific notes under `.claude/agent-memory/<agent-name>/`). Do NOT save them to per-user locations like `~/.claude/projects/.../memory/` — those aren't visible to other coders on the team.
+
+Use `.claude/agent-memory/MEMORY.md` (or `.claude/agent-memory/<agent-name>/MEMORY.md`) as a one-line-per-entry index pointing to sibling markdown files with YAML frontmatter.

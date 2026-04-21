@@ -36,3 +36,6 @@ export const proximitySearchCountry = 'CA'
 export const proximitySearchLanguage = 'en'
 export const proximitySearchMaxResults = 10
 export const proximitySearchCenter = { lat: 43.6532, lng: -79.3832 }
+
+export const defaultMapCenter = { lat: 39.8283, lng: -98.5795 }
+export const defaultMapZoom = 4
