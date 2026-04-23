@@ -1,9 +1,14 @@
 import ReplayIcon from '@mui/icons-material/Replay'
 import { Box, Button, Checkbox, FormControlLabel, Stack } from '@mui/material'
 
-import { ParamsField, ParamsSelect } from 'components/ParamsPanel/components'
+import {
+  ParamsField,
+  ParamsMultiSelect,
+  ParamsSelect
+} from 'components/ParamsPanel/components'
 
 import { useChat } from 'providers/ChatProvider'
+import { locationsSourceOptions } from 'providers/ParamsFormProvider/types'
 import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 
 import SectionTemplate from './SectionTemplate'
@@ -52,6 +57,11 @@ const ChatParamsSection = () => {
           label="useLocationId"
           options={['true', 'false']}
           tooltip="If true, the NLP model will return locationIDs inside `request.url` for location context"
+        />
+        <ParamsMultiSelect
+          label="locationsSource"
+          name="nlpLocationsSource"
+          options={locationsSourceOptions}
         />
         {ENABLE_NLP_COORDINATES && (
           <>

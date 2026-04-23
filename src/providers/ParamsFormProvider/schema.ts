@@ -149,6 +149,7 @@ const schema = Joi.object({
     .items(Joi.string())
     .allow(null, '')
     .single(),
+  nlpLocationsSource: Joi.array().items(Joi.string()).allow(null, '').single(),
   unknowns: Joi.object().optional()
 })
 

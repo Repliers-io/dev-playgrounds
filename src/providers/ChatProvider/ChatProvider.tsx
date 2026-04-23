@@ -65,6 +65,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const nlpUseLocationId = getValues('nlpUseLocationId')
       const nlpLat = getValues('nlpLat')
       const nlpLong = getValues('nlpLong')
+      const nlpLocationsSource = getValues('nlpLocationsSource')
 
       // Add user message to history immediately
       const userMessage: ChatItem = {
@@ -92,6 +93,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         bodyParams.listings = nlpListings
       if (nlpFields) bodyParams.fields = nlpFields
       if (nlpUseLocationId) bodyParams.useLocationId = nlpUseLocationId
+      if (nlpLocationsSource?.length)
+        bodyParams.locationsSource = nlpLocationsSource
 
       const parsedLat = Number(nlpLat)
       const parsedLong = Number(nlpLong)
