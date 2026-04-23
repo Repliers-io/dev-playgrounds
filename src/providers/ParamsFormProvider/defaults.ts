@@ -107,6 +107,7 @@ const defaultFormState: Partial<FormParams> = {
   nlpUseLocationId: 'true',
   nlpLat: null,
   nlpLong: null,
+  nlpLocationsSource: [],
   unknowns: {}
 }
 

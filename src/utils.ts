@@ -18,6 +18,7 @@ export const multiSelectFields = [
   'kitchenQuality',
   'frontOfStructureQuality',
   'locationsSource',
+  'nlpLocationsSource',
   'schoolType',
   'schoolLevel',
   'privateSchoolAffiliation',
