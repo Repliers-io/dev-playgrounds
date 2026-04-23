@@ -95,6 +95,7 @@ export type CustomFormParams = {
   nlpUseLocationId: string | null
   nlpLat: string | null
   nlpLong: string | null
+  nlpLocationsSource: LocationsSourceOption[]
   unknowns: Record<string, any>
 }
 
