@@ -6,7 +6,12 @@ import { Box, Stack } from '@mui/material'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 
-import { AndroidSwitch, ParamsCheckbox, ParamsRange } from '../components'
+import {
+  AndroidSwitch,
+  ParamsCheckbox,
+  ParamsField,
+  ParamsRange
+} from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -71,6 +76,16 @@ const ClustersSection = () => {
           max={200}
           name="clusterLimit"
           disabled={!clustering}
+        />
+        <ParamsRange
+          min={0}
+          max={100}
+          name="clusterListingsThreshold"
+          disabled={!clustering}
+        />
+        <ParamsField
+          name="clusterFields"
+          tooltip="Comma-separated list of fields returned for listings embedded inside clusters below the threshold"
         />
       </Stack>
     </SectionTemplate>

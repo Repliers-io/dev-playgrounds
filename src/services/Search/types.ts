@@ -79,6 +79,8 @@ export interface Filters {
   cluster?: boolean
   clusterPrecision?: number
   clusterLimit?: number
+  clusterFields?: string
+  clusterListingsThreshold?: number | null
   fields?: string
   statistics?: string
   resultsPerPage?: number

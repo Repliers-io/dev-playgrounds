@@ -85,6 +85,13 @@ const schema = Joi.object({
   cluster: Joi.boolean().allow(null, false, ''),
   clusterLimit: Joi.number().integer().positive().allow(null, false, ''),
   clusterPrecision: Joi.number().integer().positive().allow(null, false, ''),
+  clusterFields: Joi.string().allow(null, false, '').optional(),
+  clusterListingsThreshold: Joi.number()
+    .integer()
+    .min(0)
+    .max(100)
+    .allow(null, false, '')
+    .optional(),
 
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),

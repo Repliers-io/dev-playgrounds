@@ -106,18 +106,55 @@ const MapRoot = () => {
   const showMarkersAndClusters = () => {
     const map = mapRef.current
     if (!map) return
+
     // Show clusters when either:
     // 1. Clusters exist AND auto-switch is disabled, OR
     // 2. Clusters exist AND auto-switch is enabled BUT count exceeds threshold
-    if (
-      clusters?.length &&
+    const clustersOn =
+      !!clusters?.length &&
       (!dynamicClustering || count > markersClusteringThreshold)
-    ) {
-      MapService.showClusters({ map, clusters })
-    } else if (listings.length) {
+
+    // Clusters with inline listing data render as dots; the rest as bubbles.
+    const hasInlineListings = (c: (typeof clusters)[number]) =>
+      (c.count === 1 && !!c.listing) ||
+      (Array.isArray(c.listings) && c.listings.length > 0)
+
+    const inlineListingClusters = clustersOn
+      ? clusters!.filter(hasInlineListings)
+      : []
+    const multiClusters = clustersOn
+      ? clusters!.filter((c) => !hasInlineListings(c))
+      : []
+
+    const syntheticListings: Listing[] = inlineListingClusters.flatMap((c) => {
+      const items: Listing[] = []
+      if (c.listing) {
+        items.push({
+          ...(c.listing as Partial<Listing>),
+          map: {
+            latitude: String(c.location.latitude),
+            longitude: String(c.location.longitude)
+          }
+        } as Listing)
+      }
+      if (Array.isArray(c.listings) && c.listings.length) {
+        items.push(...(c.listings as Listing[]))
+      }
+      return items
+    })
+
+    const effectiveListings = clustersOn ? syntheticListings : listings
+
+    if (multiClusters.length) {
+      MapService.showClusters({ map, clusters: multiClusters })
+    } else {
+      MapService.resetClusters()
+    }
+
+    if (effectiveListings.length) {
       MapService.showMarkers({
         map,
-        items: listings.map((listing) => ({
+        items: effectiveListings.map((listing) => ({
           ...listing,
           id: getMarkerName(listing)
         })),
@@ -126,14 +163,14 @@ const MapRoot = () => {
         }
       })
     } else {
-      // No clusters and no listings - clear all markers
-      MapService.resetAllMarkers()
+      MapService.resetMarkers()
     }
   }
 
   const showLocations = () => {
     const map = mapRef.current
     if (!map) return
+    MapService.resetClusters()
     if (locations) {
       MapService.showMarkers({
         map,

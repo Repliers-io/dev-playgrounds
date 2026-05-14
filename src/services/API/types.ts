@@ -354,6 +354,8 @@ export interface ApiCluster {
   count: number
   location: ApiClusterLocation
   map: ApiClusterMapCoords
+  listing?: Partial<Listing>
+  listings?: Partial<Listing>[]
 }
 
 export type ApiQueryParamsAllowedFields =
