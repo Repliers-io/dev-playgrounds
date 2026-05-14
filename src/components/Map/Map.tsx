@@ -114,24 +114,34 @@ const MapRoot = () => {
       !!clusters?.length &&
       (!dynamicClustering || count > markersClusteringThreshold)
 
-    // Single-listing clusters render as listing dots; the rest as cluster bubbles.
-    const singleListingClusters = clustersOn
-      ? clusters!.filter((c) => c.count === 1 && c.listing)
+    // Clusters with inline listing data render as dots; the rest as bubbles.
+    const hasInlineListings = (c: (typeof clusters)[number]) =>
+      (c.count === 1 && !!c.listing) ||
+      (Array.isArray(c.listings) && c.listings.length > 0)
+
+    const inlineListingClusters = clustersOn
+      ? clusters!.filter(hasInlineListings)
       : []
     const multiClusters = clustersOn
-      ? clusters!.filter((c) => !(c.count === 1 && c.listing))
+      ? clusters!.filter((c) => !hasInlineListings(c))
       : []
 
-    const syntheticListings: Listing[] = singleListingClusters.map(
-      (c) =>
-        ({
+    const syntheticListings: Listing[] = inlineListingClusters.flatMap((c) => {
+      const items: Listing[] = []
+      if (c.listing) {
+        items.push({
           ...(c.listing as Partial<Listing>),
           map: {
             latitude: String(c.location.latitude),
             longitude: String(c.location.longitude)
           }
-        }) as Listing
-    )
+        } as Listing)
+      }
+      if (Array.isArray(c.listings) && c.listings.length) {
+        items.push(...(c.listings as Listing[]))
+      }
+      return items
+    })
 
     const effectiveListings = clustersOn ? syntheticListings : listings
 

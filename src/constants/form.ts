@@ -63,7 +63,9 @@ export const listingsOnlyParams: (keyof FormParams)[] = []
 
 export const clusterOnlyParams: (keyof FormParams)[] = [
   'clusterLimit',
-  'clusterPrecision'
+  'clusterPrecision',
+  'clusterFields',
+  'clusterListingsThreshold'
 ]
 
 export const statsOnlyParams: (keyof FormParams)[] = ['statistics', 'grp']
