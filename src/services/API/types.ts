@@ -408,6 +408,8 @@ export interface ApiQueryParams {
   minSoldDate: string
   maxSoldDate: string
   minListDate: string
+  minOpenHouseDate: string
+  maxOpenHouseDate: string
   statistics: string
 
   // operator - default: 'AND'

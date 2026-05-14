@@ -25,6 +25,7 @@ import {
   CredentialsSection,
   ListingParamsSection,
   LocationParamsSection,
+  OpenHouseSection,
   ParamsPresets,
   QueryParamsSection,
   SchoolParamsSection,
@@ -83,6 +84,7 @@ const ParamsPanel = () => {
             {/* <AiTextSection /> */}
             <LocationParamsSection />
             <TimerangeSection />
+            <OpenHouseSection />
             <StatisticsSection />
             <ClustersSection />
             <CenterRadiusSection />
