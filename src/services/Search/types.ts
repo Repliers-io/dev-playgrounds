@@ -67,6 +67,8 @@ export interface Filters {
   maxSoldDate?: string
   minUpdatedOn?: string
   maxUpdatedOn?: string
+  minOpenHouseDate?: string
+  maxOpenHouseDate?: string
   daysOnMarket?: DaysOnMarket
   soldWithin?: SoldWithin
   minYearBuilt?: number | null
@@ -77,6 +79,8 @@ export interface Filters {
   cluster?: boolean
   clusterPrecision?: number
   clusterLimit?: number
+  clusterFields?: string
+  clusterListingsThreshold?: number | null
   fields?: string
   statistics?: string
   resultsPerPage?: number

@@ -354,6 +354,8 @@ export interface ApiCluster {
   count: number
   location: ApiClusterLocation
   map: ApiClusterMapCoords
+  listing?: Partial<Listing>
+  listings?: Partial<Listing>[]
 }
 
 export type ApiQueryParamsAllowedFields =
@@ -408,6 +410,8 @@ export interface ApiQueryParams {
   minSoldDate: string
   maxSoldDate: string
   minListDate: string
+  minOpenHouseDate: string
+  maxOpenHouseDate: string
   statistics: string
 
   // operator - default: 'AND'

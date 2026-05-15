@@ -49,8 +49,6 @@ export class MapService {
     items: any[]
     onClick?: (item: any) => void
   }): void {
-    this.resetClusters()
-
     items.forEach((item) => {
       const { id, status } = item
 
@@ -162,7 +160,6 @@ export class MapService {
 
   // Clustering
   showClusters({ map, clusters }: { map: Map; clusters: ApiCluster[] }): void {
-    this.resetMarkers()
     this.smartResetClusters(clusters)
 
     clusters.forEach((cluster) => {

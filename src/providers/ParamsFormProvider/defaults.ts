@@ -82,6 +82,9 @@ const defaultFormState: Partial<FormParams> = {
   cluster: undefined,
   clusterLimit: 100,
   clusterPrecision: 10,
+  clusterFields:
+    'type,status,lastStatus,listPrice,soldPrice,permissions,map,mlsNumber',
+  clusterListingsThreshold: null,
   fields: listingFields.join(','),
   statistics: defaultStatisticsFields.join(','),
   imageSearchItems: [],
@@ -95,6 +98,8 @@ const defaultFormState: Partial<FormParams> = {
   maxSoldDate: undefined,
   minUpdatedOn: undefined,
   maxUpdatedOn: undefined,
+  minOpenHouseDate: undefined,
+  maxOpenHouseDate: undefined,
 
   /**
    * chat parameters
