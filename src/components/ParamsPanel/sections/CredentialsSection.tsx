@@ -6,7 +6,7 @@ import { Button, Link, Stack } from '@mui/material'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 
-import { ParamsField } from '../components'
+import { ApiKeyField, ParamsField } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
@@ -44,8 +44,7 @@ const CredentialsSection = () => {
       }
     >
       <Stack spacing={1}>
-        <ParamsField
-          noClear
+        <ApiKeyField
           name="apiKey"
           hint="* HTTP Header"
           label="REPILERS-API-KEY"

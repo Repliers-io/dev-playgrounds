@@ -1,4 +1,5 @@
 export { default as AndroidSwitch } from './AndroidSwitch'
+export { default as ApiKeyField } from './ApiKeyField'
 export { default as ParamsCheckbox } from './ParamsCheckbox'
 export { default as ParamsDate } from './ParamsDate'
 export { default as ParamsField } from './ParamsField'
