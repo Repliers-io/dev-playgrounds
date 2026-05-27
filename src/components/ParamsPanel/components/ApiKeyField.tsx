@@ -44,7 +44,10 @@ const ApiKeyField: React.FC<ApiKeyFieldProps> = ({
   const { ref: registerRef, ...registerRest } = register(name)
 
   useEffect(() => {
-    if (isEditing) editInputRef.current?.focus()
+    if (isEditing) {
+      editInputRef.current?.focus()
+      editInputRef.current?.select()
+    }
   }, [isEditing])
 
   const handleBlur = () => {
@@ -58,7 +61,6 @@ const ApiKeyField: React.FC<ApiKeyFieldProps> = ({
     const pasted = event.clipboardData.getData('text')
     if (!pasted) return
     setValue(name, pasted)
-    trigger(name)
     onChange()
   }
 
