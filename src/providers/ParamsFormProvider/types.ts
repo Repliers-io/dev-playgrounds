@@ -5,7 +5,12 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
-export const locationsSourceOptions = ['MLS', 'UserDefined', 'LiveBy'] as const
+export const locationsSourceOptions = [
+  'MLS',
+  'UserDefined',
+  'LiveBy',
+  'C2GIS'
+] as const
 export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
 
 export const locationsSubTypeOptions = ['village'] as const
