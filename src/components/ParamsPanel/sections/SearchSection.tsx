@@ -2,14 +2,8 @@ import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
-import {
-  locationsClassificationOptions,
-  locationsSourceOptions,
-  locationsSubTypeOptions,
-  locationsTypeOptions,
-  trueFalseOptions,
-  useParamsForm
-} from 'providers/ParamsFormProvider'
+import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
+import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 
 import {
@@ -28,6 +22,7 @@ const SearchSection = () => {
   const { params } = useSearch()
   const { onClear } = useParamsForm()
   const { clearData } = useLocations()
+  const { options, loading } = useLocationsSelectOptions()
   const locationsEndpoint = params.endpoint === 'locations'
   const locationsAutocompleteEndpoint =
     params.endpoint === 'locations/autocomplete'
@@ -63,26 +58,30 @@ const SearchSection = () => {
           <ParamsMultiSelect
             label="source"
             name="locationsSource"
-            options={locationsSourceOptions}
+            options={options?.locationsSource}
+            loading={loading}
           />
 
           <ParamsMultiSelect
             label="type"
             name="locationsType"
-            options={locationsTypeOptions}
+            options={options?.locationsType}
+            loading={loading}
           />
 
           <ParamsMultiSelect
             label="subType"
             name="locationsSubType"
-            options={locationsSubTypeOptions}
+            options={options?.locationsSubType}
+            loading={loading}
             tooltip="Only used with source=UserDefined for now"
           />
 
           <ParamsMultiSelect
             label="classification"
             name="locationsClassification"
-            options={locationsClassificationOptions}
+            options={options?.locationsClassification}
+            loading={loading}
             tooltip="Only used with source=UserDefined for now"
           />
 
