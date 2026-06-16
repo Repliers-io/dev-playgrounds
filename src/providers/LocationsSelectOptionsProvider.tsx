@@ -67,9 +67,12 @@ const LocationsSelectOptionsProvider = ({
 
       fieldNames.forEach((path) => {
         const value = getPath(aggregates, path) || {}
-        const alphabetical = alphabeticalFields.includes(path)
+        const alphabetical = (alphabeticalFields as readonly string[]).includes(
+          path
+        )
         const entries = Object.entries(value).sort(
           (a: [string, any], b: [string, any]) => {
+            if (a[0] === '' && b[0] === '') return 0
             if (a[0] === '') return -1
             if (b[0] === '') return 1
             return alphabetical
