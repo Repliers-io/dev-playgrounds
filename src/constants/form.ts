@@ -34,6 +34,10 @@ export const locationsApiFieldsMappings: Partial<
   'school.districtName': 'schoolDistrictName'
 }
 
+// location aggregate fields whose options should be sorted alphabetically
+// instead of by the default descending-count order
+export const locationsAlphabeticalFields: readonly string[] = ['type']
+
 export const apiFieldsMappings: Partial<
   Record<(typeof apiFields)[number], string>
 > = {

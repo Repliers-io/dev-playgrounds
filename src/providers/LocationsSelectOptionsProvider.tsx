@@ -12,6 +12,7 @@ import React, {
 import { apiFetch } from 'utils/api'
 import { getPath } from 'utils/path'
 import {
+  locationsAlphabeticalFields as alphabeticalFields,
   locationsApiFields as fields,
   locationsApiFieldsMappings as mappings
 } from 'constants/form'
@@ -66,9 +67,15 @@ const LocationsSelectOptionsProvider = ({
 
       fieldNames.forEach((path) => {
         const value = getPath(aggregates, path) || {}
+        const alphabetical = alphabeticalFields.includes(path)
         const entries = Object.entries(value).sort(
-          (a: [string, any], b: [string, any]) =>
-            a[0] === '' ? -1 : b[1] - a[1]
+          (a: [string, any], b: [string, any]) => {
+            if (a[0] === '') return -1
+            if (b[0] === '') return 1
+            return alphabetical
+              ? a[0].localeCompare(b[0])
+              : (b[1] as number) - (a[1] as number)
+          }
         )
         const filteredEntries = entries.filter(
           ([, count]) => (count as number) >= minCount
