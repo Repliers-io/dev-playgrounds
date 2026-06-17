@@ -11,6 +11,10 @@ export const apiFields = [
 ] as const
 
 export const locationsApiFields = [
+  'source',
+  'type',
+  'subType',
+  'classification',
   'school.schoolType',
   'school.schoolLevel',
   'school.privateSchoolAffiliation',
@@ -20,11 +24,21 @@ export const locationsApiFields = [
 export const locationsApiFieldsMappings: Partial<
   Record<(typeof locationsApiFields)[number], string>
 > = {
+  source: 'locationsSource',
+  type: 'locationsType',
+  subType: 'locationsSubType',
+  classification: 'locationsClassification',
   'school.schoolType': 'schoolType',
   'school.schoolLevel': 'schoolLevel',
   'school.privateSchoolAffiliation': 'privateSchoolAffiliation',
   'school.districtName': 'schoolDistrictName'
 }
+
+// location aggregate fields whose options should be sorted alphabetically
+// instead of by the default descending-count order
+export const locationsAlphabeticalFields = [
+  'type'
+] as const satisfies readonly (typeof locationsApiFields)[number][]
 
 export const apiFieldsMappings: Partial<
   Record<(typeof apiFields)[number], string>

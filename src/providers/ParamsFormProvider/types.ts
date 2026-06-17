@@ -5,38 +5,6 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
-export const locationsSourceOptions = [
-  'MLS',
-  'UserDefined',
-  'LiveBy',
-  'PublicRecord'
-] as const
-export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
-
-export const locationsSubTypeOptions = ['village'] as const
-export type LocationsSubTypeOption = (typeof locationsSubTypeOptions)[number]
-
-export const locationsTypeOptions = [
-  'area',
-  'city',
-  'city-alternate',
-  'neighborhood',
-  'neighborhood-alternate',
-  'postalCode',
-  'district',
-  'schoolDistrict',
-  'school'
-] as const
-export type LocationsTypeOption = (typeof locationsTypeOptions)[number]
-
-export const locationsClassificationOptions = [
-  'Unified',
-  'Non-Unique',
-  'PO Box'
-] as const
-export type LocationsClassificationOption =
-  (typeof locationsClassificationOptions)[number]
-
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
@@ -52,15 +20,15 @@ export type CustomFormParams = {
 
   // location params
   locationsSortBy: 'typeAsc' | 'typeDesc' | undefined
-  locationsType: LocationsTypeOption[]
-  locationsSubType: LocationsSubTypeOption[]
-  locationsClassification: LocationsClassificationOption[]
+  locationsType: string[]
+  locationsSubType: string[]
+  locationsClassification: string[]
   locationsFields: string
   locationsLocationId: string
   locationsHasBoundary: boolean
   locationsPointWithinBoundary: boolean
   locationsPageNum: number | null
-  locationsSource: LocationsSourceOption[]
+  locationsSource: string[]
   locationsResultsPerPage: number | null
   locationsBoundary: string | null
   locationsMinSize: number | null
@@ -76,8 +44,8 @@ export type CustomFormParams = {
   listingFields: string | null
   listingBoardId: number | null
   listingLocations: string | null
-  listingLocationsSource: LocationsSourceOption[]
-  listingLocationsType: LocationsTypeOption[]
+  listingLocationsSource: string[]
+  listingLocationsType: string[]
   imageSearchItems?: {
     type: 'text' | 'image'
     value?: string
@@ -100,7 +68,7 @@ export type CustomFormParams = {
   nlpUseLocationId: string | null
   nlpLat: string | null
   nlpLong: string | null
-  nlpLocationsSource: LocationsSourceOption[]
+  nlpLocationsSource: string[]
   unknowns: Record<string, any>
 }
 
