@@ -51,7 +51,7 @@ const LocationsSelectOptionsProvider = ({
   children: React.ReactNode
 }) => {
   const [loading, setLoading] = useState(false)
-  const [locationsSourceLoading, setLocationsSourceLoading] = useState(true)
+  const [locationsSourceLoading, setLocationsSourceLoading] = useState(false)
   const [options, setOptions] = useState<Record<string, string[]>>({})
   const { params } = useSearch()
   const { apiKey = '', apiUrl = '', locationsSource = [] } = params
@@ -153,7 +153,7 @@ const LocationsSelectOptionsProvider = ({
     const fetchOtherAggregates = async () => {
       setLoading(true)
       try {
-        // Only fetch other aggregates if at least one source is selected
+        // If sources are selected, filter aggregates by source; otherwise fetch unfiltered
         const sourceFilter =
           locationsSource && locationsSource.length > 0
             ? locationsSource

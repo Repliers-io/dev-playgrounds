@@ -17,7 +17,7 @@ const nlpVersionOptions = ['1', '2', '3'] as const
 
 const ChatParamsSection = () => {
   const { restartSession, history, stickySession, setStickySession } = useChat()
-  const { options, loading } = useLocationsSelectOptions()
+  const { options, locationsSourceLoading } = useLocationsSelectOptions()
 
   return (
     <SectionTemplate
@@ -63,7 +63,7 @@ const ChatParamsSection = () => {
           label="locationsSource"
           name="nlpLocationsSource"
           options={options?.locationsSource}
-          loading={loading}
+          loading={locationsSourceLoading}
         />
         {ENABLE_NLP_COORDINATES && (
           <>
