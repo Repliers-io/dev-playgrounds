@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import { Box, Button, Stack } from '@mui/material'
 
@@ -5,6 +8,7 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
 import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
+import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
 import {
   ParamsField,
@@ -24,9 +28,55 @@ const SearchSection = () => {
   const { clearData } = useLocations()
   const { options, loading, locationsSourceLoading } =
     useLocationsSelectOptions()
+  const { watch } = useFormContext()
+  const locationsType = watch('locationsType')
+  const locationsSubType = watch('locationsSubType')
+  const locationsClassification = watch('locationsClassification')
   const locationsEndpoint = params.endpoint === 'locations'
   const locationsAutocompleteEndpoint =
     params.endpoint === 'locations/autocomplete'
+
+  // Validate and clear selections that no longer exist in available options
+  useValidateDropdownSelections(
+    'locationsType',
+    locationsType,
+    options?.locationsType
+  )
+  useValidateDropdownSelections(
+    'locationsSubType',
+    locationsSubType,
+    options?.locationsSubType
+  )
+  useValidateDropdownSelections(
+    'locationsClassification',
+    locationsClassification,
+    options?.locationsClassification
+  )
+
+  // Clear dependent fields immediately when source changes to prevent stale API requests
+  const { setValue } = useFormContext()
+  const { onChange: submitForm } = useParamsForm()
+  const prevSourceRef = useRef<string[]>([])
+
+  useEffect(() => {
+    const currentSource = params.locationsSource || []
+    const prevSource = prevSourceRef.current
+
+    // Check if source actually changed (not on initial load)
+    const sourceChanged =
+      JSON.stringify(currentSource) !== JSON.stringify(prevSource)
+
+    if (sourceChanged && prevSource.length > 0) {
+      // Source was changed by user, clear dependent fields
+      setValue('locationsType', [])
+      setValue('locationsSubType', [])
+      setValue('locationsClassification', [])
+      // Trigger form submission with cleared values
+      submitForm()
+    }
+
+    prevSourceRef.current = currentSource
+  }, [params.locationsSource, setValue, submitForm])
 
   return (
     <SectionTemplate

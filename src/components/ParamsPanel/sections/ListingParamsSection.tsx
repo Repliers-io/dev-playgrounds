@@ -1,19 +1,53 @@
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
 import { useListingLocationsSelectOptions } from 'providers/ListingLocationsSelectOptionsProvider'
-import { trueFalseOptions } from 'providers/ParamsFormProvider'
+import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
+import { useSearch } from 'providers/SearchProvider'
+import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
+  const { params } = useSearch()
+  const { onChange: submitForm } = useParamsForm()
   const { options, loading, locationsSourceLoading } =
     useListingLocationsSelectOptions()
   const listingLocations = watch('listingLocations')
+  const listingLocationsType = watch('listingLocationsType')
+
+  // Validate and clear selections that no longer exist in available options
+  useValidateDropdownSelections(
+    'listingLocationsType',
+    listingLocationsType,
+    options?.locationsType
+  )
+
+  // Clear dependent fields immediately when listing source changes to prevent stale API requests
+  const prevListingSourceRef = useRef<string[]>([])
+
+  useEffect(() => {
+    const currentSource = params.listingLocationsSource || []
+    const prevSource = prevListingSourceRef.current
+
+    // Check if source actually changed (not on initial load)
+    const sourceChanged =
+      JSON.stringify(currentSource) !== JSON.stringify(prevSource)
+
+    if (sourceChanged && prevSource.length > 0) {
+      // Source was changed by user, clear dependent fields
+      setValue('listingLocationsType', [])
+      // Trigger form submission with cleared values
+      submitForm()
+    }
+
+    prevListingSourceRef.current = currentSource
+  }, [params.listingLocationsSource, setValue, submitForm])
 
   return (
     <SectionTemplate
