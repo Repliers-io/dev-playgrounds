@@ -106,88 +106,89 @@ const ParamsMultiSelect = ({
                 arrow
                 placement="top"
               >
-              <span>
-              <TextField
-                select
-                fullWidth
-                size="small"
-                disabled={disabled}
-                error={!!errors[name]}
-                helperText={errors[name]?.message?.toString()}
-                {...field}
-                value={[...localValue].flat()}
-                onChange={(e) => {
-                  const newValue = e.target.value
-                  setLocalValue([...newValue])
-                }}
-                slotProps={{
-                  select: {
-                    multiple: true,
-                    displayEmpty: true,
-                    onClose: () => {
-                      field.onChange(
-                        stringValue ? localValue.join(',') : localValue
-                      )
-                      onChange()
-                    },
-                    renderValue: (selected) => {
-                      if (
-                        !selected ||
-                        (Array.isArray(selected) && selected.length === 0)
-                      ) {
-                        return (
-                          <Typography variant="body2" color="#CCC">
-                            null
-                          </Typography>
-                        )
+                <span>
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    disabled={disabled}
+                    error={!!errors[name]}
+                    helperText={errors[name]?.message?.toString()}
+                    {...field}
+                    value={[...localValue].flat()}
+                    onChange={(e) => {
+                      const newValue = e.target.value
+                      setLocalValue([...newValue])
+                    }}
+                    slotProps={{
+                      select: {
+                        multiple: true,
+                        displayEmpty: true,
+                        onClose: () => {
+                          field.onChange(
+                            stringValue ? localValue.join(',') : localValue
+                          )
+                          onChange()
+                        },
+                        renderValue: (selected) => {
+                          if (
+                            !selected ||
+                            (Array.isArray(selected) && selected.length === 0)
+                          ) {
+                            return (
+                              <Typography variant="body2" color="#CCC">
+                                null
+                              </Typography>
+                            )
+                          }
+                          return (
+                            <Box
+                              sx={{
+                                maxWidth: '100%',
+                                overflow: 'hidden',
+                                py: 0.25,
+                                textOverflow: 'ellipsis'
+                              }}
+                            >
+                              {Array.isArray(selected)
+                                ? selected.join(',')
+                                : String(selected)}
+                            </Box>
+                          )
+                        }
                       }
-                      return (
-                        <Box
-                          sx={{
-                            maxWidth: '100%',
-                            overflow: 'hidden',
-                            py: 0.25,
-                            textOverflow: 'ellipsis'
-                          }}
-                        >
-                          {Array.isArray(selected)
-                            ? selected.join(',')
-                            : String(selected)}
-                        </Box>
-                      )
-                    }
-                  }
-                }}
-              >
-                {!noNull && (
-                  <MenuItem value="">
-                    <span style={{ color: '#aaa' }}>null</span>
-                  </MenuItem>
-                )}
-                {(options || []).filter(Boolean).map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <Checkbox
-                      size="small"
-                      sx={checkboxStyles}
-                      checked={localValue.includes(option)}
-                    />
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-              </span>
+                    }}
+                  >
+                    {!noNull && (
+                      <MenuItem value="">
+                        <span style={{ color: '#aaa' }}>null</span>
+                      </MenuItem>
+                    )}
+                    {(options || []).filter(Boolean).map((option) => (
+                      <MenuItem key={option} value={option}>
+                        <Checkbox
+                          size="small"
+                          sx={checkboxStyles}
+                          checked={localValue.includes(option)}
+                        />
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </span>
               </Tooltip>
 
-              {Boolean(!noClear && !disabled && localValue.length > 0) && !loading && (
-                <Box sx={endIconStyles}>
-                  <IconButton
-                    onClick={handleClearClick}
-                    sx={{ p: 0.5, mr: '-8px', mt: '-7px' }}
-                  >
-                    <ClearIcon sx={{ color: 'primary.main', fontSize: 18 }} />
-                  </IconButton>
-                </Box>
-              )}
+              {Boolean(!noClear && !disabled && localValue.length > 0) &&
+                !loading && (
+                  <Box sx={endIconStyles}>
+                    <IconButton
+                      onClick={handleClearClick}
+                      sx={{ p: 0.5, mr: '-8px', mt: '-7px' }}
+                    >
+                      <ClearIcon sx={{ color: 'primary.main', fontSize: 18 }} />
+                    </IconButton>
+                  </Box>
+                )}
               {loading && (
                 <Box sx={endIconStyles}>
                   <CircularProgress size={14} />

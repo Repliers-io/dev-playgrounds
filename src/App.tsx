@@ -7,6 +7,7 @@ import GoogleTagManager from 'components/GoogleTagManager'
 import PageContent from 'components/PageContent'
 
 import { ChatProvider } from 'providers/ChatProvider'
+import ListingLocationsSelectOptionsProvider from 'providers/ListingLocationsSelectOptionsProvider'
 import ListingProvider from 'providers/ListingProvider'
 import LocationsProvider from 'providers/LocationsProvider'
 import LocationsSelectOptionsProvider from 'providers/LocationsSelectOptionsProvider'
@@ -54,11 +55,13 @@ function App() {
               <MapOptionsProvider style="map" params={mapParams}>
                 <SelectOptionsProvider>
                   <LocationsSelectOptionsProvider>
-                    <ParamsFormProvider>
-                      <ChatProvider>
-                        <PageContent />
-                      </ChatProvider>
-                    </ParamsFormProvider>
+                    <ListingLocationsSelectOptionsProvider>
+                      <ParamsFormProvider>
+                        <ChatProvider>
+                          <PageContent />
+                        </ChatProvider>
+                      </ParamsFormProvider>
+                    </ListingLocationsSelectOptionsProvider>
                   </LocationsSelectOptionsProvider>
                 </SelectOptionsProvider>
               </MapOptionsProvider>

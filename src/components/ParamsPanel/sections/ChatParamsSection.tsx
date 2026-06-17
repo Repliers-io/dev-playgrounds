@@ -8,7 +8,7 @@ import {
 } from 'components/ParamsPanel/components'
 
 import { useChat } from 'providers/ChatProvider'
-import { locationsSourceOptions } from 'providers/ParamsFormProvider/types'
+import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
 import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 
 import SectionTemplate from './SectionTemplate'
@@ -17,6 +17,7 @@ const nlpVersionOptions = ['1', '2', '3'] as const
 
 const ChatParamsSection = () => {
   const { restartSession, history, stickySession, setStickySession } = useChat()
+  const { options, locationsSourceLoading } = useLocationsSelectOptions()
 
   return (
     <SectionTemplate
@@ -61,7 +62,8 @@ const ChatParamsSection = () => {
         <ParamsMultiSelect
           label="locationsSource"
           name="nlpLocationsSource"
-          options={locationsSourceOptions}
+          options={options?.locationsSource}
+          loading={locationsSourceLoading}
         />
         {ENABLE_NLP_COORDINATES && (
           <>
