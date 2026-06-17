@@ -1,8 +1,10 @@
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Stack } from '@mui/material'
 
 import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
@@ -13,11 +15,13 @@ import SectionTemplate from './SectionTemplate'
 const SchoolParamsSection = () => {
   const { params } = useSearch()
   const { options, loading } = useLocationsSelectOptions()
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
+  const { onChange: submitForm } = useParamsForm()
   const schoolType = watch('schoolType')
   const schoolLevel = watch('schoolLevel')
   const privateSchoolAffiliation = watch('privateSchoolAffiliation')
   const schoolDistrictName = watch('schoolDistrictName')
+  const locationsSourceFormValue = watch('locationsSource')
 
   // Validate and clear selections that no longer exist in available options
   useValidateDropdownSelections('schoolType', schoolType, options?.schoolType)
@@ -36,6 +40,42 @@ const SchoolParamsSection = () => {
     schoolDistrictName,
     options?.schoolDistrictName
   )
+
+  // Clear school fields when source changes
+  const prevSourceFormRef = useRef<string[]>([])
+
+  useEffect(() => {
+    const currentSource = locationsSourceFormValue || []
+    const prevSource = prevSourceFormRef.current
+
+    // Check if source actually changed in form (not on initial load)
+    const sourceChanged =
+      JSON.stringify(currentSource) !== JSON.stringify(prevSource)
+
+    if (sourceChanged && prevSource.length > 0) {
+      // Source was changed by user, clear school-related fields
+      setValue('schoolType', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      setValue('schoolLevel', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      setValue('privateSchoolAffiliation', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      setValue('schoolDistrictName', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      // Resubmit with cleared values to prevent stale URL
+      submitForm()
+    }
+
+    prevSourceFormRef.current = currentSource
+  }, [locationsSourceFormValue, setValue, submitForm])
 
   if (params.endpoint !== 'locations') return null
 

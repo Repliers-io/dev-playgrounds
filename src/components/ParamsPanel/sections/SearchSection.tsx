@@ -53,30 +53,41 @@ const SearchSection = () => {
     options?.locationsClassification
   )
 
-  // Clear dependent fields immediately when source changes to prevent stale API requests
+  // Clear dependent fields when source changes
   const { setValue } = useFormContext()
   const { onChange: submitForm } = useParamsForm()
-  const prevSourceRef = useRef<string[]>([])
+  const sourceFormValue = watch('locationsSource')
+  const prevSourceFormRef = useRef<string[]>([])
 
   useEffect(() => {
-    const currentSource = params.locationsSource || []
-    const prevSource = prevSourceRef.current
+    const currentSource = sourceFormValue || []
+    const prevSource = prevSourceFormRef.current
 
-    // Check if source actually changed (not on initial load)
+    // Check if source actually changed in form (not on initial load)
     const sourceChanged =
       JSON.stringify(currentSource) !== JSON.stringify(prevSource)
 
     if (sourceChanged && prevSource.length > 0) {
-      // Source was changed by user, clear dependent fields
-      setValue('locationsType', [])
-      setValue('locationsSubType', [])
-      setValue('locationsClassification', [])
-      // Trigger form submission with cleared values
+      // Source was changed by user, clear dependent fields immediately
+      // This runs before the submit from ParamsMultiSelect, ensuring clean values
+      setValue('locationsType', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      setValue('locationsSubType', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      setValue('locationsClassification', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      // Resubmit with cleared values to prevent stale URL
       submitForm()
     }
 
-    prevSourceRef.current = currentSource
-  }, [params.locationsSource, setValue, submitForm])
+    prevSourceFormRef.current = currentSource
+  }, [sourceFormValue, setValue, submitForm])
 
   return (
     <SectionTemplate

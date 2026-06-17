@@ -5,7 +5,6 @@ import { Box, Stack } from '@mui/material'
 
 import { useListingLocationsSelectOptions } from 'providers/ListingLocationsSelectOptionsProvider'
 import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
-import { useSearch } from 'providers/SearchProvider'
 import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
@@ -14,12 +13,12 @@ import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
   const { watch, setValue } = useFormContext()
-  const { params } = useSearch()
   const { onChange: submitForm } = useParamsForm()
   const { options, loading, locationsSourceLoading } =
     useListingLocationsSelectOptions()
   const listingLocations = watch('listingLocations')
   const listingLocationsType = watch('listingLocationsType')
+  const listingLocationsSourceFormValue = watch('listingLocationsSource')
 
   // Validate and clear selections that no longer exist in available options
   useValidateDropdownSelections(
@@ -28,26 +27,29 @@ const ListingParamsSection = () => {
     options?.locationsType
   )
 
-  // Clear dependent fields immediately when listing source changes to prevent stale API requests
-  const prevListingSourceRef = useRef<string[]>([])
+  // Clear dependent fields when listing source changes
+  const prevListingSourceFormRef = useRef<string[]>([])
 
   useEffect(() => {
-    const currentSource = params.listingLocationsSource || []
-    const prevSource = prevListingSourceRef.current
+    const currentSource = listingLocationsSourceFormValue || []
+    const prevSource = prevListingSourceFormRef.current
 
-    // Check if source actually changed (not on initial load)
+    // Check if source actually changed in form (not on initial load)
     const sourceChanged =
       JSON.stringify(currentSource) !== JSON.stringify(prevSource)
 
     if (sourceChanged && prevSource.length > 0) {
-      // Source was changed by user, clear dependent fields
-      setValue('listingLocationsType', [])
-      // Trigger form submission with cleared values
+      // Source was changed by user, clear dependent fields immediately
+      setValue('listingLocationsType', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+      // Resubmit with cleared values to prevent stale URL
       submitForm()
     }
 
-    prevListingSourceRef.current = currentSource
-  }, [params.listingLocationsSource, setValue, submitForm])
+    prevListingSourceFormRef.current = currentSource
+  }, [listingLocationsSourceFormValue, setValue, submitForm])
 
   return (
     <SectionTemplate

@@ -19,7 +19,10 @@ export const useValidateDropdownSelections = (
 
     // Only update if something was filtered out
     if (validValues.length !== selectedValues.length) {
-      setValue(fieldName, validValues)
+      setValue(fieldName, validValues, {
+        shouldDirty: true,
+        shouldValidate: true
+      })
     }
   }, [fieldName, selectedValues, availableOptions, setValue])
 }
