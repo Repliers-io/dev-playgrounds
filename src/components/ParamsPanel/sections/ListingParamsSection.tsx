@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form'
 import { Box, Stack } from '@mui/material'
 
 import { useListingLocationsSelectOptions } from 'providers/ListingLocationsSelectOptionsProvider'
-import { trueFalseOptions, useParamsForm } from 'providers/ParamsFormProvider'
+import { trueFalseOptions } from 'providers/ParamsFormProvider'
 import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
@@ -13,7 +13,6 @@ import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
   const { watch, setValue } = useFormContext()
-  const { onChange: submitForm } = useParamsForm()
   const { options, loading, locationsSourceLoading } =
     useListingLocationsSelectOptions()
   const listingLocations = watch('listingLocations')
@@ -39,17 +38,16 @@ const ListingParamsSection = () => {
       JSON.stringify(currentSource) !== JSON.stringify(prevSource)
 
     if (sourceChanged && prevSource.length > 0) {
-      // Source was changed by user, clear dependent fields immediately
+      // Source was changed by user, clear dependent fields
+      // ParamsMultiSelect already submitted the form with new source
       setValue('listingLocationsType', [], {
         shouldDirty: true,
         shouldValidate: true
       })
-      // Resubmit with cleared values to prevent stale URL
-      submitForm()
     }
 
     prevListingSourceFormRef.current = currentSource
-  }, [listingLocationsSourceFormValue, setValue, submitForm])
+  }, [listingLocationsSourceFormValue, setValue])
 
   return (
     <SectionTemplate

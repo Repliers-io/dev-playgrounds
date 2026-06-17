@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form'
 import { Stack } from '@mui/material'
 
 import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
-import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
 import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
@@ -16,7 +15,6 @@ const SchoolParamsSection = () => {
   const { params } = useSearch()
   const { options, loading } = useLocationsSelectOptions()
   const { watch, setValue } = useFormContext()
-  const { onChange: submitForm } = useParamsForm()
   const schoolType = watch('schoolType')
   const schoolLevel = watch('schoolLevel')
   const privateSchoolAffiliation = watch('privateSchoolAffiliation')
@@ -54,6 +52,7 @@ const SchoolParamsSection = () => {
 
     if (sourceChanged && prevSource.length > 0) {
       // Source was changed by user, clear school-related fields
+      // ParamsMultiSelect already submitted the form with new source
       setValue('schoolType', [], {
         shouldDirty: true,
         shouldValidate: true
@@ -70,12 +69,10 @@ const SchoolParamsSection = () => {
         shouldDirty: true,
         shouldValidate: true
       })
-      // Resubmit with cleared values to prevent stale URL
-      submitForm()
     }
 
     prevSourceFormRef.current = currentSource
-  }, [locationsSourceFormValue, setValue, submitForm])
+  }, [locationsSourceFormValue, setValue])
 
   if (params.endpoint !== 'locations') return null
 

@@ -9,7 +9,11 @@ export const useValidateDropdownSelections = (
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    if (!availableOptions || !selectedValues || selectedValues.length === 0) {
+    if (
+      !availableOptions ||
+      !Array.isArray(selectedValues) ||
+      selectedValues.length === 0
+    ) {
       return
     }
 

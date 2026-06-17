@@ -56,6 +56,15 @@ const LocationsSelectOptionsProvider = ({
   const { params } = useSearch()
   const { apiKey = '', apiUrl = '', locationsSource = [] } = params
 
+  // Memoize extracted values to prevent unnecessary effect triggers
+  // when params object reference changes but values don't
+  const memoizedLocationsSource = useMemo(
+    () => locationsSource || [],
+    [locationsSource?.join?.(',')]
+  )
+  const memoizedApiKey = useMemo(() => apiKey, [apiKey])
+  const memoizedApiUrl = useMemo(() => apiUrl, [apiUrl])
+
   const fetchOptions = useCallback(
     async <K extends string>(
       fieldNames: readonly K[],
@@ -143,10 +152,10 @@ const LocationsSelectOptionsProvider = ({
       }
     }
 
-    if (apiKey && apiUrl) {
+    if (memoizedApiKey && memoizedApiUrl) {
       fetchSources()
     }
-  }, [apiKey, apiUrl, fetchOptions, applyMappings])
+  }, [memoizedApiKey, memoizedApiUrl, fetchOptions, applyMappings])
 
   // Phase 2: Fetch other aggregates when apiKey/apiUrl or locationsSource changes
   useEffect(() => {
@@ -155,8 +164,8 @@ const LocationsSelectOptionsProvider = ({
       try {
         // If sources are selected, filter aggregates by source; otherwise fetch unfiltered
         const sourceFilter =
-          locationsSource && locationsSource.length > 0
-            ? locationsSource
+          memoizedLocationsSource && memoizedLocationsSource.length > 0
+            ? memoizedLocationsSource
             : undefined
 
         const otherOptions = await fetchOptions(
@@ -175,10 +184,10 @@ const LocationsSelectOptionsProvider = ({
       }
     }
 
-    if (apiKey && apiUrl) {
+    if (memoizedApiKey && memoizedApiUrl) {
       fetchOtherAggregates()
     }
-  }, [apiKey, apiUrl, locationsSource, fetchOptions, applyMappings])
+  }, [memoizedApiKey, memoizedApiUrl, memoizedLocationsSource, fetchOptions, applyMappings])
 
   const contextValue = useMemo(
     () => ({
