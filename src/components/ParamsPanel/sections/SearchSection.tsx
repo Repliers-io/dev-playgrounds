@@ -22,7 +22,8 @@ const SearchSection = () => {
   const { params } = useSearch()
   const { onClear } = useParamsForm()
   const { clearData } = useLocations()
-  const { options, loading } = useLocationsSelectOptions()
+  const { options, loading, locationsSourceLoading } =
+    useLocationsSelectOptions()
   const locationsEndpoint = params.endpoint === 'locations'
   const locationsAutocompleteEndpoint =
     params.endpoint === 'locations/autocomplete'
@@ -59,7 +60,7 @@ const SearchSection = () => {
             label="source"
             name="locationsSource"
             options={options?.locationsSource}
-            loading={loading}
+            loading={locationsSourceLoading}
           />
 
           <ParamsMultiSelect

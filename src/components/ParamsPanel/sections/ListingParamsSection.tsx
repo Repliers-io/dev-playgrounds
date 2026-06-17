@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { Box, Stack } from '@mui/material'
 
-import { useLocationsSelectOptions } from 'providers/LocationsSelectOptionsProvider'
+import { useListingLocationsSelectOptions } from 'providers/ListingLocationsSelectOptionsProvider'
 import { trueFalseOptions } from 'providers/ParamsFormProvider'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
@@ -11,7 +11,8 @@ import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
   const { watch } = useFormContext()
-  const { options, loading } = useLocationsSelectOptions()
+  const { options, loading, locationsSourceLoading } =
+    useListingLocationsSelectOptions()
   const listingLocations = watch('listingLocations')
 
   return (
@@ -54,7 +55,7 @@ const ListingParamsSection = () => {
                 label="locationsSource"
                 name="listingLocationsSource"
                 options={options?.locationsSource}
-                loading={loading}
+                loading={locationsSourceLoading}
               />
 
               <ParamsMultiSelect

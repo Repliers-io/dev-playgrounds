@@ -13,37 +13,27 @@ import { apiFetch } from 'utils/api'
 import { getPath } from 'utils/path'
 import {
   locationsAlphabeticalFields as alphabeticalFields,
-  locationsApiFields as fields,
   locationsApiFieldsMappings as mappings
 } from 'constants/form'
 
 import { useSearch } from './SearchProvider'
 
-type LocationsSelectOptionsContextType = {
-  fields: typeof fields
+type ListingLocationsSelectOptionsContextType = {
   loading: boolean
-  options: Record<string, string[]>
   locationsSourceLoading: boolean
+  options: Record<string, string[]>
 }
 
-const LocationsSelectOptionsContext =
-  createContext<LocationsSelectOptionsContextType | null>(null)
+const ListingLocationsSelectOptionsContext =
+  createContext<ListingLocationsSelectOptionsContextType | null>(null)
 
 // Fields that should be fetched first (no filtering)
 const sourceOnlyFields = ['source'] as const
 
-// Fields to fetch when source is selected
-const otherAggregateFields = [
-  'type',
-  'subType',
-  'classification',
-  'school.schoolType',
-  'school.schoolLevel',
-  'school.privateSchoolAffiliation',
-  'school.districtName'
-] as const
+// Fields to fetch when listing source is selected
+const otherAggregateFields = ['type', 'subType', 'classification'] as const
 
-const LocationsSelectOptionsProvider = ({
+const ListingLocationsSelectOptionsProvider = ({
   minCount = 0,
   children
 }: {
@@ -54,7 +44,7 @@ const LocationsSelectOptionsProvider = ({
   const [locationsSourceLoading, setLocationsSourceLoading] = useState(true)
   const [options, setOptions] = useState<Record<string, string[]>>({})
   const { params } = useSearch()
-  const { apiKey = '', apiUrl = '', locationsSource = [] } = params
+  const { apiKey = '', apiUrl = '', listingLocationsSource = [] } = params
 
   const fetchOptions = useCallback(
     async <K extends string>(
@@ -137,7 +127,7 @@ const LocationsSelectOptionsProvider = ({
         const mappedOptions = applyMappings(sourceOptions)
         setOptions((prev) => ({ ...prev, ...mappedOptions }))
       } catch (error) {
-        console.error('Failed to fetch locations sources:', error)
+        console.error('Failed to fetch listing locations sources:', error)
       } finally {
         setLocationsSourceLoading(false)
       }
@@ -148,15 +138,15 @@ const LocationsSelectOptionsProvider = ({
     }
   }, [apiKey, apiUrl, fetchOptions, applyMappings])
 
-  // Phase 2: Fetch other aggregates when apiKey/apiUrl or locationsSource changes
+  // Phase 2: Fetch other aggregates when apiKey/apiUrl or listingLocationsSource changes
   useEffect(() => {
     const fetchOtherAggregates = async () => {
       setLoading(true)
       try {
         // Only fetch other aggregates if at least one source is selected
         const sourceFilter =
-          locationsSource && locationsSource.length > 0
-            ? locationsSource
+          listingLocationsSource && listingLocationsSource.length > 0
+            ? listingLocationsSource
             : undefined
 
         const otherOptions = await fetchOptions(
@@ -169,7 +159,7 @@ const LocationsSelectOptionsProvider = ({
           ...mappedOptions
         }))
       } catch (error) {
-        console.error('Failed to fetch other location aggregates:', error)
+        console.error('Failed to fetch listing location aggregates:', error)
       } finally {
         setLoading(false)
       }
@@ -178,11 +168,10 @@ const LocationsSelectOptionsProvider = ({
     if (apiKey && apiUrl) {
       fetchOtherAggregates()
     }
-  }, [apiKey, apiUrl, locationsSource, fetchOptions, applyMappings])
+  }, [apiKey, apiUrl, listingLocationsSource, fetchOptions, applyMappings])
 
   const contextValue = useMemo(
     () => ({
-      fields,
       options,
       loading,
       locationsSourceLoading
@@ -191,19 +180,19 @@ const LocationsSelectOptionsProvider = ({
   )
 
   return (
-    <LocationsSelectOptionsContext.Provider value={contextValue}>
+    <ListingLocationsSelectOptionsContext.Provider value={contextValue}>
       {children}
-    </LocationsSelectOptionsContext.Provider>
+    </ListingLocationsSelectOptionsContext.Provider>
   )
 }
 
-export default LocationsSelectOptionsProvider
+export default ListingLocationsSelectOptionsProvider
 
-export const useLocationsSelectOptions = () => {
-  const context = useContext(LocationsSelectOptionsContext)
+export const useListingLocationsSelectOptions = () => {
+  const context = useContext(ListingLocationsSelectOptionsContext)
   if (!context) {
     throw Error(
-      'useLocationsSelectOptions must be used within a LocationsSelectOptionsProvider'
+      'useListingLocationsSelectOptions must be used within a ListingLocationsSelectOptionsProvider'
     )
   }
   return context
