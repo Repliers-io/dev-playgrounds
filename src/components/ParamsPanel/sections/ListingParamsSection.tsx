@@ -1,19 +1,53 @@
-import { Box, Stack } from '@mui/material'
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import {
-  locationsSourceOptions,
-  locationsTypeOptions,
-  trueFalseOptions
-} from 'providers/ParamsFormProvider'
+import { Box, Stack } from '@mui/material'
+
+import { useListingLocationsSelectOptions } from 'providers/ListingLocationsSelectOptionsProvider'
+import { trueFalseOptions } from 'providers/ParamsFormProvider'
+import { useValidateDropdownSelections } from 'hooks/useValidateDropdownSelections'
 
 import { ParamsField, ParamsMultiSelect, ParamsSelect } from '../components'
 
 import SectionTemplate from './SectionTemplate'
 
 const ListingParamsSection = () => {
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
+  const { options, loading, locationsSourceLoading } =
+    useListingLocationsSelectOptions()
   const listingLocations = watch('listingLocations')
+  const listingLocationsType = watch('listingLocationsType')
+  const listingLocationsSourceFormValue = watch('listingLocationsSource')
+
+  // Validate and clear selections that no longer exist in available options
+  useValidateDropdownSelections(
+    'listingLocationsType',
+    listingLocationsType,
+    options?.locationsType
+  )
+
+  // Clear dependent fields when listing source changes
+  const prevListingSourceFormRef = useRef<string[]>([])
+
+  useEffect(() => {
+    const currentSource = listingLocationsSourceFormValue || []
+    const prevSource = prevListingSourceFormRef.current
+
+    // Check if source actually changed in form (not on initial load)
+    const sourceChanged =
+      JSON.stringify(currentSource) !== JSON.stringify(prevSource)
+
+    if (sourceChanged && prevSource.length > 0) {
+      // Source was changed by user, clear dependent fields
+      // ParamsMultiSelect already submitted the form with new source
+      setValue('listingLocationsType', [], {
+        shouldDirty: true,
+        shouldValidate: true
+      })
+    }
+
+    prevListingSourceFormRef.current = currentSource
+  }, [listingLocationsSourceFormValue, setValue])
 
   return (
     <SectionTemplate
@@ -54,13 +88,15 @@ const ListingParamsSection = () => {
               <ParamsMultiSelect
                 label="locationsSource"
                 name="listingLocationsSource"
-                options={locationsSourceOptions}
+                options={options?.locationsSource}
+                loading={locationsSourceLoading}
               />
 
               <ParamsMultiSelect
                 label="locationsType"
                 name="listingLocationsType"
-                options={locationsTypeOptions}
+                options={options?.locationsType}
+                loading={loading}
                 tooltip="Filter which location types are returned"
               />
             </>
