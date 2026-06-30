@@ -96,6 +96,8 @@ const defaultFormState: Partial<FormParams> = {
   maxListDate: undefined,
   minSoldDate: undefined,
   maxSoldDate: undefined,
+  minClosedDate: undefined,
+  maxClosedDate: undefined,
   minUpdatedOn: undefined,
   maxUpdatedOn: undefined,
   minOpenHouseDate: undefined,
