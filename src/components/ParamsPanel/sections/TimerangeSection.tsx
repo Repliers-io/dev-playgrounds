@@ -26,6 +26,11 @@ const TimerangeSection = () => {
         </Stack>
 
         <Stack spacing={1} direction="row">
+          <ParamsDate name="minClosedDate" />
+          <ParamsDate name="maxClosedDate" />
+        </Stack>
+
+        <Stack spacing={1} direction="row">
           <ParamsDate name="minUpdatedOn" />
           <ParamsDate name="maxUpdatedOn" />
         </Stack>
