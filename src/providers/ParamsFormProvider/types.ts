@@ -9,7 +9,7 @@ export const locationsSourceOptions = [
   'MLS',
   'UserDefined',
   'LiveBy',
-  'C2GIS'
+  'PublicRecord'
 ] as const
 export type LocationsSourceOption = (typeof locationsSourceOptions)[number]
 
