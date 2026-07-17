@@ -132,7 +132,9 @@ export const sortByOptions = [
   'repliersUpdatedOnAsc',
   'repliersUpdatedOnDesc',
   'qualityAsc',
-  'qualityDesc'
+  'qualityDesc',
+  'centroidDistanceAsc',
+  'centroidDistanceDesc'
 ] as const
 export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
 
