@@ -129,7 +129,13 @@ const LocationsSelectOptionsProvider = ({
           )
         }
 
-        result[path] = Array.from(new Set(['', ...names]))
+        // Re-sort after the union so appended top-level values don't break
+        // the alphabetical ordering. Count-ordered fields keep the appended
+        // (count-less) values last.
+        const unique = Array.from(new Set(names.filter((name) => name !== '')))
+        if (alphabetical) unique.sort((a, b) => a.localeCompare(b))
+
+        result[path] = ['', ...unique]
       })
 
       return result
