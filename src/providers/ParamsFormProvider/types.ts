@@ -146,6 +146,8 @@ export const statisticsFields = [
 
   'avg-priceSqft',
   'med-priceSqft',
+  'min-priceSqft',
+  'max-priceSqft',
 
   'cnt-available',
   'cnt-closed',
