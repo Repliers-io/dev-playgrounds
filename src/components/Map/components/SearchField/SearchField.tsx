@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form'
 
 import {
   Autocomplete,
+  type AutocompleteRenderOptionState,
   Box,
   CircularProgress,
   debounce,
@@ -177,7 +178,8 @@ const SearchField = () => {
 
   const renderOptionElement = (
     props: React.HTMLAttributes<HTMLLIElement> & { key?: React.Key },
-    option: any
+    option: any,
+    state: AutocompleteRenderOptionState
   ) => {
     if (option.type === 'loader') {
       return <OptionLoader key="loader" />
@@ -197,7 +199,10 @@ const SearchField = () => {
         onCenterClick={() => centerMap(option)}
         onUseClick={handleUseClick}
         {...props}
-        key={option.locationId}
+        // the API can return the same locationId more than once, so the index
+        // is required to keep keys unique — duplicates break reconciliation
+        // and leave the list scrambled / with stale items
+        key={`${option.locationId}-${state.index}`}
         id={`option-${getLocationName(option)}`}
       />
     )
