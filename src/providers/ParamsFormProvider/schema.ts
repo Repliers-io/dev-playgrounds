@@ -117,12 +117,13 @@ const schema = Joi.object({
   locationsResultsPerPage: Joi.number()
     .integer()
     .min(1)
-    .max(300)
+    .max(1000)
     .allow(null, false, '')
     .messages({
       'number.base': 'Results per page must be a number',
       'number.min': 'Results per page must be at least 1',
-      'number.max': 'Results per page must be at most 300'
+      'number.max':
+        'Results per page must be at most 1000 - depends on your API key settings.'
     }),
   minQuality: Joi.number()
     .min(1.0)
