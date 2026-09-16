@@ -31,7 +31,8 @@ export const booleanFields = [
   'cluster',
   'stats',
   'center',
-  'bounds'
+  'bounds',
+  'simplify'
 ] as const
 
 export const formatMultiSelectFields = (

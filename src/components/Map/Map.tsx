@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
 
 import { Box, Stack } from '@mui/material'
@@ -9,6 +9,7 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
+import { simplifyBoundary } from 'utils/geo'
 import { getLocationName, getMapStyleUrl, getMarkerName } from 'utils/map'
 import {
   mapboxDefaults,
@@ -67,6 +68,7 @@ const MapRoot = () => {
   const listingsTab = !params.tab || params.tab === 'map'
 
   const centerPoint = params.center
+  const { simplify: simplifyGeometry, simplifyTolerance } = params
 
   // polygon the selected stack is drawn as, kept lit for as long as it is set
   const selectedPolygonId = selectedStack
@@ -176,30 +178,44 @@ const MapRoot = () => {
     }
   }
 
+  // one entity per identical-geometry stack, see utils/locations.
+  // marker ids come from the untouched representative, so simplification never
+  // shifts them; `renderKey` is what tells MapService to redraw the geometry
+  const locationItems = useMemo(() => {
+    const tolerance = Number(simplifyTolerance)
+    const thinning = Boolean(simplifyGeometry) && tolerance > 0
+
+    return stacks.map((stack) => {
+      const { locationId, map: locationMap, name: label } = stack.representative
+      const { boundary, geometryType = 'Polygon' } = locationMap || {}
+
+      return {
+        id: getLocationName(stack.representative),
+        size: 'location',
+        stackCount: stack.members.length,
+        renderKey: thinning ? `t${tolerance}` : '',
+        stack,
+        locationId,
+        label,
+        map:
+          thinning && boundary?.length
+            ? {
+                ...locationMap,
+                boundary: simplifyBoundary(boundary, geometryType, tolerance)
+              }
+            : locationMap
+      } as any
+    })
+  }, [stacks, simplifyGeometry, simplifyTolerance])
+
   const showLocations = () => {
     const map = mapRef.current
     if (!map) return
     MapService.resetClusters()
     if (locations) {
-      // one entity per identical-geometry stack, see utils/locations
       MapService.showMarkers({
         map,
-        items: stacks.map((stack) => {
-          const {
-            locationId,
-            map: locationMap,
-            name: label
-          } = stack.representative
-          return {
-            id: getLocationName(stack.representative),
-            size: 'location',
-            stackCount: stack.members.length,
-            stack,
-            locationId,
-            label,
-            map: locationMap
-          } as any
-        }),
+        items: locationItems,
         onClick: (location) => {
           focusLocation(getLocationName(location))
           // narrow the list to this stack, a lone polygon clears the narrowing
@@ -236,7 +252,7 @@ const MapRoot = () => {
     dynamicClustering,
     listingsTab,
     locations,
-    stacks
+    locationItems
   ])
 
   useEffect(() => {

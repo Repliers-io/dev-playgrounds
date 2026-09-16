@@ -6,9 +6,14 @@ import {
   type Polygon,
   type Position
 } from 'geojson'
-import { type LngLatLike, type Map, Marker as MapboxMarker } from 'mapbox-gl'
+import {
+  type LngLatLike,
+  type Map,
+  Marker as MapboxMarker,
+  type PointLike
+} from 'mapbox-gl'
 
-import { lighten } from '@mui/material'
+import { darken } from '@mui/material'
 
 import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 
@@ -24,6 +29,9 @@ import {
 } from 'utils/map'
 
 export const polygonColor = '#6633FF'
+// `fill-opacity` multiplies the 1px fill outline too, so it has to start out
+// darker than the fill to stay legible once alpha is applied
+export const polygonOutlineColor = darken(polygonColor, 0.35)
 
 export const polygonFillOpacity = 0.25
 // stacked parcels share one polygon, a denser fill marks them apart
@@ -34,13 +42,22 @@ export class MapService {
   markers: Markers = {}
   clusters: Markers = {}
 
-  // rendered stack size per marker id, so a changed count redraws its badge
-  stackCounts: Record<string, number> = {}
+  // signature of what each marker id currently draws, so a changed stack size
+  // or a changed geometry redraws it even though the id stayed the same
+  renderKeys: Record<string, string> = {}
 
   // count badges keyed by their polygon id, so focus can repaint them in step
   stackBadges: Record<string, MapboxMarker> = {}
 
-  hoverStack: Set<string> = new Set()
+  // click handler per polygon fill layer. Mapbox runs a separate hit test for
+  // every layer-scoped listener, so hundreds of polygons get two delegated
+  // listeners on the map and one hit test instead
+  private polygonHandlers: Record<string, () => void> = {}
+  private polygonLayerIds: string[] = []
+  private polygonLayersDirty = true
+  private eventsBoundTo: Map | null = null
+  private hoverScheduled = false
+  private pointerCursor = false
 
   createMarkerElement = ({ ...props }: MarkerProps) => {
     const element = <Marker {...props} />
@@ -69,11 +86,11 @@ export class MapService {
       const hasValidCenter = Number.isFinite(lng) && Number.isFinite(lat)
       const center = hasValidCenter ? ({ lng, lat } as LngLatLike) : null
 
-      const stackCount = item.stackCount || 1
+      const renderKey = `${item.stackCount || 1}:${item.renderKey ?? ''}`
       const singleViewOnMap = this.markers[id]
       if (singleViewOnMap) {
-        // markers are write-once, except when the stack behind one changed size
-        if (this.stackCounts[id] === stackCount) return
+        // markers are write-once, except when what they draw actually changed
+        if (this.renderKeys[id] === renderKey) return
         this.removeMarkers([id])
       }
 
@@ -89,7 +106,10 @@ export class MapService {
           latitude: item.map?.latitude,
           item
         })
+        return
       }
+
+      this.renderKeys[id] = renderKey
     })
 
     // Clearing Marker Residues
@@ -158,7 +178,6 @@ export class MapService {
   addMarker(key: string, marker: MapboxMarker) {
     if (!this.markers[key]) {
       this.markers[key] = marker
-      this.stackCounts[key] = 1
     }
   }
 
@@ -169,7 +188,7 @@ export class MapService {
         this.markers[key].remove()
       }
       delete markers[key]
-      delete this.stackCounts[key]
+      delete this.renderKeys[key]
     })
     this.markers = { ...markers }
   }
@@ -209,10 +228,60 @@ export class MapService {
     })
   }
 
+  /**
+   * Two delegated listeners cover every polygon on the map. A layer-scoped
+   * `map.on('click', layerId, fn)` costs one hit test per registered layer on
+   * each event, which is what made hundreds of polygons expensive to hover.
+   */
+  private bindPolygonEvents(map: Map) {
+    if (this.eventsBoundTo === map) return
+    this.eventsBoundTo = map
+
+    map.on('click', (event) => {
+      const layerId = this.queryPolygonLayer(map, event.point)
+      if (layerId) this.polygonHandlers[layerId]?.()
+    })
+
+    map.on('mousemove', (event) => {
+      // one hit test per frame is plenty for a cursor change
+      if (this.hoverScheduled) return
+      this.hoverScheduled = true
+
+      requestAnimationFrame(() => {
+        this.hoverScheduled = false
+        const hovered = Boolean(this.queryPolygonLayer(map, event.point))
+        if (hovered === this.pointerCursor) return
+        this.pointerCursor = hovered
+        map.getCanvas().style.cursor = hovered ? 'pointer' : ''
+      })
+    })
+  }
+
+  /** Topmost polygon fill layer under a screen point, if any. */
+  private queryPolygonLayer(map: Map, point: PointLike): string | null {
+    if (this.polygonLayersDirty) {
+      this.polygonLayerIds = Object.keys(this.polygonHandlers)
+      this.polygonLayersDirty = false
+    }
+    if (!this.polygonLayerIds.length) return null
+
+    try {
+      const [feature] = map.queryRenderedFeatures(point, {
+        layers: this.polygonLayerIds
+      })
+      return feature?.layer?.id || null
+      // a style reload can drop layers the registry still lists
+    } catch {
+      return null
+    }
+  }
+
   removePolygon(map: Map, markerId: string): void {
+    delete this.polygonHandlers[`${markerId}-fill`]
+    this.polygonLayersDirty = true
+
     try {
       map.removeLayer(`${markerId}-fill`)
-      map.removeLayer(`${markerId}-outline`)
       map.removeSource(markerId)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
@@ -254,47 +323,28 @@ export class MapService {
       })
 
       const markerFillId = `${id}-fill`
-      const markerOutlineId = `${id}-outline`
 
+      // the outline rides on the fill layer instead of its own line layer:
+      // halves the layer count and drops line tessellation entirely
       map.addLayer({
         id: markerFillId,
         type: 'fill',
         source: id,
         paint: {
           'fill-color': polygonColor,
+          'fill-outline-color': polygonOutlineColor,
           'fill-opacity': stacked
             ? stackedPolygonFillOpacity
             : polygonFillOpacity,
           'fill-color-transition': { duration: 0 },
-          'fill-opacity-transition': { duration: 0 }
+          'fill-opacity-transition': { duration: 0 },
+          'fill-outline-color-transition': { duration: 0 }
         }
       })
 
-      map.addLayer({
-        id: markerOutlineId,
-        type: 'line',
-        source: id,
-        paint: {
-          'line-color': lighten(polygonColor, 0.2),
-          'line-width': 1.5,
-          'line-color-transition': { duration: 0 },
-          'line-width-transition': { duration: 0 }
-        }
-      })
-
-      map.on('click', markerFillId, () => {
-        onClick?.()
-      })
-
-      map.on('mouseleave', markerFillId, () => {
-        this.hoverStack.delete(markerFillId)
-        if (this.hoverStack.size === 0) map.getCanvas().style.cursor = ''
-      })
-
-      map.on('mouseenter', markerFillId, () => {
-        map.getCanvas().style.cursor = 'pointer'
-        this.hoverStack.add(markerFillId)
-      })
+      this.polygonHandlers[markerFillId] = () => onClick?.()
+      this.polygonLayersDirty = true
+      this.bindPolygonEvents(map)
 
       const badge = stacked
         ? this.createStackBadge({
@@ -316,7 +366,6 @@ export class MapService {
           return this.markers[id]
         }
       } as MapboxMarker
-      this.stackCounts[id] = stackCount
     } catch (error) {
       console.error('Error creating polygon:', error)
     }
@@ -360,7 +409,7 @@ export class MapService {
   // a polygon can be redrawn or dropped between focus and blur, so a missing
   // layer is an expected outcome here rather than something worth reporting
   private hasPolygonLayers(map: Map, id: string) {
-    return Boolean(map.getLayer(`${id}-fill`) && map.getLayer(`${id}-outline`))
+    return Boolean(map.getLayer(`${id}-fill`))
   }
 
   // the badge sits on top of its polygon, so it follows the same paint
@@ -373,11 +422,10 @@ export class MapService {
 
   focusPolygon(map: Map, id: string) {
     const fill = `${id}-fill`
-    const outline = `${id}-outline`
     if (!this.hasPolygonLayers(map, id)) return
     try {
       map.setPaintProperty(fill, 'fill-color', polygonFocusColor)
-      map.setPaintProperty(outline, 'line-color', polygonFocusColor)
+      map.setPaintProperty(fill, 'fill-outline-color', polygonFocusColor)
       this.paintStackBadge(id, polygonFocusColor)
     } catch (error) {
       console.error('Error focusing polygon:', error)
@@ -386,12 +434,10 @@ export class MapService {
 
   blurPolygon(map: Map, id: string) {
     const fill = `${id}-fill`
-    const outline = `${id}-outline`
     if (!this.hasPolygonLayers(map, id)) return
     try {
       map.setPaintProperty(fill, 'fill-color', polygonColor)
-      map.setPaintProperty(outline, 'line-color', lighten(polygonColor, 0.2))
-      map.setPaintProperty(outline, 'line-width', 1.5)
+      map.setPaintProperty(fill, 'fill-outline-color', polygonOutlineColor)
       this.paintStackBadge(id, null)
     } catch (error) {
       console.error('Error blurring polygon:', error)
@@ -402,8 +448,10 @@ export class MapService {
     const markers = Object.values(this.markers)
     markers.forEach((marker) => marker.remove())
     this.markers = {}
-    this.stackCounts = {}
+    this.renderKeys = {}
     this.stackBadges = {}
+    this.polygonHandlers = {}
+    this.polygonLayersDirty = true
   }
 
   resetClusters() {
