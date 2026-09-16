@@ -13,6 +13,10 @@ export type MarkerProps = {
   link?: string
   status?: string
   className?: string
+  // overrides the size/status derived background, used by polygon stack badges
+  color?: string
+  // drops the white outline, so a badge reads as part of the shape below it
+  borderless?: boolean
   size?: 'point' | 'tag' | 'cluster' | 'location'
   onClick?: MouseEventHandler
   // TODO: there should be no difference between onClick and onTap
@@ -28,6 +32,8 @@ const Marker = ({
   size = 'tag',
   status = 'A',
   className = '',
+  color,
+  borderless = false,
   onTap,
   onClick,
   onMouseEnter,
@@ -37,11 +43,12 @@ const Marker = ({
   // not sure if we even need to pass status as a components' prop
   const labelString = size === 'point' ? '' : label
   const bgcolor =
-    size === 'location'
+    color ||
+    (size === 'location'
       ? `${polygonColor}33`
       : status === 'U'
         ? darken(marker, 0.2)
-        : marker
+        : marker)
 
   const calculatedClusterWeight = 20 + label.length * 4
 
@@ -69,7 +76,12 @@ const Marker = ({
       borderRadius: '50%',
       width: calculatedClusterWeight,
       height: calculatedClusterWeight,
-      lineHeight: toRem(calculatedClusterWeight - 3)
+      // centered by layout rather than by a line-height tuned to the border,
+      // so the label stays put whether or not the circle is borderless
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      lineHeight: 1
     }
   }
 
@@ -144,7 +156,7 @@ const Marker = ({
         <Box
           sx={{
             p: 0,
-            border: 2,
+            border: borderless ? 0 : 2,
             zIndex: 10,
             position: 'relative',
             userSelect: 'none',
@@ -154,7 +166,8 @@ const Marker = ({
             textAlign: 'center',
             boxSizing: 'border-box',
             textOverflow: 'ellipsis',
-            bgcolor,
+            // MapService repaints a badge by setting --marker-bg on the root
+            bgcolor: `var(--marker-bg, ${bgcolor})`,
             color: 'common.white',
             borderColor: 'common.white',
             ...sizeSx

@@ -15,6 +15,7 @@ import Marker, { type MarkerProps } from 'components/Map/components/Marker'
 import { type ApiCluster } from 'services/API/types'
 import { type Markers } from 'services/Map'
 import {
+  getBoundaryCenter,
   getLocationName,
   getMapUrl,
   getMarkerName,
@@ -24,9 +25,20 @@ import {
 
 export const polygonColor = '#6633FF'
 
+export const polygonFillOpacity = 0.25
+// stacked parcels share one polygon, a denser fill marks them apart
+export const stackedPolygonFillOpacity = 0.5
+export const polygonFocusColor = '#ff9800'
+
 export class MapService {
   markers: Markers = {}
   clusters: Markers = {}
+
+  // rendered stack size per marker id, so a changed count redraws its badge
+  stackCounts: Record<string, number> = {}
+
+  // count badges keyed by their polygon id, so focus can repaint them in step
+  stackBadges: Record<string, MapboxMarker> = {}
 
   hoverStack: Set<string> = new Set()
 
@@ -57,8 +69,13 @@ export class MapService {
       const hasValidCenter = Number.isFinite(lng) && Number.isFinite(lat)
       const center = hasValidCenter ? ({ lng, lat } as LngLatLike) : null
 
+      const stackCount = item.stackCount || 1
       const singleViewOnMap = this.markers[id]
-      if (singleViewOnMap) return
+      if (singleViewOnMap) {
+        // markers are write-once, except when the stack behind one changed size
+        if (this.stackCounts[id] === stackCount) return
+        this.removeMarkers([id])
+      }
 
       const { boundary, geometryType = 'Polygon' } = (item.map as any) || {}
       if (boundary?.length) {
@@ -102,6 +119,7 @@ export class MapService {
       map,
       coordinates: boundary,
       geometryType,
+      stackCount: item.stackCount,
       onClick: () => onClick?.(item)
     })
   }
@@ -140,6 +158,7 @@ export class MapService {
   addMarker(key: string, marker: MapboxMarker) {
     if (!this.markers[key]) {
       this.markers[key] = marker
+      this.stackCounts[key] = 1
     }
   }
 
@@ -150,6 +169,7 @@ export class MapService {
         this.markers[key].remove()
       }
       delete markers[key]
+      delete this.stackCounts[key]
     })
     this.markers = { ...markers }
   }
@@ -205,15 +225,18 @@ export class MapService {
     id,
     coordinates,
     geometryType,
+    stackCount = 1,
     onClick
   }: {
     map: Map
     id: string
     coordinates: Position[][] | Position[][][]
     geometryType: 'Polygon' | 'MultiPolygon'
+    stackCount?: number
     onClick?: () => void
   }): void {
     try {
+      const stacked = stackCount > 1
       const geometry: Polygon | MultiPolygon =
         geometryType === 'Polygon'
           ? { type: 'Polygon', coordinates: coordinates as Position[][] }
@@ -239,7 +262,9 @@ export class MapService {
         source: id,
         paint: {
           'fill-color': polygonColor,
-          'fill-opacity': 0.25,
+          'fill-opacity': stacked
+            ? stackedPolygonFillOpacity
+            : polygonFillOpacity,
           'fill-color-transition': { duration: 0 },
           'fill-opacity-transition': { duration: 0 }
         }
@@ -271,23 +296,89 @@ export class MapService {
         this.hoverStack.add(markerFillId)
       })
 
+      const badge = stacked
+        ? this.createStackBadge({
+            map,
+            coordinates,
+            geometryType,
+            stackCount,
+            onClick
+          })
+        : null
+
+      if (badge) this.stackBadges[id] = badge
+
       this.markers[id] = {
         remove: () => {
+          badge?.remove()
+          delete this.stackBadges[id]
           this.removePolygon(map, id)
           return this.markers[id]
         }
       } as MapboxMarker
+      this.stackCounts[id] = stackCount
     } catch (error) {
       console.error('Error creating polygon:', error)
     }
   }
 
+  /**
+   * Count badge for a polygon shared by several locations. It carries no DOM id
+   * on purpose: the focus effect falls back to highlighting the polygon only
+   * when getElementById finds nothing for the focused marker.
+   */
+  private createStackBadge({
+    map,
+    coordinates,
+    geometryType,
+    stackCount,
+    onClick
+  }: {
+    map: Map
+    coordinates: Position[][] | Position[][][]
+    geometryType: 'Polygon' | 'MultiPolygon'
+    stackCount: number
+    onClick?: () => void
+  }): MapboxMarker | null {
+    const center = getBoundaryCenter(coordinates, geometryType)
+    if (!center) return null
+
+    const element = this.createMarkerElement({
+      size: 'cluster',
+      color: polygonColor,
+      borderless: true,
+      label: String(stackCount),
+      onClick: (e) => {
+        e.preventDefault()
+        onClick?.()
+      }
+    })
+
+    return new MapboxMarker(element).setLngLat(center).addTo(map)
+  }
+
+  // a polygon can be redrawn or dropped between focus and blur, so a missing
+  // layer is an expected outcome here rather than something worth reporting
+  private hasPolygonLayers(map: Map, id: string) {
+    return Boolean(map.getLayer(`${id}-fill`) && map.getLayer(`${id}-outline`))
+  }
+
+  // the badge sits on top of its polygon, so it follows the same paint
+  private paintStackBadge(id: string, color: string | null) {
+    const element = this.stackBadges[id]?.getElement()
+    if (!element) return
+    if (color) element.style.setProperty('--marker-bg', color)
+    else element.style.removeProperty('--marker-bg')
+  }
+
   focusPolygon(map: Map, id: string) {
     const fill = `${id}-fill`
     const outline = `${id}-outline`
+    if (!this.hasPolygonLayers(map, id)) return
     try {
-      map.setPaintProperty(fill, 'fill-color', '#ff9800')
-      map.setPaintProperty(outline, 'line-color', '#ff9800')
+      map.setPaintProperty(fill, 'fill-color', polygonFocusColor)
+      map.setPaintProperty(outline, 'line-color', polygonFocusColor)
+      this.paintStackBadge(id, polygonFocusColor)
     } catch (error) {
       console.error('Error focusing polygon:', error)
     }
@@ -296,10 +387,12 @@ export class MapService {
   blurPolygon(map: Map, id: string) {
     const fill = `${id}-fill`
     const outline = `${id}-outline`
+    if (!this.hasPolygonLayers(map, id)) return
     try {
       map.setPaintProperty(fill, 'fill-color', polygonColor)
       map.setPaintProperty(outline, 'line-color', lighten(polygonColor, 0.2))
       map.setPaintProperty(outline, 'line-width', 1.5)
+      this.paintStackBadge(id, null)
     } catch (error) {
       console.error('Error blurring polygon:', error)
     }
@@ -309,6 +402,8 @@ export class MapService {
     const markers = Object.values(this.markers)
     markers.forEach((marker) => marker.remove())
     this.markers = {}
+    this.stackCounts = {}
+    this.stackBadges = {}
   }
 
   resetClusters() {

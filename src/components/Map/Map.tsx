@@ -47,7 +47,8 @@ const MapRoot = () => {
     position,
     setPosition
   } = useMapOptions()
-  const { locations } = useLocations()
+  const { locations, stacks, stackByMember, selectedStack, selectStack } =
+    useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
   const prevFocusedPolygon = useRef<string | null>(null)
@@ -63,6 +64,11 @@ const MapRoot = () => {
   const listingsTab = !params.tab || params.tab === 'map'
 
   const centerPoint = params.center
+
+  // polygon the selected stack is drawn as, kept lit for as long as it is set
+  const selectedPolygonId = selectedStack
+    ? getLocationName(selectedStack.representative)
+    : null
 
   setMapContainerRef(mapContainerRef)
 
@@ -172,20 +178,29 @@ const MapRoot = () => {
     if (!map) return
     MapService.resetClusters()
     if (locations) {
+      // one entity per identical-geometry stack, see utils/locations
       MapService.showMarkers({
         map,
-        items: locations.map((location) => {
-          const { locationId, map, name: label } = location
+        items: stacks.map((stack) => {
+          const {
+            locationId,
+            map: locationMap,
+            name: label
+          } = stack.representative
           return {
-            id: getLocationName(location),
+            id: getLocationName(stack.representative),
             size: 'location',
+            stackCount: stack.members.length,
+            stack,
             locationId,
             label,
-            map
+            map: locationMap
           } as any
         }),
         onClick: (location) => {
           focusLocation(getLocationName(location))
+          // narrow the list to this stack, a lone polygon clears the narrowing
+          selectStack(location.stackCount > 1 ? location.stack : null)
         }
       })
     }
@@ -211,33 +226,49 @@ const MapRoot = () => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
+  }, [
+    clusters,
+    listings,
+    count,
+    dynamicClustering,
+    listingsTab,
+    locations,
+    stacks
+  ])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
 
-    if (focusedMarker) {
-      prevFocusedMarker.current?.classList.remove('focused')
+    // a selected stack stays lit until its own close button clears it, while
+    // `focusedMarker` is transient and gets dropped on every new result set
+    const targetId = focusedMarker
+      ? stackByMember[focusedMarker] || focusedMarker
+      : selectedPolygonId
 
-      if (prevFocusedPolygon.current) {
-        MapService.blurPolygon(map, prevFocusedPolygon.current)
-        prevFocusedPolygon.current = null
-      }
+    prevFocusedMarker.current?.classList.remove('focused')
+    prevFocusedMarker.current = null
 
-      const element = document.getElementById(focusedMarker)
-      if (element) {
-        element.classList.add('focused')
-        prevFocusedMarker.current = element
-      } else {
-        // no HTML element found, should be MapBox polygon instead
-        MapService.focusPolygon(map, focusedMarker)
-        prevFocusedPolygon.current = focusedMarker
-      }
+    if (prevFocusedPolygon.current && prevFocusedPolygon.current !== targetId) {
+      MapService.blurPolygon(map, prevFocusedPolygon.current)
+      prevFocusedPolygon.current = null
+    }
+
+    if (!targetId) return
+
+    const element = document.getElementById(targetId)
+    if (element) {
+      element.classList.add('focused')
+      prevFocusedMarker.current = element
+    } else {
+      // no HTML element found, should be MapBox polygon instead.
+      // repainted on every pass so a redrawn polygon keeps its highlight
+      MapService.focusPolygon(map, targetId)
+      prevFocusedPolygon.current = targetId
     }
 
     return () => prevFocusedMarker.current?.classList.remove('focused')
-  }, [focusedMarker])
+  }, [focusedMarker, stackByMember, selectedPolygonId, stacks])
 
   useEffect(() => {
     if (mapVisible && !statisticsTab) mapRef.current?.resize()

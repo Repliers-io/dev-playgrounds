@@ -25,7 +25,10 @@ const CenterRadiusSection = () => {
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setValue('center', event.target.checked)
+    const { checked } = event.target
+    setValue('center', checked)
+    // center and bounds are mutually exclusive ways to scope a request
+    if (checked) setValue('bounds', false)
     onChange()
   }
 
