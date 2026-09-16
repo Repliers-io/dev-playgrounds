@@ -171,6 +171,7 @@ const MapRoot = () => {
     }
 
     if (effectiveListings.length) {
+      // the map tab has no boundaries, so this also drops the polygon source
       MapService.showMarkers({
         map,
         items: effectiveListings.map((listing) => ({
@@ -182,7 +183,7 @@ const MapRoot = () => {
         }
       })
     } else {
-      MapService.resetMarkers()
+      MapService.resetMarkers(map)
     }
   }
 
@@ -242,7 +243,7 @@ const MapRoot = () => {
     } else {
       // manually delete them all
       if (!locations) {
-        MapService.resetAllMarkers()
+        MapService.resetAllMarkers(map)
       } else {
         showLocations()
       }

@@ -2,11 +2,13 @@ import { type MouseEvent } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
   type Feature,
+  type FeatureCollection,
   type MultiPolygon,
   type Polygon,
   type Position
 } from 'geojson'
 import {
+  type GeoJSONSource,
   type LngLatLike,
   type Map,
   Marker as MapboxMarker,
@@ -34,27 +36,36 @@ export const polygonColor = '#6633FF'
 export const polygonOutlineColor = darken(polygonColor, 0.35)
 
 export const polygonFillOpacity = 0.25
-// stacked parcels share one polygon, a denser fill marks them apart
-export const stackedPolygonFillOpacity = 0.5
+// stacked parcels share one polygon: a near-solid fill both marks them apart
+// and gives the plain white count on top something to read against
+export const stackedPolygonFillOpacity = 0.75
 export const polygonFocusColor = '#ff9800'
+
+// every boundary lives in this one source and is drawn by this one layer,
+// so the cost of adding a polygon no longer scales with draw calls or tile
+// indexes. Focus rides on feature-state, which the GPU resolves per feature.
+const polygonSourceId = 'locations-boundaries'
+const polygonLayerId = 'locations-boundaries-fill'
+
+const focusedCase = (focused: string, idle: string) => [
+  'case',
+  ['boolean', ['feature-state', 'focused'], false],
+  focused,
+  idle
+]
 
 export class MapService {
   markers: Markers = {}
   clusters: Markers = {}
 
-  // signature of what each marker id currently draws, so a changed stack size
-  // or a changed geometry redraws it even though the id stayed the same
-  renderKeys: Record<string, string> = {}
-
   // count badges keyed by their polygon id, so focus can repaint them in step
   stackBadges: Record<string, MapboxMarker> = {}
+  private badgeKeys: Record<string, string> = {}
 
-  // click handler per polygon fill layer. Mapbox runs a separate hit test for
-  // every layer-scoped listener, so hundreds of polygons get two delegated
-  // listeners on the map and one hit test instead
-  private polygonHandlers: Record<string, () => void> = {}
-  private polygonLayerIds: string[] = []
-  private polygonLayersDirty = true
+  // boundary items by marker id, so a hit test can report what was clicked
+  private polygonItems: Record<string, any> = {}
+  private polygonOnClick?: (item: any) => void
+
   private eventsBoundTo: Map | null = null
   private hoverScheduled = false
   private pointerCursor = false
@@ -78,70 +89,148 @@ export class MapService {
     items: any[]
     onClick?: (item: any) => void
   }): void {
+    const boundaryItems: any[] = []
+    const pointItems: any[] = []
+
     items.forEach((item) => {
-      const { id, status } = item
-
-      const lng = Number(item.map?.longitude)
-      const lat = Number(item.map?.latitude)
-      const hasValidCenter = Number.isFinite(lng) && Number.isFinite(lat)
-      const center = hasValidCenter ? ({ lng, lat } as LngLatLike) : null
-
-      const renderKey = `${item.stackCount || 1}:${item.renderKey ?? ''}`
-      const singleViewOnMap = this.markers[id]
-      if (singleViewOnMap) {
-        // markers are write-once, except when what they draw actually changed
-        if (this.renderKeys[id] === renderKey) return
-        this.removeMarkers([id])
-      }
-
-      const { boundary, geometryType = 'Polygon' } = (item.map as any) || {}
-      if (boundary?.length) {
-        this.showBoundary({ id, map, boundary, geometryType, item, onClick })
-      } else if (center) {
-        this.showMarker({ map, center, item, status, onClick })
-      } else {
-        console.error('Skipping location with invalid coordinates:', {
-          id: item.id,
-          longitude: item.map?.longitude,
-          latitude: item.map?.latitude,
-          item
-        })
+      if (item.map?.boundary?.length) {
+        boundaryItems.push(item)
         return
       }
 
-      this.renderKeys[id] = renderKey
+      const lng = Number(item.map?.longitude)
+      const lat = Number(item.map?.latitude)
+      if (Number.isFinite(lng) && Number.isFinite(lat)) {
+        pointItems.push(item)
+        return
+      }
+
+      console.error('Skipping location with invalid coordinates:', {
+        id: item.id,
+        longitude: item.map?.longitude,
+        latitude: item.map?.latitude,
+        item
+      })
+    })
+
+    this.syncPolygons({ map, items: boundaryItems, onClick })
+
+    pointItems.forEach((item) => {
+      // DOM markers stay write-once, nothing about them changes in place
+      if (this.markers[item.id]) return
+      const lng = Number(item.map.longitude)
+      const lat = Number(item.map.latitude)
+      this.showMarker({
+        map,
+        center: { lng, lat } as LngLatLike,
+        item,
+        status: item.status,
+        onClick
+      })
     })
 
     // Clearing Marker Residues
     const markersToRemove = Object.keys(this.markers).filter(
-      (key) => !items.some((prop) => prop.id === key)
+      (key) => !pointItems.some((item) => item.id === key)
     )
     this.removeMarkers(markersToRemove)
   }
 
-  private showBoundary({
-    id,
+  /**
+   * Replaces every rendered boundary in one `setData` call. The source and its
+   * layer are created once and then reused for the life of the map.
+   */
+  private syncPolygons({
     map,
-    boundary,
-    geometryType,
-    item,
+    items,
     onClick
   }: {
-    id: string
     map: Map
-    boundary: Position[][] | Position[][][]
-    geometryType: 'Polygon' | 'MultiPolygon'
-    item: any
+    items: any[]
     onClick?: (item: any) => void
   }) {
-    this.createPolygon({
-      id,
-      map,
-      coordinates: boundary,
-      geometryType,
-      stackCount: item.stackCount,
-      onClick: () => onClick?.(item)
+    this.polygonOnClick = onClick
+    this.polygonItems = {}
+
+    const features: Feature[] = items.map((item) => {
+      const { boundary, geometryType = 'Polygon' } = item.map
+      const geometry: Polygon | MultiPolygon =
+        geometryType === 'Polygon'
+          ? { type: 'Polygon', coordinates: boundary as Position[][] }
+          : { type: 'MultiPolygon', coordinates: boundary as Position[][][] }
+
+      this.polygonItems[item.id] = item
+
+      return {
+        type: 'Feature',
+        geometry,
+        properties: {
+          markerId: item.id,
+          stacked: (item.stackCount || 1) > 1
+        }
+      }
     })
+
+    const collection: FeatureCollection = {
+      type: 'FeatureCollection',
+      features
+    }
+
+    try {
+      const source = map.getSource(polygonSourceId) as GeoJSONSource | undefined
+
+      if (source) {
+        // feature-state is keyed by feature id and would outlive the features
+        map.removeFeatureState({ source: polygonSourceId })
+        source.setData(collection)
+      } else if (features.length) {
+        map.addSource(polygonSourceId, {
+          type: 'geojson',
+          data: collection,
+          // lifts `markerId` into `feature.id` so feature-state can address it
+          promoteId: 'markerId'
+        })
+
+        map.addLayer({
+          id: polygonLayerId,
+          type: 'fill',
+          source: polygonSourceId,
+          paint: {
+            'fill-color': focusedCase(polygonFocusColor, polygonColor),
+            'fill-outline-color': focusedCase(
+              polygonFocusColor,
+              polygonOutlineColor
+            ),
+            'fill-opacity': [
+              'case',
+              ['boolean', ['get', 'stacked'], false],
+              stackedPolygonFillOpacity,
+              polygonFillOpacity
+            ],
+            'fill-color-transition': { duration: 0 },
+            'fill-opacity-transition': { duration: 0 },
+            'fill-outline-color-transition': { duration: 0 }
+          }
+        } as any)
+
+        this.bindPolygonEvents(map)
+      }
+    } catch (error) {
+      console.error('Error syncing polygons:', error)
+    }
+
+    this.syncStackBadges(map, items)
+  }
+
+  private removePolygonSource(map: Map) {
+    try {
+      if (map.getLayer(polygonLayerId)) map.removeLayer(polygonLayerId)
+      if (map.getSource(polygonSourceId)) map.removeSource(polygonSourceId)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      // Mapbox throws when the style was swapped out from under us
+    }
+    this.polygonItems = {}
   }
 
   private showMarker({
@@ -188,7 +277,6 @@ export class MapService {
         this.markers[key].remove()
       }
       delete markers[key]
-      delete this.renderKeys[key]
     })
     this.markers = { ...markers }
   }
@@ -238,8 +326,8 @@ export class MapService {
     this.eventsBoundTo = map
 
     map.on('click', (event) => {
-      const layerId = this.queryPolygonLayer(map, event.point)
-      if (layerId) this.polygonHandlers[layerId]?.()
+      const item = this.queryPolygonItem(map, event.point)
+      if (item) this.polygonOnClick?.(item)
     })
 
     map.on('mousemove', (event) => {
@@ -249,7 +337,7 @@ export class MapService {
 
       requestAnimationFrame(() => {
         this.hoverScheduled = false
-        const hovered = Boolean(this.queryPolygonLayer(map, event.point))
+        const hovered = Boolean(this.queryPolygonItem(map, event.point))
         if (hovered === this.pointerCursor) return
         this.pointerCursor = hovered
         map.getCanvas().style.cursor = hovered ? 'pointer' : ''
@@ -257,201 +345,114 @@ export class MapService {
     })
   }
 
-  /** Topmost polygon fill layer under a screen point, if any. */
-  private queryPolygonLayer(map: Map, point: PointLike): string | null {
-    if (this.polygonLayersDirty) {
-      this.polygonLayerIds = Object.keys(this.polygonHandlers)
-      this.polygonLayersDirty = false
-    }
-    if (!this.polygonLayerIds.length) return null
+  /** Topmost boundary under a screen point, resolved back to its item. */
+  private queryPolygonItem(map: Map, point: PointLike): any | null {
+    if (!map.getLayer(polygonLayerId)) return null
 
     try {
       const [feature] = map.queryRenderedFeatures(point, {
-        layers: this.polygonLayerIds
+        layers: [polygonLayerId]
       })
-      return feature?.layer?.id || null
-      // a style reload can drop layers the registry still lists
+      const markerId = feature?.properties?.markerId
+      return markerId ? this.polygonItems[markerId] || null : null
+      // a style reload can drop the layer while the registry still holds items
     } catch {
       return null
     }
   }
 
-  removePolygon(map: Map, markerId: string): void {
-    delete this.polygonHandlers[`${markerId}-fill`]
-    this.polygonLayersDirty = true
-
-    try {
-      map.removeLayer(`${markerId}-fill`)
-      map.removeSource(markerId)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      // TODO: not sure we need to handle this error. Mapbox cant control its own sources
-    }
-  }
-
-  createPolygon({
-    map,
-    id,
-    coordinates,
-    geometryType,
-    stackCount = 1,
-    onClick
-  }: {
-    map: Map
-    id: string
-    coordinates: Position[][] | Position[][][]
-    geometryType: 'Polygon' | 'MultiPolygon'
-    stackCount?: number
-    onClick?: () => void
-  }): void {
-    try {
-      const stacked = stackCount > 1
-      const geometry: Polygon | MultiPolygon =
-        geometryType === 'Polygon'
-          ? { type: 'Polygon', coordinates: coordinates as Position[][] }
-          : { type: 'MultiPolygon', coordinates: coordinates as Position[][][] }
-
-      const polygonGeoJSON: Feature = {
-        type: 'Feature',
-        geometry,
-        properties: {}
-      }
-
-      map.addSource(id, {
-        type: 'geojson',
-        data: polygonGeoJSON
-      })
-
-      const markerFillId = `${id}-fill`
-
-      // the outline rides on the fill layer instead of its own line layer:
-      // halves the layer count and drops line tessellation entirely
-      map.addLayer({
-        id: markerFillId,
-        type: 'fill',
-        source: id,
-        paint: {
-          'fill-color': polygonColor,
-          'fill-outline-color': polygonOutlineColor,
-          'fill-opacity': stacked
-            ? stackedPolygonFillOpacity
-            : polygonFillOpacity,
-          'fill-color-transition': { duration: 0 },
-          'fill-opacity-transition': { duration: 0 },
-          'fill-outline-color-transition': { duration: 0 }
-        }
-      })
-
-      this.polygonHandlers[markerFillId] = () => onClick?.()
-      this.polygonLayersDirty = true
-      this.bindPolygonEvents(map)
-
-      const badge = stacked
-        ? this.createStackBadge({
-            map,
-            coordinates,
-            geometryType,
-            stackCount,
-            onClick
-          })
-        : null
-
-      if (badge) this.stackBadges[id] = badge
-
-      this.markers[id] = {
-        remove: () => {
-          badge?.remove()
-          delete this.stackBadges[id]
-          this.removePolygon(map, id)
-          return this.markers[id]
-        }
-      } as MapboxMarker
-    } catch (error) {
-      console.error('Error creating polygon:', error)
-    }
-  }
-
   /**
-   * Count badge for a polygon shared by several locations. It carries no DOM id
-   * on purpose: the focus effect falls back to highlighting the polygon only
-   * when getElementById finds nothing for the focused marker.
+   * Count for a polygon shared by several locations: bare white text with no
+   * DOM id and no pointer events, so hover and clicks fall straight through to
+   * the polygon underneath and stay on the single delegated hit test.
    */
   private createStackBadge({
     map,
     coordinates,
     geometryType,
-    stackCount,
-    onClick
+    stackCount
   }: {
     map: Map
     coordinates: Position[][] | Position[][][]
     geometryType: 'Polygon' | 'MultiPolygon'
     stackCount: number
-    onClick?: () => void
   }): MapboxMarker | null {
     const center = getBoundaryCenter(coordinates, geometryType)
     if (!center) return null
 
     const element = this.createMarkerElement({
-      size: 'cluster',
-      color: polygonColor,
-      borderless: true,
-      label: String(stackCount),
-      onClick: (e) => {
-        e.preventDefault()
-        onClick?.()
-      }
+      size: 'label',
+      label: String(stackCount)
     })
+    element.style.pointerEvents = 'none'
 
     return new MapboxMarker(element).setLngLat(center).addTo(map)
   }
 
-  // a polygon can be redrawn or dropped between focus and blur, so a missing
-  // layer is an expected outcome here rather than something worth reporting
-  private hasPolygonLayers(map: Map, id: string) {
-    return Boolean(map.getLayer(`${id}-fill`))
-  }
+  /** Badges are DOM, so unlike the polygons they are diffed rather than reset. */
+  private syncStackBadges(map: Map, items: any[]) {
+    const wanted: Record<string, { item: any; key: string }> = {}
 
-  // the badge sits on top of its polygon, so it follows the same paint
-  private paintStackBadge(id: string, color: string | null) {
-    const element = this.stackBadges[id]?.getElement()
-    if (!element) return
-    if (color) element.style.setProperty('--marker-bg', color)
-    else element.style.removeProperty('--marker-bg')
+    items.forEach((item) => {
+      const stackCount = item.stackCount || 1
+      if (stackCount < 2) return
+      wanted[item.id] = { item, key: `${stackCount}:${item.renderKey ?? ''}` }
+    })
+
+    Object.keys(this.stackBadges).forEach((id) => {
+      if (wanted[id] && this.badgeKeys[id] === wanted[id].key) return
+      this.stackBadges[id].remove()
+      delete this.stackBadges[id]
+      delete this.badgeKeys[id]
+    })
+
+    Object.entries(wanted).forEach(([id, { item, key }]) => {
+      if (this.stackBadges[id]) return
+
+      const { boundary, geometryType = 'Polygon' } = item.map
+      const badge = this.createStackBadge({
+        map,
+        coordinates: boundary,
+        geometryType,
+        stackCount: item.stackCount
+      })
+
+      if (badge) {
+        this.stackBadges[id] = badge
+        this.badgeKeys[id] = key
+      }
+    })
   }
 
   focusPolygon(map: Map, id: string) {
-    const fill = `${id}-fill`
-    if (!this.hasPolygonLayers(map, id)) return
+    if (!map.getLayer(polygonLayerId)) return
     try {
-      map.setPaintProperty(fill, 'fill-color', polygonFocusColor)
-      map.setPaintProperty(fill, 'fill-outline-color', polygonFocusColor)
-      this.paintStackBadge(id, polygonFocusColor)
+      map.setFeatureState({ source: polygonSourceId, id }, { focused: true })
     } catch (error) {
       console.error('Error focusing polygon:', error)
     }
   }
 
   blurPolygon(map: Map, id: string) {
-    const fill = `${id}-fill`
-    if (!this.hasPolygonLayers(map, id)) return
+    if (!map.getLayer(polygonLayerId)) return
     try {
-      map.setPaintProperty(fill, 'fill-color', polygonColor)
-      map.setPaintProperty(fill, 'fill-outline-color', polygonOutlineColor)
-      this.paintStackBadge(id, null)
+      map.removeFeatureState({ source: polygonSourceId, id }, 'focused')
     } catch (error) {
       console.error('Error blurring polygon:', error)
     }
   }
 
-  resetMarkers() {
+  resetMarkers(map?: Map) {
     const markers = Object.values(this.markers)
     markers.forEach((marker) => marker.remove())
     this.markers = {}
-    this.renderKeys = {}
+
+    Object.values(this.stackBadges).forEach((badge) => badge.remove())
     this.stackBadges = {}
-    this.polygonHandlers = {}
-    this.polygonLayersDirty = true
+    this.badgeKeys = {}
+
+    if (map) this.removePolygonSource(map)
+    this.polygonItems = {}
   }
 
   resetClusters() {
@@ -460,8 +461,8 @@ export class MapService {
     this.clusters = {}
   }
 
-  resetAllMarkers() {
-    this.resetMarkers()
+  resetAllMarkers(map?: Map) {
+    this.resetMarkers(map)
     this.resetClusters()
   }
 
