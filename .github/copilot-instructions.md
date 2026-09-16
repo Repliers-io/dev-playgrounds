@@ -53,27 +53,30 @@ ParamsPanel UI → react-hook-form (ParamsFormProvider) → SearchProvider.setPa
 1. **Type** — add the field to `CustomFormParams` (for app-internal params) or confirm it already exists in `Filters`/`ApiCredentials` in `src/services/API/types.ts`.
 
 2. **Joi schema** — add a validation rule in `src/providers/ParamsFormProvider/schema.ts`.
+
    ```ts
    myNewParam: Joi.number().integer().positive().allow(null, false, ''),
    ```
+
    Use `.allow(null, false, '')` for optional numeric fields so empty inputs don't fail validation.
 
 3. **Default value** — add the field with its empty/null default to `src/providers/ParamsFormProvider/defaults.ts`.
+
    ```ts
    myNewParam: undefined,   // or null / [] / ''
    ```
 
 4. **UI control** — add a control inside the relevant section component under `src/components/ParamsPanel/sections/`. Choose the right reusable control:
 
-   | Component | When to use |
-   |-----------|-------------|
-   | `ParamsField` | Free-text or numeric input |
-   | `ParamsSelect` | Single value from a fixed list |
-   | `ParamsMultiSelect` | Multiple values from a fixed list (sent as array) |
+   | Component           | When to use                                                |
+   | ------------------- | ---------------------------------------------------------- |
+   | `ParamsField`       | Free-text or numeric input                                 |
+   | `ParamsSelect`      | Single value from a fixed list                             |
+   | `ParamsMultiSelect` | Multiple values from a fixed list (sent as array)          |
    | `ParamsToggleGroup` | Small set of mutually-exclusive values rendered as buttons |
-   | `ParamsRange` | Two related numeric fields (min/max pair) |
-   | `ParamsCheckbox` | Boolean toggle |
-   | `ParamsDate` | Date picker (uses MUI X DatePicker + dayjs) |
+   | `ParamsRange`       | Two related numeric fields (min/max pair)                  |
+   | `ParamsCheckbox`    | Boolean toggle                                             |
+   | `ParamsDate`        | Date picker (uses MUI X DatePicker + dayjs)                |
 
    All controls read/write form state via `useFormContext()` internally and call `useParamsForm().onChange()` to submit. Pass `name` matching the `FormParams` key exactly.
 
@@ -157,3 +160,8 @@ Params prefixed `listing*` (e.g. `listingFields`, `listingBoardId`, `listingLoca
 Durable rules, project facts, and agent-specific notes that AI coding agents should remember across sessions belong in `.claude/agent-memory/` in this repo (agent-specific notes under `.claude/agent-memory/<agent-name>/`). Do NOT save them to per-user locations like `~/.claude/projects/.../memory/` — those aren't visible to other coders on the team.
 
 Use `.claude/agent-memory/MEMORY.md` (or `.claude/agent-memory/<agent-name>/MEMORY.md`) as a one-line-per-entry index pointing to sibling markdown files with YAML frontmatter.
+
+## Additional Guidelines
+
+- **Do not propose commits**: Only create commits when explicitly requested. Avoid suggesting git commit operations at the end of work items.
+- **Focus on code changes**: Let the user decide when to commit based on their workflow.
