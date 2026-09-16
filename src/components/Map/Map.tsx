@@ -67,6 +67,14 @@ const MapRoot = () => {
   // Default to map tab when no tab is specified
   const listingsTab = !params.tab || params.tab === 'map'
 
+  // the switch acts on the panel, so it stays out of the way until the list is
+  // actually on screen; once collapsed it has to remain, or the panel the user
+  // hid would have no way back
+  const locationsListPopulated = Boolean(
+    selectedStack ? selectedStack.members.length : locations?.length
+  )
+  const showLocationsSwitch = !openLocationsPanel || locationsListPopulated
+
   const centerPoint = params.center
   const { simplify: simplifyGeometry, simplifyTolerance } = params
 
@@ -333,7 +341,7 @@ const MapRoot = () => {
         <MapClusterWarnings />
         <MapContainer ref={mapContainerRef} />
         {locationsTab && openLocationsPanel && <SearchField />}
-        {locationsTab && (
+        {locationsTab && showLocationsSwitch && (
           <SearchFieldSwitch
             open={openLocationsPanel}
             raised={locationsEndpoint}
