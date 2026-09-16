@@ -95,6 +95,12 @@ const schema = Joi.object({
 
   bounds: Joi.boolean().allow(null, false, ''),
 
+  simplify: Joi.boolean().allow(null, false, ''),
+  simplifyTolerance: Joi.number().positive().allow(null, false, '').messages({
+    'number.base': 'Tolerance must be a number',
+    'number.positive': 'Tolerance must be greater than 0'
+  }),
+
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),
   locationsMaxSize: Joi.number().positive().allow(null, false, ''),

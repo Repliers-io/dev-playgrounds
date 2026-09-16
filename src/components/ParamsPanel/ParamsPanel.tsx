@@ -23,6 +23,7 @@ import {
   ChatParamsSection,
   ClustersSection,
   CredentialsSection,
+  GeometrySection,
   ListingParamsSection,
   LocationParamsSection,
   OpenHouseSection,
@@ -67,6 +68,7 @@ const ParamsPanel = () => {
             <SchoolParamsSection />
             <CenterRadiusSection />
             <BoundsSection />
+            <GeometrySection />
           </>
         )
 
