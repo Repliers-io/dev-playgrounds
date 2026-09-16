@@ -170,11 +170,18 @@ const ParamsPanel = () => {
       const locationsEndpoint = params.endpoint === 'locations'
       if (!locationsEndpoint && !searchParams.search) return // disable empty `search` requests
 
+      // the viewport rectangle replaces center + radius when `bounds` is on;
+      // /locations wants a closed ring, unlike the listings endpoint
+      const geoParams =
+        params.bounds && position.bounds
+          ? getMapRectangle(position.bounds, { closed: true })
+          : getCenterPoint(params, position)
+
       try {
         await locationsContext.search({
           ...searchParams,
           ...locationsParams,
-          ...getCenterPoint(params, position)
+          ...geoParams
         })
       } catch (error: any) {
         console.error('fetchLocations error:', error)

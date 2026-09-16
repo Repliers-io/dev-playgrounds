@@ -30,7 +30,8 @@ export const booleanFields = [
   'dynamicClusterPrecision',
   'cluster',
   'stats',
-  'center'
+  'center',
+  'bounds'
 ] as const
 
 export const formatMultiSelectFields = (

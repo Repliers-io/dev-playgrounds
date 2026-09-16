@@ -1,12 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Autocomplete,
   Box,
   CircularProgress,
   debounce,
-  TextField
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
+  Typography
 } from '@mui/material'
 
 import { useLocations } from 'providers/LocationsProvider'
@@ -19,13 +24,17 @@ import { OptionGroup, OptionLoader, OptionLocation } from './components'
 
 const minCharsToSuggest = 3
 const debounceDelay = 300
+// listbox height budget, and what the stack header takes out of it
+const listboxOffset = 121
+const stackHeaderHeight = 40
 
 const SearchField = () => {
   const { onChange } = useParamsForm()
   const { setValue } = useFormContext()
-  const { loading, locations, clearData } = useLocations()
+  const { loading, locations, clearData, selectedStack, selectStack } =
+    useLocations()
   const { params, clearData: clearSearchData } = useSearch()
-  const { mapRef, focusedMarker, focusLocation } = useMapOptions()
+  const { mapRef, focusedMarker, focusLocation, blurMarker } = useMapOptions()
   const initialValue = params.search || ''
   const locationsEndpoint = params.endpoint === 'locations'
 
@@ -33,6 +42,67 @@ const SearchField = () => {
   const prevQuery = useRef<string>(initialValue)
 
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
+
+  // inside a stack the members are alphabetical, unnamed ones sink to the end
+  const options = useMemo(() => {
+    if (!selectedStack) return locations
+    return [...selectedStack.members].sort((a, b) => {
+      const nameA = String(a?.name ?? '').trim()
+      const nameB = String(b?.name ?? '').trim()
+      if (!nameA) return nameB ? 1 : 0
+      if (!nameB) return -1
+      return nameA.localeCompare(nameB)
+    })
+  }, [selectedStack, locations])
+
+  const renderPaper = useCallback(
+    ({ children, ...paperProps }: React.HTMLAttributes<HTMLElement>) => (
+      <Paper {...paperProps}>
+        {selectedStack && (
+          <Stack
+            gap={0.5}
+            direction="row"
+            alignItems="center"
+            sx={{
+              px: 1,
+              flexShrink: 0,
+              height: stackHeaderHeight,
+              boxSizing: 'border-box',
+              borderBottom: 1,
+              borderColor: 'divider',
+              bgcolor: 'background.default'
+            }}
+          >
+            <Typography
+              noWrap
+              flex={1}
+              variant="body2"
+              fontWeight={600}
+              title={selectedStack.representative?.name}
+            >
+              {selectedStack.representative?.name} ·{' '}
+              {selectedStack.members.length} locations
+            </Typography>
+            <IconButton
+              size="small"
+              title="Show all locations"
+              // keep the input focused, a blur would re-submit the search
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                // drop the polygon highlight along with the narrowed list
+                selectStack(null)
+                blurMarker()
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Stack>
+        )}
+        {children}
+      </Paper>
+    ),
+    [selectedStack, selectStack, blurMarker]
+  )
 
   const setValues = (values: Record<string, any>) => {
     clearSearchData()
@@ -221,7 +291,8 @@ const SearchField = () => {
         selectOnFocus
         clearOnEscape
         disableListWrap
-        options={locations}
+        options={options}
+        PaperComponent={renderPaper}
         inputValue={searchString}
         onChange={handleChange}
         onInputChange={handleInputChange}
@@ -241,7 +312,11 @@ const SearchField = () => {
         ListboxProps={{
           sx: {
             opacity: loading ? 0.3 : 1,
-            maxHeight: 'calc(100vh - 121px)',
+            // the stack header lives inside the same paper, so it eats into
+            // the height the options list is allowed to take
+            maxHeight: `calc(100vh - ${
+              listboxOffset + (selectedStack ? stackHeaderHeight : 0)
+            }px)`,
             boxSizing: 'border-box',
             overflowY: 'auto',
             scrollbarWidth: 'thin',

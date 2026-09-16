@@ -93,6 +93,8 @@ const schema = Joi.object({
     .allow(null, false, '')
     .optional(),
 
+  bounds: Joi.boolean().allow(null, false, ''),
+
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),
   locationsMaxSize: Joi.number().positive().allow(null, false, ''),
@@ -117,12 +119,12 @@ const schema = Joi.object({
   locationsResultsPerPage: Joi.number()
     .integer()
     .min(1)
-    .max(300)
+    .max(1000)
     .allow(null, false, '')
     .messages({
       'number.base': 'Results per page must be a number',
       'number.min': 'Results per page must be at least 1',
-      'number.max': 'Results per page must be at most 300'
+      'number.max': 'Results per page must be at most 1000'
     }),
   minQuality: Joi.number()
     .min(1.0)

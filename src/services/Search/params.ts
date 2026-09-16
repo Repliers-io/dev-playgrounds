@@ -4,8 +4,11 @@ import { type LngLatBounds } from 'mapbox-gl'
 import { getDefaultBounds, toRectangle } from 'utils/map'
 import { defaultResultsPerPage } from 'constants/search'
 
-export const getMapRectangle = (bounds: LngLatBounds) => ({
-  map: toRectangle(bounds)
+export const getMapRectangle = (
+  bounds: LngLatBounds,
+  { closed = false }: { closed?: boolean } = {}
+) => ({
+  map: toRectangle(bounds, 0, { closed })
 })
 
 export const getDefaultRectangle = () => ({
