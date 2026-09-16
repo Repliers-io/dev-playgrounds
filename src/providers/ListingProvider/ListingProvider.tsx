@@ -91,12 +91,16 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     previousRequest.current = requestUrl
     previousKey.current = apiKey
 
+    abortController.current?.abort()
+
+    const controller = new AbortController()
+    abortController.current = controller
+    // the ref always belongs to the newest request: an older one that loses the
+    // race must not clear it, or the next call would have nothing left to abort
+    const current = () => abortController.current === controller
+
     try {
       setLoading(true)
-      abortController.current?.abort()
-
-      const controller = new AbortController()
-      abortController.current = controller
       const startTime = performance.now()
 
       setRequest(requestUrl)
@@ -111,10 +115,14 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
         }
       )
       const endTime = performance.now()
+      // a superseded request must not paint over the newer one's results
+      if (!current()) return null
+
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
 
       const { size, text } = await readResponseBody(response)
+      if (!current()) return null
       setSize(size)
 
       let jsonResponse: any = {}
@@ -137,11 +145,15 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
 
       return jsonResponse
     } catch (error: any) {
+      // being aborted means a newer request took over, which is not a failure
+      if (controller.signal.aborted || !current()) return null
       setStatusCode(error?.status || 500)
       return null
     } finally {
-      setLoading(false)
-      abortController.current = null
+      if (current()) {
+        setLoading(false)
+        abortController.current = null
+      }
     }
   }, [])
 
