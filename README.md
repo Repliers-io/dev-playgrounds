@@ -50,4 +50,8 @@ Tech Stack: React + TypeScript + Vite
    npm run dev
    ```
 
+## Architecture & Internals
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the provider tree, the state/URL model, how requests are dispatched, per-tab behaviour, and a list of non-obvious gotchas. The checklist for adding a new search parameter lives in [.github/copilot-instructions.md](.github/copilot-instructions.md).
+
 Happy Coding!
