@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
+import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
 import { groupLocationsByGeometry, type LocationStack } from 'utils/locations'
 
 import { type LocationsContextType, type SavedResponse } from './types'
@@ -123,21 +123,12 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
 
-      const contentLength = response.headers.get('content-length')
-      let size = 0
-
-      if (contentLength) {
-        size = parseInt(contentLength, 10)
-      } else {
-        const clone = response.clone()
-        const text = await clone.text()
-        size = new Blob([text]).size
-      }
+      const { size, text } = await readResponseBody(response)
       setSize(size)
 
       let jsonResponse: any = {}
       try {
-        jsonResponse = await response.json()
+        jsonResponse = JSON.parse(text)
         setJson(jsonResponse)
       } catch (error) {
         console.error('Error parsing response', error)
