@@ -82,7 +82,7 @@ const LocationsSelectOptionsProvider = ({
         query.source = sourceFilter
       }
 
-      let aggregates: Record<string, any> = {}
+      let body: Record<string, any> = {}
       const result: Record<K, string[]> = {} as Record<K, string[]>
 
       try {
@@ -91,10 +91,12 @@ const LocationsSelectOptionsProvider = ({
           { get: query },
           fetchOpts
         )
-        aggregates = (await response.json()).aggregates
+        body = await response.json()
       } catch (error) {
         console.error('No locations field options provided from API', error)
       }
+
+      const aggregates: Record<string, any> = body.aggregates || {}
 
       fieldNames.forEach((path) => {
         const value = getPath(aggregates, path) || {}
@@ -114,9 +116,26 @@ const LocationsSelectOptionsProvider = ({
         const filteredEntries = entries.filter(
           ([, count]) => (count as number) >= minCount
         )
-        result[path] = Array.from(
-          new Set(['', ...filteredEntries.map(([name]) => name)])
-        )
+        const names = filteredEntries.map(([name]) => name)
+
+        // The aggregate breakdown can omit distinct values that carry no
+        // count (e.g. `UserDefined` sources are absent from
+        // `aggregates.source`). Union with the top-level array the API
+        // returns for this field so every distinct value still appears.
+        const topLevel = getPath(body, path)
+        if (Array.isArray(topLevel)) {
+          names.push(
+            ...topLevel.filter((name): name is string => typeof name === 'string')
+          )
+        }
+
+        // Re-sort after the union so appended top-level values don't break
+        // the alphabetical ordering. Count-ordered fields keep the appended
+        // (count-less) values last.
+        const unique = Array.from(new Set(names.filter((name) => name !== '')))
+        if (alphabetical) unique.sort((a, b) => a.localeCompare(b))
+
+        result[path] = ['', ...unique]
       })
 
       return result

@@ -137,7 +137,9 @@ export const sortByOptions = [
   'repliersUpdatedOnAsc',
   'repliersUpdatedOnDesc',
   'qualityAsc',
-  'qualityDesc'
+  'qualityDesc',
+  'centroidDistanceAsc',
+  'centroidDistanceDesc'
 ] as const
 export type SortByOption = (typeof sortByOptions)[number] // `SortBy`
 
@@ -148,6 +150,9 @@ export const statisticsFields = [
   'pct-aboveBelowList',
 
   'avg-priceSqft',
+  'med-priceSqft',
+  'min-priceSqft',
+  'max-priceSqft',
 
   'cnt-available',
   'cnt-closed',
