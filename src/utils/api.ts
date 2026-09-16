@@ -9,6 +9,25 @@ export const queryStringOptions: StringifyOptions = {
   sort: false
 }
 
+/**
+ * Reads a response body once, reporting its byte size next to the raw text.
+ *
+ * The obvious version — clone the response, read the clone to text, wrap it in
+ * a Blob for `.size`, then call `response.json()` — decodes the payload twice
+ * and copies it twice. On a few megabytes that measured in seconds, so the
+ * body is pulled as an ArrayBuffer instead: `byteLength` is free and the
+ * decode happens exactly once.
+ */
+export const readResponseBody = async (response: Response) => {
+  const contentLength = response.headers.get('content-length')
+  const buffer = await response.arrayBuffer()
+
+  return {
+    size: contentLength ? parseInt(contentLength, 10) : buffer.byteLength,
+    text: new TextDecoder().decode(buffer)
+  }
+}
+
 export const apiFetch = async <T = Response>(
   url: string,
   params: { get?: any; post?: any },

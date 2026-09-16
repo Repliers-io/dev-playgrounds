@@ -31,15 +31,17 @@ import './ResponsePanel.css'
 
 import RequestParser from './components/RequestParser'
 
-// Format bytes to human-readable size
+// Format bytes to human-readable size, decimal units as the API reports them
 const formatBytes = (bytes: number): string => {
-  if (bytes === 0) return '0 B'
+  if (!bytes || bytes < 0) return '0B'
 
-  const sizes = ['B', 'kB', 'mB', 'gB']
-  const i = Math.floor(Math.log(bytes) / Math.log(1000))
+  const units = ['B', 'kB', 'MB', 'GB', 'TB']
+  const step = Math.floor(Math.log(bytes) / Math.log(1000))
+  const unit = Math.min(step, units.length - 1)
 
-  if (i === 0) return `${bytes}${sizes[i]}`
-  return `${(bytes / Math.pow(1000, i)).toFixed(bytes > 100_000 ? 0 : 1)}${sizes[i]}`
+  if (unit === 0) return `${bytes}B`
+  // one decimal at every scale: dropping it turned 3.5MB into a flat "3mB"
+  return `${(bytes / 1000 ** unit).toFixed(1)}${units[unit]}`
 }
 
 const formatColor = (bytes: number): string => {

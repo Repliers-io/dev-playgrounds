@@ -11,7 +11,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { type ChatItem } from 'components/Chat/types'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
+import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
 
 import { type APIChatResponse, type ChatContextType } from './types'
 
@@ -123,22 +123,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setTime(Math.floor(endTime - startTime))
         setStatusCode(response.status)
 
-        const contentLength = response.headers.get('content-length')
-        let responseSize = 0
-
-        if (contentLength) {
-          responseSize = parseInt(contentLength, 10)
-        } else {
-          const clone = response.clone()
-          const text = await clone.text()
-          responseSize = new Blob([text]).size
-        }
+        const { size: responseSize, text } = await readResponseBody(response)
         setSize(responseSize)
 
         let jsonResponse: APIChatResponse | null = null
 
         try {
-          jsonResponse = await response.json()
+          jsonResponse = JSON.parse(text)
           setJson(jsonResponse as Record<string, unknown>)
         } catch {
           console.error('Failed to parse JSON response')
