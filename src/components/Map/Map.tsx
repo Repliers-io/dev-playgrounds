@@ -28,7 +28,8 @@ import {
   MapDrawButton,
   MapNavigation,
   MapStyleSwitch,
-  SearchField
+  SearchField,
+  SearchFieldSwitch
 } from './components'
 
 const MapRoot = () => {
@@ -53,12 +54,14 @@ const MapRoot = () => {
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
   const prevFocusedPolygon = useRef<string | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [openLocationsPanel, setOpenLocationsPanel] = useState(true)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
 
   const listingsDisabled = params.listings === 'false'
 
   const locationsTab = params.tab === 'locations'
+  const locationsEndpoint = params.endpoint === 'locations'
   const statisticsTab = params.tab === 'stats'
   // Default to map tab when no tab is specified
   const listingsTab = !params.tab || params.tab === 'map'
@@ -313,7 +316,14 @@ const MapRoot = () => {
       >
         <MapClusterWarnings />
         <MapContainer ref={mapContainerRef} />
-        {locationsTab && <SearchField />}
+        {locationsTab && openLocationsPanel && <SearchField />}
+        {locationsTab && (
+          <SearchFieldSwitch
+            open={openLocationsPanel}
+            raised={locationsEndpoint}
+            onClick={() => setOpenLocationsPanel(!openLocationsPanel)}
+          />
+        )}
         {listingsTab && (
           <MapCounter count={count} loading={loading || !request} />
         )}

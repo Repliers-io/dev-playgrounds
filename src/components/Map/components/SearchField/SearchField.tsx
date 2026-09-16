@@ -28,6 +28,14 @@ const debounceDelay = 300
 const listboxOffset = 121
 const stackHeaderHeight = 40
 
+// panel geometry, shared with the collapse switch that anchors to its corner
+export const panelWidth = 328
+export const panelInset = 16
+export const panelInputHeight = 46
+// on the locations endpoint the input is lifted by exactly its own height, so
+// its bottom edge rests on the top of the map and only the list stays visible
+export const panelRaisedTop = -panelInputHeight
+
 const SearchField = () => {
   const { onChange } = useParamsForm()
   const { setValue } = useFormContext()
@@ -276,10 +284,10 @@ const SearchField = () => {
   return (
     <Box
       sx={{
-        left: 16,
-        top: locationsEndpoint ? -46 : 16,
+        left: panelInset,
+        top: locationsEndpoint ? panelRaisedTop : panelInset,
         boxShadow: locationsEndpoint ? 0 : 1,
-        width: 'min(calc(100% - 32px), 328px)',
+        width: `min(calc(100% - ${panelInset * 2}px), ${panelWidth}px)`,
         position: 'absolute',
         borderRadius: 1
       }}
