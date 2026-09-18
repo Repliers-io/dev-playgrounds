@@ -1,1 +1,2 @@
 - [Locations `name` param scope](project_locations_name_param.md) — `name` is /locations-only; must be nulled out for /locations/autocomplete
+- [`radiusUnit` is undocumented](project_radius_unit_undocumented.md) — public API docs only ever say "radius in KM"; unit list/default/max are unverified

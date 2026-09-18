@@ -440,7 +440,8 @@ export interface ApiQueryParams {
 
   lat: string
   long: string
-  radius: number // in KM
+  radius: number // in `radiusUnit`, km by default
+  radiusUnit: 'm' | 'km' | 'mi' | 'yd'
   fields: string
   imageSearchItems: ApiImageSearchItem[]
 }
