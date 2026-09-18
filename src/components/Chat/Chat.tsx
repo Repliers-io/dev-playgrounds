@@ -51,6 +51,11 @@ const Chat = () => {
 
     // Sync center toggle with whether radius is being applied
     setValue('center', 'radius' in filters)
+    // NLP radii are in km unless it says otherwise, so a unit picked earlier
+    // in the UI must not carry over to the new radius
+    if ('radius' in filters && !('radiusUnit' in filters)) {
+      setValue('radiusUnit', 'km')
+    }
 
     // Always set unknowns (even if empty)
     setValue('unknowns', unknowns)

@@ -67,7 +67,8 @@ export const filterQueryParams = (params: Partial<FormParams> = {}) => {
     ...(!params.cluster ? clusterOnlyParams : []),
     ...(params.tab !== 'locations' ? searchOnlyParams : []),
     ...(params.tab === 'locations' ? listingsOnlyParams : []),
-    ...(!params.center ? ['radius', 'radiusUnit'] : []) // radius requires lat/long which only exist when center is enabled
+    ...(!params.center ? ['radius'] : []), // radius requires lat/long which only exist when center is enabled
+    'radiusUnit' // only meaningful next to a radius, so getCenterPoint owns it
   ]
 
   const maybeArrays = [
@@ -167,9 +168,11 @@ export const getCenterPoint = (
 ) => {
   if (params.center) {
     if (requireRadius && params.radius == null) return {}
+    const hasRadius = params.radius != null
     return {
       radius: params.radius,
-      radiusUnit: params.radiusUnit || 'km',
+      // a unit without a radius is noise, so send it only alongside one
+      ...(hasRadius && { radiusUnit: params.radiusUnit || 'km' }),
       lat: position.center?.lat,
       long: position.center?.lng
     }
