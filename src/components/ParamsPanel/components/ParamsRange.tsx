@@ -14,6 +14,8 @@ interface RangeProps extends SliderProps {
   hint?: string
   link?: string
   tooltip?: string
+  // extra control rendered inline after the label, e.g. a unit picker
+  labelSlot?: React.ReactNode
 }
 
 const ParamsRange: React.FC<RangeProps> = ({
@@ -22,6 +24,7 @@ const ParamsRange: React.FC<RangeProps> = ({
   hint,
   link,
   tooltip,
+  labelSlot,
   disabled = false,
   ...rest
 }) => {
@@ -64,7 +67,9 @@ const ParamsRange: React.FC<RangeProps> = ({
         link={link}
         tooltip={tooltip}
         pb={0}
-      />
+      >
+        {labelSlot}
+      </ParamLabel>
       <Box id={name} sx={{ position: 'relative' }}>
         <Stack direction="row" gap={3} alignItems="center" pl={1.25}>
           <Slider

@@ -5,6 +5,9 @@ import {
 } from 'services/API/types'
 import { type Filters } from 'services/Search'
 
+export const radiusUnitOptions = ['m', 'km', 'mi', 'yd'] as const
+export type RadiusUnitOption = (typeof radiusUnitOptions)[number]
+
 export type CustomFormParams = {
   dynamicClustering: boolean
   dynamicClusterPrecision: boolean
@@ -16,6 +19,12 @@ export type CustomFormParams = {
 
   center: boolean
   radius: number | null
+  radiusUnit: RadiusUnitOption
+  // scope locations requests by the map viewport instead of center + radius
+  bounds: boolean
+  // thin location boundaries before handing them to Mapbox, rendering only
+  simplify: boolean
+  simplifyTolerance: number | null
   search: string
 
   // location params

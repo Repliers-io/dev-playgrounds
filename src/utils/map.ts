@@ -101,6 +101,40 @@ export const getMarkerName = (listing: Listing) =>
 export const getLocationName = (location: any) =>
   `location-${location.locationId}-${location.map?.boundary?.[0]?.length || 0}`
 
+/**
+ * Center of a boundary's bounding box, used to place the stack count badge.
+ * Parcels are near-rectangular, so the bbox center sits inside the shape and
+ * costs a single pass over the coordinates.
+ */
+export const getBoundaryCenter = (
+  boundary: Position[][] | Position[][][],
+  geometryType: 'Polygon' | 'MultiPolygon' = 'Polygon'
+): LngLat | null => {
+  const rings =
+    geometryType === 'MultiPolygon'
+      ? (boundary as Position[][][]).flat()
+      : (boundary as Position[][])
+
+  let minLng = Infinity
+  let maxLng = -Infinity
+  let minLat = Infinity
+  let maxLat = -Infinity
+
+  rings.forEach((ring) => {
+    ring?.forEach(([lng, lat]) => {
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) return
+      if (lng < minLng) minLng = lng
+      if (lng > maxLng) maxLng = lng
+      if (lat < minLat) minLat = lat
+      if (lat > maxLat) maxLat = lat
+    })
+  })
+
+  if (!Number.isFinite(minLng) || !Number.isFinite(minLat)) return null
+
+  return new mapboxgl.LngLat((minLng + maxLng) / 2, (minLat + maxLat) / 2)
+}
+
 export const toMapboxPoint = (location: ApiCoords) => {
   const { latitude, longitude } = location
   return new mapboxgl.LngLat(longitude, latitude)
@@ -132,7 +166,11 @@ export const toApiBounds = (bounds: LngLatBounds): ApiBounds => {
   }
 }
 
-export const toRectangle = (bounds: LngLatBounds, buffer = 0) => {
+export const toRectangle = (
+  bounds: LngLatBounds,
+  buffer = 0,
+  { closed = false }: { closed?: boolean } = {}
+) => {
   /*
     map = [ ↗ NorthEast, ↖ NorthWest, ↙ SouthWest, ↘ SouthEast]
   */
@@ -149,6 +187,9 @@ export const toRectangle = (bounds: LngLatBounds, buffer = 0) => {
     `[${sw.lng - buffer},${sw.lat - buffer}]`, // ↙
     `[${se.lng + buffer},${se.lat - buffer}]` //  ↘
   ]
+
+  // the /locations spec requires a closed ring, the listings endpoint does not
+  if (closed) rectangle.push(rectangle[0])
 
   return `[[${rectangle.join(',')}]]`
 }

@@ -13,7 +13,8 @@ export type MarkerProps = {
   link?: string
   status?: string
   className?: string
-  size?: 'point' | 'tag' | 'cluster' | 'location'
+  // `label` is bare white text with no chrome, used for polygon stack counts
+  size?: 'point' | 'tag' | 'cluster' | 'location' | 'label'
   onClick?: MouseEventHandler
   // TODO: there should be no difference between onClick and onTap
   onTap?: TouchEventHandler
@@ -69,18 +70,31 @@ const Marker = ({
       borderRadius: '50%',
       width: calculatedClusterWeight,
       height: calculatedClusterWeight,
-      lineHeight: toRem(calculatedClusterWeight - 3)
+      // centered by layout rather than by a line-height tuned to the border
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      lineHeight: 1
+    },
+    // sits directly on the shape it counts, so it carries no chrome of its own
+    label: {
+      p: 0,
+      border: 0,
+      bgcolor: 'transparent',
+      fontWeight: 700,
+      lineHeight: 1,
+      whiteSpace: 'nowrap'
     }
   }
 
   const sizeSx = sizes[size]
 
-  const highlightSx =
-    size === 'location'
-      ? {}
-      : {
-          border: `8px solid ${alpha(lighten(bgcolor, 0.2), 0.3)}`
-        }
+  const bare = size === 'location' || size === 'label'
+  const highlightSx = bare
+    ? {}
+    : {
+        border: `8px solid ${alpha(lighten(bgcolor, 0.2), 0.3)}`
+      }
 
   const handleTouchEnd = (e: TouchEvent) => {
     // if tap handler is provided

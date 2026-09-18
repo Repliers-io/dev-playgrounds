@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
+import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
 
 import { type ListingContextType, type SavedResponse } from './types'
 
@@ -69,12 +69,14 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
       boardId: listingBoardId,
       fields: listingFields,
       locations: includeLocations ? 'true' : undefined,
-      locationsSource: includeLocations && listingLocationsSource?.length
-        ? listingLocationsSource
-        : undefined,
-      locationsType: includeLocations && listingLocationsType?.length
-        ? listingLocationsType
-        : undefined
+      locationsSource:
+        includeLocations && listingLocationsSource?.length
+          ? listingLocationsSource
+          : undefined,
+      locationsType:
+        includeLocations && listingLocationsType?.length
+          ? listingLocationsType
+          : undefined
     }
 
     // Build the full request URL for display
@@ -89,12 +91,16 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
     previousRequest.current = requestUrl
     previousKey.current = apiKey
 
+    abortController.current?.abort()
+
+    const controller = new AbortController()
+    abortController.current = controller
+    // the ref always belongs to the newest request: an older one that loses the
+    // race must not clear it, or the next call would have nothing left to abort
+    const current = () => abortController.current === controller
+
     try {
       setLoading(true)
-      abortController.current?.abort()
-
-      const controller = new AbortController()
-      abortController.current = controller
       const startTime = performance.now()
 
       setRequest(requestUrl)
@@ -109,24 +115,19 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
         }
       )
       const endTime = performance.now()
+      // a superseded request must not paint over the newer one's results
+      if (!current()) return null
+
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
 
-      const contentLength = response.headers.get('content-length')
-      let size = 0
-
-      if (contentLength) {
-        size = parseInt(contentLength, 10)
-      } else {
-        const clone = response.clone()
-        const text = await clone.text()
-        size = new Blob([text]).size
-      }
+      const { size, text } = await readResponseBody(response)
+      if (!current()) return null
       setSize(size)
 
       let jsonResponse: any = {}
       try {
-        jsonResponse = await response.json()
+        jsonResponse = JSON.parse(text)
         setJson(jsonResponse)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_error) {
@@ -144,11 +145,15 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
 
       return jsonResponse
     } catch (error: any) {
+      // being aborted means a newer request took over, which is not a failure
+      if (controller.signal.aborted || !current()) return null
       setStatusCode(error?.status || 500)
       return null
     } finally {
-      setLoading(false)
-      abortController.current = null
+      if (current()) {
+        setLoading(false)
+        abortController.current = null
+      }
     }
   }, [])
 

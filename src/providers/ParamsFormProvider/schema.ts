@@ -3,6 +3,7 @@ import Joi from 'joi'
 import {
   classOptions,
   lastStatusOptions,
+  radiusUnitOptions,
   sortByOptions,
   statusOptions,
   typeOptions
@@ -93,6 +94,17 @@ const schema = Joi.object({
     .allow(null, false, '')
     .optional(),
 
+  bounds: Joi.boolean().allow(null, false, ''),
+  radiusUnit: Joi.string()
+    .valid(...radiusUnitOptions)
+    .allow(null, ''),
+
+  simplify: Joi.boolean().allow(null, false, ''),
+  simplifyTolerance: Joi.number().positive().allow(null, false, '').messages({
+    'number.base': 'Tolerance must be a number',
+    'number.positive': 'Tolerance must be greater than 0'
+  }),
+
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),
   locationsMaxSize: Joi.number().positive().allow(null, false, ''),
@@ -117,12 +129,13 @@ const schema = Joi.object({
   locationsResultsPerPage: Joi.number()
     .integer()
     .min(1)
-    .max(300)
+    .max(1000)
     .allow(null, false, '')
     .messages({
       'number.base': 'Results per page must be a number',
       'number.min': 'Results per page must be at least 1',
-      'number.max': 'Results per page must be at most 300'
+      'number.max':
+        'Results per page must be at most 1000 - depends on your API key settings.'
     }),
   minQuality: Joi.number()
     .min(1.0)

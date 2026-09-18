@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapboxMap } from 'mapbox-gl'
 
 import { Box, Stack } from '@mui/material'
@@ -9,6 +9,7 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
+import { simplifyBoundary } from 'utils/geo'
 import { getLocationName, getMapStyleUrl, getMarkerName } from 'utils/map'
 import {
   mapboxDefaults,
@@ -28,7 +29,8 @@ import {
   MapDrawButton,
   MapNavigation,
   MapStyleSwitch,
-  SearchField
+  SearchField,
+  SearchFieldSwitch
 } from './components'
 
 const MapRoot = () => {
@@ -47,22 +49,39 @@ const MapRoot = () => {
     position,
     setPosition
   } = useMapOptions()
-  const { locations } = useLocations()
+  const { locations, stacks, stackByMember, selectedStack, selectStack } =
+    useLocations()
   const { request, count, listings, loading, clusters, params } = useSearch()
   const prevFocusedMarker = useRef<HTMLElement | null>(null)
   const prevFocusedPolygon = useRef<string | null>(null)
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [openLocationsPanel, setOpenLocationsPanel] = useState(true)
   const firstTimeLoaded = useRef(false)
   const { dynamicClustering } = params
 
   const listingsDisabled = params.listings === 'false'
 
   const locationsTab = params.tab === 'locations'
+  const locationsEndpoint = params.endpoint === 'locations'
   const statisticsTab = params.tab === 'stats'
   // Default to map tab when no tab is specified
   const listingsTab = !params.tab || params.tab === 'map'
 
+  // the switch acts on the panel, so it stays out of the way until the list is
+  // actually on screen; once collapsed it has to remain, or the panel the user
+  // hid would have no way back
+  const locationsListPopulated = Boolean(
+    selectedStack ? selectedStack.members.length : locations?.length
+  )
+  const showLocationsSwitch = !openLocationsPanel || locationsListPopulated
+
   const centerPoint = params.center
+  const { simplify: simplifyGeometry, simplifyTolerance } = params
+
+  // polygon the selected stack is drawn as, kept lit for as long as it is set
+  const selectedPolygonId = selectedStack
+    ? getLocationName(selectedStack.representative)
+    : null
 
   setMapContainerRef(mapContainerRef)
 
@@ -152,6 +171,7 @@ const MapRoot = () => {
     }
 
     if (effectiveListings.length) {
+      // the map tab has no boundaries, so this also drops the polygon source
       MapService.showMarkers({
         map,
         items: effectiveListings.map((listing) => ({
@@ -163,9 +183,39 @@ const MapRoot = () => {
         }
       })
     } else {
-      MapService.resetMarkers()
+      MapService.resetMarkers(map)
     }
   }
+
+  // one entity per identical-geometry stack, see utils/locations.
+  // marker ids come from the untouched representative, so simplification never
+  // shifts them; `renderKey` is what tells MapService to redraw the geometry
+  const locationItems = useMemo(() => {
+    const tolerance = Number(simplifyTolerance)
+    const thinning = Boolean(simplifyGeometry) && tolerance > 0
+
+    return stacks.map((stack) => {
+      const { locationId, map: locationMap, name: label } = stack.representative
+      const { boundary, geometryType = 'Polygon' } = locationMap || {}
+
+      return {
+        id: getLocationName(stack.representative),
+        size: 'location',
+        stackCount: stack.members.length,
+        renderKey: thinning ? `t${tolerance}` : '',
+        stack,
+        locationId,
+        label,
+        map:
+          thinning && boundary?.length
+            ? {
+                ...locationMap,
+                boundary: simplifyBoundary(boundary, geometryType, tolerance)
+              }
+            : locationMap
+      } as any
+    })
+  }, [stacks, simplifyGeometry, simplifyTolerance])
 
   const showLocations = () => {
     const map = mapRef.current
@@ -174,18 +224,11 @@ const MapRoot = () => {
     if (locations) {
       MapService.showMarkers({
         map,
-        items: locations.map((location) => {
-          const { locationId, map, name: label } = location
-          return {
-            id: getLocationName(location),
-            size: 'location',
-            locationId,
-            label,
-            map
-          } as any
-        }),
+        items: locationItems,
         onClick: (location) => {
           focusLocation(getLocationName(location))
+          // narrow the list to this stack, a lone polygon clears the narrowing
+          selectStack(location.stackCount > 1 ? location.stack : null)
         }
       })
     }
@@ -200,7 +243,7 @@ const MapRoot = () => {
     } else {
       // manually delete them all
       if (!locations) {
-        MapService.resetAllMarkers()
+        MapService.resetAllMarkers(map)
       } else {
         showLocations()
       }
@@ -211,33 +254,49 @@ const MapRoot = () => {
       setOpenDrawer(true)
     }
     blurMarker()
-  }, [clusters, listings, count, dynamicClustering, listingsTab, locations])
+  }, [
+    clusters,
+    listings,
+    count,
+    dynamicClustering,
+    listingsTab,
+    locations,
+    locationItems
+  ])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
 
-    if (focusedMarker) {
-      prevFocusedMarker.current?.classList.remove('focused')
+    // a selected stack stays lit until its own close button clears it, while
+    // `focusedMarker` is transient and gets dropped on every new result set
+    const targetId = focusedMarker
+      ? stackByMember[focusedMarker] || focusedMarker
+      : selectedPolygonId
 
-      if (prevFocusedPolygon.current) {
-        MapService.blurPolygon(map, prevFocusedPolygon.current)
-        prevFocusedPolygon.current = null
-      }
+    prevFocusedMarker.current?.classList.remove('focused')
+    prevFocusedMarker.current = null
 
-      const element = document.getElementById(focusedMarker)
-      if (element) {
-        element.classList.add('focused')
-        prevFocusedMarker.current = element
-      } else {
-        // no HTML element found, should be MapBox polygon instead
-        MapService.focusPolygon(map, focusedMarker)
-        prevFocusedPolygon.current = focusedMarker
-      }
+    if (prevFocusedPolygon.current && prevFocusedPolygon.current !== targetId) {
+      MapService.blurPolygon(map, prevFocusedPolygon.current)
+      prevFocusedPolygon.current = null
+    }
+
+    if (!targetId) return
+
+    const element = document.getElementById(targetId)
+    if (element) {
+      element.classList.add('focused')
+      prevFocusedMarker.current = element
+    } else {
+      // no HTML element found, should be MapBox polygon instead.
+      // repainted on every pass so a redrawn polygon keeps its highlight
+      MapService.focusPolygon(map, targetId)
+      prevFocusedPolygon.current = targetId
     }
 
     return () => prevFocusedMarker.current?.classList.remove('focused')
-  }, [focusedMarker])
+  }, [focusedMarker, stackByMember, selectedPolygonId, stacks])
 
   useEffect(() => {
     if (mapVisible && !statisticsTab) mapRef.current?.resize()
@@ -282,7 +341,14 @@ const MapRoot = () => {
       >
         <MapClusterWarnings />
         <MapContainer ref={mapContainerRef} />
-        {locationsTab && <SearchField />}
+        {locationsTab && openLocationsPanel && <SearchField />}
+        {locationsTab && showLocationsSwitch && (
+          <SearchFieldSwitch
+            open={openLocationsPanel}
+            raised={locationsEndpoint}
+            onClick={() => setOpenLocationsPanel(!openLocationsPanel)}
+          />
+        )}
         {listingsTab && (
           <MapCounter count={count} loading={loading || !request} />
         )}

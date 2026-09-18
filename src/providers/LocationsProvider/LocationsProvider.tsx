@@ -8,7 +8,8 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
-import { apiFetch, queryStringOptions } from 'utils/api'
+import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
+import { groupLocationsByGeometry, type LocationStack } from 'utils/locations'
 
 import { type LocationsContextType, type SavedResponse } from './types'
 
@@ -20,7 +21,9 @@ const emptySavedResponse: SavedResponse = {
   count: 0,
   page: 0,
   pages: 0,
-  locations: []
+  locations: [],
+  stacks: [],
+  stackByMember: {}
 }
 
 const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
@@ -31,15 +34,22 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
   const [size, setSize] = useState(0)
   const [json, setJson] = useState<null | any>(null)
   const [saved, setSaved] = useState<SavedResponse>(emptySavedResponse)
+  const [selectedStack, setSelectedStack] = useState<LocationStack | null>(null)
   const abortController = useRef<AbortController | null>(null)
   const disabled = useRef(false)
 
   const previousRequest = useRef<string>('')
   const previousKey = useRef<string>('')
 
+  const selectStack = useCallback(
+    (stack: LocationStack | null) => setSelectedStack(stack),
+    []
+  )
+
   const clearData = useCallback(() => {
     setStatusCode(null)
     setSaved(emptySavedResponse)
+    setSelectedStack(null)
     previousRequest.current = ''
   }, [])
 
@@ -91,12 +101,16 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     previousRequest.current = request
     previousKey.current = apiKey
 
+    abortController.current?.abort()
+
+    const controller = new AbortController()
+    abortController.current = controller
+    // the ref always belongs to the newest request: an older one that loses the
+    // race must not clear it, or the next call would have nothing left to abort
+    const current = () => abortController.current === controller
+
     try {
       setLoading(true)
-      abortController.current?.abort()
-
-      const controller = new AbortController()
-      abortController.current = controller
       const startTime = performance.now()
 
       setRequest(request)
@@ -110,24 +124,19 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
         }
       )
       const endTime = performance.now()
+      // a superseded request must not paint over the newer one's results
+      if (!current()) return null
+
       setTime(Math.floor(endTime - startTime))
       setStatusCode(response.status)
 
-      const contentLength = response.headers.get('content-length')
-      let size = 0
-
-      if (contentLength) {
-        size = parseInt(contentLength, 10)
-      } else {
-        const clone = response.clone()
-        const text = await clone.text()
-        size = new Blob([text]).size
-      }
+      const { size, text } = await readResponseBody(response)
+      if (!current()) return null
       setSize(size)
 
       let jsonResponse: any = {}
       try {
-        jsonResponse = await response.json()
+        jsonResponse = JSON.parse(text)
         setJson(jsonResponse)
       } catch (error) {
         console.error('Error parsing response', error)
@@ -136,24 +145,33 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
 
       if (response.ok && !disabled.current) {
         const { count, page, numPages, locations } = jsonResponse
+        const locationsList = Array.isArray(locations) ? locations : []
 
         const remappedResponse: SavedResponse = {
           page: page || 0,
           pages: numPages || 0,
           count: count || 0,
-          locations: Array.isArray(locations) ? locations : []
+          locations: locationsList,
+          ...groupLocationsByGeometry(locationsList)
         }
 
         setSaved(remappedResponse)
+        // selection is scoped to one result set: new data drops the narrowed
+        // list, and Map clears the marker focus that lit the polygon
+        setSelectedStack(null)
       }
 
       return json
     } catch (error: any) {
+      // being aborted means a newer request took over, which is not a failure
+      if (controller.signal.aborted || !current()) return null
       setStatusCode(error?.status)
       return null
     } finally {
-      setLoading(false)
-      abortController.current = null
+      if (current()) {
+        setLoading(false)
+        abortController.current = null
+      }
     }
   }, [])
 
@@ -169,9 +187,21 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       json,
       size,
       ...saved,
+      selectedStack,
+      selectStack,
       clearData
     }),
-    [loading, json, request, size, saved, search, clearData]
+    [
+      loading,
+      json,
+      request,
+      size,
+      saved,
+      search,
+      selectedStack,
+      selectStack,
+      clearData
+    ]
   )
 
   return (

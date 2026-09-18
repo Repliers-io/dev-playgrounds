@@ -1,5 +1,60 @@
+import { type Position } from 'geojson'
+
+import { simplify } from '@turf/turf'
+
 const toRad = (deg: number) => deg * (Math.PI / 180)
 const toDeg = (rad: number) => rad * (180 / Math.PI)
+
+// a closed ring needs three distinct corners plus the repeated first point
+const drawableRing = (ring: Position[]) =>
+  Array.isArray(ring) && ring.length > 3
+
+/**
+ * Douglas-Peucker simplification of a location boundary, used to cut the vertex
+ * count Mapbox has to draw. Tolerance is in degrees, to match WGS84 coordinates.
+ *
+ * Applied to rendering only: grouping still compares the untouched geometry, and
+ * the response panel keeps showing the raw payload. A boundary that collapses
+ * below a drawable ring is returned at full detail rather than dropped.
+ */
+export const simplifyBoundary = (
+  boundary: Position[][] | Position[][][],
+  geometryType: 'Polygon' | 'MultiPolygon' = 'Polygon',
+  tolerance = 0
+): Position[][] | Position[][][] => {
+  if (!tolerance || tolerance <= 0 || !boundary?.length) return boundary
+
+  try {
+    const simplified: any = simplify(
+      { type: geometryType, coordinates: boundary } as any,
+      { tolerance, highQuality: false, mutate: false }
+    )
+
+    const coordinates = simplified?.coordinates
+    if (!coordinates?.length) return boundary
+
+    const rings: Position[][] =
+      geometryType === 'MultiPolygon'
+        ? (coordinates as Position[][][]).flat()
+        : (coordinates as Position[][])
+
+    return rings.every(drawableRing) ? coordinates : boundary
+  } catch {
+    return boundary
+  }
+}
+
+export const countBoundaryPoints = (
+  boundary: Position[][] | Position[][][],
+  geometryType: 'Polygon' | 'MultiPolygon' = 'Polygon'
+): number => {
+  if (!boundary?.length) return 0
+  const rings: Position[][] =
+    geometryType === 'MultiPolygon'
+      ? (boundary as Position[][][]).flat()
+      : (boundary as Position[][])
+  return rings.reduce((total, ring) => total + (ring?.length || 0), 0)
+}
 
 export type Location = { lat: number; lng: number }
 

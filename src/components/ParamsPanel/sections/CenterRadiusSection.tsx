@@ -8,6 +8,7 @@ import { useParamsForm } from 'providers/ParamsFormProvider'
 
 import { AndroidSwitch, ParamsRange } from '../components'
 import ParamLabel from '../components/ParamsLabel'
+import RadiusUnitSelect from '../components/RadiusUnitSelect'
 
 import BoundsPoint from './BoundsSection/BoundsPoint'
 import SectionTemplate from './SectionTemplate'
@@ -25,7 +26,10 @@ const CenterRadiusSection = () => {
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setValue('center', event.target.checked)
+    const { checked } = event.target
+    setValue('center', checked)
+    // center and bounds are mutually exclusive ways to scope a request
+    if (checked) setValue('bounds', false)
     onChange()
   }
 
@@ -47,7 +51,12 @@ const CenterRadiusSection = () => {
             <BoundsPoint label="✛" point={center!} />
           </Box>
 
-          <ParamsRange min={0} max={100} name="radius" hint="km" />
+          <ParamsRange
+            min={0}
+            max={2500}
+            name="radius"
+            labelSlot={<RadiusUnitSelect disabled={!mapCenter} />}
+          />
           {radiusRequiredButMissing && (
             <FormHelperText error>
               `radius` is required for Listings Search

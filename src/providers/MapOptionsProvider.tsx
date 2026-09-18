@@ -89,6 +89,10 @@ const MapOptionsProvider = ({
   }
   const clearEditMode = () => setEditMode(null)
 
+  // stable identity: consumers put this in hook deps, and an inline arrow here
+  // would change on every map move and remount whatever depends on it
+  const blurMarker = useCallback(() => setFocusedMarker(null), [])
+
   const destroyMap = useCallback(() => {
     const map = mapRef.current
     if (map) {
@@ -170,7 +174,7 @@ const MapOptionsProvider = ({
       focusedMarker,
       focusMarker,
       focusLocation,
-      blurMarker: () => setFocusedMarker(null),
+      blurMarker,
       destroyMap,
       centerMap,
       mapRef,
@@ -184,6 +188,7 @@ const MapOptionsProvider = ({
       editMode,
       canRenderMap,
       focusedMarker,
+      blurMarker,
       destroyMap,
       centerMap
     ]

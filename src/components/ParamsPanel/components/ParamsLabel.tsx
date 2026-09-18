@@ -21,6 +21,7 @@ const ParamsLabel: React.FC<ParamLabelProps> = ({
   hint,
   link,
   tooltip,
+  children,
   ...rest
 }) => {
   return (
@@ -62,6 +63,7 @@ const ParamsLabel: React.FC<ParamLabelProps> = ({
           )}
         </Typography>
       )}
+      {children}
     </Stack>
   )
 }
