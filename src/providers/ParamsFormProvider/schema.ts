@@ -3,6 +3,7 @@ import Joi from 'joi'
 import {
   classOptions,
   lastStatusOptions,
+  radiusUnitOptions,
   sortByOptions,
   statusOptions,
   typeOptions
@@ -94,6 +95,9 @@ const schema = Joi.object({
     .optional(),
 
   bounds: Joi.boolean().allow(null, false, ''),
+  radiusUnit: Joi.string()
+    .valid(...radiusUnitOptions)
+    .allow(null, ''),
 
   simplify: Joi.boolean().allow(null, false, ''),
   simplifyTolerance: Joi.number().positive().allow(null, false, '').messages({

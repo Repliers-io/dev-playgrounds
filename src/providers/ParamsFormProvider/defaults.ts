@@ -19,6 +19,7 @@ const defaultFormState: Partial<FormParams> = {
   endpoint: 'locations',
   center: false,
   radius: null,
+  radiusUnit: 'km',
   bounds: false,
   simplify: false,
   simplifyTolerance: 0.0001,
