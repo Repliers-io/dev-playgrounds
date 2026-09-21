@@ -1,3 +1,4 @@
+import defaultFormState from 'providers/ParamsFormProvider/defaults'
 import presets from 'constants/stat-presets'
 
 export type PresetParams = Record<string, unknown>
@@ -14,7 +15,9 @@ export const presetKeys = Array.from(
   new Set(statPresets.flatMap((preset) => Object.keys(preset.params)))
 )
 
-// params the form keeps as a comma-joined string rather than an array
+// params the form keeps as a comma-joined string rather than an array. Any
+// other comma-string field a preset starts to set (e.g. `fields`) must be
+// listed here too, or it merges as a scalar where the last click wins
 const commaStringKeys = ['statistics']
 
 // list params are merged across presets; everything else is a scalar where
@@ -37,16 +40,28 @@ const pack = (presetValue: unknown, items: string[]) =>
   Array.isArray(presetValue) ? items : items.join(',')
 
 // a preset is selected while every list value it contributes is still in
-// the form. Scalars such as dates are applied but not matched: presets set
-// conflicting ranges, so matching them would let the last click evict the
-// others. `undefined` is "don't care" so presets that clear a field can
-// coexist with ones that set it
+// the form. Scalars such as dates only have to be present, not equal:
+// presets set conflicting ranges, so matching them would let the last click
+// evict the others, while a cleared date must still drop the highlight.
+// `undefined` is "don't care" so presets that clear a field can coexist
+// with ones that set it
 export const isPresetSelected = (current: PresetParams, params: PresetParams) =>
   Object.entries(params).every(([key, value]) => {
-    if (value === undefined || !isList(key, value)) return true
+    if (value === undefined) return true
+    if (!isList(key, value)) return toItems(current[key]).length > 0
     const have = new Set(toItems(current[key]))
     return toItems(value).every((item) => have.has(item))
   })
+
+// true while every field a preset can touch still holds its default, i.e.
+// the user has not started shaping a query of their own
+export const presetFieldsUntouched = (current: PresetParams) => {
+  const defaults = defaultFormState as PresetParams
+  const fingerprint = (value: unknown) => toItems(value).sort().join(',')
+  return presetKeys.every(
+    (key) => fingerprint(current[key]) === fingerprint(defaults[key])
+  )
+}
 
 // the form patch that layers `preset` on top of `current`, given the presets
 // already selected (`others`) whose claims on shared keys must survive

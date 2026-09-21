@@ -18,7 +18,7 @@ import {
   StatBarChart,
   StatPresets
 } from './components'
-import { defaultPresetsPatch } from './presets'
+import { defaultPresetsPatch, presetFieldsUntouched } from './presets'
 
 const flattenArrayObjects = (dataArray: any[]) => {
   const rows = new Set()
@@ -68,13 +68,15 @@ const Statistics = () => {
   const listingsEnabled = watch('listings')
 
   // first visit to the tab: seed the default presets, but only for a user who
-  // has not switched statistics on themselves. Later visits leave the form
-  // alone even if the user has since deselected everything
+  // has neither switched statistics on nor shaped a query of their own. The
+  // map tab shares these fields, so seeding over a hand-built status, class
+  // or date filter would silently rewrite that search too. Later visits leave
+  // the form alone even if the user has since deselected everything
   const seeded = useRef(false)
   useEffect(() => {
     if (seeded.current || tab !== 'stats') return
     seeded.current = true
-    if (getValues('stats')) return
+    if (getValues('stats') || !presetFieldsUntouched(getValues())) return
 
     const patch = defaultPresetsPatch(getValues())
     Object.entries(patch).forEach(([key, value]) => {
@@ -204,15 +206,19 @@ const Statistics = () => {
             rows = rows.filter((key) => key !== 'count')
           }
 
-          // flatten nested objects if they exist
-          const hasNestedValues = dataArray.some((item) =>
-            rows.some(
-              (row) => typeof item[row] === 'object' && item[row] !== null
+          // flatten nested objects if they exist, keeping the flat series
+          // that sit next to them (a doubly-grouped response carries both)
+          const isNested = (row: string) =>
+            dataArray.some(
+              (item) => typeof item[row] === 'object' && item[row] !== null
             )
-          )
-          if (hasNestedValues) {
+          const nestedRows = rows.filter(isNested)
+          if (nestedRows.length) {
             const flattened = flattenArrayObjects(dataArray)
-            rows = flattened.rows
+            rows = [
+              ...rows.filter((row) => !nestedRows.includes(row)),
+              ...flattened.rows
+            ]
             dataArray = flattened.dataArray
           }
 

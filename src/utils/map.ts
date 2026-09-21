@@ -254,22 +254,6 @@ export const estimateBoundsAtZoom = (
   )
 }
 
-export const calcBoundsAtZoom = (
-  map: mapboxgl.Map,
-  location: ApiCoords,
-  zoom: number
-): ApiBounds => {
-  const { clientWidth, clientHeight } = map.getContainer()
-  return toApiBounds(
-    estimateBoundsAtZoom(
-      toMapboxPoint(location),
-      zoom,
-      clientWidth,
-      clientHeight
-    )
-  )
-}
-
 /**
  * Size of `element`, or of the nearest ancestor that is laid out when the
  * element sits inside a `display: none` subtree and measures 0 x 0.

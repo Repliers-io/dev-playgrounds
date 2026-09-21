@@ -520,7 +520,7 @@ this saves time when grepping:
 | `constants/storage.ts` | Seven storage keys; only `tokenKey` is referenced, and only by `tokens.ts`. No localStorage/sessionStorage/cookies are used anywhere. |
 | `constants/search.ts` | Only `defaultResultsPerPage` is referenced (by an unused helper). `defaultClusterPrecision=12` / `defaultClusterLimit=200` **contradict** the real defaults (`10` / `100`) in `ParamsFormProvider/defaults.ts`. |
 | `constants/map.ts` | `defaultPolygon` (Toronto), `proximitySearch*`, `*Zoom` constants unused. |
-| `utils/map.ts` | Roughly half is unused: `getCoords`, `getZoom`, `setMapUrl`, `calcZoomLevel`, `calcBoundsAtZoom`, `addPolygon`/`removePolygon`, `updateMapboxPosition`, `getStatic*`. |
+| `utils/map.ts` | Roughly half is unused: `getCoords`, `getZoom`, `setMapUrl`, `calcZoomLevel`, `addPolygon`/`removePolygon`, `updateMapboxPosition`, `getStatic*`. |
 | `utils/geo.ts`, `utils/validators.ts` | Referenced only by their own tests. |
 | `components/Autosuggest/` | Empty stub. |
 | `Map/components/SearchField/components/OptionGroup.tsx` | Never called (no `groupBy`); the `listing`/`address`/`loader` option types come from another app. |

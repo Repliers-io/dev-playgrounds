@@ -339,14 +339,13 @@ const MapRoot = () => {
     if (!position?.center || position.bounds) return
 
     const { width, height } = getLaidOutSize(mapContainerRef.current)
+    // the real map clamps zoom, so a hand-edited URL must not widen the
+    // estimate beyond what the map tab would show for the same URL
+    const { minZoom = 0, maxZoom = 22 } = mapboxDefaults
+    const zoom = Math.min(Math.max(position.zoom, minZoom), maxZoom)
     setPosition({
       ...position,
-      bounds: estimateBoundsAtZoom(
-        position.center,
-        position.zoom,
-        width,
-        height
-      )
+      bounds: estimateBoundsAtZoom(position.center, zoom, width, height)
     })
   }, [canRenderMap, locationsTab, listingsTab, position])
 

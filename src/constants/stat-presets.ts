@@ -2,6 +2,10 @@ import dayjs from 'dayjs'
 
 import { type FormParams } from 'providers/ParamsFormProvider'
 
+// array params merge across selected presets; `statistics` merges too because
+// components/Statistics/presets.ts lists it as a comma-string field. Any other
+// comma-string param a preset sets needs adding there, or it is treated as a
+// scalar where the last click wins
 type PresetType = Array<{
   name: string
   params: Partial<FormParams>
