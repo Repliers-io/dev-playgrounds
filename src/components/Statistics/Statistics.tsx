@@ -173,12 +173,11 @@ const Statistics = () => {
             })
           )
 
-          const nonEmptyColumn = dataArray.reduce(
-            (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
-            {}
-          )
-
-          let rows = Object.keys(nonEmptyColumn).filter((key) => key !== 'name')
+          // collect the series from every bucket: months with no matches come
+          // back as `{ count: 0 }` only, so any single bucket may lack metrics
+          let rows = Array.from(
+            new Set(dataArray.flatMap((item) => Object.keys(item)))
+          ).filter((key) => key !== 'name')
 
           // we should remove 'count' row from all charts except 'new' and 'closed'
           if (name !== 'new' && name !== 'closed') {
@@ -186,7 +185,12 @@ const Statistics = () => {
           }
 
           // flatten nested objects if they exist
-          if (typeof dataArray[0]?.[rows[0]] === 'object') {
+          const hasNestedValues = dataArray.some((item) =>
+            rows.some(
+              (row) => typeof item[row] === 'object' && item[row] !== null
+            )
+          )
+          if (hasNestedValues) {
             const flattened = flattenArrayObjects(dataArray)
             rows = flattened.rows
             dataArray = flattened.dataArray
