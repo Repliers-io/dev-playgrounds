@@ -12,6 +12,7 @@
     "clean": "rimraf ./dist",
     "deps": "npx taze",
     "deps:update": "npx taze -w",
+    "test": "jest",
     "eslint": "eslint \"./**/*.{ts,tsx,js}\"",
     "eslint:fix": "eslint --fix \"./**/*.{ts,tsx,js}\"",
     "prettier": "prettier --check ./**/*.{ts,tsx,js}",
