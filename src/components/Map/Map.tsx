@@ -33,6 +33,7 @@ import {
   MapContainer,
   MapCounter,
   MapDrawButton,
+  MapLocationsPresets,
   MapNavigation,
   MapStyleSwitch,
   SearchField,
@@ -378,6 +379,7 @@ const MapRoot = () => {
         {listingsTab && (
           <MapCounter count={count} loading={loading || !request} />
         )}
+        {locationsTab && <MapLocationsPresets />}
 
         <Stack
           spacing={2}
