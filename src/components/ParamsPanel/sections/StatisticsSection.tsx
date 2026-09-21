@@ -1,7 +1,8 @@
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Stack } from '@mui/material'
+import ClearAllIcon from '@mui/icons-material/ClearAll'
+import { Box, Button, Stack } from '@mui/material'
 
 import { statsGroupingOptions } from 'services/Search/types'
 import { statisticsFields, useParamsForm } from 'providers/ParamsFormProvider'
@@ -15,11 +16,21 @@ const StatsSection = () => {
   const { watch, setValue } = useFormContext()
 
   const statsEnabled = watch('stats')
+  const statistics = watch('statistics')
+  const grp = watch('grp')
+  const nothingToClear = !statistics && !grp?.length
 
   const handleSwitchChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue('stats', event.target.checked)
+    onChange()
+  }
+
+  // empties both fields of the block, which also deselects every preset
+  const handleClear = () => {
+    setValue('statistics', '')
+    setValue('grp', [])
     onChange()
   }
 
@@ -30,9 +41,24 @@ const StatsSection = () => {
       title="Statistics"
       disabled={!statsEnabled}
       rightSlot={
-        <Box sx={{ pb: 1, my: -1, mr: -0.25, transform: 'scale(0.8)' }}>
-          <AndroidSwitch checked={statsEnabled} onChange={handleSwitchChange} />
-        </Box>
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Button
+            size="small"
+            variant="text"
+            disabled={nothingToClear}
+            sx={{ mb: 1, px: 1, height: 32, whiteSpace: 'nowrap' }}
+            onClick={handleClear}
+            endIcon={<ClearAllIcon />}
+          >
+            Clear
+          </Button>
+          <Box sx={{ pb: 1, my: -1, mr: -0.25, transform: 'scale(0.8)' }}>
+            <AndroidSwitch
+              checked={statsEnabled}
+              onChange={handleSwitchChange}
+            />
+          </Box>
+        </Stack>
       }
     >
       <Stack spacing={1.5}>

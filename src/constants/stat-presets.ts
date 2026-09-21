@@ -2,16 +2,22 @@ import dayjs from 'dayjs'
 
 import { type FormParams } from 'providers/ParamsFormProvider'
 
-type PresetType = Array<{ name: string; params: Partial<FormParams> }>
+type PresetType = Array<{
+  name: string
+  params: Partial<FormParams>
+  // applied on the first visit to the stats tab when statistics are still off
+  selectedByDefault?: boolean
+}>
 
 const presets: PresetType = [
   {
-    name: 'Med/Avg List Price by Day (last 3 months)',
+    name: 'Med/Avg List Price by Day (last 12 months)',
+    selectedByDefault: true,
     params: {
       grp: ['grp-day'],
       status: ['A'],
       statistics: ['med-listPrice', 'avg-listPrice'].join(','),
-      minListDate: dayjs().subtract(3, 'month').format('YYYY-MM-DD'),
+      minListDate: dayjs().subtract(12, 'month').format('YYYY-MM-DD'),
       maxListDate: dayjs().format('YYYY-MM-DD'),
       minSoldDate: undefined,
       maxSoldDate: undefined,
@@ -20,6 +26,7 @@ const presets: PresetType = [
   },
   {
     name: 'Med/Avg Sold Price by Month (last 12 months)',
+    selectedByDefault: true,
     params: {
       grp: ['grp-mth'],
       status: ['U'],
@@ -32,14 +39,15 @@ const presets: PresetType = [
     }
   },
   {
-    name: 'New/Closed Listings by Month (last 6 months)',
+    name: 'New/Closed Listings by Month (last 24 months)',
+    selectedByDefault: true,
     params: {
       grp: ['grp-mth'],
       status: ['U', 'A'],
       statistics: ['cnt-new', 'cnt-closed'].join(','),
-      minListDate: dayjs().subtract(6, 'month').format('YYYY-MM-DD'),
+      minListDate: dayjs().subtract(24, 'month').format('YYYY-MM-DD'),
       maxListDate: dayjs().format('YYYY-MM-DD'),
-      minSoldDate: dayjs().subtract(6, 'month').format('YYYY-MM-DD'),
+      minSoldDate: dayjs().subtract(24, 'month').format('YYYY-MM-DD'),
       maxSoldDate: dayjs().format('YYYY-MM-DD'),
       class: undefined
     }

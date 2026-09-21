@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Area, Bar } from 'recharts'
 
@@ -17,6 +18,7 @@ import {
   StatBarChart,
   StatPresets
 } from './components'
+import { defaultPresetsPatch } from './presets'
 
 const flattenArrayObjects = (dataArray: any[]) => {
   const rows = new Set()
@@ -57,12 +59,30 @@ const getColumns = (data: any) => {
 
 const Statistics = () => {
   const { onChange } = useParamsForm()
-  const { watch, setValue } = useFormContext()
+  const { watch, setValue, getValues } = useFormContext()
   const { statistics } = useSearch()
   const statCharts = Object.entries(statistics || {})
 
+  const tab = watch('tab')
   const statsEnabled = watch('stats')
   const listingsEnabled = watch('listings')
+
+  // first visit to the tab: seed the default presets, but only for a user who
+  // has not switched statistics on themselves. Later visits leave the form
+  // alone even if the user has since deselected everything
+  const seeded = useRef(false)
+  useEffect(() => {
+    if (seeded.current || tab !== 'stats') return
+    seeded.current = true
+    if (getValues('stats')) return
+
+    const patch = defaultPresetsPatch(getValues())
+    Object.entries(patch).forEach(([key, value]) => {
+      setValue(key, value)
+    })
+    setValue('stats', true)
+    onChange()
+  }, [tab])
 
   const handleProTipClick = () => {
     setValue('listings', 'false')
@@ -173,12 +193,11 @@ const Statistics = () => {
             })
           )
 
-          const nonEmptyColumn = dataArray.reduce(
-            (acc, cur) => (Object.keys(cur).length > 1 ? cur : acc),
-            {}
-          )
-
-          let rows = Object.keys(nonEmptyColumn).filter((key) => key !== 'name')
+          // collect the series from every bucket: months with no matches come
+          // back as `{ count: 0 }` only, so any single bucket may lack metrics
+          let rows = Array.from(
+            new Set(dataArray.flatMap((item) => Object.keys(item)))
+          ).filter((key) => key !== 'name')
 
           // we should remove 'count' row from all charts except 'new' and 'closed'
           if (name !== 'new' && name !== 'closed') {
@@ -186,7 +205,12 @@ const Statistics = () => {
           }
 
           // flatten nested objects if they exist
-          if (typeof dataArray[0]?.[rows[0]] === 'object') {
+          const hasNestedValues = dataArray.some((item) =>
+            rows.some(
+              (row) => typeof item[row] === 'object' && item[row] !== null
+            )
+          )
+          if (hasNestedValues) {
             const flattened = flattenArrayObjects(dataArray)
             rows = flattened.rows
             dataArray = flattened.dataArray
