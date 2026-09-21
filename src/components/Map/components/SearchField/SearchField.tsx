@@ -19,6 +19,12 @@ import { useLocations } from 'providers/LocationsProvider'
 import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useParamsForm } from 'providers/ParamsFormProvider'
 import { useSearch } from 'providers/SearchProvider'
+import {
+  getBoundaryBbox,
+  getFitPadding,
+  getLocationZoom,
+  locationFitShare
+} from 'utils/locationView'
 import { getLocationName } from 'utils/map'
 
 import { OptionGroup, OptionLoader, OptionLocation } from './components'
@@ -131,14 +137,34 @@ const SearchField = () => {
     }
   }, [focusedMarker])
 
+  // a boundary is fitted to `locationFitShare` of the map, a location that
+  // only has a point gets the fixed zoom step for its type
   const centerMap = (option: any) => {
-    if (mapRef.current) {
-      mapRef.current.flyTo({
-        center: [option.map.longitude, option.map.latitude],
-        zoom: 10,
+    const map = mapRef.current
+    if (!map) return
+
+    const { boundary, geometryType, longitude, latitude } = option.map || {}
+    const bbox = getBoundaryBbox(boundary, geometryType)
+    if (bbox) {
+      const { clientWidth, clientHeight } = map.getContainer()
+      map.fitBounds(bbox, {
+        padding: getFitPadding(
+          { width: clientWidth, height: clientHeight },
+          locationFitShare
+        ),
         curve: 1
       })
+      return
     }
+
+    const lng = Number(longitude)
+    const lat = Number(latitude)
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return
+    map.flyTo({
+      center: [lng, lat],
+      zoom: getLocationZoom(option.type),
+      curve: 1
+    })
   }
 
   const handleInputChange = (

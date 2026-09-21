@@ -12,6 +12,7 @@ import {
 } from 'services/API/types'
 import { type MapPosition } from 'services/Map/types'
 import { toSafeNumber } from 'utils/formatters'
+import { getBoundaryBbox } from 'utils/locationView'
 import { info } from 'constants/colors'
 import { secondary } from 'constants/colors'
 import {
@@ -110,28 +111,9 @@ export const getBoundaryCenter = (
   boundary: Position[][] | Position[][][],
   geometryType: 'Polygon' | 'MultiPolygon' = 'Polygon'
 ): LngLat | null => {
-  const rings =
-    geometryType === 'MultiPolygon'
-      ? (boundary as Position[][][]).flat()
-      : (boundary as Position[][])
-
-  let minLng = Infinity
-  let maxLng = -Infinity
-  let minLat = Infinity
-  let maxLat = -Infinity
-
-  rings.forEach((ring) => {
-    ring?.forEach(([lng, lat]) => {
-      if (!Number.isFinite(lng) || !Number.isFinite(lat)) return
-      if (lng < minLng) minLng = lng
-      if (lng > maxLng) maxLng = lng
-      if (lat < minLat) minLat = lat
-      if (lat > maxLat) maxLat = lat
-    })
-  })
-
-  if (!Number.isFinite(minLng) || !Number.isFinite(minLat)) return null
-
+  const bbox = getBoundaryBbox(boundary, geometryType)
+  if (!bbox) return null
+  const [minLng, minLat, maxLng, maxLat] = bbox
   return new mapboxgl.LngLat((minLng + maxLng) / 2, (minLat + maxLat) / 2)
 }
 
