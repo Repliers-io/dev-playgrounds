@@ -2,27 +2,51 @@ import { useFormContext } from 'react-hook-form'
 
 import { Button, Stack, Typography } from '@mui/material'
 
-import { type FormParams, useParamsForm } from 'providers/ParamsFormProvider'
+import { useParamsForm } from 'providers/ParamsFormProvider'
 import { highlightPresetFields } from 'utils/dom'
-import presets from 'constants/stat-presets'
 
 import '../../ParamsPanel/sections/ParamsPresets.css'
 
+import {
+  addPreset,
+  isPresetSelected,
+  type Preset,
+  presetKeys,
+  type PresetParams,
+  removePreset,
+  statPresets
+} from '../presets'
+
 const StatPresets = () => {
   const { onChange } = useParamsForm()
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
 
-  const handlePresetClick = (params: Partial<FormParams>) => {
-    Object.entries(params).forEach(([key, value]) => {
+  const statsEnabled = watch('stats')
+  const watched = watch(presetKeys)
+  const current: PresetParams = Object.fromEntries(
+    presetKeys.map((key, index) => [key, watched[index]])
+  )
+
+  const selectedPresets = statsEnabled
+    ? statPresets.filter((preset) => isPresetSelected(current, preset.params))
+    : []
+
+  const handlePresetClick = (preset: Preset) => {
+    const others = selectedPresets.filter((other) => other !== preset)
+    const deselecting = selectedPresets.includes(preset)
+    const next = deselecting
+      ? removePreset(current, preset, others)
+      : addPreset(current, preset, others)
+
+    Object.entries(next).forEach(([key, value]) => {
       setValue(key, value)
     })
     // Enable the statistics section
-    setValue('stats', true)
+    if (!deselecting) setValue('stats', true)
     onChange()
 
     // Highlight changed fields with animation
-    const changedFields = Object.keys(params)
-    highlightPresetFields(changedFields)
+    highlightPresetFields(Object.keys(next))
 
     // Scroll to stats section with additional delay
     document
@@ -36,17 +60,22 @@ const StatPresets = () => {
         Usage examples
       </Typography>
       <Stack direction="row" gap={1.25} flexWrap="wrap">
-        {presets.map((preset) => (
-          <Button
-            size="small"
-            key={preset.name}
-            variant="outlined"
-            sx={{ borderRadius: 1, px: 1, py: 0.5, height: 36 }}
-            onClick={() => handlePresetClick(preset.params)}
-          >
-            {preset.name}
-          </Button>
-        ))}
+        {statPresets.map((preset) => {
+          const selected = selectedPresets.includes(preset)
+          return (
+            <Button
+              size="small"
+              key={preset.name}
+              variant={selected ? 'contained' : 'outlined'}
+              disableElevation
+              aria-pressed={selected}
+              sx={{ borderRadius: 1, px: 1, py: 0.5, height: 36 }}
+              onClick={() => handlePresetClick(preset)}
+            >
+              {preset.name}
+            </Button>
+          )
+        })}
       </Stack>
     </Stack>
   )

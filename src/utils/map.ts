@@ -226,41 +226,64 @@ export const calcZoomLevelForBounds = (
   return Math.min(zoomWidth, zoomHeight)
 }
 
+/**
+ * The viewport a `width` x `height` pixel Mapbox map shows at `center` and
+ * `zoom`, for when the map itself cannot be created, e.g. its container is
+ * hidden. Mapbox GL renders 512px tiles, hence the `zoom + 1`.
+ */
+export const estimateBoundsAtZoom = (
+  center: LngLat,
+  zoom: number,
+  width: number,
+  height: number
+): LngLatBounds => {
+  const EARTH_RADIUS = 6378137 // in meters
+  const latRad = (center.lat * Math.PI) / 180
+
+  const metersPerPixel =
+    (2 * Math.PI * EARTH_RADIUS * Math.cos(latRad)) / (256 * 2 ** (zoom + 1))
+
+  const latDiff = ((height * metersPerPixel) / EARTH_RADIUS) * (180 / Math.PI)
+  const lngDiff =
+    (((width * metersPerPixel) / EARTH_RADIUS) * (180 / Math.PI)) /
+    Math.cos(latRad)
+
+  return new mapboxgl.LngLatBounds(
+    [center.lng - lngDiff / 2, center.lat - latDiff / 2],
+    [center.lng + lngDiff / 2, center.lat + latDiff / 2]
+  )
+}
+
 export const calcBoundsAtZoom = (
   map: mapboxgl.Map,
   location: ApiCoords,
   zoom: number
 ): ApiBounds => {
-  const EARTH_RADIUS = 6378137 // in meters
-  const mapWidth = map.getContainer().clientWidth
-  const mapHeight = map.getContainer().clientHeight
+  const { clientWidth, clientHeight } = map.getContainer()
+  return toApiBounds(
+    estimateBoundsAtZoom(
+      toMapboxPoint(location),
+      zoom,
+      clientWidth,
+      clientHeight
+    )
+  )
+}
 
-  const zoomPow = 2 ** (zoom + 1)
-
-  const metersPerPixel =
-    (2 *
-      Math.PI *
-      EARTH_RADIUS *
-      Math.cos((location.latitude * Math.PI) / 180)) /
-    (256 * zoomPow)
-
-  const widthInMeters = mapWidth * metersPerPixel
-  const heightInMeters = mapHeight * metersPerPixel
-
-  const latDiff = (heightInMeters / EARTH_RADIUS) * (180 / Math.PI)
-  const lngDiff =
-    ((widthInMeters / EARTH_RADIUS) * (180 / Math.PI)) /
-    Math.cos((location.latitude * Math.PI) / 180)
-
-  const swLng = location.longitude - lngDiff / 2
-  const swLat = location.latitude - latDiff / 2
-  const neLng = location.longitude + lngDiff / 2
-  const neLat = location.latitude + latDiff / 2
-
-  const sw = new mapboxgl.LngLat(swLng, swLat)
-  const ne = new mapboxgl.LngLat(neLng, neLat)
-
-  return toApiBounds(new mapboxgl.LngLatBounds(sw, ne))
+/**
+ * Size of `element`, or of the nearest ancestor that is laid out when the
+ * element sits inside a `display: none` subtree and measures 0 x 0.
+ */
+export const getLaidOutSize = (element: HTMLElement | null) => {
+  let node: HTMLElement | null = element
+  while (node) {
+    const { clientWidth, clientHeight } = node
+    if (clientWidth > 0 && clientHeight > 0) {
+      return { width: clientWidth, height: clientHeight }
+    }
+    node = node.parentElement
+  }
+  return { width: window.innerWidth, height: window.innerHeight }
 }
 
 export const removePolygon = (map: MapboxMap) => {

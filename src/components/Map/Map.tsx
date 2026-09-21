@@ -10,7 +10,13 @@ import { useMapOptions } from 'providers/MapOptionsProvider'
 import { useSearch } from 'providers/SearchProvider'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { simplifyBoundary } from 'utils/geo'
-import { getLocationName, getMapStyleUrl, getMarkerName } from 'utils/map'
+import {
+  estimateBoundsAtZoom,
+  getLaidOutSize,
+  getLocationName,
+  getMapStyleUrl,
+  getMarkerName
+} from 'utils/map'
 import {
   mapboxDefaults,
   mapboxToken,
@@ -322,6 +328,26 @@ const MapRoot = () => {
       }
     }
   }, [canRenderMap, locationsTab, listingsTab])
+
+  // the map cannot be created while its tab is hidden, yet the other tabs
+  // still scope their requests by the viewport: estimate the one the map
+  // would show from the URL's center and zoom and the slot it will occupy.
+  // The real bounds replace it as soon as the map tab is opened
+  useEffect(() => {
+    if (!canRenderMap || mapRef.current || locationsTab || listingsTab) return
+    if (!position?.center || position.bounds) return
+
+    const { width, height } = getLaidOutSize(mapContainerRef.current)
+    setPosition({
+      ...position,
+      bounds: estimateBoundsAtZoom(
+        position.center,
+        position.zoom,
+        width,
+        height
+      )
+    })
+  }, [canRenderMap, locationsTab, listingsTab, position])
 
   return (
     <Stack spacing={1.5} sx={{ position: 'relative', flex: 1 }}>
