@@ -63,6 +63,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       locationsSortBy,
       locationsFields,
       locationsLocationId,
+      locationsApn,
       locationsPageNum,
       locationsResultsPerPage,
       locationsBoundary,
@@ -84,6 +85,7 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
     rest.sortBy = locationsSortBy
     rest.fields = locationsFields || ''
     rest.locationId = locationsLocationId
+    rest.apn = locationsApn
     rest.pageNum = locationsPageNum
     rest.resultsPerPage = locationsResultsPerPage
     rest.boundary = locationsBoundary || null

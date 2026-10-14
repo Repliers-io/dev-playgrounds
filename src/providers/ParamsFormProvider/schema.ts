@@ -106,6 +106,7 @@ const schema = Joi.object({
   }),
 
   locationsPointWithinBoundary: Joi.boolean().allow(null, false, ''),
+  locationsApn: Joi.string().allow(null, false, '').optional(),
   locationsMinSize: Joi.number().positive().allow(null, false, ''),
   locationsMaxSize: Joi.number().positive().allow(null, false, ''),
   name: Joi.string().allow(null, false, '').optional(),

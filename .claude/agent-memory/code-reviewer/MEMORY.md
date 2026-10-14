@@ -1,3 +1,4 @@
 - [Locations `name` param scope](project_locations_name_param.md) — `name` is /locations-only; must be nulled out for /locations/autocomplete
 - [`radiusUnit` is undocumented](project_radius_unit_undocumented.md) — public API docs only ever say "radius in KM"; unit list/default/max are unverified
-- [Unit tests exist but never run](project_tests_not_wired_up.md) — no test script or vitest config; `describe` is undefined, so "tests added" != verified
+- [Unit tests run under jest](project_tests_not_wired_up.md) — `npm test` / jest.config.cjs since 22d3996; run new tests, don't assume
+- [mapbox moveend fires on interrupt](project_mapbox_moveend_on_interrupt.md) — flyTo's stop() fires moveend sync; `once('moveend')` before flyTo is racy

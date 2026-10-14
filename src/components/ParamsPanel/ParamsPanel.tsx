@@ -28,6 +28,7 @@ import {
   LocationParamsSection,
   OpenHouseSection,
   ParamsPresets,
+  PublicRecordSection,
   QueryParamsSection,
   SchoolParamsSection,
   SearchSection,
@@ -68,6 +69,7 @@ const ParamsPanel = () => {
             <SchoolParamsSection />
             <CenterRadiusSection />
             <BoundsSection />
+            <PublicRecordSection />
             <GeometrySection />
           </>
         )

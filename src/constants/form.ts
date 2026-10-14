@@ -100,6 +100,7 @@ export const searchOnlyParams: (keyof FormParams)[] = [
   'locationsPageNum',
   'locationsResultsPerPage',
   'locationsLocationId',
+  'locationsApn',
   'locationsSource',
   'locationsMinSize',
   'locationsMaxSize',
