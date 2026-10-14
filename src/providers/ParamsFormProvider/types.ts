@@ -34,6 +34,8 @@ export type CustomFormParams = {
   locationsClassification: string[]
   locationsFields: string
   locationsLocationId: string
+  // assessor parcel numbers, comma-separated in the form, an array for the API
+  locationsApn: string
   locationsHasBoundary: boolean
   locationsPointWithinBoundary: boolean
   locationsPageNum: number | null
