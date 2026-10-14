@@ -150,7 +150,14 @@ export const filterLocationsParams = (params: Partial<FormParams>) => {
   const locationsParams = pick(
     params,
     params.endpoint === 'locations'
-      ? ['state', 'area', 'city', 'neighborhood', 'locationsLocationId']
+      ? [
+          'state',
+          'area',
+          'city',
+          'neighborhood',
+          'locationsLocationId',
+          'locationsApn'
+        ]
       : ['state', 'area', 'city']
   )
 

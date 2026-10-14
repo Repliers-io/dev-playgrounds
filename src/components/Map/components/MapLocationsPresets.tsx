@@ -34,6 +34,10 @@ const MapLocationsPresets = () => {
     setValue('locationsType', [])
     setValue('locationsSubType', [])
     setValue('locationsClassification', [])
+    // a preset lists everything in the viewport; an id or parcel lookup left
+    // over from before would narrow it to nothing at the new center
+    setValue('locationsLocationId', '')
+    setValue('locationsApn', '')
     // GET /locations lists everything in the viewport; autocomplete needs a
     // search string and would show nothing for a preset
     setValue('endpoint', 'locations')
@@ -55,9 +59,11 @@ const MapLocationsPresets = () => {
 
   const handleClick = (preset: LocationsPreset) => {
     if (isSelected(preset)) {
-      // second click releases the preset, like the stats presets do
+      // second click releases the preset, like the stats presets do; the page
+      // size belongs to the preset, so it goes back to the default with it
       setValue('locationsSource', [])
       setValue('center', false)
+      setValue('locationsResultsPerPage', null)
       onChange()
       return
     }
