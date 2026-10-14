@@ -7,23 +7,10 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   modulePaths: ['<rootDir>/src'],
-  // jest resolves the turf bundle to its ESM sources, which it cannot parse;
-  // the CommonJS build alongside requires its sub-packages the normal way
-  moduleNameMapper: {
-    '^@turf/turf$': '<rootDir>/node_modules/@turf/turf/dist/cjs/index.cjs'
-  },
-  // the few ESM-only packages that build still pulls in get compiled to
-  // CommonJS by ts-jest like the sources are (`allowJs` covers their .js)
-  transformIgnorePatterns: [
-    '/node_modules/(?!(kdbush|geokdbush|tinyqueue|polyclip-ts|splaytree-ts)/)'
-  ],
   transform: {
-    '^.+\\.[tj]sx?$': [
+    '^.+\\.tsx?$': [
       'ts-jest',
-      {
-        tsconfig: { module: 'commonjs', jsx: 'react-jsx', allowJs: true },
-        diagnostics: false
-      }
+      { tsconfig: { module: 'commonjs', jsx: 'react-jsx' }, diagnostics: false }
     ]
   }
 }
