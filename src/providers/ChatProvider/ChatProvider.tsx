@@ -78,9 +78,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setStatusCode(null)
 
       const controller = new AbortController()
-      const getParams = {
-        nlpVersion
-      }
+      // empty nlpVersion is not sent at all, the API falls back to its default
+      const getParams: Record<string, string> = {}
+      if (nlpVersion) getParams.nlpVersion = nlpVersion
       const paramsString = queryString.stringify(getParams, queryStringOptions)
 
       const endpointUrl = `${apiUrl}/nlp`
