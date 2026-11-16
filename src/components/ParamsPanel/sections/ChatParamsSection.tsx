@@ -13,7 +13,8 @@ import { ENABLE_NLP_COORDINATES } from 'constants/featureFlags'
 
 import SectionTemplate from './SectionTemplate'
 
-const nlpVersionOptions = ['1', '2', '3'] as const
+const nlpVersionOptions = ['1', '2', '3', '4'] as const
+const latestNlpVersion = Math.max(...nlpVersionOptions.map(Number))
 
 const ChatParamsSection = () => {
   const { restartSession, history, stickySession, setStickySession } = useChat()
@@ -28,11 +29,10 @@ const ChatParamsSection = () => {
     >
       <Stack spacing={1.25}>
         <ParamsSelect
-          noNull
           name="nlpVersion"
           label="nlpVersion"
           options={nlpVersionOptions}
-          tooltip="Repliers NLP Model version"
+          tooltip={`Repliers NLP Model version. When not set the API uses the default version: ${latestNlpVersion}`}
         />
         <ParamsField
           name="nlpId"

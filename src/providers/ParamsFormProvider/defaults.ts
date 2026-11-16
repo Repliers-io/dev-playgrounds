@@ -111,7 +111,7 @@ const defaultFormState: Partial<FormParams> = {
   /**
    * chat parameters
    */
-  nlpVersion: '3',
+  nlpVersion: '',
   nlpId: '',
   clientId: '',
   nlpListings: null,
