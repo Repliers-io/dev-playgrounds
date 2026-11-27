@@ -19,13 +19,15 @@ type ApiKeyFieldProps = {
   label?: string
   hint?: string
   editTrigger?: 'click' | 'icon'
+  errorMessage?: string | null
 }
 
 const ApiKeyField: React.FC<ApiKeyFieldProps> = ({
   name,
   label = name,
   hint,
-  editTrigger = 'icon'
+  editTrigger = 'icon',
+  errorMessage
 }) => {
   const [isEditing, setIsEditing] = useState(false)
   const editInputRef = useRef<HTMLInputElement | null>(null)
@@ -43,10 +45,18 @@ const ApiKeyField: React.FC<ApiKeyFieldProps> = ({
 
   const { ref: registerRef, ...registerRest } = register(name)
 
+  const showEditor = isEditing || !value // an empty key has nothing to mask: edit it directly
+  const errorText =
+    errors[name]?.message?.toString() || errorMessage || undefined
+  const hasError = !!errors[name] || !!errorMessage
+
   useEffect(() => {
-    if (isEditing) {
-      editInputRef.current?.focus()
-      editInputRef.current?.select()
+    const input = editInputRef.current
+    // only when entering edit mode from the masked view: if the user is already typing
+    // here, select() would highlight the first character and the next keystroke replaces it
+    if (isEditing && input && document.activeElement !== input) {
+      input.focus()
+      input.select()
     }
   }, [isEditing])
 
@@ -88,23 +98,29 @@ const ApiKeyField: React.FC<ApiKeyFieldProps> = ({
           fullWidth
           size="small"
           placeholder="null"
-          error={!!errors[name]}
-          helperText={errors[name]?.message?.toString()}
+          error={hasError}
+          helperText={errorText}
           {...registerRest}
+          onChange={(event) => {
+            // the first character makes `value` truthy; latch edit mode so the
+            // field doesn't swap to the masked view mid-typing
+            setIsEditing(true)
+            return registerRest.onChange(event)
+          }}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          sx={{ display: isEditing ? undefined : 'none' }}
+          sx={{ display: showEditor ? undefined : 'none' }}
         />
 
         {/* Display-only masked input */}
-        {!isEditing && (
+        {!showEditor && (
           <TextField
             fullWidth
             size="small"
             value={maskKey(value)}
             placeholder="null"
-            error={!!errors[name]}
-            helperText={errors[name]?.message?.toString()}
+            error={hasError}
+            helperText={errorText}
             onClick={
               editTrigger === 'click' ? () => setIsEditing(true) : undefined
             }

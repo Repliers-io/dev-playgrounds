@@ -2,6 +2,8 @@ import queryString, { type StringifyOptions } from 'query-string'
 
 import { type ApiCredentials } from 'services/API/types'
 
+import { ApiError } from './apiErrors'
+
 export const queryStringOptions: StringifyOptions = {
   arrayFormat: 'none',
   skipEmptyString: true,
@@ -76,7 +78,8 @@ export const fetchListings = async ({ apiKey, apiUrl }: ApiCredentials) => {
     const options = { headers: { 'REPLIERS-API-KEY': apiKey } }
     const response = await apiFetch(`${apiUrl}/listings`, getOptions, options)
     if (!response.ok) {
-      throw new Error('[fetchListings]: could not fetch listings')
+      const body = await response.json().catch(() => null)
+      throw new ApiError(response.status, body)
     }
 
     const { listings } = await response.json()

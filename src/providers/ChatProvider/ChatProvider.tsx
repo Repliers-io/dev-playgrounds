@@ -11,7 +11,9 @@ import { useFormContext } from 'react-hook-form'
 
 import { type ChatItem } from 'components/Chat/types'
 
+import { useSearch } from 'providers/SearchProvider'
 import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
+import { getApiErrorMessage } from 'utils/apiErrors'
 
 import { type APIChatResponse, type ChatContextType } from './types'
 
@@ -27,6 +29,7 @@ const ChatContext = createContext<ChatContextType | null>(null)
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const { getValues, setValue } = useFormContext()
+  const { reportApiResponse } = useSearch()
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -135,9 +138,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           console.error('Failed to parse JSON response')
         }
 
+        reportApiResponse(response.status, jsonResponse, apiKey)
+
         if (jsonResponse) {
           // Update nlpId in form if sticky session is enabled
-          if (stickySession) {
+          if (stickySession && response.ok) {
             setValue('nlpId', jsonResponse.nlpId)
           }
 
@@ -146,7 +151,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             value:
               jsonResponse?.request?.summary ||
               jsonResponse?.request?.error ||
-              `Error ${response.status}: ${response.statusText}`,
+              getApiErrorMessage(jsonResponse) ||
+              `Error ${response.status}${response.statusText ? `: ${response.statusText}` : ''}`,
             type: 'ai',
             error: !response.ok,
             body: jsonResponse?.request?.body,
@@ -166,7 +172,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false)
       }
     },
-    [apiKey, apiUrl, getValues, setValue, stickySession]
+    [apiKey, apiUrl, getValues, setValue, stickySession, reportApiResponse]
   )
 
   const restartSession = useCallback(() => {

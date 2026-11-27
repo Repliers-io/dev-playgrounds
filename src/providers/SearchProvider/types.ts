@@ -39,4 +39,10 @@ export type SearchContextType = SavedResponse & {
   setPolygon: (polygon: Position[]) => void
   clearPolygon: () => void
   clearData: () => void
+  apiKeyError: string | null
+  reportApiResponse: (
+    status: number,
+    body: unknown,
+    requestApiKey?: string
+  ) => string | null
 }
