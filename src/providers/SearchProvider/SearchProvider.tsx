@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState
@@ -14,6 +15,7 @@ import {
   type FormParams
 } from 'providers/ParamsFormProvider'
 import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
+import { getApiKeyError } from 'utils/apiErrors'
 
 import { type SavedResponse, type SearchContextType } from './types'
 
@@ -103,6 +105,27 @@ const SearchProvider = ({
 
   const previousRequest = useRef<string>('')
   const previousKey = useRef<string>('')
+
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null)
+  const currentApiKey = useRef(stateParams.apiKey)
+
+  useEffect(() => {
+    currentApiKey.current = stateParams.apiKey
+    setApiKeyError(null) // a new key (or API URL) starts unknown; its own responses decide
+  }, [stateParams.apiKey, stateParams.apiUrl])
+
+  // stable identity (no deps), so callbacks may call it without listing it as a dep
+  const reportApiResponse = useCallback(
+    (status: number, body: unknown, requestApiKey?: string) => {
+      const keyError = getApiKeyError(status, body)
+      // a response for a key that has since been replaced says nothing about the current one
+      if (requestApiKey !== currentApiKey.current) return keyError
+      if (keyError) setApiKeyError(keyError)
+      else if (status >= 200 && status < 300) setApiKeyError(null)
+      return keyError
+    },
+    []
+  )
 
   const clearPolygon = useCallback(() => setPolygon(null), [])
 
@@ -235,6 +258,8 @@ const SearchProvider = ({
 
       const json = JSON.parse(text)
       setJson(json)
+      if (reportApiResponse(response.status, json, apiKey))
+        setSaved(emptySavedResponse)
 
       if (response.ok && !disabled.current) {
         const { listings, count, page, numPages, aggregates, statistics } = json
@@ -290,7 +315,9 @@ const SearchProvider = ({
       polygon: searchPolygon,
       setPolygon,
       clearPolygon,
-      clearData
+      clearData,
+      apiKeyError,
+      reportApiResponse
     }),
     [
       stateParams,
@@ -307,7 +334,9 @@ const SearchProvider = ({
       removeParam,
       removeParams,
       clearPolygon,
-      clearData
+      clearData,
+      apiKeyError,
+      reportApiResponse
     ]
   )
 

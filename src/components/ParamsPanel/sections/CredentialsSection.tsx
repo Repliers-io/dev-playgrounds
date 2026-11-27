@@ -13,7 +13,8 @@ import SectionTemplate from './SectionTemplate'
 const CredentialsSection = () => {
   const { centerMap } = useMapOptions()
   const {
-    params: { apiKey, apiUrl }
+    params: { apiKey, apiUrl },
+    apiKeyError
   } = useSearch()
   const {
     formState: { errors }
@@ -23,7 +24,7 @@ const CredentialsSection = () => {
     if (apiKey && apiUrl) centerMap(apiKey, apiUrl)
   }
 
-  const hasApiKeyError = !!errors.apiKey
+  const hasApiKeyError = !!errors.apiKey || !!apiKeyError
 
   return (
     <SectionTemplate
@@ -48,6 +49,7 @@ const CredentialsSection = () => {
           name="apiKey"
           hint="* HTTP Header"
           label="REPILERS-API-KEY"
+          errorMessage={apiKeyError}
         />
         {hasApiKeyError && (
           <Link

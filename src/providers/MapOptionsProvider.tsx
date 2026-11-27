@@ -11,6 +11,7 @@ import { LngLat, type Map as MapboxMap } from 'mapbox-gl'
 
 import { type MapPosition } from 'services/Map/types'
 import { fetchListings } from 'utils/api'
+import { ApiError } from 'utils/apiErrors'
 import { getLocations, getMapPosition } from 'utils/map'
 import { defaultMapCenter, defaultMapZoom } from 'constants/map'
 import { type MapStyle } from 'constants/map-styles'
@@ -64,7 +65,8 @@ const MapOptionsProvider = ({
   children?: React.ReactNode
 }) => {
   const {
-    params: { apiKey, apiUrl }
+    params: { apiKey, apiUrl },
+    reportApiResponse
   } = useSearch()
 
   const [canRenderMap, setCanRenderMap] = useState(false)
@@ -130,9 +132,19 @@ const MapOptionsProvider = ({
             : fallbackPosition()
           applyPosition(mapPosition)
         })
-        .catch((err) => console.error(err))
+        .catch((err) => {
+          console.error(err)
+          if (err instanceof ApiError)
+            reportApiResponse(err.status, err.body, apiKey)
+          // without sample listings there is nothing to fit, but the map must still render:
+          // ParamsPanel sends no request at all until canRenderMap is true
+          if (!canRenderMap) {
+            setPosition(fallbackPosition())
+            setCanRenderMap(true)
+          }
+        })
     },
-    [canRenderMap]
+    [canRenderMap, reportApiResponse]
   )
 
   const setMapRef = useCallback((ref: MapboxMap | null) => {

@@ -53,7 +53,7 @@ const LocationsSelectOptionsProvider = ({
   const [loading, setLoading] = useState(false)
   const [locationsSourceLoading, setLocationsSourceLoading] = useState(false)
   const [options, setOptions] = useState<Record<string, string[]>>({})
-  const { params } = useSearch()
+  const { params, reportApiResponse } = useSearch()
   const { apiKey = '', apiUrl = '', locationsSource = [] } = params
 
   // Memoize extracted values to prevent unnecessary effect triggers
@@ -92,6 +92,8 @@ const LocationsSelectOptionsProvider = ({
           fetchOpts
         )
         body = await response.json()
+        reportApiResponse(response.status, body, apiKey)
+        if (!response.ok) body = {}
       } catch (error) {
         console.error('No locations field options provided from API', error)
       }
@@ -140,7 +142,7 @@ const LocationsSelectOptionsProvider = ({
 
       return result
     },
-    [apiKey, apiUrl, minCount]
+    [apiKey, apiUrl, minCount, reportApiResponse]
   )
 
   const applyMappings = useCallback((options: Record<string, string[]>) => {

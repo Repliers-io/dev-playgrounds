@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
+import { useSearch } from 'providers/SearchProvider'
 import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
 
 import { type ListingContextType, type SavedResponse } from './types'
@@ -21,6 +22,7 @@ const emptySavedResponse: SavedResponse = {
 }
 
 const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
+  const { reportApiResponse } = useSearch()
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -133,6 +135,9 @@ const ListingProvider = ({ children }: { children?: React.ReactNode }) => {
       } catch (_error) {
         setJson(null)
       }
+
+      if (reportApiResponse(response.status, jsonResponse, apiKey))
+        setSaved(emptySavedResponse)
 
       if (response.ok && !disabled.current) {
         // Response is a single property object, not an array

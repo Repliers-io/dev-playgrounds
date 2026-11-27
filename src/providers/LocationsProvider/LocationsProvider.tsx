@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import queryString from 'query-string'
 
+import { useSearch } from 'providers/SearchProvider'
 import { apiFetch, queryStringOptions, readResponseBody } from 'utils/api'
 import { groupLocationsByGeometry, type LocationStack } from 'utils/locations'
 
@@ -27,6 +28,7 @@ const emptySavedResponse: SavedResponse = {
 }
 
 const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
+  const { reportApiResponse } = useSearch()
   const [loading, setLoading] = useState(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [request, setRequest] = useState('')
@@ -143,6 +145,11 @@ const LocationsProvider = ({ children }: { children?: React.ReactNode }) => {
       } catch (error) {
         console.error('Error parsing response', error)
         setJson(null)
+      }
+
+      if (reportApiResponse(response.status, jsonResponse, apiKey)) {
+        setSaved(emptySavedResponse)
+        setSelectedStack(null)
       }
 
       if (response.ok && !disabled.current) {
